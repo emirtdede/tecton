@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Slett timeliste",
+    "timesheet_delete_msg": "Er du sikker på at du vil slette denne timelisteposten? Denne handlingen kan ikke angres.",
+    "advance_delete_title": "Slett forskudd/transaksjon",
+    "advance_delete_msg": "Er du sikker på at du vil slette dette forskuddet? Systemet vil også automatisk slette dette beløpet fra Kassen."
   },
   "cash": {
     "title": "Kassehåndtering",
@@ -327,7 +331,8 @@
     "required_field": "Vennligst fyll ut dette feltet.",
     "page": "Side",
     "next_short": "Neste",
-    "yes": "Ja"
+    "yes": "Ja",
+    "no": "Ingen"
   },
   "worker_modal": {
     "title_new": "Legg til ansatt",
@@ -524,8 +529,8 @@
     "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
     "help_h3": "3. Updating and Editing",
     "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
-    "delete_title": "Delete Subcontractor",
-    "delete_confirm": "Are you sure you want to delete this subcontractor ledger? This action cannot be undone.",
+    "delete_title": "Slett underleverandør",
+    "delete_confirm": "Er du sikker på at du vil slette denne underleverandørreskontroen? Denne handlingen kan ikke angres.",
     "no_results": "No subcontractors found matching the search criteria.",
     "empty_state": "No subcontractors registered for this construction site yet."
   },
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Permisjon for personell"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Bekreft Gjenoppretting",
     "restore_confirm_msg": "Er du sikker på at du vil gjenopprette denne posten? Den vil bli flyttet tilbake til sin opprinnelige plassering.",
-    "restore_error": "Gjenopprettingsfeil:"
+    "restore_error": "Gjenopprettingsfeil:",
+    "leave_title": "{{type}} Gå ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Multiplikator",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Permisjon for personell",
+  "leave_type": {
+    "Ücretsiz": "Ubetalt",
+    "Ücretli": "Betalt",
+    "Yıllık": "Årlig",
+    "Mazeret": "Unnskyldning",
+    "Sağlık": "Medisinsk"
   }
 }

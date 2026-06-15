@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Ta bort tidrapport",
+    "timesheet_delete_msg": "Är du säker på att du vill ta bort denna tidrapport? Denna åtgärd kan inte ångras.",
+    "advance_delete_title": "Ta bort förskott/transaktion",
+    "advance_delete_msg": "Är du säker på att du vill ta bort detta förskott? Systemet kommer också automatiskt att ta bort detta belopp från kassan."
   },
   "cash": {
     "title": "Kassahantering",
@@ -327,7 +331,8 @@
     "required_field": "Vänligen fyll i detta fält.",
     "page": "Sida",
     "next_short": "Nästa",
-    "yes": "Ja"
+    "yes": "Ja",
+    "no": "Inga"
   },
   "worker_modal": {
     "title_new": "Lägg till ny personal",
@@ -524,8 +529,8 @@
     "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
     "help_h3": "3. Updating and Editing",
     "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
-    "delete_title": "Delete Subcontractor",
-    "delete_confirm": "Are you sure you want to delete this subcontractor ledger? This action cannot be undone.",
+    "delete_title": "Ta bort underleverantör",
+    "delete_confirm": "Är du säker på att du vill ta bort denna underleverantörsreskontra? Denna åtgärd kan inte ångras.",
     "no_results": "No subcontractors found matching the search criteria.",
     "empty_state": "No subcontractors registered for this construction site yet."
   },
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Personalledighet"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Bekräfta Återställning",
     "restore_confirm_msg": "Är du säker på att du vill återställa denna post? Den kommer att flyttas tillbaka till sin ursprungliga plats.",
-    "restore_error": "Återställningsfel:"
+    "restore_error": "Återställningsfel:",
+    "leave_title": "{{type}} Lämna ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Multiplikator",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Personalledighet",
+  "leave_type": {
+    "Ücretsiz": "Obetald",
+    "Ücretli": "Betalt",
+    "Yıllık": "Årlig",
+    "Mazeret": "Ursäkt",
+    "Sağlık": "Medicinsk"
   }
 }

@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Usuń grafik",
+    "timesheet_delete_msg": "Czy na pewno chcesz usunąć ten rekord karty czasu pracy? Tej akcji nie można cofnąć.",
+    "advance_delete_title": "Usuń zaliczkę/transakcję",
+    "advance_delete_msg": "Czy na pewno chcesz usunąć to zaliczkę? System automatycznie skreśli także tę kwotę z Kasy."
   },
   "cash": {
     "title": "Kasa",
@@ -327,7 +331,8 @@
     "required_field": "Proszę wypełnić to pole.",
     "page": "Strona",
     "next_short": "Następny",
-    "yes": "Tak"
+    "yes": "Tak",
+    "no": "NIE"
   },
   "worker_modal": {
     "title_new": "Dodaj",
@@ -524,8 +529,8 @@
     "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
     "help_h3": "3. Updating and Editing",
     "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
-    "delete_title": "Delete Subcontractor",
-    "delete_confirm": "Are you sure you want to delete this subcontractor ledger? This action cannot be undone.",
+    "delete_title": "Usuń podwykonawcę",
+    "delete_confirm": "Czy na pewno chcesz usunąć tę księgę podwykonawców? Tej akcji nie można cofnąć.",
     "no_results": "No subcontractors found matching the search criteria.",
     "empty_state": "No subcontractors registered for this construction site yet."
   },
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Urlop personelu"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Potwierdzenie Przywrócenia",
     "restore_confirm_msg": "Czy na pewno chcesz przywrócić ten rekord? Zostanie on przeniesiony z powrotem na swoje pierwotne miejsce.",
-    "restore_error": "Błąd przywracania:"
+    "restore_error": "Błąd przywracania:",
+    "leave_title": "{{type}} Wyjdź ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Mnożnik",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Urlop personelu",
+  "leave_type": {
+    "Ücretsiz": "Nie zapłacony",
+    "Ücretli": "Płatny",
+    "Yıllık": "Coroczny",
+    "Mazeret": "Wymówka",
+    "Sağlık": "Medyczny"
   }
 }

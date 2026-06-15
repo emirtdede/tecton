@@ -245,7 +245,11 @@
     "help_h2": "2. Devreden Bakiye Raporu",
     "help_p2": "Belirli tarih aralıkları seçildiğinde, geçmişten devreden bakiyeyi otomatik hesaplayan otonom raporlar oluşturabilirsiniz.",
     "help_h3": "3. PDF Mutabakat Çıktısı",
-    "help_p3": "Şirket logonuzun ve detaylı hesap dökümünün yer aldığı resmi antetli PDF ekstreleri üreterek işçinizle paylaşabilirsiniz."
+    "help_p3": "Şirket logonuzun ve detaylı hesap dökümünün yer aldığı resmi antetli PDF ekstreleri üreterek işçinizle paylaşabilirsiniz.",
+    "timesheet_delete_title": "Puantajı Sil",
+    "timesheet_delete_msg": "Bu puantaj kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+    "advance_delete_title": "Avansı Sil",
+    "advance_delete_msg": "Bu avansı silmek istediğinize emin misiniz? Sistem bu tutarı Kasa'dan da otomatik olarak iptal edecektir."
   },
   "cash": {
     "title": "Kasa Yönetimi",
@@ -346,7 +350,8 @@
     "required_field": "Lütfen bu alanı doldurun.",
     "page": "Sayfa",
     "next_short": "Sonraki",
-    "yes": "Evet"
+    "yes": "Evet",
+    "no": "Hayır"
   },
   "worker_modal": {
     "title_new": "Yeni Personel Ekle",
@@ -915,12 +920,14 @@
       "journal": "Günlük Jurnal",
       "quality": "Kalite Kontrol Tutanağı",
       "subcontractor": "Taşeron Cari Kaydı",
-      "project": "Şantiye Kaydı"
+      "project": "Şantiye Kaydı",
+      "worker_leaves": "Personel İzni"
     },
     "allProjectsOption": "Tüm Projeler",
     "restore_confirm_title": "Geri Yükleme Onayı",
     "restore_confirm_msg": "Bu kaydı geri yüklemek istediğinize emin misiniz? Kayıt, silinmeden önceki asıl yerine eklenecektir.",
-    "restore_error": "Geri yükleme hatası:"
+    "restore_error": "Geri yükleme hatası:",
+    "leave_title": "{{type}} İzni ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1023,5 +1030,13 @@
   "multiplier": "Çarpan",
   "settings_logs": {
     "error_read": "Loglar okunamadı:"
+  },
+  "recycle_type_worker_leaves": "Personel İzni",
+  "leave_type": {
+    "Ücretsiz": "Ücretsiz",
+    "Ücretli": "Ücretli",
+    "Yıllık": "Yıllık",
+    "Mazeret": "Mazeret",
+    "Sağlık": "Sağlık"
   }
 }

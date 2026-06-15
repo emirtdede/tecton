@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "删除时间表",
+    "timesheet_delete_msg": "您确定要删除此时间表记录吗？此操作无法撤消。",
+    "advance_delete_title": "删除预付款/交易",
+    "advance_delete_msg": "您确定要删除此预付款吗？系统还将自动从收银机中取消该金额。"
   },
   "cash": {
     "title": "现金管理",
@@ -327,7 +331,8 @@
     "required_field": "请填写此字段。",
     "page": "页",
     "next_short": "下一页",
-    "yes": "是"
+    "yes": "是的",
+    "no": "不"
   },
   "worker_modal": {
     "title_new": "添加新人员",
@@ -524,8 +529,8 @@
     "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
     "help_h3": "3. Updating and Editing",
     "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
-    "delete_title": "Delete Subcontractor",
-    "delete_confirm": "Are you sure you want to delete this subcontractor ledger? This action cannot be undone.",
+    "delete_title": "删除分包商",
+    "delete_confirm": "您确定要删除此分包商分类帐吗？此操作无法撤消。",
     "no_results": "No subcontractors found matching the search criteria.",
     "empty_state": "No subcontractors registered for this construction site yet."
   },
@@ -923,12 +928,14 @@
       "journal": "每日日志",
       "quality": "质量控制报告",
       "subcontractor": "分包商分类账",
-      "project": "项目记录"
+      "project": "项目记录",
+      "worker_leaves": "人员休假"
     },
     "allProjectsOption": "所有项目",
     "restore_confirm_title": "恢复确认",
     "restore_confirm_msg": "您确定要恢复此记录吗？它将被移回其原始位置。",
-    "restore_error": "恢复错误："
+    "restore_error": "恢复错误：",
+    "leave_title": "{{type}} 离开（{{start}} - {{end}}）"
   },
   "global": {
     "spotlight": "聚光灯：Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "乘数",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "人员休假",
+  "leave_type": {
+    "Ücretsiz": "未付",
+    "Ücretli": "有薪酬的",
+    "Yıllık": "年度的",
+    "Mazeret": "原谅",
+    "Sağlık": "医疗的"
   }
 }

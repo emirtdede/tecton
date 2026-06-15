@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Urenstaat verwijderen",
+    "timesheet_delete_msg": "Weet u zeker dat u deze urenstaatrecord wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    "advance_delete_title": "Voorschot/transactie verwijderen",
+    "advance_delete_msg": "Weet u zeker dat u dit voorschot wilt verwijderen? Het systeem zal dit bedrag ook automatisch uit de kassa schrappen."
   },
   "cash": {
     "title": "Kassa",
@@ -327,7 +331,8 @@
     "required_field": "Vul dit veld in.",
     "page": "Pagina",
     "next_short": "Volgende",
-    "yes": "Ja"
+    "yes": "Ja",
+    "no": "Nee"
   },
   "worker_modal": {
     "title_new": "Toevoegen",
@@ -524,8 +529,8 @@
     "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
     "help_h3": "3. Updating and Editing",
     "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
-    "delete_title": "Delete Subcontractor",
-    "delete_confirm": "Are you sure you want to delete this subcontractor ledger? This action cannot be undone.",
+    "delete_title": "Onderaannemer verwijderen",
+    "delete_confirm": "Weet u zeker dat u dit grootboek van onderaannemers wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
     "no_results": "No subcontractors found matching the search criteria.",
     "empty_state": "No subcontractors registered for this construction site yet."
   },
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Personeelsverlof"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Herstel Bevestiging",
     "restore_confirm_msg": "Weet u zeker dat u dit record wilt herstellen? Het wordt teruggeplaatst naar de oorspronkelijke locatie.",
-    "restore_error": "Herstelfout:"
+    "restore_error": "Herstelfout:",
+    "leave_title": "{{type}} Verlof ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Vermenigvuldiger",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Personeelsverlof",
+  "leave_type": {
+    "Ücretsiz": "Onbetaald",
+    "Ücretli": "Betaald",
+    "Yıllık": "Jaarlijks",
+    "Mazeret": "Excuus",
+    "Sağlık": "Medisch"
   }
 }
