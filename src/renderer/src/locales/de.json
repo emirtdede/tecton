@@ -76,10 +76,10 @@
     "system_maintenance": "Systemwartung",
     "logo_uploaded": "Logo hochgeladen",
     "parameters": "Parameter",
-    "regionalSettings": "Regional Format Settings",
-    "customCurrency": "Currency Override",
-    "customDateFormat": "Date Format Override",
-    "customTimeFormat": "Time Format Override",
+    "regionalSettings": "Regionale Formateinstellungen",
+    "customCurrency": "Währungsüberschreibung",
+    "customDateFormat": "Überschreiben des Datumsformats",
+    "customTimeFormat": "Überschreibung des Zeitformats",
     "autoByLanguage": "Automatisch (nach Sprache)",
     "regionalFormatSettings": "Regionale Formateinstellungen",
     "currencyOverride": "Währungsauswahl",
@@ -110,14 +110,14 @@
     "delete": "Löschen",
     "net_balance": "Nettosaldo",
     "phone_not_found": "Telefon nicht angegeben",
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "help_title": "Leitfaden zum Personalmanagement",
+    "help_desc": "Im Bereich „Personalverwaltung“ können Sie Arbeitszeittabellen, Verdienste, Vorschüsse und Zahlungsdetails Ihrer Mitarbeiter verfolgen.",
+    "help_h1": "1. Fügen Sie Worker und Excel hinzu",
+    "help_p1": "Fügen Sie einzelne Arbeiter über die Schaltfläche oben rechts hinzu oder importieren Sie eine Chargenliste, indem Sie die Excel-Vorlage herunterladen.",
+    "help_h2": "2. Gruppenanalyse",
+    "help_p2": "Analysieren Sie Ausgaben und Mitarbeiterzahlen nach Gruppenkategorie (z. B. Elektriker, Hüttenarbeiter).",
+    "help_h3": "3. Scorecards und Aussagen",
+    "help_p3": "Klicken Sie auf den Namen eines Mitarbeiters, um dessen Stundenzettel anzuzeigen, neue Salden zu berechnen und detaillierte PDF-Abrechnungen zu exportieren.",
     "undo_success": "Aktion erfolgreich rückgängig gemacht!",
     "undo_error": "Rückgängig machen fehlgeschlagen:",
     "delete_worker_title": "Personal Löschen",
@@ -169,8 +169,8 @@
       "tags_label": "Schlagworte",
       "tags_ph": "Beispiel: Reisemaut, persönlich",
       "notes_ph": "z.B. Wöchentlicher Abschlag",
-      "delete_title": "Delete Advance",
-      "delete_confirm": "Are you sure you want to delete this advance? The system will automatically cancel this amount from the Cash Register as well."
+      "delete_title": "Vorschuss löschen",
+      "delete_confirm": "Sind Sie sicher, dass Sie diesen Vorschuss löschen möchten? Das System löscht diesen Betrag automatisch auch aus der Registrierkasse."
     },
     "summary": {
       "previous_balance": "Vorheriger Saldo",
@@ -178,7 +178,7 @@
       "period_advance": "Vorschuss",
       "new_balance": "Neuer Saldo",
       "carried_balance_report": "Vortragsbericht",
-      "advance_deduction": "Advance Deduction"
+      "advance_deduction": "Vorababzug"
     },
     "filter": {
       "start_date": "Startdatum",
@@ -216,17 +216,17 @@
     "calculated_earned": "Berechneter Verdienst:",
     "auto_deduct_notice": "* Der Vorschuss wird automatisch von der Kasse abgezogen.",
     "current_balance": "Aktueller Kontostand",
-    "help_title": "Worker Profile Guide",
-    "help_desc": "The worker profile displays all financial and working history of the selected employee on a single screen.",
-    "help_h1": "1. Timesheets & Advances",
-    "help_p1": "Quickly enter daily timesheet records (standard hours or overtime) and cash advance logs.",
-    "help_h2": "2. Carried Balance Report",
-    "help_p2": "Generate date-range filtered statement reports that automatically calculate the carried over balance.",
-    "help_h3": "3. PDF Reconciliation",
-    "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
-    "whatsapp_send": "Send via WhatsApp",
+    "help_title": "Leitfaden zum Arbeitnehmerprofil",
+    "help_desc": "Das Mitarbeiterprofil zeigt die gesamte Finanz- und Arbeitshistorie des ausgewählten Mitarbeiters auf einem einzigen Bildschirm an.",
+    "help_h1": "1. Stundenzettel und Vorschüsse",
+    "help_p1": "Geben Sie schnell tägliche Arbeitszeitnachweise (Standardstunden oder Überstunden) und Bargeldvorschussprotokolle ein.",
+    "help_h2": "2. Bilanzbericht",
+    "help_p2": "Generieren Sie nach Datumsbereich gefilterte Kontoauszugsberichte, die den übertragenen Saldo automatisch berechnen.",
+    "help_h3": "3. PDF-Abgleich",
+    "help_p3": "Erstellen und teilen Sie gebrandete, offizielle PDF-Kontoauszüge mit Ihrem Firmenlogo.",
+    "whatsapp_send": "Per WhatsApp verschicken",
     "whatsapp_no_phone": "Registrierte Telefonnummer für das Personal nicht gefunden.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "whatsapp_message_template": "Lieber {{name}}, Ihr Kontoauszug zwischen {{startDate}} und {{endDate}}:\n\n- Gesamtverdient: {{earned}}\n- Gesamtzahl der Zahlungen/Vorauszahlungen: {{advance}}\n- Restguthaben: {{balance}}\n\nPräsentiert zu Ihrer Information.",
     "timesheet_delete_title": "Stundenzettel löschen",
     "timesheet_delete_msg": "Sind Sie sicher, dass Sie diesen Stundenzetteldatensatz löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "advance_delete_title": "Vorschuss/Transaktion löschen",
@@ -262,14 +262,14 @@
     "tags_ph": "z.B. Material, Miete",
     "search_placeholder": "Beschreibungen suchen...",
     "new_transaction": "Neue Bargeldtransaktion",
-    "help_title": "Cash Register Guide",
-    "help_desc": "Cash Register is used to log all cash inflows and outflows on your construction site.",
-    "help_h1": "1. Income/Expense Entries",
-    "help_p1": "Record incomes (+) and expenses (-). Worker advances are automatically deducted from the register.",
-    "help_h2": "2. Monthly Financial Status",
-    "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
-    "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "help_title": "Leitfaden für Registrierkassen",
+    "help_desc": "Mit der Registrierkasse erfassen Sie alle Geldzu- und -abflüsse auf Ihrer Baustelle.",
+    "help_h1": "1. Einnahmen-/Ausgabeneinträge",
+    "help_p1": "Erfassen Sie Einnahmen (+) und Ausgaben (-). Arbeitnehmervorschüsse werden automatisch vom Register abgezogen.",
+    "help_h2": "2. Monatlicher Finanzstatus",
+    "help_p2": "Verfolgen Sie sofort die Gesamteinnahmen, Gesamtausgaben, Arbeitskosten und monatlichen Nettobargeldveränderungen.",
+    "help_h3": "3. Filtern und Exportieren",
+    "help_p3": "Filtern Sie Bargeldprotokolle nach Datumsbereich oder Transaktionstyp und laden Sie Berichte im Excel- oder PDF-Format herunter.",
     "allCompany": "Ganzes Unternehmen (Global)",
     "headquarters": "Hauptkasse / Allgemein",
     "relatedProject": "Zugehörige Baustelle",
@@ -278,7 +278,7 @@
     "netBalance": "Netto-Kassenbestand",
     "expense": "Ausgabe",
     "income": "Einnahme",
-    "tags": "Tags",
+    "tags": "Schlagworte",
     "delete_title": "Bargeldtransaktion löschen",
     "delete_confirm": "Möchten Sie diese Bargeldtransaktion wirklich löschen? Diese Aktion wirkt sich dauerhaft auf den Kassenbestand aus."
   },
@@ -332,7 +332,8 @@
     "page": "Seite",
     "next_short": "Weiter",
     "yes": "Ja",
-    "no": "NEIN"
+    "no": "NEIN",
+    "error": "Fehler"
   },
   "worker_modal": {
     "title_new": "Neues Personal hinzufügen",
@@ -341,7 +342,7 @@
     "name_ph": "z.B. Max Mustermann",
     "tc": "Identitätsnummer",
     "tc_ph": "11 Ziffern (Optional)",
-    "tags": "Tags",
+    "tags": "Schlagworte",
     "tags_ph": "z.B. Meister, Baustelle A (Eingabe drücken)",
     "status": "Status",
     "status_active": "Aktiv",
@@ -383,7 +384,7 @@
     "dev_info": "Entwickler:",
     "cat_code": "Code & Technologie",
     "cat_prof": "Berufliches Netzwerk",
-    "cat_social": "Content & Social",
+    "cat_social": "Inhalt und Soziales",
     "download_template": "Excel-Vorlage Herunterladen",
     "template_downloaded": "Excel-Vorlage Heruntergeladen",
     "err_name_empty": "Zeile {line}: Name darf nicht leer sein.",
@@ -450,14 +451,14 @@
     "active_workspace": "Aktiver Arbeitsbereich",
     "location_unspecified": "Kein Standort angegeben",
     "select_workspace": "Arbeitsbereich auswählen",
-    "help_title": "Construction Site Guide",
-    "help_desc": "Site Management allows you to add and manage different projects or locations.",
-    "help_h1": "1. Active Workspace",
-    "help_p1": "Select a project to set it as active. All transactions and reports will belong to this project.",
-    "help_h2": "2. Location & Weather",
-    "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
-    "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "help_title": "Baustellenführer",
+    "help_desc": "Mit Site Management können Sie verschiedene Projekte oder Standorte hinzufügen und verwalten.",
+    "help_h1": "1. Aktiver Arbeitsbereich",
+    "help_p1": "Wählen Sie ein Projekt aus, um es als aktiv festzulegen. All transactions and reports will belong to this project.",
+    "help_h2": "2. Standort und Wetter",
+    "help_p2": "Geben Sie einen Standort an (z. B. „Istanbul, TR“), um die täglichen Wetterbedingungen automatisch abzurufen.",
+    "help_h3": "3. Suchen und paginieren",
+    "help_p3": "Durchsuchen Sie sofort alle Baustellen und listen Sie Projekte mithilfe der Paginierung effizient auf.",
     "delete_title": "Baustelle löschen",
     "delete_msg": "Sicher löschen? Daten werden ausgeblendet."
   },
@@ -500,14 +501,14 @@
   },
   "media": {
     "gallery_title": "📷 Medien-Galerie der Baustelle",
-    "help_title": "Media Gallery Guide",
-    "help_desc": "Site Media Gallery aggregates all photos uploaded through Delivery Notes and Quality Control.",
-    "help_h1": "1. Visual Timeline",
-    "help_p1": "Browse all construction site images sorted chronologically from newest to oldest.",
-    "help_h2": "2. Quick Details",
-    "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
-    "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "help_title": "Leitfaden zur Mediengalerie",
+    "help_desc": "Die Site Media Gallery fasst alle über Lieferscheine und Qualitätskontrolle hochgeladenen Fotos zusammen.",
+    "help_h1": "1. Visuelle Zeitleiste",
+    "help_p1": "Durchsuchen Sie alle Baustellenbilder, chronologisch sortiert vom neuesten zum ältesten.",
+    "help_h2": "2. Schnelle Details",
+    "help_p2": "Klicken Sie auf ein Foto, um es in voller Größe anzuzeigen und den zugehörigen Lieferschein oder Qualitätsbericht anzuzeigen.",
+    "help_h3": "3. Kategoriefilter",
+    "help_p3": "Filtern Sie Medien nach Typ (Lieferscheinfotos vs. Qualitätskontrollfotos) oder suchen Sie nach Notizen.",
     "no_image": "Kein Bild"
   },
   "subcontractor": {
@@ -517,22 +518,22 @@
     "service": "Leistungsbereich",
     "service_ph": "z.B. Baggervermietung / Erdarbeiten",
     "wage": "Tageslohn / Satz (₺)",
-    "table_name": "Subcontractor / Company",
-    "table_wage": "Daily Rate",
+    "table_name": "Subunternehmer / Unternehmen",
+    "table_wage": "Tagespreis",
     "table_status": "Status",
     "table_action": "Aktion",
-    "help_title": "Subcontractor Ledger Guide",
-    "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
-    "help_h1": "1. Daily Rate and Ledger Entry",
-    "help_p1": "The daily rate defined for each subcontractor is taken as the baseline for their scorecards and monthly statements.",
-    "help_h2": "2. Search and Filtering",
-    "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
-    "help_h3": "3. Updating and Editing",
-    "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
+    "help_title": "Leitfaden zur Subunternehmerbuchhaltung",
+    "help_desc": "Subunternehmerbücher dienen der Verfolgung von Tagessätzen, Dienstleistungen und Kontaktdaten von Subunternehmern oder gemieteten Maschinen, die auf Ihrer Baustelle arbeiten.",
+    "help_h1": "1. Tageskurs und Hauptbucheintrag",
+    "help_p1": "Der für jeden Subunternehmer festgelegte Tagessatz wird als Basis für seine Scorecards und Monatsabrechnungen verwendet.",
+    "help_h2": "2. Suchen und Filtern",
+    "help_p2": "Sie können in der Subunternehmerliste in Echtzeit nach Name, Service oder Telefonnummer suchen und mit der Paginierung problemlos durch große Datensätze navigieren.",
+    "help_h3": "3. Aktualisieren und Bearbeiten",
+    "help_p3": "Sie können Subunternehmertitel, Telefonnummern und Tagessätze jederzeit über die Schaltfläche „Bearbeiten“ aktualisieren.",
     "delete_title": "Subunternehmer löschen",
     "delete_confirm": "Sind Sie sicher, dass Sie dieses Subunternehmerbuch löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "no_results": "Es wurden keine Subunternehmer gefunden, die den Suchkriterien entsprechen.",
+    "empty_state": "Für diese Baustelle sind noch keine Subunternehmer registriert."
   },
   "quality": {
     "title": "🛡️ Qualitätskontrolle & Baustellenberichte",
@@ -546,21 +547,21 @@
     "detailed_description": "Detaillierte Beschreibung",
     "description_ph": "Details des festgestellten Mangels...",
     "add_report": "Bericht hinzufügen",
-    "no_results": "No reports found matching the search criteria.",
-    "empty_state": "No quality control reports found for this construction site yet.",
-    "open_photo": "Open Report Photo",
+    "no_results": "Es wurden keine Berichte gefunden, die den Suchkriterien entsprechen.",
+    "empty_state": "Für diese Baustelle wurden noch keine Qualitätskontrollberichte gefunden.",
+    "open_photo": "Öffnen Sie das Berichtsfoto",
     "upload_mobile_title": "Vom Handy hochladen",
     "upload_mobile_desc": "Mit **demselben WLAN** verbinden und QR scannen:",
     "delete_title": "Bericht löschen",
     "delete_confirm": "Sind Sie sicher, dass Sie diesen Qualitätskontrollbericht löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "help_title": "Quality Control Guide",
-    "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
-    "help_h1": "1. Report Statuses",
-    "help_p1": "Log reports as 'OPEN' initially, and update them to 'RESOLVED' once the technical issue is solved.",
-    "help_h2": "2. Visual Evidence",
-    "help_p2": "Attach photos of identified issues and write detailed solution plans in the description area.",
-    "help_h3": "3. Filtering",
-    "help_p3": "Filter reports by resolution status or photo availability to track pending issues."
+    "help_title": "Leitfaden zur Qualitätskontrolle",
+    "help_desc": "Das Qualitätskontrollmodul wird zur Protokollierung struktureller Probleme, Sicherheitsbefunde und Standortberichte verwendet.",
+    "help_h1": "1. Berichtsstatus",
+    "help_p1": "Protokollieren Sie Berichte zunächst als „OFFEN“ und aktualisieren Sie sie auf „GELÖST“, sobald das technische Problem behoben ist.",
+    "help_h2": "2. Visueller Beweis",
+    "help_p2": "Fügen Sie Fotos der identifizierten Probleme bei und schreiben Sie detaillierte Lösungspläne in den Beschreibungsbereich.",
+    "help_h3": "3. Filtern",
+    "help_p3": "Filtern Sie Berichte nach Lösungsstatus oder Fotoverfügbarkeit, um ausstehende Probleme zu verfolgen."
   },
   "journal": {
     "title": "📓 Baustellen-Tagebuch",
@@ -570,19 +571,19 @@
     "notes": "Tagebuch-Notizen / Ausgeführte Arbeiten",
     "notes_ph": "z.B. Stützenbewehrung 2. OG geflochten, C30-Beton gegossen...",
     "save_btn": "Tagebuch speichern / aktualisieren",
-    "weather_loading": "Reading from clouds...",
-    "weather_no_location": "Could not retrieve weather since site location is not specified.",
-    "worker_count_badge": "Workers",
-    "no_results": "No journal entries found matching the search criteria.",
-    "empty_state": "No daily journal entries found yet.",
-    "help_title": "Daily Journal Guide",
-    "help_desc": "The Daily Journal is the official log where you chronologically archive daily field activities, working personnel counts, and weather conditions.",
-    "help_h1": "1. Weather Integration",
-    "help_p1": "When the location is specified on the Project page, the system automatically fetches the weather and temperature via OpenWeather API.",
-    "help_h2": "2. Auto Worker Calculation",
-    "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
-    "help_h3": "3. Edit Lock Policy",
-    "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
+    "weather_loading": "Aus den Wolken lesen...",
+    "weather_no_location": "Das Wetter konnte nicht abgerufen werden, da der Standort des Standorts nicht angegeben ist.",
+    "worker_count_badge": "Arbeiter",
+    "no_results": "Es wurden keine Journaleinträge gefunden, die den Suchkriterien entsprechen.",
+    "empty_state": "Es wurden noch keine täglichen Journaleinträge gefunden.",
+    "help_title": "Täglicher Tagebuchführer",
+    "help_desc": "Das Daily Journal ist das offizielle Protokoll, in dem Sie die täglichen Feldaktivitäten, die Anzahl der Arbeitskräfte und die Wetterbedingungen chronologisch archivieren.",
+    "help_h1": "1. Wetterintegration",
+    "help_p1": "Wenn der Standort auf der Projektseite angegeben wird, ruft das System automatisch das Wetter und die Temperatur über die OpenWeather-API ab.",
+    "help_h2": "2. Auto-Worker-Berechnung",
+    "help_p2": "Die Gesamtzahl der an diesem Datum aktiven Arbeitskräfte wird automatisch aus den Stundenzetteln berechnet und im Formular angezeigt.",
+    "help_h3": "3. Bearbeiten Sie die Sperrrichtlinie",
+    "help_p3": "Um die Integrität historischer Daten zu wahren, können Tagesjournale nur am Tag ihrer Erstellung bearbeitet werden. Ältere Einträge sind gesperrt.",
     "delete_title": "Journal löschen",
     "delete_confirm": "Möchten Sie diesen Journaleintrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "weatherDesc": "Wetterbeschreibung",
@@ -600,23 +601,23 @@
     "material_type_ph": "z.B. Lieferbeton C30",
     "receipt_no": "Lieferschein- / Belegnummer",
     "document_photo": "Dokumenten-Foto",
-    "no_results": "No delivery notes found matching the search criteria.",
-    "empty_state": "No delivery notes found yet.",
+    "no_results": "Es wurden keine Lieferscheine gefunden, die den Suchkriterien entsprechen.",
+    "empty_state": "Es wurden noch keine Lieferscheine gefunden.",
     "photo": "Foto",
-    "view_photo": "View",
-    "no_photo": "None",
+    "view_photo": "Sicht",
+    "no_photo": "Keiner",
     "upload_mobile_title": "Foto vom Handy Hochladen",
     "upload_mobile_desc": "Verbinden Sie das Handy mit dem **selben WLAN-Netzwerk** und scannen Sie den QR-Code:",
     "delete_title": "Dokument löschen",
     "delete_confirm": "Sind Sie sicher, dass Sie diesen Lieferscheineintrag löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "help_title": "Delivery Note Guide",
-    "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
-    "help_h1": "1. Supplier & Material Type",
-    "help_p1": "Log supplier names, material types, units, quantities, and receipt/delivery note numbers.",
-    "help_h2": "2. Document Photos",
-    "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
-    "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "help_title": "Leitfaden zum Lieferschein",
+    "help_desc": "Das Modul „Lieferschein“ dient zur Protokollierung eingehender Baumaterialien und zum Hochladen von Lieferdokumenten.",
+    "help_h1": "1. Lieferant und Materialtyp",
+    "help_p1": "Protokollieren Sie Lieferantennamen, Materialtypen, Einheiten, Mengen und Empfangs-/Lieferscheinnummern.",
+    "help_h2": "2. Fotos dokumentieren",
+    "help_p2": "Laden Sie gescannte Dokumente oder Fotos vom PC hoch oder verwenden Sie den mobilen QR-Code, um ein digitales Archiv zu erstellen.",
+    "help_h3": "3. Intelligente Suche",
+    "help_p3": "Durchsuchen Sie sofort Materialbeschreibungen, Lieferantennamen oder Lieferscheinnummern.",
     "photo_success": "Foto erfolgreich vom Mobilgerät empfangen!",
     "photo_error": "Fehler beim Speichern des Fotos:",
     "photo_upload_error": "Fehler bei der Verarbeitung des Fotos:",
@@ -627,30 +628,30 @@
     "title": "📐 Aufmaß & Produktionsüberwachung",
     "item_name": "Produktionsposition",
     "item_name_ph": "z.B. Errichten einer Ziegelwand",
-    "no_results": "No production records found matching the search criteria.",
-    "empty_state": "No production entries recorded for this construction site yet.",
+    "no_results": "Es wurden keine Produktionsdatensätze gefunden, die den Suchkriterien entsprechen.",
+    "empty_state": "Für diese Baustelle sind noch keine Produktionseinträge erfasst.",
     "delete_title": "Datensatz löschen",
     "delete_confirm": "Sind Sie sicher, dass Sie diesen Produktionsdatensatz löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "help_title": "Quantity Survey Guide",
-    "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
-    "help_h1": "1. Production Item Records",
-    "help_p1": "Log daily or weekly production items, specifying their units (m², m³, kg, etc.) and quantities.",
-    "help_h2": "2. Archive & Details",
-    "help_p2": "Write notes for each entry to keep a chronological archive of progress in different blocks.",
-    "help_h3": "3. Search & Filters",
-    "help_p3": "Search through item names or notes, and filter them by date range or unit type."
+    "help_title": "Leitfaden zur Mengenerhebung",
+    "help_desc": "Das Mengenerfassungsmodul wird verwendet, um Bauelemente, Einheiten und Fortschritt zu verfolgen.",
+    "help_h1": "1. Produktionsartikelaufzeichnungen",
+    "help_p1": "Protokollieren Sie Tages- oder Wochenproduktionsartikel unter Angabe ihrer Einheiten (m², m³, kg usw.) und Mengen.",
+    "help_h2": "2. Archiv & Details",
+    "help_p2": "Schreiben Sie Notizen zu jedem Eintrag, um ein chronologisches Archiv des Fortschritts in den verschiedenen Blöcken zu führen.",
+    "help_h3": "3. Suche und Filter",
+    "help_p3": "Durchsuchen Sie Elementnamen oder Notizen und filtern Sie sie nach Datumsbereich oder Einheitentyp."
   },
   "anomalies": {
-    "no_anomaly_title": "No System Anomalies",
-    "no_anomaly_desc": "All financial balances and HSE certificates are up-to-date.",
+    "no_anomaly_title": "Keine Systemanomalien",
+    "no_anomaly_desc": "Alle Finanzsalden und HSE-Zertifikate sind auf dem neuesten Stand.",
     "financial_warnings_title": "Finanzielle Warnungen",
     "hse_expired_title": "Abgelaufene Sicherheitszertifikate",
     "hse_expired_badge": "ABGELAUFEN!",
     "hse_expiring_title": "Ablaufende Sicherheitszertifikate",
     "days_left": "Tage übrig",
     "more_people": "und {{count}} weitere Personen...",
-    "no_results": "No results found.",
-    "search_no_results": "No results matching the search criteria were found."
+    "no_results": "Keine Ergebnisse gefunden.",
+    "search_no_results": "Es wurden keine Ergebnisse gefunden, die den Suchkriterien entsprechen."
   },
   "settings.regionalSettings": "Regional Format Settings",
   "settings.customCurrency": "Currency Override",
@@ -707,14 +708,14 @@
   "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_title": "Leitfaden zum Personalmanagement",
+    "help_desc": "Im Bereich „Personalverwaltung“ können Sie Arbeitszeittabellen, Verdienste, Vorschüsse und Zahlungsdetails Ihrer Mitarbeiter verfolgen.",
+    "help_h1": "1. Fügen Sie Worker und Excel hinzu",
+    "help_p1": "Fügen Sie einzelne Arbeiter über die Schaltfläche oben rechts hinzu oder importieren Sie eine Chargenliste, indem Sie die Excel-Vorlage herunterladen.",
+    "help_h2": "2. Gruppenanalyse",
+    "help_p2": "Analysieren Sie Ausgaben und Mitarbeiterzahlen nach Gruppenkategorie (z. B. Elektriker, Hüttenarbeiter).",
+    "help_h3": "3. Scorecards und Aussagen",
+    "help_p3": "Klicken Sie auf den Namen eines Mitarbeiters, um dessen Stundenzettel anzuzeigen, neue Salden zu berechnen und detaillierte PDF-Abrechnungen zu exportieren."
   },
   "guides": {
     "site": {
@@ -733,22 +734,22 @@
       }
     },
     "personnel": {
-      "title": "Personal-Handbuch",
+      "title": "Mitarbeiterführer",
       "step1": {
-        "title": "1. Hinzufügen",
-        "desc": "Verwenden Sie die Excel-Vorlage."
+        "title": "1. Fügen Sie Mitarbeiter und Excel hinzu",
+        "desc": "Verwenden Sie die Excel-Vorlage, um eine Liste in großen Mengen hochzuladen."
       },
       "step2": {
         "title": "2. Gruppenanalyse",
-        "desc": "Ausgaben nach Gruppenkategorie analysieren."
+        "desc": "Analysieren Sie die Kosten nach Gruppenkategorie."
       },
       "step3": {
-        "title": "3. Stundenzettel und Abrechnungen",
-        "desc": "Klicken Sie auf den Namen, um den Stundenzettel anzuzeigen."
+        "title": "3. Scorecard und Aussagen",
+        "desc": "Klicken Sie auf den Namen, um die Anzeigetafel anzuzeigen."
       },
       "step4": {
-        "title": "4. Urlaubsverwaltung",
-        "desc": "Erfassen Sie die Tage, an denen das Personal im Urlaub oder krankgeschrieben ist."
+        "title": "4. Berechtigungsverwaltung",
+        "desc": "Erfassen Sie die Tage, an denen das Personal entschuldigt oder krankgeschrieben ist."
       }
     },
     "quantity": {
@@ -767,33 +768,33 @@
       }
     },
     "delivery": {
-      "title": "Lieferleitfaden",
+      "title": "Leitfaden zum Lieferschein",
       "step1": {
-        "title": "1. Lieferant",
-        "desc": "Lieferanten."
+        "title": "1. Lieferant und Material",
+        "desc": "Notieren Sie Lieferanten- und Materialnamen."
       },
       "step2": {
-        "title": "2. Fotos",
-        "desc": "Dokumentenfotos."
+        "title": "2. Fotos dokumentieren",
+        "desc": "Laden Sie Lieferscheinfotos für das digitale Archiv hoch."
       },
       "step3": {
-        "title": "3. Suche",
-        "desc": "Suchen."
+        "title": "3. Intelligente Suche",
+        "desc": "Suchen Sie nach Lieferscheinnummern oder Lieferanten."
       }
     },
     "journal": {
-      "title": "Tagebuch-Leitfaden",
+      "title": "Zeitschriftenführer",
       "step1": {
         "title": "1. Wetter",
-        "desc": "Wetter."
+        "desc": "Zeichnen Sie täglich das Wetter und den Allgemeinzustand auf."
       },
       "step2": {
-        "title": "2. Logbuch",
-        "desc": "Ereignisse."
+        "title": "2. Chronologische Aufzeichnung",
+        "desc": "Notieren Sie wichtige Ereignisse der Reihe nach."
       },
       "step3": {
-        "title": "3. Verlauf",
-        "desc": "Historie."
+        "title": "3. Geschichte",
+        "desc": "Durchsuchen Sie ganz einfach die vergangenen Tage."
       }
     },
     "quality": {
@@ -873,16 +874,16 @@
     },
     "production": {
       "step1": {
-        "title": "1. Einträge",
-        "desc": "Aufzeichnungen."
+        "title": "1. Produktionsaufzeichnungen",
+        "desc": "Erfassen Sie die Tagesproduktion."
       },
       "step2": {
-        "title": "2. Archiv",
-        "desc": "Archiv."
+        "title": "2. Archiv und Details",
+        "desc": "Schreiben Sie Notizen, um ein chronologisches Archiv zu führen."
       },
       "step3": {
-        "title": "3. Suche",
-        "desc": "Filter."
+        "title": "3. Suche und Filter",
+        "desc": "Filtern Sie nach Datumsbereich oder Einheit."
       },
       "title": "Produktionsleitfaden"
     }
@@ -915,27 +916,53 @@
     "title": "Papierkorb",
     "guide": {
       "title": "Papierkorb",
-      "intro": "Gelöschte Datensätze werden hier aufgelistet."
+      "intro": "Gelöschte Datensätze werden hier aufgelistet.",
+      "how_it_works_title": "Wie funktioniert es?",
+      "how_it_works_desc": "Wenn Sie einen Datensatz im System löschen, wird dieser nicht dauerhaft gelöscht. Stattdessen wird es vorläufig gelöscht und in diesem Papierkorb aufgeführt.",
+      "restore_title": "Daten wiederherstellen:",
+      "restore_desc": "Klicken Sie auf die Schaltfläche „Wiederherstellen“, um den Datensatz in Sekundenschnelle wiederherzustellen. Wiederhergestellte Elemente verbleiben zur Rückverfolgbarkeit als schreibgeschützte/passive Datensätze im Papierkorb.",
+      "project_isolation_title": "Projekttrennung:",
+      "project_isolation_desc": "Jeder Datensatz zeigt das Projekt an, zu dem er gehört. Verwenden Sie den Projektfilter oben, um Ihren Papierkorb organisiert zu halten.",
+      "date_filter_title": "Datumsfilter und Suche:",
+      "date_filter_desc": "Sie können gelöschte Datensätze nach Löschdatum, Typ oder Titel suchen und filtern."
     },
     "allRecordsOption": "Alle Datensätze",
     "onlyDeleted": "Nur gelöschte",
     "onlyRestored": "Nur wiederhergestellte",
     "allRecordTypesOption": "Alle Datensatzarten",
-    "type": {
-      "personnel": "Personalakte",
-      "cash": "Bargeldtransaktion",
-      "delivery": "Lieferschein / Material",
-      "journal": "Tagesjournal",
-      "quality": "Qualitätskontrollbericht",
-      "subcontractor": "Subunternehmer-Buch",
-      "project": "Projektaufzeichnung",
-      "worker_leaves": "Personalurlaub"
-    },
+    "type": "Datensatztyp",
     "allProjectsOption": "Alle Projekte",
     "restore_confirm_title": "Wiederherstellung Bestätigen",
     "restore_confirm_msg": "Sind Sie sicher, dass Sie diesen Datensatz wiederherstellen möchten? Er wird an seinen ursprünglichen Ort zurückverschoben.",
     "restore_error": "Wiederherstellungsfehler:",
-    "leave_title": "{{type}} Verlassen ({{start}} - {{end}})"
+    "leave_title": "{{type}} Verlassen ({{start}} - {{end}})",
+    "content": "Inhalt/Titel",
+    "deletedAt": "Gelöscht um",
+    "emptyState": "Keine gelöschten Datensätze gefunden.",
+    "itemType": {
+      "worker": "Personalakte",
+      "transaction": "Bargeldtransaktion",
+      "material": "Lieferschein / Material",
+      "journal": "Tagesjournal",
+      "quality": "Qualitätskontrollbericht",
+      "subcontractor": "Subunternehmer-Hauptbuchdatensatz",
+      "project": "Projektaufzeichnung"
+    },
+    "searchPlaceholder": "Suchen...",
+    "searchAll": "Überall suchen",
+    "allTypes": "Alle Datensatztypen",
+    "hideRestored": "Ausblenden Restauriert",
+    "showRestored": "Wiederhergestellt anzeigen",
+    "project": "Projekt / Standort",
+    "deletedProjectShort": "Gelöscht",
+    "restoreStatus": {
+      "all": "Alle Aufzeichnungen",
+      "onlyDeleted": "Nur gelöscht",
+      "onlyRestored": "Nur restauriert"
+    },
+    "startDateLabel": "Startdatum",
+    "endDateLabel": "Enddatum",
+    "dateOrderError": "Das Startdatum darf nicht nach dem Enddatum liegen."
   },
   "global": {
     "spotlight": "Suchen: Strg + K",
@@ -952,7 +979,7 @@
   },
   "sidebar": {
     "recycleBin": "Papierkorb",
-    "spotlight": "Spotlight"
+    "spotlight": "Scheinwerfer"
   },
   "anomaly": {
     "noAnomalies": "Keine Systemanomalien",
@@ -1007,7 +1034,7 @@
   "recycle_page_desc": "Listen Sie hier gelöschte Datensätze auf und stellen Sie sie an ihren ursprünglichen Platz wieder her.",
   "sidebar_recycle_btn": "Papierkorb",
   "__dummy_to_fix_json": {
-    "dummy": "dummy"
+    "dummy": "Dummy"
   },
   "dashboard.edit": "Bearbeiten",
   "common.edit": "Bearbeiten",
@@ -1034,7 +1061,7 @@
   "spotlight_faq_1_desc": "Eingang - Ausgang. Vorschüsse werden automatisch als Ausgang verbucht.",
   "spotlight_faq_2_label": "Wie wird ein System-Backup (Wiederherstellung) erstellt?",
   "spotlight_faq_2_desc": "Dies geschieht durch Drag & Drop des .sqlite-Backups auf der Seite Einstellungen.",
-  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "sidebar_spotlight": "Spotlight: Strg + K",
   "multiplier": "Multiplikator",
   "settings_logs": {
     "error_read": "Fehler beim Lesen der Protokolle:"

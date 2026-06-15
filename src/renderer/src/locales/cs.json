@@ -76,26 +76,26 @@
     "system_maintenance": "Údržba systému",
     "logo_uploaded": "Logo nahráno",
     "parameters": "Parametry",
-    "regionalSettings": "Regional Format Settings",
-    "customCurrency": "Currency Override",
-    "customDateFormat": "Date Format Override",
-    "customTimeFormat": "Time Format Override",
-    "autoByLanguage": "Automaticky (dle jazyka)",
+    "regionalSettings": "Nastavení regionálního formátu",
+    "customCurrency": "Přepsání měny",
+    "customDateFormat": "Přepsání formátu data",
+    "customTimeFormat": "Přepsání formátu času",
+    "autoByLanguage": "Automaticky (podle jazyka)",
     "regionalFormatSettings": "Regionální nastavení",
-    "currencyOverride": "Currency Selection",
-    "dateFormatOverride": "Date Format Selection",
-    "timeFormatOverride": "Time Format Selection",
+    "currencyOverride": "Výběr měny",
+    "dateFormatOverride": "Výběr formátu data",
+    "timeFormatOverride": "Výběr formátu času",
     "currencySelection": "Výběr měny",
     "dateFormatSelection": "Formát data",
     "timeFormatSelection": "Formát času",
-    "time24h": "24 Hours (14:30)",
-    "time12h": "12 Hours AM/PM (02:30 PM)",
-    "backup_error": "Backup Error:",
-    "optimize_success": "Database optimized successfully.",
-    "optimize_error": "Optimization Error:",
-    "cloud_folder_success": "Silent cloud backup folder set successfully:",
-    "restore_confirm_title": "Restore Confirmation",
-    "restore_error": "Restore error:"
+    "time24h": "24 hodin (14:30)",
+    "time12h": "12 hodin AM/PM (14:30)",
+    "backup_error": "Chyba zálohování:",
+    "optimize_success": "Databáze úspěšně optimalizována.",
+    "optimize_error": "Chyba optimalizace:",
+    "cloud_folder_success": "Složka pro zálohování tichého cloudu byla úspěšně nastavena:",
+    "restore_confirm_title": "Potvrzení obnovení",
+    "restore_error": "Chyba obnovení:"
   },
   "dashboard": {
     "title": "Správa personálu",
@@ -110,16 +110,16 @@
     "delete": "Odstranit",
     "net_balance": "Čistý zůstatek",
     "phone_not_found": "Telefon nezadán",
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
+    "help_title": "Průvodce personálním managementem",
+    "help_desc": "Panel Personální správa vám umožňuje sledovat pracovní výkazy, výdělky, zálohy a platební údaje vašich pracovníků.",
+    "help_h1": "1. Přidejte Workers & Excel",
+    "help_p1": "Přidejte jednotlivé pracovníky pomocí pravého horního tlačítka nebo importujte seznam dávek stažením šablony Excel.",
+    "help_h2": "2. Skupinová analýza",
+    "help_p2": "Analyzujte výdaje a počty pracovníků podle skupinových kategorií (např. Elektrikáři, železáři).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
-    "undo_success": "Action successfully undone!",
-    "undo_error": "Undo failed:",
+    "help_p3": "Kliknutím na jméno kteréhokoli pracovníka zobrazíte jeho pracovní výkazy, spočítáte nové zůstatky a exportujete podrobné výpisy ve formátu PDF.",
+    "undo_success": "Akce byla úspěšně zrušena!",
+    "undo_error": "Vrátit zpět se nezdařilo:",
     "delete_worker_title": "Odstranit personál",
     "delete_worker_msg": "Opravdu chcete tento personál odstranit (přesunout do koše)? Systémová data nebudou trvale smazána, ale budou odstraněna ze seznamů."
   },
@@ -169,8 +169,8 @@
       "tags_label": "Tagy",
       "tags_ph": "Příklad: Cestovní mýtné, Osobní",
       "notes_ph": "Např. týdenní záloha",
-      "delete_title": "Delete Advance",
-      "delete_confirm": "Are you sure you want to delete this advance? The system will automatically cancel this amount from the Cash Register as well."
+      "delete_title": "Smazat zálohu",
+      "delete_confirm": "Opravdu chcete tuto zálohu smazat? Systém automaticky zruší i tuto částku z Pokladny."
     },
     "summary": {
       "previous_balance": "Předchozí zůstatek",
@@ -178,7 +178,7 @@
       "period_advance": "Záloha",
       "new_balance": "Nový zůstatek",
       "carried_balance_report": "Zpráva o převáděném zůstatku",
-      "advance_deduction": "Advance Deduction"
+      "advance_deduction": "Předběžný odpočet"
     },
     "filter": {
       "start_date": "Počáteční datum",
@@ -216,17 +216,17 @@
     "calculated_earned": "Vypočítaný výdělek:",
     "auto_deduct_notice": "* Záloha bude odečtena z pokladny.",
     "current_balance": "Aktuální zůstatek",
-    "help_title": "Worker Profile Guide",
-    "help_desc": "The worker profile displays all financial and working history of the selected employee on a single screen.",
-    "help_h1": "1. Timesheets & Advances",
-    "help_p1": "Quickly enter daily timesheet records (standard hours or overtime) and cash advance logs.",
-    "help_h2": "2. Carried Balance Report",
-    "help_p2": "Generate date-range filtered statement reports that automatically calculate the carried over balance.",
-    "help_h3": "3. PDF Reconciliation",
-    "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
-    "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "help_title": "Průvodce profilem pracovníka",
+    "help_desc": "Profil pracovníka zobrazuje veškerou finanční a pracovní historii vybraného zaměstnance na jediné obrazovce.",
+    "help_h1": "1. Časové rozvrhy a zálohy",
+    "help_p1": "Rychle zadávejte záznamy denního časového rozvrhu (standardní hodiny nebo přesčasy) a protokoly cash advance.",
+    "help_h2": "2. Zpráva Carried Balance",
+    "help_p2": "Vytvářejte sestavy výpisů filtrovaných podle období, které automaticky vypočítávají převedený zůstatek.",
+    "help_h3": "3. Odsouhlasení PDF",
+    "help_p3": "Vytvářejte a sdílejte značková oficiální prohlášení ve formátu PDF s logem vaší společnosti.",
+    "whatsapp_send": "Odeslat přes WhatsApp",
+    "whatsapp_no_phone": "Registrované telefonní číslo personálu nebylo nalezeno.",
+    "whatsapp_message_template": "Vážený {{name}}, výpis z vašeho účtu mezi {{startDate}} a {{endDate}}:\n\n– Celkový výdělek: {{earned}}\n– Celková platba/záloha: {{advance}}\n– Zbývající zůstatek: {{balance}}\n\nUvedeno pro vaši informaci.",
     "timesheet_delete_title": "Smazat časový rozvrh",
     "timesheet_delete_msg": "Opravdu chcete smazat tento záznam časového rozvrhu? Tuto akci nelze vrátit zpět.",
     "advance_delete_title": "Smazat zálohu/transakci",
@@ -262,14 +262,14 @@
     "tags_ph": "Štítky",
     "search_placeholder": "Hledat v popisech...",
     "new_transaction": "Nová hotovostní transakce",
-    "help_title": "Cash Register Guide",
-    "help_desc": "Cash Register is used to log all cash inflows and outflows on your construction site.",
-    "help_h1": "1. Income/Expense Entries",
-    "help_p1": "Record incomes (+) and expenses (-). Worker advances are automatically deducted from the register.",
-    "help_h2": "2. Monthly Financial Status",
-    "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
-    "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "help_title": "Průvodce registrační pokladnou",
+    "help_desc": "Pokladna slouží k evidenci všech peněžních příjmů a výdajů na vaší stavbě.",
+    "help_h1": "1. Položky příjmů/výdajů",
+    "help_p1": "Evidujte příjmy (+) a výdaje (-). Zálohy pracovníků se automaticky odečítají z evidence.",
+    "help_h2": "2. Měsíční finanční stav",
+    "help_p2": "Okamžitě sledujte celkové příjmy, celkové výdaje, mzdové náklady a měsíční čisté peněžní změny.",
+    "help_h3": "3. Filtrování a export",
+    "help_p3": "Filtrujte pokladní deníky podle období nebo typu transakce a stahujte zprávy ve formátu Excel nebo PDF.",
     "allCompany": "Celá firma (Globální)",
     "headquarters": "Centrální pokladna / Obecné",
     "relatedProject": "Související staveniště",
@@ -327,12 +327,13 @@
     "all": "Vše",
     "page_info": "Stránka",
     "page_guide": "Průvodce stránkou",
-    "error_occurred": "Error:",
+    "error_occurred": "Chyba:",
     "required_field": "Vyplňte prosím toto pole.",
     "page": "Strana",
     "next_short": "Další",
     "yes": "Ano",
-    "no": "Žádný"
+    "no": "Žádný",
+    "error": "Chyba"
   },
   "worker_modal": {
     "title_new": "Přidat",
@@ -367,7 +368,7 @@
     "earned": "Vyděláno:",
     "advance": "Záloha:",
     "total_balance": "ZŮSTATEK",
-    "error": "Error retrieving report:"
+    "error": "Chyba při načítání přehledu:"
   },
   "about": {
     "title": "O aplikaci & Nápověda",
@@ -450,14 +451,14 @@
     "active_workspace": "Aktivní pracovní prostor",
     "location_unspecified": "Poloha neuvedena",
     "select_workspace": "Vybrat pracovní prostor",
-    "help_title": "Construction Site Guide",
-    "help_desc": "Site Management allows you to add and manage different projects or locations.",
-    "help_h1": "1. Active Workspace",
-    "help_p1": "Select a project to set it as active. All transactions and reports will belong to this project.",
-    "help_h2": "2. Location & Weather",
-    "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
-    "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "help_title": "Průvodce staveništěm",
+    "help_desc": "Správa webu vám umožňuje přidávat a spravovat různé projekty nebo umístění.",
+    "help_h1": "1. Aktivní pracovní plocha",
+    "help_p1": "Vyberte projekt a nastavte jej jako aktivní. Všechny transakce a zprávy budou patřit tomuto projektu.",
+    "help_h2": "2. Poloha a počasí",
+    "help_p2": "Zadejte místo (např. „Istanbul, TR“) pro automatické načítání denních povětrnostních podmínek.",
+    "help_h3": "3. Hledat a stránkovat",
+    "help_p3": "Okamžitě prohledávejte staveniště a seznamte projekty efektivně pomocí stránkování.",
     "delete_title": "Smazat web",
     "delete_msg": "Opravdu smazat? Data budou skryta."
   },
@@ -500,14 +501,14 @@
   },
   "media": {
     "gallery_title": "📷 Mediální galerie staveniště",
-    "help_title": "Media Gallery Guide",
-    "help_desc": "Site Media Gallery aggregates all photos uploaded through Delivery Notes and Quality Control.",
-    "help_h1": "1. Visual Timeline",
-    "help_p1": "Browse all construction site images sorted chronologically from newest to oldest.",
-    "help_h2": "2. Quick Details",
-    "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
-    "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "help_title": "Průvodce galerií médií",
+    "help_desc": "Site Media Gallery shromažďuje všechny fotografie nahrané prostřednictvím dodacích listů a kontroly kvality.",
+    "help_h1": "1. Vizuální časová osa",
+    "help_p1": "Procházejte všechny obrázky staveniště seřazené chronologicky od nejnovějších po nejstarší.",
+    "help_h2": "2. Rychlé podrobnosti",
+    "help_p2": "Kliknutím na libovolnou fotografii ji zobrazíte v plné velikosti a zobrazíte související dodací list nebo zprávu o kvalitě.",
+    "help_h3": "3. Filtry kategorií",
+    "help_p3": "Filtrujte média podle typu (fotografie dodacího listu vs. fotografie kontroly kvality) nebo vyhledávejte podle poznámek.",
     "no_image": "Žádný obrázek"
   },
   "subcontractor": {
@@ -517,22 +518,22 @@
     "service": "Oblast služeb",
     "service_ph": "např. Pronájem rypadla / Výkopy",
     "wage": "Denní mzda / Sazba (₺)",
-    "table_name": "Subcontractor / Company",
-    "table_wage": "Daily Rate",
-    "table_status": "Status",
+    "table_name": "Subdodavatel / společnost",
+    "table_wage": "Denní sazba",
+    "table_status": "Postavení",
     "table_action": "Akce",
-    "help_title": "Subcontractor Ledger Guide",
-    "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
-    "help_h1": "1. Daily Rate and Ledger Entry",
-    "help_p1": "The daily rate defined for each subcontractor is taken as the baseline for their scorecards and monthly statements.",
-    "help_h2": "2. Search and Filtering",
-    "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
-    "help_h3": "3. Updating and Editing",
-    "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
+    "help_title": "Průvodce knihou subdodavatelů",
+    "help_desc": "Knihy subdodavatelů se používají ke sledování denních sazeb, služeb a kontaktních údajů subdodavatelů nebo najatých strojů pracujících na vaší stavbě.",
+    "help_h1": "1. Denní sazba a položka Ledger",
+    "help_p1": "Denní sazba definovaná pro každého subdodavatele je brána jako výchozí hodnota pro jejich výsledkové karty a měsíční výkazy.",
+    "help_h2": "2. Vyhledávání a filtrování",
+    "help_p2": "Můžete provádět vyhledávání v reálném čase v seznamu subdodavatelů podle jména, služby nebo telefonu a snadno procházet velké záznamy pomocí stránkování.",
+    "help_h3": "3. Aktualizace a úpravy",
+    "help_p3": "Pomocí tlačítka 'Upravit' můžete kdykoli aktualizovat názvy subdodavatelů, telefonní čísla a denní sazby.",
     "delete_title": "Odstranit subdodavatele",
     "delete_confirm": "Opravdu chcete smazat tuto účetní knihu subdodavatelů? Tuto akci nelze vrátit zpět.",
-    "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "no_results": "Nebyli nalezeni žádní subdodavatelé odpovídající vyhledávacím kritériím.",
+    "empty_state": "Pro tuto stavbu se zatím neregistrovali žádní subdodavatelé."
   },
   "quality": {
     "title": "🛡️ Kontrola kvality a zprávy ze staveniště",
@@ -546,21 +547,21 @@
     "detailed_description": "Podrobný popis",
     "description_ph": "Podrobnosti o zjištěném problému...",
     "add_report": "Přidat zprávu",
-    "no_results": "No reports found matching the search criteria.",
-    "empty_state": "No quality control reports found for this construction site yet.",
-    "open_photo": "Open Report Photo",
+    "no_results": "Nebyly nalezeny žádné zprávy odpovídající kritériím vyhledávání.",
+    "empty_state": "Pro toto staveniště nebyly dosud nalezeny žádné zprávy o kontrole kvality.",
+    "open_photo": "Otevřete Report Photo",
     "upload_mobile_title": "Nahrát z mobilu",
     "upload_mobile_desc": "Připojte se k **stejné WiFi** a naskenujte QR:",
     "delete_title": "Smazat zprávu",
     "delete_confirm": "Opravdu chcete smazat tuto zprávu o kontrole kvality? Tuto akci nelze vrátit zpět.",
-    "help_title": "Quality Control Guide",
-    "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
-    "help_h1": "1. Report Statuses",
-    "help_p1": "Log reports as 'OPEN' initially, and update them to 'RESOLVED' once the technical issue is solved.",
-    "help_h2": "2. Visual Evidence",
-    "help_p2": "Attach photos of identified issues and write detailed solution plans in the description area.",
-    "help_h3": "3. Filtering",
-    "help_p3": "Filter reports by resolution status or photo availability to track pending issues."
+    "help_title": "Průvodce kontrolou kvality",
+    "help_desc": "Modul kontroly kvality se používá k protokolování strukturálních problémů, bezpečnostních zjištění a zpráv na místě.",
+    "help_h1": "1. Stavy zpráv",
+    "help_p1": "Nejprve protokolujte hlášení jako „OTEVŘENO“ ​​a po vyřešení technického problému je aktualizujte na „VYŘEŠENO“.",
+    "help_h2": "2. Vizuální důkaz",
+    "help_p2": "Připojte fotografie identifikovaných problémů a napište podrobné plány řešení do oblasti popisu.",
+    "help_h3": "3. Filtrování",
+    "help_p3": "Filtrujte zprávy podle stavu rozlišení nebo dostupnosti fotografií a sledujte nevyřízené problémy."
   },
   "journal": {
     "title": "📓 Stavební deník",
@@ -570,19 +571,19 @@
     "notes": "Poznámky deníku / Provedené práce",
     "notes_ph": "např. Svázána výztuž sloupů ve 2. patře, nalití betonu C30...",
     "save_btn": "Uložit / Aktualizovat deník",
-    "weather_loading": "Reading from clouds...",
-    "weather_no_location": "Could not retrieve weather since site location is not specified.",
-    "worker_count_badge": "Workers",
-    "no_results": "No journal entries found matching the search criteria.",
-    "empty_state": "No daily journal entries found yet.",
-    "help_title": "Daily Journal Guide",
-    "help_desc": "The Daily Journal is the official log where you chronologically archive daily field activities, working personnel counts, and weather conditions.",
-    "help_h1": "1. Weather Integration",
-    "help_p1": "When the location is specified on the Project page, the system automatically fetches the weather and temperature via OpenWeather API.",
+    "weather_loading": "Čtení z mraků...",
+    "weather_no_location": "Počasí se nepodařilo načíst, protože umístění webu není zadáno.",
+    "worker_count_badge": "Dělníci",
+    "no_results": "Nebyly nalezeny žádné položky deníku odpovídající kritériím vyhledávání.",
+    "empty_state": "Dosud nebyly nalezeny žádné záznamy denního deníku.",
+    "help_title": "Průvodce denním deníkem",
+    "help_desc": "Denní žurnál je oficiální deník, kde chronologicky archivujete každodenní terénní aktivity, počty pracujících zaměstnanců a povětrnostní podmínky.",
+    "help_h1": "1. Integrace počasí",
+    "help_p1": "Když je místo specifikováno na stránce projektu, systém automaticky načte počasí a teplotu přes OpenWeather API.",
     "help_h2": "2. Auto Worker Calculation",
-    "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
-    "help_h3": "3. Edit Lock Policy",
-    "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
+    "help_p2": "Celkový počet pracovníků aktivních k tomuto datu se automaticky vypočítá z časových výkazů a projeví se ve formuláři.",
+    "help_h3": "3. Upravte zásady zámku",
+    "help_p3": "Pro zachování integrity historických dat lze denní deníky upravovat pouze v den, kdy byly vytvořeny. Starší záznamy jsou uzamčeny.",
     "delete_title": "Smazat deník",
     "delete_confirm": "Opravdu chcete smazat tento denní záznam? Tuto akci nelze vrátit zpět.",
     "weatherDesc": "Popis počasí",
@@ -600,57 +601,57 @@
     "material_type_ph": "např. Hotový beton C30",
     "receipt_no": "Dodací list / Číslo účtenky",
     "document_photo": "Fotka dokumentu",
-    "no_results": "No delivery notes found matching the search criteria.",
-    "empty_state": "No delivery notes found yet.",
+    "no_results": "Nebyly nalezeny žádné dodací listy odpovídající kritériím vyhledávání.",
+    "empty_state": "Dosud nebyly nalezeny žádné dodací listy.",
     "photo": "Fotografie",
-    "view_photo": "View",
-    "no_photo": "None",
+    "view_photo": "Pohled",
+    "no_photo": "Žádný",
     "upload_mobile_title": "Nahrát fotku z mobilu",
     "upload_mobile_desc": "Připojte mobil ke **stejné síti WiFi** a naskenujte QR kód:",
     "delete_title": "Smazat dokument",
     "delete_confirm": "Opravdu chcete smazat tento záznam o dodacím listu? Tuto akci nelze vrátit zpět.",
-    "help_title": "Delivery Note Guide",
-    "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
-    "help_h1": "1. Supplier & Material Type",
-    "help_p1": "Log supplier names, material types, units, quantities, and receipt/delivery note numbers.",
-    "help_h2": "2. Document Photos",
-    "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
-    "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
-    "photo_success": "Photo successfully received from mobile device!",
-    "photo_error": "Failed to save photo:",
-    "photo_upload_error": "Error processing photo:",
-    "lan_error": "Local server could not be started:",
+    "help_title": "Průvodce dodacím listem",
+    "help_desc": "Modul dodací list slouží k evidenci příchozích stavebních materiálů a nahrávání dodacích dokladů.",
+    "help_h1": "1. Dodavatel a typ materiálu",
+    "help_p1": "Zaznamenávejte jména dodavatelů, typy materiálů, jednotky, množství a čísla příjemek/dodacích listů.",
+    "help_h2": "2. Dokumentujte fotografie",
+    "help_p2": "Nahrajte naskenované dokumenty nebo fotografie z PC nebo použijte mobilní QR kód k vytvoření digitálního archivu.",
+    "help_h3": "3. Inteligentní vyhledávání",
+    "help_p3": "Okamžitě prohledávejte popisy materiálů, jména dodavatelů nebo čísla dodacích listů.",
+    "photo_success": "Fotografie byla úspěšně přijata z mobilního zařízení!",
+    "photo_error": "Fotku se nepodařilo uložit:",
+    "photo_upload_error": "Chyba při zpracování fotografie:",
+    "lan_error": "Místní server nelze spustit:",
     "qr_link": "Odkaz:"
   },
   "production": {
     "title": "📐 Výkaz výměr a sledování produkce",
     "item_name": "Položka produkce",
     "item_name_ph": "např. Zdění cihlové zdi",
-    "no_results": "No production records found matching the search criteria.",
-    "empty_state": "No production entries recorded for this construction site yet.",
+    "no_results": "Nebyly nalezeny žádné výrobní záznamy odpovídající kritériím vyhledávání.",
+    "empty_state": "Pro toto staveniště dosud nebyly zaznamenány žádné výrobní vstupy.",
     "delete_title": "Smazat záznam",
     "delete_confirm": "Opravdu chcete smazat tento záznam o výrobě? Tuto akci nelze vrátit zpět.",
-    "help_title": "Quantity Survey Guide",
-    "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
-    "help_h1": "1. Production Item Records",
-    "help_p1": "Log daily or weekly production items, specifying their units (m², m³, kg, etc.) and quantities.",
-    "help_h2": "2. Archive & Details",
-    "help_p2": "Write notes for each entry to keep a chronological archive of progress in different blocks.",
-    "help_h3": "3. Search & Filters",
-    "help_p3": "Search through item names or notes, and filter them by date range or unit type."
+    "help_title": "Průvodce kvantitativním průzkumem",
+    "help_desc": "Modul Průzkum množství se používá ke sledování stavebních položek, jednotek a postupu.",
+    "help_h1": "1. Evidence výrobních položek",
+    "help_p1": "Zaznamenávejte denní nebo týdenní výrobní položky s uvedením jejich jednotek (m², m³, kg atd.) a množství.",
+    "help_h2": "2. Archiv a podrobnosti",
+    "help_p2": "Ke každému záznamu si napište poznámky, abyste si zachovali chronologický archiv postupu v různých blocích.",
+    "help_h3": "3. Vyhledávání a filtry",
+    "help_p3": "Prohledávejte názvy položek nebo poznámky a filtrujte je podle období nebo typu jednotky."
   },
   "anomalies": {
-    "no_anomaly_title": "No System Anomalies",
-    "no_anomaly_desc": "All financial balances and HSE certificates are up-to-date.",
+    "no_anomaly_title": "Žádné systémové anomálie",
+    "no_anomaly_desc": "Všechny finanční zůstatky a certifikáty HSE jsou aktuální.",
     "financial_warnings_title": "Finanční varování",
     "hse_expired_title": "Expirované certifikáty BOZP",
     "hse_expired_badge": "EXPIROVÁNO!",
     "hse_expiring_title": "Končící certifikáty BOZP",
     "days_left": "dní zbývá",
     "more_people": "a {{count}} dalších lidí...",
-    "no_results": "No results found.",
-    "search_no_results": "No results matching the search criteria were found."
+    "no_results": "Nebyly nalezeny žádné výsledky.",
+    "search_no_results": "Nebyly nalezeny žádné výsledky odpovídající kritériím vyhledávání."
   },
   "settings.regionalSettings": "Regional Format Settings",
   "settings.customCurrency": "Currency Override",
@@ -707,184 +708,184 @@
   "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
+    "help_title": "Průvodce personálním managementem",
+    "help_desc": "Panel Personální správa vám umožňuje sledovat pracovní výkazy, výdělky, zálohy a platební údaje vašich pracovníků.",
+    "help_h1": "1. Přidejte Workers & Excel",
+    "help_p1": "Přidejte jednotlivé pracovníky pomocí pravého horního tlačítka nebo importujte seznam dávek stažením šablony Excel.",
+    "help_h2": "2. Skupinová analýza",
+    "help_p2": "Analyzujte výdaje a počty pracovníků podle skupinových kategorií (např. Elektrikáři, železáři).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Kliknutím na jméno kteréhokoli pracovníka zobrazíte jeho pracovní výkazy, spočítáte nové zůstatky a exportujete podrobné výpisy ve formátu PDF."
   },
   "guides": {
     "site": {
-      "title": "Průvodce správou webu",
+      "title": "Průvodce správou staveniště",
       "step1": {
-        "title": "1. Aktivní pracovní prostor",
+        "title": "1. Aktif Şantiye",
         "desc": "Vyberte projekt, který chcete nastavit jako aktivní."
       },
       "step2": {
-        "title": "2. Poloha a počasí",
-        "desc": "Zadejte polohu pro automatické načítání denního počasí."
+        "title": "2. Místo a počasí",
+        "desc": "Určete místo, kde se bude automaticky přijímat denní předpověď počasí."
       },
       "step3": {
-        "title": "3. Hledání a stránkování",
-        "desc": "Okamžité vyhledávání mezi staveništi."
+        "title": "3. Vyhledávání a stránkování",
+        "desc": "Okamžité vyhledávání na staveništích."
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Průvodce pro zaměstnance",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Přidejte zaměstnance a Excel",
+        "desc": "K hromadnému nahrání seznamu použijte šablonu Excel."
       },
       "step2": {
-        "title": "2. Analýza skupiny",
-        "desc": "Analyzujte výdaje podle kategorie skupiny."
+        "title": "2. Skupinová analýza",
+        "desc": "Analyzujte náklady podle kategorií skupiny."
       },
       "step3": {
-        "title": "3. Výkazy a prohlášení",
-        "desc": "Kliknutím na jméno zobrazíte výkaz práce."
+        "title": "3. Scorecard a výpisy",
+        "desc": "Kliknutím na název zobrazíte výsledkovou tabulku."
       },
       "step4": {
-        "title": "4. Správa dovolené",
-        "desc": "Zaznamenejte dny, kdy je personál na dovolené nebo na nemocenské."
+        "title": "4. Správa oprávnění",
+        "desc": "Zaznamenejte dny, kdy je personál omluven nebo na pracovní neschopnosti."
       }
     },
     "quantity": {
-      "title": "Průvodce produkcí",
+      "title": "Průvodce výrobou",
       "step1": {
-        "title": "1. Záznamy",
-        "desc": "Zaznamenejte produkci."
+        "title": "1. Výrobní záznamy",
+        "desc": "Zaznamenávejte denní produkci."
       },
       "step2": {
-        "title": "2. Archiv",
-        "desc": "Poznámky."
+        "title": "2. Archiv a podrobnosti",
+        "desc": "Pište si poznámky do chronologického archivu."
       },
       "step3": {
-        "title": "3. Hledání",
-        "desc": "Filtry."
+        "title": "3. Vyhledávání a filtry",
+        "desc": "Filtrujte podle období nebo jednotky."
       }
     },
     "delivery": {
-      "title": "Průvodce dodávkami",
+      "title": "Průvodce dodacím listem",
       "step1": {
-        "title": "1. Dodavatel",
-        "desc": "Dodavatelé."
+        "title": "1. Dodavatel a materiál",
+        "desc": "Zaznamenejte dodavatele a názvy materiálů."
       },
       "step2": {
-        "title": "2. Fotky",
-        "desc": "Fotky dokladů."
+        "title": "2. Dokumentujte fotografie",
+        "desc": "Nahrajte fotografie dodacího listu pro digitální archiv."
       },
       "step3": {
-        "title": "3. Hledání",
-        "desc": "Hledat v seznamu."
+        "title": "3. Inteligentní vyhledávání",
+        "desc": "Vyhledejte čísla dodacích listů nebo dodavatele."
       }
     },
     "journal": {
       "title": "Průvodce deníkem",
       "step1": {
         "title": "1. Počasí",
-        "desc": "Počasí."
+        "desc": "Zaznamenávejte denní počasí a celkový stav."
       },
       "step2": {
-        "title": "2. Události",
-        "desc": "Události."
+        "title": "2. Chronologický záznam",
+        "desc": "Zaznamenávejte důležité události v pořadí."
       },
       "step3": {
         "title": "3. Historie",
-        "desc": "Historie."
+        "desc": "Snadno procházejte předchozí dny."
       }
     },
     "quality": {
       "title": "Průvodce kvalitou",
       "step1": {
-        "title": "1. Stavy reportů",
-        "desc": "Aktualizovat po vyřešení."
+        "title": "1. Stavy zpráv",
+        "desc": "Po vyřešení problému aktualizujte stav."
       },
       "step2": {
-        "title": "2. Vizuální důkazy",
-        "desc": "Přidat fotky."
+        "title": "2. Vizuální důkaz",
+        "desc": "Zahrňte fotografie všech zjištěných problémů."
       },
       "step3": {
         "title": "3. Filtrování",
-        "desc": "Filtrovat otevřené problémy."
+        "desc": "Filtr pro sledování otevřených problémů."
       }
     },
     "subcontractor": {
-      "title": "Průvodce subdodavateli",
+      "title": "Průvodce pro subdodavatele",
       "step1": {
         "title": "1. Denní mzda",
-        "desc": "Sledovat denní mzdy."
+        "desc": "Sledujte denní mzdy subdodavatelů."
       },
       "step2": {
-        "title": "2. Hledání a filtrování",
-        "desc": "Hledat v seznamu."
+        "title": "2. Hledat a filtrovat",
+        "desc": "Prohledejte seznam subdodavatelů."
       },
       "step3": {
-        "title": "3. Úprava",
-        "desc": "Aktualizovat kdykoliv."
+        "title": "3. Aktualizovat a upravit",
+        "desc": "Aktualizujte denní deníky kdykoli."
       }
     },
     "media": {
       "title": "Průvodce médii",
       "step1": {
-        "title": "1. Vizuální osa",
-        "desc": "Prohlížejte obrázky chronologicky."
+        "title": "1. Vizuální časová osa",
+        "desc": "Prohlédněte si snímky staveniště chronologicky."
       },
       "step2": {
-        "title": "2. Rychlé detaily",
-        "desc": "Klikněte na fotku pro plnou velikost."
+        "title": "2. Rychlé podrobnosti",
+        "desc": "Kliknutím na libovolnou fotografii zobrazíte plnou velikost."
       },
       "step3": {
         "title": "3. Filtry kategorií",
-        "desc": "Filtrovat podle dodacího listu nebo zprávy o kvalitě."
+        "desc": "Filtrujte podle dodacího listu nebo zpráv o kvalitě."
       }
     },
     "cash": {
-      "title": "Průvodce pokladnou",
+      "title": "Průvodce správou úschovny",
       "step1": {
-        "title": "1. Příjmy/Výdaje",
-        "desc": "Záznam příjmů a výdajů."
+        "title": "1. Evidence příjmů/výdajů",
+        "desc": "Evidujte příjmy a výdaje."
       },
       "step2": {
-        "title": "2. Měsíční stav",
-        "desc": "Zobrazení měsíčního cash flow a zůstatku."
+        "title": "2. Měsíční finanční situace",
+        "desc": "Zobrazit měsíční peněžní tok a zůstatek."
       },
       "step3": {
         "title": "3. Export",
-        "desc": "Stáhnout jako PDF nebo Excel."
+        "desc": "Stáhněte si transakce jako PDF nebo Excel."
       }
     },
     "recycle": {
-      "title": "Recycle Bin Guide",
+      "title": "Průvodce odpadky",
       "step1": {
-        "title": "How it Works?",
-        "desc": "Deleted records are soft-deleted and listed here."
+        "title": "Jak to funguje?",
+        "desc": "Smazané záznamy jsou zde uvedeny s měkkým mazáním."
       },
       "step2": {
-        "title": "Restoring Data",
-        "desc": "Use the restore button to recover records."
+        "title": "Záchrana dat",
+        "desc": "K obnovení záznamů použijte tlačítko obnovení."
       },
       "step3": {
-        "title": "Project Separation",
-        "desc": "Filter your recycle bin by project."
+        "title": "Oddělení projektu",
+        "desc": "Filtrujte svůj odpad podle projektů."
       }
     },
     "production": {
       "step1": {
-        "title": "1. Záznamy",
-        "desc": "Zaznamenejte produkci."
+        "title": "1. Výrobní záznamy",
+        "desc": "Zaznamenávejte denní produkci."
       },
       "step2": {
-        "title": "2. Archiv",
-        "desc": "Poznámky."
+        "title": "2. Archiv a podrobnosti",
+        "desc": "Pište si poznámky do chronologického archivu."
       },
       "step3": {
-        "title": "3. Hledání",
-        "desc": "Filtry."
+        "title": "3. Vyhledávání a filtry",
+        "desc": "Filtrujte podle období nebo jednotky."
       },
-      "title": "Průvodce produkcí"
+      "title": "Průvodce výrobou"
     }
   },
   "worker": {
@@ -900,45 +901,71 @@
     "id_tc": "ID/RČ"
   },
   "recycle": {
-    "desc": "List deleted records here and restore them back to their original places.",
-    "search": "Search...",
-    "allRecords": "All Records",
-    "allRecordTypes": "All Record Types",
-    "allProjects": "All Projects",
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "tableRecordType": "Record Type",
+    "desc": "Zde uveďte smazané záznamy a obnovte je zpět na původní místa.",
+    "search": "Vyhledávání...",
+    "allRecords": "Všechny záznamy",
+    "allRecordTypes": "Všechny typy záznamů",
+    "allProjects": "Všechny projekty",
+    "startDate": "Datum zahájení",
+    "endDate": "Datum ukončení",
+    "tableRecordType": "Typ záznamu",
     "tableProject": "Projekt / Místo",
-    "tableContent": "Content / Title",
-    "tableDeletedAt": "Deleted At",
-    "tableAction": "Action",
-    "title": "Recycle Bin",
+    "tableContent": "Obsah / Název",
+    "tableDeletedAt": "Smazáno v",
+    "tableAction": "Akce",
+    "title": "Koš",
     "guide": {
-      "title": "Recycle Bin Guide",
-      "intro": "Deleted records are soft-deleted and listed here."
+      "title": "Průvodce košem",
+      "intro": "Smazané záznamy jsou vymazány a jsou uvedeny zde.",
+      "how_it_works_title": "Jak to funguje?",
+      "how_it_works_desc": "Když vymažete jakýkoli záznam v systému, nebude trvale vymazán. Místo toho je vymazán a uveden v tomto koši.",
+      "restore_title": "Obnovení dat:",
+      "restore_desc": "Kliknutím na tlačítko \"Obnovit\" obnovíte záznam během několika sekund. Obnovené položky zůstávají v koši jako záznamy pouze pro čtení/pasivní záznamy pro dohledatelnost.",
+      "project_isolation_title": "Oddělení projektu:",
+      "project_isolation_desc": "Každý záznam zobrazuje projekt, ke kterému patří. Použijte filtr projektu v horní části, abyste měli ve svém odpadkovém koši pořádek.",
+      "date_filter_title": "Datumové filtry a vyhledávání:",
+      "date_filter_desc": "Smazané záznamy můžete vyhledávat a filtrovat podle data smazání, typu nebo názvu."
     },
-    "allRecordsOption": "All Records",
-    "onlyDeleted": "Only Deleted",
-    "onlyRestored": "Only Restored",
-    "allRecordTypesOption": "All Record Types",
-    "type": {
-      "personnel": "Personnel Record",
-      "cash": "Cash Transaction",
-      "delivery": "Delivery Note / Material",
-      "journal": "Daily Journal",
-      "quality": "Quality Control Report",
-      "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record",
-      "worker_leaves": "Pracovní volno"
-    },
-    "allProjectsOption": "All Projects",
+    "allRecordsOption": "Všechny záznamy",
+    "onlyDeleted": "Pouze smazáno",
+    "onlyRestored": "Pouze obnoveno",
+    "allRecordTypesOption": "Všechny typy záznamů",
+    "type": "Typ záznamu",
+    "allProjectsOption": "Všechny projekty",
     "restore_confirm_title": "Potvrzení obnovy",
     "restore_confirm_msg": "Opravdu chcete tento záznam obnovit? Bude přesunut zpět na původní místo.",
     "restore_error": "Chyba obnovy:",
-    "leave_title": "{{type}} Odejít ({{start}} – {{end}})"
+    "leave_title": "{{type}} Odejít ({{start}} – {{end}})",
+    "content": "Obsah / Název",
+    "deletedAt": "Smazáno v",
+    "emptyState": "Nebyly nalezeny žádné smazané záznamy.",
+    "itemType": {
+      "worker": "Personální záznam",
+      "transaction": "Hotovostní transakce",
+      "material": "Dodací list / Materiál",
+      "journal": "Denní deník",
+      "quality": "Zpráva o kontrole kvality",
+      "subcontractor": "Záznam účetní knihy subdodavatelů",
+      "project": "Záznam projektu"
+    },
+    "searchPlaceholder": "Vyhledávání...",
+    "searchAll": "Hledat všude",
+    "allTypes": "Všechny typy záznamů",
+    "hideRestored": "Skrýt Obnoveno",
+    "showRestored": "Zobrazit obnoveno",
+    "project": "Projekt / Web",
+    "deletedProjectShort": "Smazáno",
+    "restoreStatus": {
+      "all": "Všechny záznamy",
+      "onlyDeleted": "Pouze smazáno",
+      "onlyRestored": "Pouze obnoveno"
+    },
+    "startDateLabel": "Datum zahájení",
+    "endDateLabel": "Datum ukončení",
+    "dateOrderError": "Datum zahájení nemůže být pozdější než datum ukončení."
   },
   "global": {
-    "spotlight": "Spotlight: Ctrl + K",
+    "spotlight": "Podsvícení: Ctrl + K",
     "recordsCount": "({{count}} záznamů)",
     "restore": "Obnovit",
     "restored": "Obnoveno",
@@ -1007,7 +1034,7 @@
   "recycle_page_desc": "Zde naleznete smazané záznamy a můžete je obnovit na jejich původní místa.",
   "sidebar_recycle_btn": "Odpadkový Koš",
   "__dummy_to_fix_json": {
-    "dummy": "dummy"
+    "dummy": "figurína"
   },
   "dashboard.edit": "Upravit",
   "common.edit": "Upravit",
@@ -1034,10 +1061,10 @@
   "spotlight_faq_1_desc": "Příjem - Výdej. Zálohy se automaticky zaznamenávají jako výdaje.",
   "spotlight_faq_2_label": "Jak se dělá záloha systému (Obnova)?",
   "spotlight_faq_2_desc": "Provádí se přetažením zálohy .sqlite na stránce Nastavení.",
-  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "sidebar_spotlight": "Podsvícení: Ctrl + K",
   "multiplier": "Násobitel",
   "settings_logs": {
-    "error_read": "Failed to read logs:"
+    "error_read": "Nepodařilo se přečíst protokoly:"
   },
   "recycle_type_worker_leaves": "Pracovní volno",
   "leave_type": {

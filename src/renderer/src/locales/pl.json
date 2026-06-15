@@ -733,22 +733,22 @@
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Przewodnik personelu",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Dodaj personel i Excel",
+        "desc": "Użyj szablonu programu Excel, aby zbiorczo przesłać listę."
       },
       "step2": {
-        "title": "2. Analiza grupy",
-        "desc": "Analizuj wydatki według kategorii grupy."
+        "title": "2. Analiza grupowa",
+        "desc": "Analizuj koszty według kategorii grupowych."
       },
       "step3": {
-        "title": "3. Karty czasu pracy i zestawienia",
-        "desc": "Kliknij nazwisko, aby zobaczyć kartę czasu pracy."
+        "title": "3. Karta wyników i oświadczenia",
+        "desc": "Kliknij nazwę, aby zobaczyć tabelę wyników."
       },
       "step4": {
-        "title": "4. Zarządzanie urlopami",
-        "desc": "Zapisz dni, w których personel przebywa na urlopie lub zwolnieniu lekarskim."
+        "title": "4. Zarządzanie uprawnieniami",
+        "desc": "Rejestruj dni, w których personel jest usprawiedliwiony lub przebywa na zwolnieniu chorobowym."
       }
     },
     "quantity": {
@@ -767,33 +767,33 @@
       }
     },
     "delivery": {
-      "title": "Przewodnik po dostawach",
+      "title": "Przewodnik po dowodach dostawy",
       "step1": {
-        "title": "1. Dostawca",
-        "desc": "Dostawca."
+        "title": "1. Dostawca i materiał",
+        "desc": "Zapisz nazwy dostawców i materiałów."
       },
       "step2": {
-        "title": "2. Zdjęcia",
-        "desc": "Zdjęcia."
+        "title": "2. Dokumentuj zdjęcia",
+        "desc": "Prześlij zdjęcia listów przewozowych do archiwum cyfrowego."
       },
       "step3": {
-        "title": "3. Szukaj",
-        "desc": "Szukaj."
+        "title": "3. Inteligentne wyszukiwanie",
+        "desc": "Wyszukaj numery listów przewozowych lub dostawców."
       }
     },
     "journal": {
       "title": "Przewodnik po dzienniku",
       "step1": {
         "title": "1. Pogoda",
-        "desc": "Pogoda."
+        "desc": "Rejestruj codzienną pogodę i ogólny stan."
       },
       "step2": {
-        "title": "2. Log",
-        "desc": "Wydarzenia."
+        "title": "2. Zapis chronologiczny",
+        "desc": "Rejestruj ważne wydarzenia w odpowiedniej kolejności."
       },
       "step3": {
         "title": "3. Historia",
-        "desc": "Historia."
+        "desc": "Z łatwością przeglądaj poprzednie dni."
       }
     },
     "quality": {
@@ -873,16 +873,16 @@
     },
     "production": {
       "step1": {
-        "title": "1. Rekordy",
-        "desc": "Rekordy."
+        "title": "1. Dokumentacja produkcyjna",
+        "desc": "Rekordowa dzienna produkcja."
       },
       "step2": {
-        "title": "2. Archiwum",
-        "desc": "Archiwum."
+        "title": "2. Archiwum i szczegóły",
+        "desc": "Twórz notatki, aby zachować chronologiczne archiwum."
       },
       "step3": {
-        "title": "3. Szukaj",
-        "desc": "Szukaj."
+        "title": "3. Wyszukiwanie i filtry",
+        "desc": "Filtruj według zakresu dat lub jednostki."
       },
       "title": "Przewodnik po produkcji"
     }

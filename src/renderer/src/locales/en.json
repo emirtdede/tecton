@@ -724,37 +724,37 @@
   },
   "guides": {
     "site": {
-      "title": "Site Management Guide",
+      "title": "Construction Site Management Guide",
       "step1": {
-        "title": "1. Active Workspace",
+        "title": "1. Active Construction Site",
         "desc": "Select a project to set as active."
       },
       "step2": {
         "title": "2. Location and Weather",
-        "desc": "Specify a location to automatically retrieve daily weather."
+        "desc": "Specify a location to automatically receive daily weather forecast."
       },
       "step3": {
-        "title": "3. Search and Pagination",
-        "desc": "Search instantly between construction sites."
+        "title": "3. Search and Paging",
+        "desc": "Instantly search across construction sites."
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Staff Guide",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Add Staff and Excel",
+        "desc": "Use the Excel template to bulk upload a list."
       },
       "step2": {
         "title": "2. Group Analysis",
-        "desc": "Analyze expenses according to group category."
+        "desc": "Analyze costs by group category."
       },
       "step3": {
-        "title": "3. Timesheets and Statements",
-        "desc": "Click on the name to view the timesheet."
+        "title": "3. Scorecard and Statements",
+        "desc": "Click on the name to see the scoreboard."
       },
       "step4": {
-        "title": "4. Leave Management",
-        "desc": "Record the days when the personnel is on leave or sick leave."
+        "title": "4. Permission Management",
+        "desc": "Record the days when the personnel is excused or on sick leave."
       }
     },
     "quantity": {
@@ -773,33 +773,33 @@
       }
     },
     "delivery": {
-      "title": "Delivery Guide",
+      "title": "Delivery Note Guide",
       "step1": {
         "title": "1. Supplier and Material",
         "desc": "Record supplier and material names."
       },
       "step2": {
         "title": "2. Document Photos",
-        "desc": "Upload document photos for digital archive."
+        "desc": "Upload delivery note photos for digital archive."
       },
       "step3": {
         "title": "3. Smart Search",
-        "desc": "Search in delivery note numbers or suppliers."
+        "desc": "Search delivery note numbers or suppliers."
       }
     },
     "journal": {
       "title": "Journal Guide",
       "step1": {
-        "title": "1. Weather & Status",
-        "desc": "Record daily weather and general status."
+        "title": "1. Weather",
+        "desc": "Record daily weather and general condition."
       },
       "step2": {
-        "title": "2. Chronological Log",
-        "desc": "Log important events sequentially."
+        "title": "2. Chronological Record",
+        "desc": "Record important events in order."
       },
       "step3": {
         "title": "3. History",
-        "desc": "Look back at previous days easily."
+        "desc": "Easily browse previous days."
       }
     },
     "quality": {
@@ -810,37 +810,37 @@
       },
       "step2": {
         "title": "2. Visual Evidence",
-        "desc": "Add photos of identified issues."
+        "desc": "Include photos of any problems detected."
       },
       "step3": {
         "title": "3. Filtering",
-        "desc": "Filter to track open issues."
+        "desc": "Filter to keep track of open issues."
       }
     },
     "subcontractor": {
       "title": "Subcontractor Guide",
       "step1": {
         "title": "1. Daily Wage",
-        "desc": "Track daily wages of subcontractors."
+        "desc": "Keep track of subcontractors' daily wages."
       },
       "step2": {
-        "title": "2. Search and Filtering",
-        "desc": "Search in the subcontractor list."
+        "title": "2. Search and Filter",
+        "desc": "Search the subcontractor list."
       },
       "step3": {
         "title": "3. Update and Edit",
-        "desc": "Update daily wages at any time."
+        "desc": "Update daily journals at any time."
       }
     },
     "media": {
       "title": "Media Guide",
       "step1": {
         "title": "1. Visual Timeline",
-        "desc": "Examine site images chronologically."
+        "desc": "Examine construction site images chronologically."
       },
       "step2": {
         "title": "2. Quick Details",
-        "desc": "Click on any photo to view in full size."
+        "desc": "Click on any photo to view full size."
       },
       "step3": {
         "title": "3. Category Filters",
@@ -848,33 +848,33 @@
       }
     },
     "cash": {
-      "title": "Cash Management Guide",
+      "title": "Vault Management Guide",
       "step1": {
         "title": "1. Income/Expense Records",
-        "desc": "Record incomes and expenses."
+        "desc": "Record income and expenses."
       },
       "step2": {
-        "title": "2. Monthly Financial Status",
+        "title": "2. Monthly Financial Situation",
         "desc": "View monthly cash flow and balance."
       },
       "step3": {
-        "title": "3. Exporting",
+        "title": "3. Export",
         "desc": "Download transactions as PDF or Excel."
       }
     },
     "recycle": {
-      "title": "Recycle Bin Guide",
+      "title": "Trash Guide",
       "step1": {
-        "title": "How it Works?",
-        "desc": "Deleted records are soft-deleted and listed here."
+        "title": "How Does It Work?",
+        "desc": "Deleted records are listed here with soft deletion."
       },
       "step2": {
-        "title": "Restoring Data",
-        "desc": "Use the restore button to recover records."
+        "title": "Data Recovery",
+        "desc": "Use the restore button to recover the records."
       },
       "step3": {
         "title": "Project Separation",
-        "desc": "Filter your recycle bin by project."
+        "desc": "Filter your trash by projects."
       }
     },
     "production": {

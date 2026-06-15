@@ -718,138 +718,138 @@
   },
   "guides": {
     "site": {
-      "title": "Site Management Gids",
+      "title": "Handleiding voor bouwplaatsbeheer",
       "step1": {
-        "title": "1. Actieve werkruimte",
-        "desc": "Selecteer een project om als actief in te stellen."
+        "title": "1. Actieve bouwplaats",
+        "desc": "Selecteer een project dat u als actief wilt instellen."
       },
       "step2": {
         "title": "2. Locatie en weer",
-        "desc": "Geef een locatie op om automatisch het dagelijkse weer op te halen."
+        "desc": "Geef een locatie op waar u automatisch de dagelijkse weersvoorspelling wilt ontvangen."
       },
       "step3": {
-        "title": "3. Zoeken en paginering",
-        "desc": "Zoek direct tussen bouwplaatsen."
+        "title": "3. Zoeken en paging",
+        "desc": "Zoek direct op bouwlocaties."
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Gids voor personeelsbeheer",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Voeg Staf en Excel toe",
+        "desc": "Gebruik de Excel-sjabloon om een ​​lijst in bulk te uploaden."
       },
       "step2": {
         "title": "2. Groepsanalyse",
-        "desc": "Analyseer uitgaven op groepscategorie."
+        "desc": "Analyseer de uitgaven per groepscategorie."
       },
       "step3": {
-        "title": "3. Urenstaten en afschriften",
-        "desc": "Klik op de naam om de urenstaat te bekijken."
+        "title": "3. Scorekaart en rekeningoverzicht",
+        "desc": "Klik op de naam om de partituur te bekijken."
       },
       "step4": {
-        "title": "4. Verlofbeheer",
-        "desc": "Registreer de dagen waarop het personeel met verlof of ziekteverlof is."
+        "title": "4. Toestemmingsbeheer",
+        "desc": "Registreer de dagen waarop het personeel ziek of met verlof is."
       }
     },
     "quantity": {
       "title": "Productiegids",
       "step1": {
-        "title": "1. Records",
-        "desc": "Records."
+        "title": "1. Productiegegevens",
+        "desc": "Registreer de dagelijkse productie."
       },
       "step2": {
-        "title": "2. Archief",
-        "desc": "Archief."
+        "title": "2. Archief en details",
+        "desc": "Schrijf aantekeningen om een ​​chronologisch archief bij te houden."
       },
       "step3": {
-        "title": "3. Zoeken",
-        "desc": "Filters."
+        "title": "3. Zoeken en filters",
+        "desc": "Filter op datumbereik of eenheid."
       }
     },
     "delivery": {
-      "title": "Leveringsgids",
+      "title": "Gids voor leveringsnota's",
       "step1": {
-        "title": "1. Leverancier",
-        "desc": "Leverancier."
+        "title": "1. Leverancier en materiaal",
+        "desc": "Noteer leveranciers- en materiaalnamen."
       },
       "step2": {
-        "title": "2. Foto's",
-        "desc": "Foto's."
+        "title": "2. Documenteer foto's",
+        "desc": "Upload foto's van de leveringsbon voor digitaal archief."
       },
       "step3": {
-        "title": "3. Zoeken",
-        "desc": "Zoeken."
+        "title": "3. Slim zoeken",
+        "desc": "Zoek pakbonnummers of leveranciers."
       }
     },
     "journal": {
-      "title": "Dagboekgids",
+      "title": "Tijdschriftgids",
       "step1": {
         "title": "1. Weer",
-        "desc": "Weer."
+        "desc": "Registreer dagelijks het weer en de algemene toestand."
       },
       "step2": {
-        "title": "2. Log",
-        "desc": "Log."
+        "title": "2. Chronologische registratie",
+        "desc": "Registreer belangrijke gebeurtenissen op volgorde."
       },
       "step3": {
         "title": "3. Geschiedenis",
-        "desc": "Geschiedenis."
+        "desc": "Blader eenvoudig door voorgaande dagen."
       }
     },
     "quality": {
       "title": "Kwaliteitsgids",
       "step1": {
         "title": "1. Rapportstatussen",
-        "desc": "Bijwerken wanneer opgelost."
+        "desc": "Werk de status bij wanneer het probleem is opgelost."
       },
       "step2": {
         "title": "2. Visueel bewijs",
-        "desc": "Voeg foto's toe."
+        "desc": "Voeg foto's toe van eventuele gedetecteerde problemen."
       },
       "step3": {
         "title": "3. Filteren",
-        "desc": "Filter openstaande problemen."
+        "desc": "Filter om openstaande problemen bij te houden."
       }
     },
     "subcontractor": {
-      "title": "Onderaannemer gids",
+      "title": "Gids voor onderaannemers",
       "step1": {
         "title": "1. Dagloon",
-        "desc": "Houd daglonen bij."
+        "desc": "Houd de daglonen van onderaannemers bij."
       },
       "step2": {
         "title": "2. Zoeken en filteren",
-        "desc": "Zoek in de lijst."
+        "desc": "Zoek in de lijst met onderaannemers."
       },
       "step3": {
-        "title": "3. Bijwerken",
-        "desc": "Werk lonen op elk moment bij."
+        "title": "3. Bijwerken en bewerken",
+        "desc": "Update dagbladen op elk gewenst moment."
       }
     },
     "media": {
       "title": "Mediagids",
       "step1": {
         "title": "1. Visuele tijdlijn",
-        "desc": "Bekijk afbeeldingen chronologisch."
+        "desc": "Bekijk afbeeldingen van bouwplaatsen chronologisch."
       },
       "step2": {
         "title": "2. Snelle details",
-        "desc": "Klik op een foto voor volledige grootte."
+        "desc": "Klik op een foto om de volledige grootte te bekijken."
       },
       "step3": {
         "title": "3. Categoriefilters",
-        "desc": "Filteren op leveringsbon of kwaliteitsrapporten."
+        "desc": "Filter op pakbon of kwaliteitsrapporten."
       }
     },
     "cash": {
-      "title": "Gids voor kasbeheer",
+      "title": "Gids voor kluisbeheer",
       "step1": {
-        "title": "1. Inkomsten/Uitgaven",
+        "title": "1. Inkomsten-/uitgavengegevens",
         "desc": "Registreer inkomsten en uitgaven."
       },
       "step2": {
-        "title": "2. Maandelijkse financiële status",
-        "desc": "Bekijk de maandelijkse kasstroom en het saldo."
+        "title": "2. Maandelijkse financiële situatie",
+        "desc": "Bekijk de maandelijkse cashflow en het saldo."
       },
       "step3": {
         "title": "3. Exporteren",
@@ -857,32 +857,32 @@
       }
     },
     "recycle": {
-      "title": "Recycle Bin Guide",
+      "title": "Vuilnisgids",
       "step1": {
-        "title": "How it Works?",
-        "desc": "Deleted records are soft-deleted and listed here."
+        "title": "Hoe werkt het?",
+        "desc": "Verwijderde records worden hier weergegeven met zachte verwijdering."
       },
       "step2": {
-        "title": "Restoring Data",
-        "desc": "Use the restore button to recover records."
+        "title": "Gegevensherstel",
+        "desc": "Gebruik de herstelknop om de records te herstellen."
       },
       "step3": {
-        "title": "Project Separation",
-        "desc": "Filter your recycle bin by project."
+        "title": "Projectscheiding",
+        "desc": "Filter uw prullenbak op projecten."
       }
     },
     "production": {
       "step1": {
-        "title": "1. Records",
-        "desc": "Records."
+        "title": "1. Productiegegevens",
+        "desc": "Registreer de dagelijkse productie."
       },
       "step2": {
-        "title": "2. Archief",
-        "desc": "Archief."
+        "title": "2. Archief en details",
+        "desc": "Schrijf aantekeningen om een ​​chronologisch archief bij te houden."
       },
       "step3": {
-        "title": "3. Zoeken",
-        "desc": "Filters."
+        "title": "3. Zoeken en filters",
+        "desc": "Filter op datumbereik of eenheid."
       },
       "title": "Productiegids"
     }

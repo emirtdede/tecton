@@ -733,22 +733,22 @@
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Personalguide",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Lägg till Staff och Excel",
+        "desc": "Använd Excel-mallen för att massöverföra en lista."
       },
       "step2": {
         "title": "2. Gruppanalys",
-        "desc": "Analysera utgifter per gruppkategori."
+        "desc": "Analysera kostnader per gruppkategori."
       },
       "step3": {
-        "title": "3. Tidrapporter och utdrag",
-        "desc": "Klicka på namnet för att se tidrapporten."
+        "title": "3. Styrkort och uttalanden",
+        "desc": "Klicka på namnet för att se resultattavlan."
       },
       "step4": {
-        "title": "4. Frånvarohantering",
-        "desc": "Registrera de dagar då personalen är ledig eller sjukskriven."
+        "title": "4. Tillståndshantering",
+        "desc": "Anteckna de dagar då personalen är ursäktad eller sjukskriven."
       }
     },
     "quantity": {
@@ -767,33 +767,33 @@
       }
     },
     "delivery": {
-      "title": "Leveransguide",
+      "title": "Följesedlar Guide",
       "step1": {
-        "title": "1. Leverantör",
-        "desc": "Leverantör."
+        "title": "1. Leverantör och material",
+        "desc": "Rekordleverantör och materialnamn."
       },
       "step2": {
-        "title": "2. Foton",
-        "desc": "Foton."
+        "title": "2. Dokumentfoton",
+        "desc": "Ladda upp följesedelfoton för digitalt arkiv."
       },
       "step3": {
-        "title": "3. Sök",
-        "desc": "Sök."
+        "title": "3. Smart sökning",
+        "desc": "Sök efter följesedelnummer eller leverantörer."
       }
     },
     "journal": {
-      "title": "Dagboksguide",
+      "title": "Journalguide",
       "step1": {
         "title": "1. Väder",
-        "desc": "Väder."
+        "desc": "Registrera dagligt väder och allmäntillstånd."
       },
       "step2": {
-        "title": "2. Logg",
-        "desc": "Händelser."
+        "title": "2. Kronologiskt register",
+        "desc": "Spela in viktiga händelser i ordning."
       },
       "step3": {
-        "title": "3. Historik",
-        "desc": "Historik."
+        "title": "3. Historia",
+        "desc": "Bläddra enkelt tidigare dagar."
       }
     },
     "quality": {
@@ -873,16 +873,16 @@
     },
     "production": {
       "step1": {
-        "title": "1. Poster",
-        "desc": "Poster."
+        "title": "1. Produktionsrekord",
+        "desc": "Rekord daglig produktion."
       },
       "step2": {
-        "title": "2. Arkiv",
-        "desc": "Arkiv."
+        "title": "2. Arkiv och detaljer",
+        "desc": "Skriv anteckningar för att hålla ett kronologiskt arkiv."
       },
       "step3": {
-        "title": "3. Sök",
-        "desc": "Sök."
+        "title": "3. Sök och filter",
+        "desc": "Filtrera efter datumintervall eller enhet."
       },
       "title": "Produktionsguide"
     }

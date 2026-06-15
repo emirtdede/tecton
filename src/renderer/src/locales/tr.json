@@ -725,22 +725,22 @@
       }
     },
     "personnel": {
-      "title": "Personel Yönetimi Rehberi",
+      "title": "Personel Rehberi",
       "step1": {
         "title": "1. Personel Ekle ve Excel",
         "desc": "Toplu liste yüklemek için Excel şablonunu kullanın."
       },
       "step2": {
         "title": "2. Grup Analizi",
-        "desc": "Harcamaları grup kategorisine göre analiz edin."
+        "desc": "Grup kategorisine göre maliyetleri analiz edin."
       },
       "step3": {
-        "title": "3. Puantaj ve Hesap Ekstresi",
-        "desc": "Puantajı görüntülemek için ada tıklayın."
+        "title": "3. Puantaj ve Ekstreler",
+        "desc": "Puantaj tablosunu görmek için isme tıklayın."
       },
       "step4": {
         "title": "4. İzin Yönetimi",
-        "desc": "Personelin raporlu veya izinli olduğu günleri kaydedin."
+        "desc": "Personelin mazeretli veya raporlu olduğu günleri kaydedin."
       }
     },
     "quantity": {

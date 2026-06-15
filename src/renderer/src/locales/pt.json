@@ -733,22 +733,22 @@
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Guia da equipe",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Adicione equipe e Excel",
+        "desc": "Use o modelo do Excel para fazer upload em massa de uma lista."
       },
       "step2": {
-        "title": "2. Análise de grupo",
-        "desc": "Analisar despesas por categoria de grupo."
+        "title": "2. Análise de Grupo",
+        "desc": "Analise os custos por categoria de grupo."
       },
       "step3": {
-        "title": "3. Planilhas de horas e extratos",
-        "desc": "Clique no nome para visualizar a planilha."
+        "title": "3. Scorecard e Declarações",
+        "desc": "Clique no nome para ver o placar."
       },
       "step4": {
-        "title": "4. Gestão de Licenças",
-        "desc": "Registe os dias em que o pessoal está de licença ou baixa médica."
+        "title": "4. Gerenciamento de permissões",
+        "desc": "Registre os dias em que o pessoal está dispensado ou em licença médica."
       }
     },
     "quantity": {
@@ -767,33 +767,33 @@
       }
     },
     "delivery": {
-      "title": "Guia de Entrega",
+      "title": "Guia de Nota de Entrega",
       "step1": {
-        "title": "1. Fornecedor",
-        "desc": "Fornecedor."
+        "title": "1. Fornecedor e Material",
+        "desc": "Registre os nomes dos fornecedores e dos materiais."
       },
       "step2": {
-        "title": "2. Fotos",
-        "desc": "Fotos."
+        "title": "2. Fotos de documentos",
+        "desc": "Carregue fotos da nota de entrega para arquivo digital."
       },
       "step3": {
-        "title": "3. Busca",
-        "desc": "Busca."
+        "title": "3. Pesquisa inteligente",
+        "desc": "Pesquise números de notas de entrega ou fornecedores."
       }
     },
     "journal": {
-      "title": "Guia do Diário",
+      "title": "Guia do diário",
       "step1": {
         "title": "1. Clima",
-        "desc": "Clima."
+        "desc": "Registre diariamente o clima e as condições gerais."
       },
       "step2": {
-        "title": "2. Diário",
-        "desc": "Diário."
+        "title": "2. Registro cronológico",
+        "desc": "Registre eventos importantes em ordem."
       },
       "step3": {
-        "title": "3. Histórico",
-        "desc": "Histórico."
+        "title": "3. História",
+        "desc": "Navegue facilmente nos dias anteriores."
       }
     },
     "quality": {
@@ -873,18 +873,18 @@
     },
     "production": {
       "step1": {
-        "title": "1. Registros",
-        "desc": "Registros."
+        "title": "1. Registros de produção",
+        "desc": "Grave a produção diária."
       },
       "step2": {
-        "title": "2. Arquivo",
-        "desc": "Arquivo."
+        "title": "2. Arquivo e detalhes",
+        "desc": "Escreva notas para manter um arquivo cronológico."
       },
       "step3": {
-        "title": "3. Busca",
-        "desc": "Filtros."
+        "title": "3. Pesquisa e filtros",
+        "desc": "Filtre por período ou unidade."
       },
-      "title": "Guia de Produção"
+      "title": "Guia de produção"
     }
   },
   "worker": {

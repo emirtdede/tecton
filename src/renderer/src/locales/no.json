@@ -733,22 +733,22 @@
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Personalguide",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Legg til Staff og Excel",
+        "desc": "Bruk Excel-malen til å masseopplasting av en liste."
       },
       "step2": {
         "title": "2. Gruppeanalyse",
-        "desc": "Analyser utgifter etter gruppekategori."
+        "desc": "Analyser kostnader etter gruppekategori."
       },
       "step3": {
-        "title": "3. Timelister og utskrifter",
-        "desc": "Klikk på navnet for å se timelisten."
+        "title": "3. Målekort og uttalelser",
+        "desc": "Klikk på navnet for å se resultattavlen."
       },
       "step4": {
-        "title": "4. Fraværshåndtering",
-        "desc": "Registrer dagene når personalet er på permisjon eller sykemeldt."
+        "title": "4. Tillatelsesbehandling",
+        "desc": "Registrer dagene da personellet er unnskyldt eller sykemeldt."
       }
     },
     "quantity": {
@@ -767,33 +767,33 @@
       }
     },
     "delivery": {
-      "title": "Leveringsguide",
+      "title": "Følgeseddelguide",
       "step1": {
-        "title": "1. Leverandør",
-        "desc": "Leverandør."
+        "title": "1. Leverandør og Materiale",
+        "desc": "Plateleverandør og materialnavn."
       },
       "step2": {
-        "title": "2. Bilder",
-        "desc": "Bilder."
+        "title": "2. Dokumentbilder",
+        "desc": "Last opp følgeseddelbilder til digitalt arkiv."
       },
       "step3": {
-        "title": "3. Søk",
-        "desc": "Søk."
+        "title": "3. Smart søk",
+        "desc": "Søk etter følgeseddelnummer eller leverandører."
       }
     },
     "journal": {
-      "title": "Dagbokguide",
+      "title": "Journalguide",
       "step1": {
         "title": "1. Vær",
-        "desc": "Vær."
+        "desc": "Registrer daglig vær og generell tilstand."
       },
       "step2": {
-        "title": "2. Logg",
-        "desc": "Logg."
+        "title": "2. Kronologisk registrering",
+        "desc": "Registrer viktige hendelser i rekkefølge."
       },
       "step3": {
-        "title": "3. Historikk",
-        "desc": "Historikk."
+        "title": "3. Historie",
+        "desc": "Bla gjennom tidligere dager enkelt."
       }
     },
     "quality": {
@@ -873,16 +873,16 @@
     },
     "production": {
       "step1": {
-        "title": "1. Poster",
-        "desc": "Poster."
+        "title": "1. Produksjonsrekord",
+        "desc": "Rekord daglig produksjon."
       },
       "step2": {
-        "title": "2. Arkiv",
-        "desc": "Arkiv."
+        "title": "2. Arkiv og detaljer",
+        "desc": "Skriv notater for å holde et kronologisk arkiv."
       },
       "step3": {
-        "title": "3. Søk",
-        "desc": "Filtre."
+        "title": "3. Søk og filtre",
+        "desc": "Filtrer etter datoperiode eller enhet."
       },
       "title": "Produksjonsguide"
     }

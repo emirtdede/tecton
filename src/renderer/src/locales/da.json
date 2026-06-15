@@ -718,123 +718,123 @@
   },
   "guides": {
     "site": {
-      "title": "Guide til webstedadministration",
+      "title": "Byggepladsstyringsvejledning",
       "step1": {
-        "title": "1. Aktivt arbejdsområde",
-        "desc": "Vælg et projekt, der skal angives som aktivt."
+        "title": "1. Aktiv byggeplads",
+        "desc": "Vælg et projekt, der skal indstilles som aktivt."
       },
       "step2": {
         "title": "2. Beliggenhed og vejr",
-        "desc": "Angiv en placering for automatisk at hente dagligt vejr."
+        "desc": "Angiv en placering for automatisk at modtage daglig vejrudsigt."
       },
       "step3": {
-        "title": "3. Søgning og paginering",
-        "desc": "Søg øjeblikkeligt mellem byggepladser."
+        "title": "3. Søgning og personsøgning",
+        "desc": "Søg øjeblikkeligt på tværs af byggepladser."
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Personaleguide",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Tilføj personale og Excel",
+        "desc": "Brug Excel-skabelonen til at masseuploade en liste."
       },
       "step2": {
         "title": "2. Gruppeanalyse",
-        "desc": "Analyser udgifter i henhold til gruppekategori."
+        "desc": "Analyser omkostninger efter gruppekategori."
       },
       "step3": {
-        "title": "3. Timesedler og erklæringer",
-        "desc": "Klik på navnet for at se timesedlen."
+        "title": "3. Scorekort og erklæringer",
+        "desc": "Klik på navnet for at se resultattavlen."
       },
       "step4": {
-        "title": "4. Fraværshåndtering",
-        "desc": "Registrer de dage, hvor personalet er på orlov eller sygemeldt."
+        "title": "4. Tilladelsesstyring",
+        "desc": "Registrer de dage, hvor personalet er fritaget eller sygemeldt."
       }
     },
     "quantity": {
-      "title": "Produktionsguide",
+      "title": "Produktionsvejledning",
       "step1": {
-        "title": "1. Poster",
-        "desc": "Poster."
+        "title": "1. Produktionsoptegnelser",
+        "desc": "Rekord daglig produktion."
       },
       "step2": {
-        "title": "2. Arkiv",
-        "desc": "Arkiv."
+        "title": "2. Arkiv og detaljer",
+        "desc": "Skriv noter for at holde et kronologisk arkiv."
       },
       "step3": {
-        "title": "3. Søg",
-        "desc": "Søg."
+        "title": "3. Søg og filtre",
+        "desc": "Filtrer efter datointerval eller enhed."
       }
     },
     "delivery": {
-      "title": "Leveringsguide",
+      "title": "Følgeseddelvejledning",
       "step1": {
-        "title": "1. Leverandør",
-        "desc": "Leverandør."
+        "title": "1. Leverandør og materiale",
+        "desc": "Optegn leverandør- og materialenavne."
       },
       "step2": {
-        "title": "2. Fotos",
-        "desc": "Fotos."
+        "title": "2. Dokumentbilleder",
+        "desc": "Upload følgeseddelbilleder til digitalt arkiv."
       },
       "step3": {
-        "title": "3. Søg",
-        "desc": "Søg."
+        "title": "3. Smart søgning",
+        "desc": "Søg efter følgeseddelnumre eller leverandører."
       }
     },
     "journal": {
-      "title": "Dagbogsguide",
+      "title": "Journal Guide",
       "step1": {
-        "title": "1. Vejr",
-        "desc": "Vejr."
+        "title": "1. Vejret",
+        "desc": "Registrer dagligt vejr og generel tilstand."
       },
       "step2": {
-        "title": "2. Log",
-        "desc": "Log."
+        "title": "2. Kronologisk optegnelse",
+        "desc": "Optag vigtige begivenheder i rækkefølge."
       },
       "step3": {
-        "title": "3. Historik",
-        "desc": "Historik."
+        "title": "3. Historie",
+        "desc": "Gennemse nemt tidligere dage."
       }
     },
     "quality": {
       "title": "Kvalitetsguide",
       "step1": {
-        "title": "1. Rapportstatus",
-        "desc": "Opdater når løst."
+        "title": "1. Rapporter statusser",
+        "desc": "Opdater status, når problemet er løst."
       },
       "step2": {
-        "title": "2. Visuelt bevis",
-        "desc": "Tilføj billeder."
+        "title": "2. Visuelle beviser",
+        "desc": "Inkluder billeder af eventuelle opdagede problemer."
       },
       "step3": {
         "title": "3. Filtrering",
-        "desc": "Filtrer åbne problemer."
+        "desc": "Filtrer for at holde styr på åbne problemer."
       }
     },
     "subcontractor": {
-      "title": "Underleverandør Guide",
+      "title": "Underleverandørvejledning",
       "step1": {
-        "title": "1. Dagsløn",
-        "desc": "Spor dagslønninger."
+        "title": "1. Dagløn",
+        "desc": "Hold styr på underleverandørers dagsløn."
       },
       "step2": {
         "title": "2. Søg og filtrer",
-        "desc": "Søg i listen."
+        "desc": "Søg på underleverandørlisten."
       },
       "step3": {
-        "title": "3. Opdater",
-        "desc": "Opdater løn når som helst."
+        "title": "3. Opdater og rediger",
+        "desc": "Opdater daglige journaler til enhver tid."
       }
     },
     "media": {
       "title": "Medieguide",
       "step1": {
         "title": "1. Visuel tidslinje",
-        "desc": "Undersøg billeder kronologisk."
+        "desc": "Undersøg byggepladsbilleder kronologisk."
       },
       "step2": {
         "title": "2. Hurtige detaljer",
-        "desc": "Klik på et foto for at se det i fuld størrelse."
+        "desc": "Klik på et billede for at se fuld størrelse."
       },
       "step3": {
         "title": "3. Kategorifiltre",
@@ -842,49 +842,49 @@
       }
     },
     "cash": {
-      "title": "Guide til likviditetsstyring",
+      "title": "Vault Management Guide",
       "step1": {
-        "title": "1. Indtægter/udgifter",
+        "title": "1. Indtægts-/udgiftsoptegnelser",
         "desc": "Registrer indtægter og udgifter."
       },
       "step2": {
-        "title": "2. Månedlig status",
-        "desc": "Se månedligt cashflow og saldo."
+        "title": "2. Månedlig økonomisk situation",
+        "desc": "Se månedlige pengestrømme og balance."
       },
       "step3": {
         "title": "3. Eksport",
-        "desc": "Download som PDF eller Excel."
+        "desc": "Download transaktioner som PDF eller Excel."
       }
     },
     "recycle": {
-      "title": "Recycle Bin Guide",
+      "title": "Papirkurv guide",
       "step1": {
-        "title": "How it Works?",
-        "desc": "Deleted records are soft-deleted and listed here."
+        "title": "Hvordan virker det?",
+        "desc": "Slettede poster er listet her med blød sletning."
       },
       "step2": {
-        "title": "Restoring Data",
-        "desc": "Use the restore button to recover records."
+        "title": "Datagendannelse",
+        "desc": "Brug gendan-knappen til at gendanne posterne."
       },
       "step3": {
-        "title": "Project Separation",
-        "desc": "Filter your recycle bin by project."
+        "title": "Projektadskillelse",
+        "desc": "Filtrer dit affald efter projekter."
       }
     },
     "production": {
       "step1": {
-        "title": "1. Poster",
-        "desc": "Poster."
+        "title": "1. Produktionsoptegnelser",
+        "desc": "Rekord daglig produktion."
       },
       "step2": {
-        "title": "2. Arkiv",
-        "desc": "Arkiv."
+        "title": "2. Arkiv og detaljer",
+        "desc": "Skriv noter for at holde et kronologisk arkiv."
       },
       "step3": {
-        "title": "3. Søg",
-        "desc": "Søg."
+        "title": "3. Søg og filtre",
+        "desc": "Filtrer efter datointerval eller enhed."
       },
-      "title": "Produktionsguide"
+      "title": "Produktionsvejledning"
     }
   },
   "worker": {

@@ -76,15 +76,15 @@
     "system_maintenance": "Entretien du système",
     "logo_uploaded": "Logo téléchargé",
     "parameters": "Paramètres",
-    "regionalSettings": "Regional Format Settings",
-    "customCurrency": "Currency Override",
-    "customDateFormat": "Date Format Override",
-    "customTimeFormat": "Time Format Override",
+    "regionalSettings": "Paramètres de format régional",
+    "customCurrency": "Remplacement de la devise",
+    "customDateFormat": "Remplacement du format de date",
+    "customTimeFormat": "Remplacement du format de l'heure",
     "autoByLanguage": "Automatique (par langue)",
     "regionalFormatSettings": "Paramètres régionaux",
-    "currencyOverride": "Currency Selection",
-    "dateFormatOverride": "Date Format Selection",
-    "timeFormatOverride": "Time Format Selection",
+    "currencyOverride": "Sélection des devises",
+    "dateFormatOverride": "Sélection du format de date",
+    "timeFormatOverride": "Sélection du format d'heure",
     "currencySelection": "Sélection de la devise",
     "dateFormatSelection": "Format de la date",
     "timeFormatSelection": "Format de l'heure",
@@ -110,14 +110,14 @@
     "delete": "Supprimer",
     "net_balance": "Solde Net",
     "phone_not_found": "Téléphone non fourni",
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "help_title": "Guide de gestion du personnel",
+    "help_desc": "Le panneau de gestion du personnel vous permet de suivre les feuilles de temps, les gains, les avances et les détails de paiement de vos travailleurs.",
+    "help_h1": "1. Ajouter des travailleurs et Excel",
+    "help_p1": "Ajoutez des travailleurs individuels à l'aide du bouton en haut à droite ou importez une liste de lots en téléchargeant le modèle Excel.",
+    "help_h2": "2. Analyse de groupe",
+    "help_p2": "Analysez les dépenses et le nombre de travailleurs par catégorie de groupe (par exemple, électriciens, ferronniers).",
+    "help_h3": "3. Cartes de pointage et déclarations",
+    "help_p3": "Cliquez sur le nom d'un travailleur pour afficher ses feuilles de temps, calculer de nouveaux soldes et exporter des relevés PDF détaillés.",
     "undo_success": "Action annulée avec succès !",
     "undo_error": "L'annulation a échoué :",
     "delete_worker_title": "Supprimer le Personnel",
@@ -133,7 +133,7 @@
       "date": "Date",
       "type": "Type",
       "overtime": "Heures Sup.",
-      "notes": "Notes",
+      "notes": "Remarques",
       "add_btn": "Ajouter",
       "notes_ph": "Explication supplémentaire...",
       "tags_label": "Balises",
@@ -164,13 +164,13 @@
       "title": "Ajouter Avance",
       "date": "Date",
       "amount": "Montant",
-      "notes": "Notes",
+      "notes": "Remarques",
       "add_btn": "Ajouter",
       "tags_label": "Balises",
       "tags_ph": "Ex : Travel-Toll, Personnel",
       "notes_ph": "ex. Acompte hebdomadaire",
-      "delete_title": "Delete Advance",
-      "delete_confirm": "Are you sure you want to delete this advance? The system will automatically cancel this amount from the Cash Register as well."
+      "delete_title": "Supprimer l'avance",
+      "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette avance ? Le système annulera également automatiquement ce montant de la caisse enregistreuse."
     },
     "summary": {
       "previous_balance": "Solde Précédent",
@@ -178,7 +178,7 @@
       "period_advance": "Avance",
       "new_balance": "Nouveau Solde",
       "carried_balance_report": "Rapport sur le solde reporté",
-      "advance_deduction": "Advance Deduction"
+      "advance_deduction": "Déduction anticipée"
     },
     "filter": {
       "start_date": "Date de début",
@@ -191,7 +191,7 @@
     },
     "table": {
       "date": "Date",
-      "type": "Type",
+      "type": "Taper",
       "desc": "Description",
       "amount": "Montant",
       "action": "Action",
@@ -216,17 +216,17 @@
     "calculated_earned": "Gains Calculés:",
     "auto_deduct_notice": "* L'avance sera automatiquement déduite de la caisse.",
     "current_balance": "Solde actuel",
-    "help_title": "Worker Profile Guide",
-    "help_desc": "The worker profile displays all financial and working history of the selected employee on a single screen.",
-    "help_h1": "1. Timesheets & Advances",
-    "help_p1": "Quickly enter daily timesheet records (standard hours or overtime) and cash advance logs.",
-    "help_h2": "2. Carried Balance Report",
-    "help_p2": "Generate date-range filtered statement reports that automatically calculate the carried over balance.",
-    "help_h3": "3. PDF Reconciliation",
-    "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
-    "whatsapp_send": "Send via WhatsApp",
+    "help_title": "Guide du profil du travailleur",
+    "help_desc": "Le profil du travailleur affiche tous les antécédents financiers et professionnels de l'employé sélectionné sur un seul écran.",
+    "help_h1": "1. Feuilles de temps et avances",
+    "help_p1": "Saisissez rapidement les enregistrements des feuilles de temps quotidiennes (heures standard ou heures supplémentaires) et les journaux d'avances de fonds.",
+    "help_h2": "2. Rapport sur le solde reporté",
+    "help_p2": "Générez des rapports de relevés filtrés par plage de dates qui calculent automatiquement le solde reporté.",
+    "help_h3": "3. Rapprochement PDF",
+    "help_p3": "Générez et partagez des relevés PDF officiels de marque avec le logo de votre entreprise.",
+    "whatsapp_send": "Envoyer via WhatsApp",
     "whatsapp_no_phone": "Numéro de téléphone enregistré introuvable pour le personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "whatsapp_message_template": "Cher {{name}}, votre relevé de compte entre le {{startDate}} et le {{endDate}} :\n\n- Total gagné : {{earned}}\n- Total payé/avance : {{avance}}\n- Solde restant : {{balance}}\n\nPrésenté à titre d'information.",
     "timesheet_delete_title": "Supprimer la feuille de temps",
     "timesheet_delete_msg": "Êtes-vous sûr de vouloir supprimer cet enregistrement de feuille de temps ? Cette action ne peut pas être annulée.",
     "advance_delete_title": "Supprimer l'avance/la transaction",
@@ -241,7 +241,7 @@
     "net_balance": "Solde Net",
     "table": {
       "date": "Date",
-      "type": "Type",
+      "type": "Taper",
       "amount": "Montant",
       "desc": "Description",
       "empty": "Aucune transaction de caisse.",
@@ -262,14 +262,14 @@
     "tags_ph": "ex. Matériel, Loyer",
     "search_placeholder": "Rechercher dans les descriptions...",
     "new_transaction": "Nouvelle transaction en espèces",
-    "help_title": "Cash Register Guide",
-    "help_desc": "Cash Register is used to log all cash inflows and outflows on your construction site.",
-    "help_h1": "1. Income/Expense Entries",
-    "help_p1": "Record incomes (+) and expenses (-). Worker advances are automatically deducted from the register.",
-    "help_h2": "2. Monthly Financial Status",
-    "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
-    "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "help_title": "Guide de la caisse enregistreuse",
+    "help_desc": "La caisse enregistreuse est utilisée pour enregistrer toutes les entrées et sorties d'argent sur votre chantier de construction.",
+    "help_h1": "1. Entrées de revenus/dépenses",
+    "help_p1": "Enregistrez les revenus (+) et les dépenses (-). Les avances aux travailleurs sont automatiquement déduites du registre.",
+    "help_h2": "2. Situation financière mensuelle",
+    "help_p2": "Suivez instantanément les revenus totaux, les dépenses totales, les coûts de main-d'œuvre et les variations mensuelles nettes de trésorerie.",
+    "help_h3": "3. Filtrage et exportation",
+    "help_p3": "Filtrez les journaux de trésorerie par plage de dates ou par type de transaction et téléchargez des rapports au format Excel ou PDF.",
     "allCompany": "Toute l'entreprise (Global)",
     "headquarters": "Caisse centrale / Général",
     "relatedProject": "Chantier associé",
@@ -319,7 +319,7 @@
     "save": "Enregistrer",
     "date": "Date",
     "description": "Description",
-    "notes": "Description / Note",
+    "notes": "Description/Remarque",
     "notes_placeholder": "Notes supplémentaires...",
     "unit": "Unité",
     "quantity": "Quantité",
@@ -332,7 +332,8 @@
     "page": "Page",
     "next_short": "Suivant",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+    "error": "Erreur"
   },
   "worker_modal": {
     "title_new": "Ajouter du Personnel",
@@ -450,20 +451,20 @@
     "active_workspace": "Espace de travail actif",
     "location_unspecified": "Emplacement non spécifié",
     "select_workspace": "Sélectionner l'espace de travail",
-    "help_title": "Construction Site Guide",
-    "help_desc": "Site Management allows you to add and manage different projects or locations.",
-    "help_h1": "1. Active Workspace",
-    "help_p1": "Select a project to set it as active. All transactions and reports will belong to this project.",
-    "help_h2": "2. Location & Weather",
-    "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
-    "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "help_title": "Guide de chantier",
+    "help_desc": "La gestion du site vous permet d'ajouter et de gérer différents projets ou emplacements.",
+    "help_h1": "1. Espace de travail actif",
+    "help_p1": "Sélectionnez un projet pour le définir comme actif. Toutes les transactions et rapports appartiendront à ce projet.",
+    "help_h2": "2. Emplacement et météo",
+    "help_p2": "Spécifiez un emplacement (par exemple, « Istanbul, TR ») pour récupérer automatiquement les conditions météorologiques quotidiennes.",
+    "help_h3": "3. Rechercher et paginer",
+    "help_p3": "Recherchez instantanément sur les chantiers de construction et répertoriez efficacement les projets à l'aide de la pagination.",
     "delete_title": "Supprimer le site",
     "delete_msg": "Êtes-vous sûr ? Les données seront masquées."
   },
   "filters": {
     "sort": "Tri:",
-    "type": "Type:",
+    "type": "Taper:",
     "photo_status": "Statut photo:",
     "all_types": "Tous les types",
     "delivery_note": "Bon de livraison / Reçu",
@@ -500,14 +501,14 @@
   },
   "media": {
     "gallery_title": "📷 Galerie multimédia du chantier",
-    "help_title": "Media Gallery Guide",
-    "help_desc": "Site Media Gallery aggregates all photos uploaded through Delivery Notes and Quality Control.",
-    "help_h1": "1. Visual Timeline",
-    "help_p1": "Browse all construction site images sorted chronologically from newest to oldest.",
-    "help_h2": "2. Quick Details",
-    "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
-    "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "help_title": "Guide de la galerie multimédia",
+    "help_desc": "La galerie multimédia du site regroupe toutes les photos téléchargées via les notes de livraison et le contrôle qualité.",
+    "help_h1": "1. Chronologie visuelle",
+    "help_p1": "Parcourez toutes les images de chantiers de construction classées chronologiquement, de la plus récente à la plus ancienne.",
+    "help_h2": "2. Détails rapides",
+    "help_p2": "Cliquez sur n’importe quelle photo pour la voir en taille réelle et afficher le bon de livraison ou le rapport qualité associé.",
+    "help_h3": "3. Filtres de catégorie",
+    "help_p3": "Filtrez les médias par type (photos du bon de livraison ou photos du contrôle qualité) ou effectuez une recherche par notes.",
     "no_image": "Aucune image"
   },
   "subcontractor": {
@@ -517,22 +518,22 @@
     "service": "Domaine de service",
     "service_ph": "ex. Location de pelleteuse / Terrassement",
     "wage": "Salaire journalier / Tarif (₺)",
-    "table_name": "Subcontractor / Company",
-    "table_wage": "Daily Rate",
-    "table_status": "Status",
+    "table_name": "Sous-traitant / Entreprise",
+    "table_wage": "Tarif journalier",
+    "table_status": "Statut",
     "table_action": "Action",
-    "help_title": "Subcontractor Ledger Guide",
-    "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
-    "help_h1": "1. Daily Rate and Ledger Entry",
-    "help_p1": "The daily rate defined for each subcontractor is taken as the baseline for their scorecards and monthly statements.",
-    "help_h2": "2. Search and Filtering",
-    "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
-    "help_h3": "3. Updating and Editing",
-    "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
+    "help_title": "Guide du grand livre des sous-traitants",
+    "help_desc": "Les registres des sous-traitants sont utilisés pour suivre les tarifs journaliers, les services et les coordonnées des sous-traitants ou des machines louées travaillant sur votre chantier de construction.",
+    "help_h1": "1. Tarif journalier et saisie au grand livre",
+    "help_p1": "Le tarif journalier défini pour chaque sous-traitant sert de référence pour leurs tableaux de bord et relevés mensuels.",
+    "help_h2": "2. Recherche et filtrage",
+    "help_p2": "Vous pouvez effectuer des recherches en temps réel dans la liste des sous-traitants par nom, service ou téléphone, et parcourir facilement des enregistrements volumineux grâce à la pagination.",
+    "help_h3": "3. Mise à jour et édition",
+    "help_p3": "Vous pouvez mettre à jour les titres des sous-traitants, les numéros de téléphone et les tarifs journaliers à tout moment en utilisant le bouton « Modifier ».",
     "delete_title": "Supprimer le sous-traitant",
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce grand livre de sous-traitant ? Cette action ne peut pas être annulée.",
-    "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "no_results": "Aucun sous-traitant trouvé correspondant aux critères de recherche.",
+    "empty_state": "Aucun sous-traitant enregistré pour ce chantier pour l'instant."
   },
   "quality": {
     "title": "🛡️ Contrôle qualité & rapports de chantier",
@@ -546,21 +547,21 @@
     "detailed_description": "Description détaillée",
     "description_ph": "Détails de l'anomalie identifiée...",
     "add_report": "Ajouter un rapport",
-    "no_results": "No reports found matching the search criteria.",
-    "empty_state": "No quality control reports found for this construction site yet.",
-    "open_photo": "Open Report Photo",
+    "no_results": "Aucun rapport trouvé correspondant aux critères de recherche.",
+    "empty_state": "Aucun rapport de contrôle qualité trouvé pour ce chantier de construction pour l'instant.",
+    "open_photo": "Ouvrir la photo du rapport",
     "upload_mobile_title": "Télécharger depuis le mobile",
     "upload_mobile_desc": "Connectez-vous au **même WiFi** et scannez le QR :",
     "delete_title": "Supprimer le rapport",
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce rapport de contrôle qualité? Cette action est irréversible.",
-    "help_title": "Quality Control Guide",
-    "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
-    "help_h1": "1. Report Statuses",
-    "help_p1": "Log reports as 'OPEN' initially, and update them to 'RESOLVED' once the technical issue is solved.",
-    "help_h2": "2. Visual Evidence",
-    "help_p2": "Attach photos of identified issues and write detailed solution plans in the description area.",
-    "help_h3": "3. Filtering",
-    "help_p3": "Filter reports by resolution status or photo availability to track pending issues."
+    "help_title": "Guide de contrôle qualité",
+    "help_desc": "Le module de contrôle qualité est utilisé pour enregistrer les problèmes structurels, les résultats de sécurité et les rapports de site.",
+    "help_h1": "1. Statuts des rapports",
+    "help_p1": "Enregistrez initialement les rapports comme « OUVERTS » et mettez-les à jour vers « RÉSOLU » une fois le problème technique résolu.",
+    "help_h2": "2. Preuve visuelle",
+    "help_p2": "Joignez des photos des problèmes identifiés et rédigez des plans de solution détaillés dans la zone de description.",
+    "help_h3": "3. Filtrage",
+    "help_p3": "Filtrez les rapports par état de résolution ou disponibilité des photos pour suivre les problèmes en attente."
   },
   "journal": {
     "title": "📓 Journal quotidien de chantier",
@@ -570,19 +571,19 @@
     "notes": "Notes du journal / Travaux réalisés",
     "notes_ph": "ex. Armatures des poteaux du 2e étage attachées, bétonnage C30 effectué...",
     "save_btn": "Enregistrer / Mettre à jour le journal",
-    "weather_loading": "Reading from clouds...",
-    "weather_no_location": "Could not retrieve weather since site location is not specified.",
-    "worker_count_badge": "Workers",
-    "no_results": "No journal entries found matching the search criteria.",
-    "empty_state": "No daily journal entries found yet.",
-    "help_title": "Daily Journal Guide",
-    "help_desc": "The Daily Journal is the official log where you chronologically archive daily field activities, working personnel counts, and weather conditions.",
-    "help_h1": "1. Weather Integration",
-    "help_p1": "When the location is specified on the Project page, the system automatically fetches the weather and temperature via OpenWeather API.",
-    "help_h2": "2. Auto Worker Calculation",
-    "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
-    "help_h3": "3. Edit Lock Policy",
-    "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
+    "weather_loading": "Lire depuis les nuages...",
+    "weather_no_location": "Impossible de récupérer la météo car l'emplacement du site n'est pas spécifié.",
+    "worker_count_badge": "Ouvriers",
+    "no_results": "Aucune entrée de journal trouvée correspondant aux critères de recherche.",
+    "empty_state": "Aucune entrée de journal quotidienne trouvée pour l'instant.",
+    "help_title": "Guide du journal quotidien",
+    "help_desc": "Le Journal Quotidien est le journal officiel dans lequel vous archivez chronologiquement les activités quotidiennes sur le terrain, le décompte du personnel en activité et les conditions météorologiques.",
+    "help_h1": "1. Intégration météo",
+    "help_p1": "Lorsque l'emplacement est spécifié sur la page Projet, le système récupère automatiquement la météo et la température via l'API OpenWeather.",
+    "help_h2": "2. Calcul du travailleur automobile",
+    "help_p2": "Le nombre total de travailleurs actifs à cette date est automatiquement calculé à partir des feuilles de temps et reflété sur le formulaire.",
+    "help_h3": "3. Modifier la politique de verrouillage",
+    "help_p3": "Pour maintenir l'intégrité des données historiques, les journaux quotidiens ne peuvent être modifiés que le jour de leur création. Les entrées plus anciennes sont verrouillées.",
     "delete_title": "Supprimer le journal",
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette entrée de journal? Cette action ne peut pas être annulée.",
     "weatherDesc": "Description météo",
@@ -600,23 +601,23 @@
     "material_type_ph": "ex. Béton prêt à l'emploi C30",
     "receipt_no": "Bon de livraison / Numéro de reçu",
     "document_photo": "Photo du document",
-    "no_results": "No delivery notes found matching the search criteria.",
-    "empty_state": "No delivery notes found yet.",
+    "no_results": "Aucun bon de livraison trouvé correspondant aux critères de recherche.",
+    "empty_state": "Aucun bon de livraison trouvé pour l'instant.",
     "photo": "Photo",
-    "view_photo": "View",
-    "no_photo": "None",
+    "view_photo": "Voir",
+    "no_photo": "Aucun",
     "upload_mobile_title": "Télécharger une Photo depuis un Mobile",
     "upload_mobile_desc": "Connectez le mobile au **même réseau WiFi** et scannez le QR code :",
     "delete_title": "Supprimer le document",
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette entrée de bon de livraison? Cette action est irréversible.",
-    "help_title": "Delivery Note Guide",
-    "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
-    "help_h1": "1. Supplier & Material Type",
-    "help_p1": "Log supplier names, material types, units, quantities, and receipt/delivery note numbers.",
-    "help_h2": "2. Document Photos",
-    "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
-    "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "help_title": "Guide des bons de livraison",
+    "help_desc": "Le module Bon de livraison est utilisé pour enregistrer les matériaux de construction entrants et télécharger les documents de livraison.",
+    "help_h1": "1. Fournisseur et type de matériau",
+    "help_p1": "Enregistrez les noms des fournisseurs, les types de matériaux, les unités, les quantités et les numéros de bon de réception/livraison.",
+    "help_h2": "2. Documenter les photos",
+    "help_p2": "Téléchargez des documents ou des photos numérisés depuis un PC ou utilisez un code QR mobile pour créer une archive numérique.",
+    "help_h3": "3. Recherche intelligente",
+    "help_p3": "Recherchez instantanément parmi les descriptions de matériaux, les noms de fournisseurs ou les numéros de bons de livraison.",
     "photo_success": "Photo reçue avec succès depuis l'appareil mobile !",
     "photo_error": "Échec de l'enregistrement de la photo :",
     "photo_upload_error": "Erreur lors du traitement de la photo :",
@@ -627,30 +628,30 @@
     "title": "📐 Métré & suivi de production",
     "item_name": "Poste de production",
     "item_name_ph": "ex. Pose de mur en briques",
-    "no_results": "No production records found matching the search criteria.",
-    "empty_state": "No production entries recorded for this construction site yet.",
+    "no_results": "Aucun enregistrement de production correspondant aux critères de recherche n'a été trouvé.",
+    "empty_state": "Aucune entrée de production enregistrée pour ce chantier pour l'instant.",
     "delete_title": "Supprimer l'enregistrement",
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement de production? Cette action est irréversible.",
-    "help_title": "Quantity Survey Guide",
-    "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
-    "help_h1": "1. Production Item Records",
-    "help_p1": "Log daily or weekly production items, specifying their units (m², m³, kg, etc.) and quantities.",
-    "help_h2": "2. Archive & Details",
-    "help_p2": "Write notes for each entry to keep a chronological archive of progress in different blocks.",
-    "help_h3": "3. Search & Filters",
-    "help_p3": "Search through item names or notes, and filter them by date range or unit type."
+    "help_title": "Guide d'enquête quantitative",
+    "help_desc": "Le module Enquête quantitative est utilisé pour suivre les éléments de construction, les unités et la progression.",
+    "help_h1": "1. Enregistrements des articles de production",
+    "help_p1": "Enregistrez les éléments de production quotidiens ou hebdomadaires en précisant leurs unités (m², m³, kg, etc.) et leurs quantités.",
+    "help_h2": "2. Archives et détails",
+    "help_p2": "Écrivez des notes pour chaque entrée afin de conserver une archive chronologique des progrès dans différents blocs.",
+    "help_h3": "3. Recherche et filtres",
+    "help_p3": "Recherchez parmi les noms d’éléments ou les notes et filtrez-les par plage de dates ou par type d’unité."
   },
   "anomalies": {
-    "no_anomaly_title": "No System Anomalies",
-    "no_anomaly_desc": "All financial balances and HSE certificates are up-to-date.",
+    "no_anomaly_title": "Aucune anomalie du système",
+    "no_anomaly_desc": "Tous les bilans financiers et certificats HSE sont à jour.",
     "financial_warnings_title": "Avertissements financiers",
     "hse_expired_title": "Certificats de SST expirés",
     "hse_expired_badge": "EXPIRÉ !",
     "hse_expiring_title": "Certificats de SST expirant bientôt",
     "days_left": "jours restants",
     "more_people": "et {{count}} autres personnes...",
-    "no_results": "No results found.",
-    "search_no_results": "No results matching the search criteria were found."
+    "no_results": "Aucun résultat trouvé.",
+    "search_no_results": "Aucun résultat correspondant aux critères de recherche n'a été trouvé."
   },
   "settings.regionalSettings": "Regional Format Settings",
   "settings.customCurrency": "Currency Override",
@@ -707,182 +708,182 @@
   "sidebar.spotlight": "Spotlight : Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_title": "Guide de gestion du personnel",
+    "help_desc": "Le panneau de gestion du personnel vous permet de suivre les feuilles de temps, les gains, les avances et les détails de paiement de vos travailleurs.",
+    "help_h1": "1. Ajouter des travailleurs et Excel",
+    "help_p1": "Ajoutez des travailleurs individuels à l'aide du bouton en haut à droite ou importez une liste de lots en téléchargeant le modèle Excel.",
+    "help_h2": "2. Analyse de groupe",
+    "help_p2": "Analysez les dépenses et le nombre de travailleurs par catégorie de groupe (par exemple, électriciens, ferronniers).",
+    "help_h3": "3. Cartes de pointage et déclarations",
+    "help_p3": "Cliquez sur le nom d'un travailleur pour afficher ses feuilles de temps, calculer de nouveaux soldes et exporter des relevés PDF détaillés."
   },
   "guides": {
     "site": {
-      "title": "Guide de gestion du site",
+      "title": "Guide de gestion de chantier de construction",
       "step1": {
-        "title": "1. Espace de travail actif",
+        "title": "1. Chantier de construction actif",
         "desc": "Sélectionnez un projet à définir comme actif."
       },
       "step2": {
         "title": "2. Emplacement et météo",
-        "desc": "Spécifiez un emplacement pour récupérer automatiquement la météo quotidienne."
+        "desc": "Spécifiez un emplacement pour recevoir automatiquement les prévisions météorologiques quotidiennes."
       },
       "step3": {
         "title": "3. Recherche et pagination",
-        "desc": "Recherchez instantanément parmi les chantiers de construction."
+        "desc": "Recherchez instantanément sur les chantiers de construction."
       }
     },
     "personnel": {
-      "title": "Guide du Personnel",
+      "title": "Guide de gestion du personnel",
       "step1": {
-        "title": "1. Ajouter et Excel",
-        "desc": "Utilisez le modèle Excel pour un ajout en masse."
+        "title": "1. Ajouter du personnel et Excel",
+        "desc": "Utilisez le modèle Excel pour télécharger une liste en masse."
       },
       "step2": {
         "title": "2. Analyse de groupe",
-        "desc": "Analyser les dépenses selon la catégorie de groupe."
+        "desc": "Analysez les dépenses par catégorie de groupe."
       },
       "step3": {
-        "title": "3. Feuilles de temps et relevés",
-        "desc": "Cliquez sur le nom pour voir la feuille de temps."
+        "title": "3. Carte de pointage et relevé de compte",
+        "desc": "Cliquez sur le nom pour voir la partition."
       },
       "step4": {
-        "title": "4. Gestion des Congés",
-        "desc": "Enregistrez les jours où le personnel est en congé ou en arrêt maladie."
+        "title": "4. Gestion des autorisations",
+        "desc": "Enregistrez les jours où le personnel est en arrêt maladie ou en congé."
       }
     },
     "quantity": {
       "title": "Guide de production",
       "step1": {
-        "title": "1. Dossiers",
-        "desc": "Production quotidienne."
+        "title": "1. Dossiers de production",
+        "desc": "Enregistrez la production quotidienne."
       },
       "step2": {
-        "title": "2. Archives",
-        "desc": "Notes."
+        "title": "2. Archives et détails",
+        "desc": "Écrivez des notes pour conserver une archive chronologique."
       },
       "step3": {
-        "title": "3. Recherche",
-        "desc": "Filtres."
+        "title": "3. Recherche et filtres",
+        "desc": "Filtrer par plage de dates ou par unité."
       }
     },
     "delivery": {
-      "title": "Guide de livraison",
+      "title": "Guide des bons de livraison",
       "step1": {
-        "title": "1. Fournisseur",
-        "desc": "Fournisseur."
+        "title": "1. Fournisseur et matériel",
+        "desc": "Enregistrez les noms des fournisseurs et des matériaux."
       },
       "step2": {
-        "title": "2. Photos",
-        "desc": "Photos."
+        "title": "2. Documenter les photos",
+        "desc": "Téléchargez des photos du bon de livraison pour les archives numériques."
       },
       "step3": {
-        "title": "3. Recherche",
-        "desc": "Recherche."
+        "title": "3. Recherche intelligente",
+        "desc": "Recherchez des numéros de bons de livraison ou des fournisseurs."
       }
     },
     "journal": {
-      "title": "Guide du journal",
+      "title": "Guide des revues",
       "step1": {
         "title": "1. Météo",
-        "desc": "Météo."
+        "desc": "Enregistrez la météo quotidienne et l’état général."
       },
       "step2": {
-        "title": "2. Journal",
-        "desc": "Événements."
+        "title": "2. Chronologie",
+        "desc": "Enregistrez les événements importants dans l’ordre."
       },
       "step3": {
-        "title": "3. Historique",
-        "desc": "Historique."
+        "title": "3. Histoire",
+        "desc": "Parcourez facilement les jours précédents."
       }
     },
     "quality": {
-      "title": "Guide de qualité",
+      "title": "Guide Qualité",
       "step1": {
         "title": "1. Statuts des rapports",
-        "desc": "Mettre à jour une fois résolu."
+        "desc": "Mettez à jour le statut lorsque le problème est résolu."
       },
       "step2": {
         "title": "2. Preuve visuelle",
-        "desc": "Ajouter des photos."
+        "desc": "Incluez des photos de tout problème détecté."
       },
       "step3": {
         "title": "3. Filtrage",
-        "desc": "Filtrer les problèmes ouverts."
+        "desc": "Filtrez pour suivre les problèmes ouverts."
       }
     },
     "subcontractor": {
       "title": "Guide du sous-traitant",
       "step1": {
         "title": "1. Salaire journalier",
-        "desc": "Suivre les salaires."
+        "desc": "Gardez une trace des salaires quotidiens des sous-traitants."
       },
       "step2": {
-        "title": "2. Recherche et filtrage",
-        "desc": "Rechercher dans la liste."
+        "title": "2. Rechercher et filtrer",
+        "desc": "Recherchez dans la liste des sous-traitants."
       },
       "step3": {
-        "title": "3. Mettre à jour",
-        "desc": "Mettre à jour à tout moment."
+        "title": "3. Mettre à jour et modifier",
+        "desc": "Mettez à jour les journaux quotidiens à tout moment."
       }
     },
     "media": {
       "title": "Guide des médias",
       "step1": {
         "title": "1. Chronologie visuelle",
-        "desc": "Examinez les images chronologiquement."
+        "desc": "Examinez les images de chantier de construction par ordre chronologique."
       },
       "step2": {
         "title": "2. Détails rapides",
-        "desc": "Cliquez sur la photo pour la voir en taille réelle."
+        "desc": "Cliquez sur n'importe quelle photo pour l'afficher en taille réelle."
       },
       "step3": {
         "title": "3. Filtres de catégorie",
-        "desc": "Filtrer par bon de livraison ou rapports de qualité."
+        "desc": "Filtrez par bon de livraison ou rapports qualité."
       }
     },
     "cash": {
-      "title": "Guide de gestion de caisse",
+      "title": "Guide de gestion du coffre-fort",
       "step1": {
-        "title": "1. Revenus/Dépenses",
-        "desc": "Enregistrer les revenus et dépenses."
+        "title": "1. Registres des revenus/dépenses",
+        "desc": "Enregistrez les revenus et les dépenses."
       },
       "step2": {
-        "title": "2. Statut financier mensuel",
-        "desc": "Voir le flux de trésorerie mensuel et le solde."
+        "title": "2. Situation financière mensuelle",
+        "desc": "Consultez les flux de trésorerie et le solde mensuels."
       },
       "step3": {
-        "title": "3. Exportation",
-        "desc": "Télécharger les transactions en PDF ou Excel."
+        "title": "3. Exporter",
+        "desc": "Téléchargez les transactions au format PDF ou Excel."
       }
     },
     "recycle": {
-      "title": "Guide de la Corbeille",
+      "title": "Guide des déchets",
       "step1": {
-        "desc": "Les éléments supprimés sont listés ici.",
+        "desc": "Les enregistrements supprimés sont répertoriés ici avec suppression logicielle.",
         "title": "Comment ça marche ?"
       },
       "step2": {
-        "title": "Restauration",
-        "desc": "Utilisez le bouton restaurer pour récupérer."
+        "title": "Récupération de données",
+        "desc": "Utilisez le bouton de restauration pour récupérer les enregistrements."
       },
       "step3": {
-        "title": "Projets",
-        "desc": "Filtrez votre corbeille par projet."
+        "title": "Séparation du projet",
+        "desc": "Filtrez votre corbeille par projets."
       }
     },
     "production": {
       "step1": {
-        "title": "1. Dossiers",
-        "desc": "Production quotidienne."
+        "title": "1. Dossiers de production",
+        "desc": "Enregistrez la production quotidienne."
       },
       "step2": {
-        "title": "2. Archives",
-        "desc": "Notes."
+        "title": "2. Archives et détails",
+        "desc": "Écrivez des notes pour conserver une archive chronologique."
       },
       "step3": {
-        "title": "3. Recherche",
-        "desc": "Filtres."
+        "title": "3. Recherche et filtres",
+        "desc": "Filtrer par plage de dates ou par unité."
       },
       "title": "Guide de production"
     }
@@ -900,10 +901,10 @@
     "id_tc": "ID/Numéro"
   },
   "recycle": {
-    "search": "Search...",
-    "allRecords": "All Records",
-    "allRecordTypes": "All Record Types",
-    "allProjects": "All Projects",
+    "search": "Recherche...",
+    "allRecords": "Tous les enregistrements",
+    "allRecordTypes": "Tous les types d'enregistrement",
+    "allProjects": "Tous les projets",
     "startDate": "Date de début",
     "endDate": "Date de fin",
     "tableRecordType": "Type d'enregistrement",
@@ -913,29 +914,56 @@
     "tableAction": "Action",
     "title": "Corbeille",
     "guide": {
-      "title": "Recycle Bin Guide",
-      "intro": "Deleted records are soft-deleted and listed here."
+      "title": "Guide de la corbeille",
+      "intro": "Les enregistrements supprimés sont supprimés de manière logicielle et répertoriés ici.",
+      "how_it_works_title": "Comment ça marche ?",
+      "how_it_works_desc": "Lorsque vous supprimez un enregistrement dans le système, il n’est pas définitivement effacé. Au lieu de cela, il est supprimé de manière logicielle et répertorié dans cette corbeille.",
+      "restore_title": "Restauration des données :",
+      "restore_desc": "Cliquez sur le bouton \"Restaurer\" pour récupérer l'enregistrement en quelques secondes. Les éléments restaurés restent dans la corbeille sous forme d'enregistrements en lecture seule/passifs à des fins de traçabilité.",
+      "project_isolation_title": "Séparation du projet :",
+      "project_isolation_desc": "Chaque enregistrement affiche le projet auquel il appartient. Utilisez le filtre de projet en haut pour garder votre corbeille organisée.",
+      "date_filter_title": "Filtres de dates et recherche :",
+      "date_filter_desc": "Vous pouvez rechercher et filtrer les enregistrements supprimés par date, type ou titre de suppression."
     },
     "allRecordsOption": "Tous les enregistrements",
     "onlyDeleted": "Uniquement supprimés",
     "onlyRestored": "Uniquement restaurés",
     "allRecordTypesOption": "Tous les types d'enregistrement",
-    "type": {
-      "personnel": "Dossier du personnel",
-      "cash": "Transaction en espèces",
-      "delivery": "Bon de livraison / Matériel",
-      "journal": "Journal quotidien",
-      "quality": "Rapport de contrôle qualité",
-      "subcontractor": "Registre des sous-traitants",
-      "project": "Dossier du projet",
-      "worker_leaves": "Congé du personnel"
-    },
+    "type": "Type d'enregistrement",
     "allProjectsOption": "Tous les projets",
     "desc": "Listez les enregistrements supprimés ici et restaurez-les.",
     "restore_confirm_title": "Confirmation de Restauration",
     "restore_confirm_msg": "Êtes-vous sûr de vouloir restaurer cet enregistrement ? Il sera replacé à son emplacement d'origine.",
     "restore_error": "Erreur de restauration :",
-    "leave_title": "{{type}} Quitter ({{start}} - {{end}})"
+    "leave_title": "{{type}} Quitter ({{start}} - {{end}})",
+    "content": "Contenu / Titre",
+    "deletedAt": "Supprimé à",
+    "emptyState": "Aucun enregistrement supprimé trouvé.",
+    "itemType": {
+      "worker": "Dossier personnel",
+      "transaction": "Transaction en espèces",
+      "material": "Bon de livraison / Matériel",
+      "journal": "Journal quotidien",
+      "quality": "Rapport de contrôle qualité",
+      "subcontractor": "Registre du grand livre du sous-traitant",
+      "project": "Dossier de projet"
+    },
+    "searchPlaceholder": "Recherche...",
+    "searchAll": "Rechercher partout",
+    "allTypes": "Tous les types d'enregistrement",
+    "hideRestored": "Masquer restauré",
+    "showRestored": "Afficher restauré",
+    "project": "Projet / Site",
+    "deletedProjectShort": "Supprimé",
+    "guideTitle": "Informations",
+    "restoreStatus": {
+      "all": "Tous les enregistrements",
+      "onlyDeleted": "Seulement supprimé",
+      "onlyRestored": "Seulement restauré"
+    },
+    "startDateLabel": "Date de début",
+    "endDateLabel": "Date de fin",
+    "dateOrderError": "La date de début ne peut pas être postérieure à la date de fin."
   },
   "global": {
     "spotlight": "Recherche : Ctrl + K",
@@ -952,7 +980,7 @@
   },
   "sidebar": {
     "recycleBin": "Corbeille",
-    "spotlight": "Spotlight"
+    "spotlight": "Mettre en lumière"
   },
   "anomaly": {
     "noAnomalies": "Aucune anomalie",
@@ -1007,7 +1035,7 @@
   "recycle_page_desc": "Listez ici les enregistrements supprimés et restaurez-les à leur place.",
   "sidebar_recycle_btn": "Corbeille",
   "__dummy_to_fix_json": {
-    "dummy": "dummy"
+    "dummy": "factice"
   },
   "dashboard.edit": "Modifier",
   "common.edit": "Modifier",
@@ -1034,7 +1062,7 @@
   "spotlight_faq_1_desc": "Entrées - Sorties. Les avances sont des sorties automatiques.",
   "spotlight_faq_2_label": "Comment faire une sauvegarde (Restauration) ?",
   "spotlight_faq_2_desc": "En glissant-déposant la sauvegarde .sqlite dans Paramètres.",
-  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "sidebar_spotlight": "Pleins feux : Ctrl + K",
   "multiplier": "Multiplicateur",
   "settings_logs": {
     "error_read": "Échec de la lecture des journaux :"

@@ -718,171 +718,171 @@
   },
   "guides": {
     "site": {
-      "title": "Guida alla gestione del sito",
+      "title": "Guida alla gestione del cantiere",
       "step1": {
-        "title": "1. Area di lavoro attiva",
+        "title": "1. Cantiere attivo",
         "desc": "Seleziona un progetto da impostare come attivo."
       },
       "step2": {
         "title": "2. Posizione e meteo",
-        "desc": "Specifica una posizione per recuperare automaticamente il meteo giornaliero."
+        "desc": "Specifica una posizione per ricevere automaticamente le previsioni meteo giornaliere."
       },
       "step3": {
-        "title": "3. Ricerca e impaginazione",
-        "desc": "Cerca istantaneamente tra i cantieri."
+        "title": "3. Ricerca e cercapersone",
+        "desc": "Cerca istantaneamente nei cantieri."
       }
     },
     "personnel": {
-      "title": "Personnel Guide",
+      "title": "Guida alla gestione del personale",
       "step1": {
-        "title": "1. Add Worker and Excel",
-        "desc": "Use the Excel template to upload a bulk list."
+        "title": "1. Aggiungi Staff ed Excel",
+        "desc": "Utilizza il modello Excel per caricare in blocco un elenco."
       },
       "step2": {
         "title": "2. Analisi di gruppo",
-        "desc": "Analizza le spese per categoria di gruppo."
+        "desc": "Analizzare le spese per categoria di gruppo."
       },
       "step3": {
-        "title": "3. Fogli ore e dichiarazioni",
-        "desc": "Fai clic sul nome per visualizzare il foglio ore."
+        "title": "3. Scorecard ed estratto conto",
+        "desc": "Clicca sul nome per visualizzare il punteggio."
       },
       "step4": {
-        "title": "4. Gestione Permessi",
-        "desc": "Registra i giorni in cui il personale è in permesso o in congedo per malattia."
+        "title": "4. Gestione dei permessi",
+        "desc": "Registrare i giorni in cui il personale è in congedo per malattia o in congedo."
       }
     },
     "quantity": {
       "title": "Guida alla produzione",
       "step1": {
-        "title": "1. Record",
-        "desc": "Record."
+        "title": "1. Documenti di produzione",
+        "desc": "Registra la produzione giornaliera."
       },
       "step2": {
-        "title": "2. Archivio",
-        "desc": "Archivio."
+        "title": "2. Archivio e dettagli",
+        "desc": "Scrivere appunti per mantenere un archivio cronologico."
       },
       "step3": {
-        "title": "3. Ricerca",
-        "desc": "Filtri."
+        "title": "3. Ricerca e filtri",
+        "desc": "Filtra per intervallo di date o unità."
       }
     },
     "delivery": {
-      "title": "Guida alle consegne",
+      "title": "Guida alla bolla di consegna",
       "step1": {
-        "title": "1. Fornitore",
-        "desc": "Fornitore."
+        "title": "1. Fornitore e Materiale",
+        "desc": "Registrare i nomi dei fornitori e dei materiali."
       },
       "step2": {
-        "title": "2. Foto",
-        "desc": "Foto."
+        "title": "2. Foto di documenti",
+        "desc": "Carica le foto delle bolle di consegna per l'archivio digitale."
       },
       "step3": {
-        "title": "3. Ricerca",
-        "desc": "Ricerca."
+        "title": "3. Ricerca intelligente",
+        "desc": "Cerca numeri di bolle di consegna o fornitori."
       }
     },
     "journal": {
       "title": "Guida al giornale",
       "step1": {
         "title": "1. Meteo",
-        "desc": "Meteo."
+        "desc": "Registra il meteo giornaliero e le condizioni generali."
       },
       "step2": {
-        "title": "2. Registro",
-        "desc": "Registro."
+        "title": "2. Registrazione cronologica",
+        "desc": "Registra eventi importanti in ordine."
       },
       "step3": {
-        "title": "3. Cronologia",
-        "desc": "Cronologia."
+        "title": "3. Storia",
+        "desc": "Sfoglia facilmente i giorni precedenti."
       }
     },
     "quality": {
       "title": "Guida alla qualità",
       "step1": {
-        "title": "1. Stati dei rapporti",
-        "desc": "Aggiorna quando risolto."
+        "title": "1. Segnalazione degli stati",
+        "desc": "Aggiorna lo stato quando il problema viene risolto."
       },
       "step2": {
         "title": "2. Prove visive",
-        "desc": "Aggiungi foto."
+        "desc": "Includi foto di eventuali problemi rilevati."
       },
       "step3": {
-        "title": "3. Filtri",
-        "desc": "Filtra per problemi aperti."
+        "title": "3. Filtraggio",
+        "desc": "Filtra per tenere traccia dei problemi aperti."
       }
     },
     "subcontractor": {
-      "title": "Guida al subappaltatore",
+      "title": "Guida per i subappaltatori",
       "step1": {
         "title": "1. Salario giornaliero",
-        "desc": "Tieni traccia dei salari."
+        "desc": "Tieni traccia della retribuzione giornaliera dei subappaltatori."
       },
       "step2": {
-        "title": "2. Ricerca e filtro",
-        "desc": "Cerca nella lista."
+        "title": "2. Cerca e filtra",
+        "desc": "Cerca nell'elenco dei subappaltatori."
       },
       "step3": {
-        "title": "3. Aggiornamento",
-        "desc": "Aggiorna in qualsiasi momento."
+        "title": "3. Aggiorna e modifica",
+        "desc": "Aggiorna i diari giornalieri in qualsiasi momento."
       }
     },
     "media": {
       "title": "Guida multimediale",
       "step1": {
         "title": "1. Cronologia visiva",
-        "desc": "Esamina le immagini in ordine cronologico."
+        "desc": "Esamina le immagini del cantiere in ordine cronologico."
       },
       "step2": {
         "title": "2. Dettagli rapidi",
-        "desc": "Clicca su una foto per vederla a grandezza naturale."
+        "desc": "Fare clic su qualsiasi foto per visualizzarla a schermo intero."
       },
       "step3": {
         "title": "3. Filtri di categoria",
-        "desc": "Filtra per documento di trasporto o rapporti di qualità."
+        "desc": "Filtra per bolla di consegna o rapporti sulla qualità."
       }
     },
     "cash": {
-      "title": "Guida alla gestione di cassa",
+      "title": "Guida alla gestione del deposito",
       "step1": {
-        "title": "1. Entrate/Uscite",
+        "title": "1. Registrazioni entrate/spese",
         "desc": "Registra entrate e uscite."
       },
       "step2": {
-        "title": "2. Stato finanziario mensile",
-        "desc": "Visualizza flusso di cassa mensile e saldo."
+        "title": "2. Situazione finanziaria mensile",
+        "desc": "Visualizza il flusso di cassa mensile e il saldo."
       },
       "step3": {
-        "title": "3. Esportazione",
-        "desc": "Scarica transazioni come PDF o Excel."
+        "title": "3. Esporta",
+        "desc": "Scarica le transazioni in formato PDF o Excel."
       }
     },
     "recycle": {
-      "title": "Recycle Bin Guide",
+      "title": "Guida ai rifiuti",
       "step1": {
-        "title": "How it Works?",
-        "desc": "Deleted records are soft-deleted and listed here."
+        "title": "Come funziona?",
+        "desc": "I record eliminati vengono elencati qui con l'eliminazione temporanea."
       },
       "step2": {
-        "title": "Restoring Data",
-        "desc": "Use the restore button to recover records."
+        "title": "Recupero dati",
+        "desc": "Utilizzare il pulsante di ripristino per ripristinare i record."
       },
       "step3": {
-        "title": "Project Separation",
-        "desc": "Filter your recycle bin by project."
+        "title": "Separazione del progetto",
+        "desc": "Filtra il tuo cestino per progetti."
       }
     },
     "production": {
       "step1": {
-        "title": "1. Record",
-        "desc": "Record."
+        "title": "1. Documenti di produzione",
+        "desc": "Registra la produzione giornaliera."
       },
       "step2": {
-        "title": "2. Archivio",
-        "desc": "Archivio."
+        "title": "2. Archivio e dettagli",
+        "desc": "Scrivere appunti per mantenere un archivio cronologico."
       },
       "step3": {
-        "title": "3. Ricerca",
-        "desc": "Filtri."
+        "title": "3. Ricerca e filtri",
+        "desc": "Filtra per intervallo di date o unità."
       },
       "title": "Guida alla produzione"
     }
