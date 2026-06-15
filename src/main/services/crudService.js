@@ -1,7 +1,9 @@
 const logger = require('../logger');
 
-function generateHumanMessage(table_name, action, old_values, new_values) {
-  const tMap = {
+function generateHumanMessage(table_name, action, old_values, new_values, lang = 'tr') {
+  const isTr = lang === 'tr';
+
+  const tMap = isTr ? {
     'workers': 'Personel',
     'worker_groups': 'Grup',
     'timesheets': 'Puantaj',
@@ -15,47 +17,185 @@ function generateHumanMessage(table_name, action, old_values, new_values) {
     'daily_journals': 'Günlük Jurnal',
     'quality_reports': 'Kalite Tutanak',
     'subcontractor_ledgers': 'Taşeron Cari'
+  } : {
+    'workers': 'Personnel',
+    'worker_groups': 'Group',
+    'timesheets': 'Timesheet',
+    'transactions': 'Transaction/Advance',
+    'cash_register': 'Cash Entry',
+    'work_types': 'Work Type',
+    'app_settings': 'System Setting',
+    'projects': 'Project',
+    'production_records': 'Production Record',
+    'materials': 'Material Receipt',
+    'daily_journals': 'Daily Journal',
+    'quality_reports': 'Quality Report',
+    'subcontractor_ledgers': 'Subcontractor Ledger'
   };
+
   const tName = tMap[table_name] || table_name;
   
   if (action === 'CREATE') {
-    if (table_name === 'workers') return `Yeni personel eklendi: ${new_values.full_name}`;
-    if (table_name === 'transactions') return `Yeni avans/işlem eklendi. Tutar: ${new_values.amount} TL`;
-    if (table_name === 'cash_register') return `Kasaya yeni işlem girildi. Tutar: ${new_values.amount} TL (${new_values.type})`;
-    if (table_name === 'timesheets') return `Yeni puantaj girildi. Tarih: ${new_values.work_date}, Tutar: ${new_values.earned_amount} TL`;
-    return `Sisteme yeni bir ${tName} kaydı eklendi.`;
+    if (table_name === 'workers') return isTr ? `Yeni personel eklendi: ${new_values.full_name}` : `New personnel added: ${new_values.full_name}`;
+    if (table_name === 'transactions') return isTr ? `Yeni avans/işlem eklendi. Tutar: ${new_values.amount} TL` : `New transaction/advance added. Amount: ${new_values.amount} TL`;
+    if (table_name === 'cash_register') return isTr ? `Kasaya yeni işlem girildi. Tutar: ${new_values.amount} TL (${new_values.type})` : `New cash entry added. Amount: ${new_values.amount} TL (${new_values.type})`;
+    if (table_name === 'timesheets') return isTr ? `Yeni puantaj girildi. Tarih: ${new_values.work_date}, Tutar: ${new_values.earned_amount} TL` : `New timesheet entry added. Date: ${new_values.work_date}, Earned: ${new_values.earned_amount} TL`;
+    if (table_name === 'projects') return isTr ? `Yeni şantiye eklendi: ${new_values.name}${new_values.location ? ' (' + new_values.location + ')' : ''}` : `New project added: ${new_values.name}${new_values.location ? ' (' + new_values.location + ')' : ''}`;
+    if (table_name === 'production_records') return isTr ? `Yeni imalat kaydı eklendi: ${new_values.item_name} - ${new_values.quantity} ${new_values.unit}` : `New production record added: ${new_values.item_name} - ${new_values.quantity} ${new_values.unit}`;
+    if (table_name === 'materials') return isTr ? `Yeni malzeme girişi yapıldı: ${new_values.supplier} - ${new_values.material_type} (${new_values.quantity} ${new_values.unit})` : `New material receipt added: ${new_values.supplier} - ${new_values.material_type} (${new_values.quantity} ${new_values.unit})`;
+    if (table_name === 'daily_journals') return isTr ? `Günlük jurnal oluşturuldu. Tarih: ${new_values.journal_date}, Sıcaklık: ${new_values.weather_temp || 0}°C (${new_values.weather_desc || ''})` : `Daily journal created. Date: ${new_values.journal_date}, Temperature: ${new_values.weather_temp || 0}°C (${new_values.weather_desc || ''})`;
+    if (table_name === 'quality_reports') return isTr ? `Yeni kalite tutanağı eklendi: ${new_values.title} (Durum: ${new_values.status})` : `New quality report added: ${new_values.title} (Status: ${new_values.status})`;
+    if (table_name === 'subcontractor_ledgers') return isTr ? `Yeni taşeron eklendi: ${new_values.name} (${new_values.service_type})` : `New subcontractor added: ${new_values.name} (${new_values.service_type})`;
+    if (table_name === 'worker_groups') return isTr ? `Yeni personel grubu eklendi: ${new_values.name}` : `New personnel group added: ${new_values.name}`;
+    return isTr ? `Sisteme yeni bir ${tName} kaydı eklendi.` : `New ${tName} record added to system.`;
   }
+  
   if (action === 'UPDATE') {
-    if (table_name === 'workers') return `${new_values.full_name || (old_values && old_values.full_name) || 'Personel'} bilgileri güncellendi.`;
-    if (table_name === 'app_settings') return `Sistem ayarı güncellendi. Yeni Değer: ${new_values.setting_value}`;
-    return `Bir ${tName} kaydı güncellendi.`;
+    if (table_name === 'workers') {
+      const name = new_values.full_name || (old_values && old_values.full_name) || (isTr ? 'Personel' : 'Personnel');
+      return isTr ? `${name} bilgileri güncellendi.` : `Personnel details updated: ${name}`;
+    }
+    if (table_name === 'app_settings') return isTr ? `Sistem ayarı güncellendi. Yeni Değer: ${new_values.setting_value}` : `System setting updated. New Value: ${new_values.setting_value}`;
+    if (table_name === 'projects') {
+      const oldName = old_values ? old_values.name : '';
+      const oldLoc = old_values && old_values.location ? ` (${old_values.location})` : '';
+      const newName = new_values.name || oldName;
+      const newLoc = new_values.location !== undefined ? (new_values.location ? ` (${new_values.location})` : '') : oldLoc;
+      return isTr 
+        ? `Şantiye güncellendi: ${oldName}${oldLoc} -> ${newName}${newLoc}`
+        : `Project updated: ${oldName}${oldLoc} -> ${newName}${newLoc}`;
+    }
+    if (table_name === 'production_records') {
+      const name = new_values.item_name || (old_values && old_values.item_name) || '';
+      const qty = new_values.quantity !== undefined ? new_values.quantity : (old_values ? old_values.quantity : '');
+      const unit = new_values.unit || (old_values && old_values.unit) || '';
+      return isTr
+        ? `İmalat kaydı güncellendi: ${name} (${qty} ${unit})`
+        : `Production record updated: ${name} (${qty} ${unit})`;
+    }
+    if (table_name === 'materials') {
+      const supplier = new_values.supplier || (old_values && old_values.supplier) || '';
+      const mType = new_values.material_type || (old_values && old_values.material_type) || '';
+      const qty = new_values.quantity !== undefined ? new_values.quantity : (old_values ? old_values.quantity : '');
+      const unit = new_values.unit || (old_values && old_values.unit) || '';
+      return isTr
+        ? `Malzeme girişi güncellendi: ${supplier} - ${mType} (${qty} ${unit})`
+        : `Material receipt updated: ${supplier} - ${mType} (${qty} ${unit})`;
+    }
+    if (table_name === 'daily_journals') {
+      const date = new_values.journal_date || (old_values && old_values.journal_date) || '';
+      return isTr ? `Günlük jurnal güncellendi. Tarih: ${date}` : `Daily journal updated. Date: ${date}`;
+    }
+    if (table_name === 'quality_reports') {
+      const title = new_values.title || (old_values && old_values.title) || '';
+      const status = new_values.status || (old_values && old_values.status) || '';
+      return isTr
+        ? `Kalite tutanağı güncellendi: ${title} (Durum: ${status})`
+        : `Quality report updated: ${title} (Status: ${status})`;
+    }
+    if (table_name === 'subcontractor_ledgers') {
+      const name = new_values.name || (old_values && old_values.name) || '';
+      const type = new_values.service_type || (old_values && old_values.service_type) || '';
+      return isTr
+        ? `Taşeron bilgileri güncellendi: ${name} (${type})`
+        : `Subcontractor details updated: ${name} (${type})`;
+    }
+    if (table_name === 'worker_groups') {
+      const oldName = old_values ? old_values.name : '';
+      const newName = new_values.name || oldName;
+      return isTr
+        ? `Personel grubu güncellendi: ${oldName} -> ${newName}`
+        : `Personnel group updated: ${oldName} -> ${newName}`;
+    }
+    if (table_name === 'timesheets') {
+      const date = new_values.work_date || (old_values && old_values.work_date) || '';
+      const earned = new_values.earned_amount !== undefined ? new_values.earned_amount : (old_values ? old_values.earned_amount : 0);
+      return isTr
+        ? `Puantaj güncellendi. Tarih: ${date}, Tutar: ${earned} TL`
+        : `Timesheet updated. Date: ${date}, Amount: ${earned} TL`;
+    }
+    return isTr ? `Bir ${tName} kaydı güncellendi.` : `A ${tName} record was updated.`;
   }
+  
   if (action === 'DELETE') {
-    if (table_name === 'workers') return `${old_values.full_name} isimli personel silindi.`;
-    if (table_name === 'transactions') return `Bir avans/işlem iptal edildi. Tutar: ${old_values.amount} TL`;
-    if (table_name === 'cash_register') return `Kasadan bir işlem iptal edildi. Tutar: ${old_values.amount} TL (${old_values.type})`;
-    if (table_name === 'timesheets') return `${old_values.work_date} tarihli puantaj iptal edildi. Tutar: ${old_values.earned_amount} TL`;
-    return `Bir ${tName} kaydı silindi.`;
+    if (table_name === 'workers') return isTr ? `${old_values.full_name} isimli personel silindi.` : `Personnel deleted: ${old_values.full_name}`;
+    if (table_name === 'transactions') return isTr ? `Bir avans/işlem iptal edildi. Tutar: ${old_values.amount} TL` : `Transaction/advance cancelled. Amount: ${old_values.amount} TL`;
+    if (table_name === 'cash_register') return isTr ? `Kasadan bir işlem iptal edildi. Tutar: ${old_values.amount} TL (${old_values.type})` : `Cash entry cancelled. Amount: ${old_values.amount} TL (${old_values.type})`;
+    if (table_name === 'timesheets') return isTr ? `${old_values.work_date} tarihli puantaj iptal edildi. Tutar: ${old_values.earned_amount} TL` : `Timesheet cancelled for date ${old_values.work_date}. Amount: ${old_values.earned_amount} TL`;
+    if (table_name === 'projects') return isTr ? `Şantiye silindi: ${old_values.name}${old_values.location ? ' (' + old_values.location + ')' : ''}` : `Project deleted: ${old_values.name}${old_values.location ? ' (' + old_values.location + ')' : ''}`;
+    if (table_name === 'production_records') return isTr ? `İmalat kaydı silindi: ${old_values.item_name} - ${old_values.quantity} ${old_values.unit}` : `Production record deleted: ${old_values.item_name} - ${old_values.quantity} ${old_values.unit}`;
+    if (table_name === 'materials') return isTr ? `Malzeme girişi silindi: ${old_values.supplier} - ${old_values.material_type} (${old_values.quantity} ${old_values.unit})` : `Material receipt deleted: ${old_values.supplier} - ${old_values.material_type} (${old_values.quantity} ${old_values.unit})`;
+    if (table_name === 'daily_journals') return isTr ? `Günlük jurnal silindi. Tarih: ${old_values.journal_date}` : `Daily journal deleted. Date: ${old_values.journal_date}`;
+    if (table_name === 'quality_reports') return isTr ? `Kalite tutanağı silindi: ${old_values.title}` : `Quality report deleted: ${old_values.title}`;
+    if (table_name === 'subcontractor_ledgers') return isTr ? `Taşeron silindi: ${old_values.name}` : `Subcontractor deleted: ${old_values.name}`;
+    if (table_name === 'worker_groups') return isTr ? `Personel grubu silindi: ${old_values.name}` : `Personnel group deleted: ${old_values.name}`;
+    return isTr ? `Bir ${tName} kaydı silindi.` : `A ${tName} record was deleted.`;
   }
-  return `${action} işlemi gerçekleşti (${tName}).`;
+  return isTr ? `${action} işlemi gerçekleşti (${tName}).` : `${action} operation completed on (${tName}).`;
 }
 
-// Helper function to log audit
 async function logAudit(db, table_name, record_id, action, old_values = null, new_values = null) {
   try {
+    let project_id = null;
+    if (table_name === 'projects') {
+      project_id = record_id;
+    } else if (new_values && new_values.project_id) {
+      project_id = new_values.project_id;
+    } else if (old_values && old_values.project_id) {
+      project_id = old_values.project_id;
+    } else {
+      const tablesWithProject = ['workers', 'timesheets', 'transactions', 'cash_register', 'production_records', 'materials', 'daily_journals', 'quality_reports', 'subcontractor_ledgers'];
+      if (tablesWithProject.includes(table_name) && record_id) {
+        try {
+          const row = await db.get(`SELECT project_id FROM ${table_name} WHERE id = ?`, [record_id]);
+          if (row && row.project_id) {
+            project_id = row.project_id;
+          }
+        } catch (err) {
+          // ignore
+        }
+      }
+    }
+
     await db.run(
-      'INSERT INTO audit_logs (table_name, record_id, action, old_values, new_values) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO audit_logs (table_name, record_id, action, old_values, new_values, project_id) VALUES (?, ?, ?, ?, ?, ?)',
       [
         table_name, 
         record_id, 
         action, 
         old_values ? JSON.stringify(old_values) : null, 
-        new_values ? JSON.stringify(new_values) : null
+        new_values ? JSON.stringify(new_values) : null,
+        project_id
       ]
     );
 
-    const humanMsg = generateHumanMessage(table_name, action, old_values, new_values);
-    logger.info(`[DB ${action}] [${table_name}] ${humanMsg}`);
+    let lang = 'tr';
+    try {
+      const langSetting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'language'");
+      if (langSetting && langSetting.setting_value) {
+        lang = langSetting.setting_value;
+      }
+    } catch (dbErr) {
+      console.error('Failed to get language setting from DB:', dbErr);
+    }
+
+    let projectNameStr = '';
+    if (project_id) {
+      try {
+        const proj = await db.get('SELECT name FROM projects WHERE id = ?', [project_id]);
+        if (proj && proj.name) {
+          projectNameStr = proj.name;
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+    const isTr = lang === 'tr';
+    const projLabel = isTr ? 'Şantiye' : 'Project';
+    const projPart = projectNameStr ? ` [${projLabel}: ${projectNameStr}]` : '';
+
+    const humanMsg = generateHumanMessage(table_name, action, old_values, new_values, lang);
+    logger.info(`[DB ${action}] [${table_name}]${projPart} ${humanMsg}`);
 
   } catch (e) {
     console.error('Audit log error:', e);
@@ -83,6 +223,7 @@ async function readRecord(db, table, conditions = {}) {
 
   // Add default ordering
   if (table === 'workers') query += ' ORDER BY full_name ASC';
+  else if (table === 'projects') query += ' ORDER BY sort_order ASC, id DESC';
   else query += ' ORDER BY id DESC';
 
   const rows = await db.all(query, params);

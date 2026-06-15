@@ -7,6 +7,7 @@ const { app } = require('electron');
 
 let serverInstance = null;
 let currentPort = 5001;
+let currentLang = 'tr';
 
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
@@ -21,7 +22,11 @@ function getLocalIP() {
   return 'localhost';
 }
 
-function startLANServer(mainWindow) {
+function startLANServer(mainWindow, lang) {
+  if (lang) {
+    currentLang = lang;
+  }
+
   if (serverInstance) {
     return { success: true, port: currentPort, ip: getLocalIP() };
   }
@@ -54,12 +59,30 @@ function startLANServer(mainWindow) {
   expressApp.get('/', (req, res) => {
     const projectId = req.query.projectId || '';
     const projectName = req.query.projectName || 'Genel';
+    const isTr = currentLang === 'tr';
+
+    // Localized strings
+    const txtTitle = isTr ? 'Şantiye Fotoğraf Yükleyici' : 'Site Photo Uploader';
+    const txtHeader = isTr ? 'Şantiye Fotoğraf Yükle' : 'Upload Site Photo';
+    const txtSite = isTr ? 'Şantiye' : 'Site';
+    const txtTakeChoose = isTr ? '📸 Fotoğraf Çek / Seç' : '📸 Take / Choose Photo';
+    const txtStartUpload = isTr ? 'Yüklemeyi Başlat' : 'Start Upload';
+    
+    // Dynamic JavaScript translation variables for client side
+    const jsCompressing = isTr ? 'Görsel sıkıştırılıyor ve formatı optimize ediliyor...' : 'Compressing image and optimizing format...';
+    const jsUploading = isTr ? 'Yükleniyor...' : 'Uploading...';
+    const jsSuccess = isTr ? '✓ Fotoğraf başarıyla yüklendi!' : '✓ Photo uploaded successfully!';
+    const jsErrorPrefix = isTr ? 'Hata: ' : 'Error: ';
+    const jsConnErrorPrefix = isTr ? 'Bağlantı hatası: ' : 'Connection error: ';
+    const jsErrImageLoad = isTr ? 'Görsel yüklenemedi.' : 'Image could not be loaded.';
+    const jsErrFileRead = isTr ? 'Dosya okunamadı.' : 'File could not be read.';
+
     res.send(`
       <!DOCTYPE html>
       <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Şantiye Fotoğraf Yükleyici</title>
+        <title>${txtTitle}</title>
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -133,15 +156,15 @@ function startLANServer(mainWindow) {
       </head>
       <body>
         <div class="card">
-          <h1>Şantiye Fotoğraf Yükle</h1>
-          <p>Şantiye: <strong style="color:#fff">${projectName}</strong></p>
+          <h1>${txtHeader}</h1>
+          <p>${txtSite}: <strong style="color:#fff">${projectName}</strong></p>
           <form id="uploadForm" enctype="multipart/form-data">
             <label class="file-input-label" id="fileLabel">
-              📸 Fotoğraf Çek / Seç
-              <input type="file" name="photo" accept="image/*" capture="environment" id="fileInput" required />
+              ${txtTakeChoose}
+              <input type="file" name="photo" accept="image/*" id="fileInput" required />
             </label>
             <div id="fileName" style="margin-bottom:1rem;font-size:0.85rem;color:#cbd5e1"></div>
-            <button type="submit" class="btn-submit" id="submitBtn">Yüklemeyi Başlat</button>
+            <button type="submit" class="btn-submit" id="submitBtn">${txtStartUpload}</button>
           </form>
           <div id="loader" style="display:none;"><div class="spinner"></div></div>
           <div class="status" id="statusMsg"></div>
@@ -172,7 +195,7 @@ function startLANServer(mainWindow) {
             fileLabel.style.display = 'none';
             loader.style.display = 'block';
             statusMsg.className = 'status';
-            statusMsg.textContent = 'Görsel sıkıştırılıyor ve formatı optimize ediliyor...';
+            statusMsg.textContent = \`${jsCompressing}\`;
 
             try {
               const compressAndGetBlob = (inputFile) => {
@@ -197,10 +220,10 @@ function startLANServer(mainWindow) {
                         resolve(blob || inputFile);
                       }, 'image/webp', 0.8);
                     };
-                    img.onerror = () => reject(new Error('Görsel yüklenemedi.'));
+                    img.onerror = () => reject(new Error(\`${jsErrImageLoad}\`));
                     img.src = event.target.result;
                   };
-                  reader.onerror = () => reject(new Error('Dosya okunamadı.'));
+                  reader.onerror = () => reject(new Error(\`${jsErrFileRead}\`));
                   reader.readAsDataURL(inputFile);
                 });
               };
@@ -209,7 +232,7 @@ function startLANServer(mainWindow) {
               const formData = new FormData();
               formData.append('photo', webpBlob, 'mobile_photo.webp');
 
-              statusMsg.textContent = 'Yükleniyor...';
+              statusMsg.textContent = \`${jsUploading}\`;
 
               const res = await fetch('/upload?projectId=' + '${projectId}', {
                 method: 'POST',
@@ -219,7 +242,7 @@ function startLANServer(mainWindow) {
               loader.style.display = 'none';
               if (data.success) {
                 statusMsg.className = 'status success';
-                statusMsg.textContent = '✓ Fotoğraf başarıyla yüklendi!';
+                statusMsg.textContent = \`${jsSuccess}\`;
                 setTimeout(() => {
                   fileLabel.style.display = 'inline-block';
                   fileName.textContent = '';
@@ -227,14 +250,14 @@ function startLANServer(mainWindow) {
                 }, 3000);
               } else {
                 statusMsg.className = 'status error';
-                statusMsg.textContent = 'Hata: ' + data.message;
+                statusMsg.textContent = \`${jsErrorPrefix}\` + data.message;
                 submitBtn.style.display = 'block';
                 fileLabel.style.display = 'inline-block';
               }
             } catch (err) {
               loader.style.display = 'none';
               statusMsg.className = 'status error';
-              statusMsg.textContent = 'Bağlantı hatası: ' + err.message;
+              statusMsg.textContent = \`${jsConnErrorPrefix}\` + err.message;
               submitBtn.style.display = 'block';
               fileLabel.style.display = 'inline-block';
             }
@@ -247,8 +270,9 @@ function startLANServer(mainWindow) {
 
   expressApp.post('/upload', upload.single('photo'), (req, res) => {
     try {
+      const isTr = currentLang === 'tr';
       if (!req.file) {
-        return res.status(400).json({ success: false, message: 'Fotoğraf dosyası bulunamadı.' });
+        return res.status(400).json({ success: false, message: isTr ? 'Fotoğraf dosyası bulunamadı.' : 'Photo file not found.' });
       }
 
       const projectId = req.query.projectId || 'default';

@@ -62,9 +62,9 @@ const AnomalyPanel = ({ workers, balances }) => {
     );
   }
 
-  const displayedBalance = negativeBalanceWorkers.slice(0, 10);
-  const displayedExpired = isgExpiredWorkers.slice(0, 10);
-  const displayedApproaching = isgApproachingWorkers.slice(0, 10);
+  const displayedBalance = negativeBalanceWorkers;
+  const displayedExpired = isgExpiredWorkers;
+  const displayedApproaching = isgApproachingWorkers;
 
   const isEmpty = 
     (activeTab === 'all' && negativeBalanceWorkers.length === 0 && isgExpiredWorkers.length === 0 && isgApproachingWorkers.length === 0) ||
@@ -172,11 +172,6 @@ const AnomalyPanel = ({ workers, balances }) => {
                       </span>
                     </div>
                   ))}
-                  {negativeBalanceWorkers.length > 10 && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
-                      {t('anomalies.more_people', 've {{count}} kişi daha...', { count: negativeBalanceWorkers.length - 10 })}
-                    </div>
-                  )}
                 </div>
               </div>
             )}
@@ -216,11 +211,6 @@ const AnomalyPanel = ({ workers, balances }) => {
                       </span>
                     </div>
                   ))}
-                  {isgExpiredWorkers.length > 10 && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
-                      {t('anomalies.more_people', 've {{count}} kişi daha...', { count: isgExpiredWorkers.length - 10 })}
-                    </div>
-                  )}
                 </div>
               </div>
             )}
@@ -260,11 +250,6 @@ const AnomalyPanel = ({ workers, balances }) => {
                       </span>
                     </div>
                   ))}
-                  {isgApproachingWorkers.length > 10 && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
-                      {t('anomalies.more_people', 've {{count}} kişi daha...', { count: isgApproachingWorkers.length - 10 })}
-                    </div>
-                  )}
                 </div>
               </div>
             )}

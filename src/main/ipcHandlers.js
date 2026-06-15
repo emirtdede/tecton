@@ -95,7 +95,7 @@ async function setupHandlers() {
 
   ipcMain.handle('db:read-all-projects', async () => {
     try {
-      return await db.all("SELECT * FROM projects ORDER BY name ASC");
+      return await db.all("SELECT * FROM projects ORDER BY sort_order ASC, name ASC");
     } catch (error) {
       console.error('Error in db:read-all-projects:', error);
       return [];
@@ -200,8 +200,8 @@ async function setupHandlers() {
     return await generateWorkerStatement(db, worker_id, start_date, end_date);
   });
 
-  ipcMain.handle('finance:company-report', async (_, { year, month }) => {
-    return await generateCompanyFinancialSummary(db, year, month);
+  ipcMain.handle('finance:company-report', async (_, { year, month, projectId }) => {
+    return await generateCompanyFinancialSummary(db, year, month, projectId);
   });
 
   ipcMain.handle('finance:group-statement', async (_, { start_date, end_date, project_id }) => {
@@ -334,14 +334,14 @@ async function setupHandlers() {
   });
 
   // --- NEW WEATHER AND MEDIA IPC HANDLERS ---
-  ipcMain.handle('system:get-weather', async (_, { location, lang }) => {
+  ipcMain.handle('system:get-weather', async (_, { location, lang, date }) => {
     try {
       if (!location) {
         return { success: false, message: 'Lokasyon belirtilmedi.' };
       }
       
       const apiKeySetting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'weather_api_key'");
-      const apiKey = apiKeySetting ? apiKeySetting.setting_value : '895284fb665f874747e05a1216616b51'; 
+      const apiKey = apiKeySetting ? apiKeySetting.setting_value : 'c635dd8744d78dfe67964e3fac55137f'; 
       
       const openWeatherLangMap = {
         ar: 'ar',
@@ -366,42 +366,62 @@ async function setupHandlers() {
       };
       const apiLang = openWeatherLangMap[lang] || 'tr';
 
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric&lang=${apiLang}`
-      ).catch(() => null);
-
-      if (!response || !response.ok) {
-        // Fallback to simulated weather if offline or API key invalid
-        const weatherSimulations = {
-          tr: ['Güneşli', 'Parçalı Bulutlu', 'Bulutlu', 'Yağmurlu', 'Rüzgarlı'],
-          en: ['Sunny', 'Partly Cloudy', 'Cloudy', 'Rainy', 'Windy'],
-          ar: ['مشمس', 'غائم جزئيا', 'غائم', 'ممطر', 'عاصف'],
-          cs: ['Slunečno', 'Polojasno', 'Zataženo', 'Deštivo', 'Větrno'],
-          da: ['Solrigt', 'Delvist skyet', 'Overskyet', 'Regnfuldt', 'Blæsende'],
-          de: ['Sonnig', 'Teils bewölkt', 'Bewölkt', 'Regnerisch', 'Windig'],
-          es: ['Soleado', 'Parcialmente nublado', 'Nublado', 'Lluvioso', 'Ventoso'],
-          fr: ['Ensoleillé', 'Partiellement nuageux', 'Nuageux', 'Pluvieux', 'Venteux'],
-          hi: ['धूप', 'आंशिक रूप से बादल छाए रहेंगे', 'बादल छाए रहेंगे', 'बरसात', 'हवादार'],
-          it: ['Soleggiato', 'Parzialmente nuvoloso', 'Nuvoloso', 'Piovoso', 'Ventoso'],
-          ja: ['晴れ', '晴れのち曇り', '曇り', '雨', '風が強い'],
-          ko: ['맑음', '구름 조금', '흐림', '비', '바람 불어'],
-          nl: ['Zonnig', 'Half bewolkt', 'Bewolkt', 'Regenachtig', 'Winderig'],
-          no: ['Solfylt', 'Delvis skyet', 'Overskyet', 'Regnfullt', 'Vindfullt'],
-          pl: ['Słonecznie', 'Częściowo zachmurzenie', 'Pochmurno', 'Deszczowo', 'Wietrznie'],
-          pt: ['Ensolarado', 'Parcialmente nublado', 'Nublado', 'Chuvoso', 'Ventoso'],
-          ru: ['Ясно', 'Переменная облачность', 'Пасмурно', 'Дождливо', 'Ветрено'],
-          sv: ['Soligt', 'Delvis molnigt', 'Mulet', 'Regnigt', 'Blåsigt'],
-          zh: ['晴朗', '多云', '阴天', '下雨', '有风']
-        };
-        const conditions = weatherSimulations[lang] || weatherSimulations['tr'];
-        const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
-        const randomTemp = Math.floor(Math.random() * 15) + 15; // 15-30 degrees
+      let response;
+      try {
+        response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric&lang=${apiLang}`
+        );
+      } catch (networkError) {
         return {
-          success: true,
-          temp: randomTemp,
-          desc: randomCondition,
-          icon: '01d',
-          simulated: true
+          success: false,
+          errorType: 'offline',
+          message: lang === 'tr'
+            ? 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.'
+            : lang === 'hi'
+            ? 'इंटरनेट कनेक्शन नहीं है या मौसम सेवा तक नहीं पहुंचा जा सकता है।'
+            : lang === 'ar'
+            ? 'لا يوجد اتصال بالإنترنت أو لا يمكن الوصول إلى خدمة الطقس.'
+            : 'No internet connection or weather service is unreachable.'
+        };
+      }
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          return {
+            success: false,
+            errorType: 'unauthorized',
+            message: lang === 'tr'
+              ? 'Hava durumu API anahtarı (API Key) geçersiz veya süresi dolmuş. Lütfen Ayarlar sayfasından güncelleyin.'
+              : lang === 'hi'
+              ? 'मौसम API कुंजी अमान्य है या समाप्त हो गई है। कृपया इसे सेटिंग्स में अपडेट करें।'
+              : lang === 'ar'
+              ? 'مفتاح API للطقس غير صالح أو منتهي الصلاحية. يرجى تحديثه في الإعدادات.'
+              : 'Weather API key is invalid or expired. Please update it in Settings.'
+          };
+        }
+        if (response.status === 404) {
+          return {
+            success: false,
+            errorType: 'not_found',
+            message: lang === 'tr'
+              ? `Belirtilen konum bulunamadı: "${location}".`
+              : lang === 'hi'
+              ? `निर्दिष्ट स्थान नहीं मिला: "${location}".`
+              : lang === 'ar'
+              ? `لم يتم العثور على الموقع المحدد: "${location}".`
+              : `Specified location not found: "${location}".`
+          };
+        }
+        return {
+          success: false,
+          errorType: 'api_error',
+          message: lang === 'tr'
+            ? `Hava durumu servisi hata döndürdü (Kod: ${response.status}).`
+            : lang === 'hi'
+            ? `मौसम सेवा ने एक त्रुटि दी (कोड: ${response.status}).`
+            : lang === 'ar'
+            ? `أرجعت خدمة الطقس خطأ (الرمز: ${response.status}).`
+            : `Weather service returned an error (Code: ${response.status}).`
         };
       }
 
@@ -521,12 +541,12 @@ async function setupHandlers() {
   const { startLANServer, stopLANServer } = require('./services/lanServer');
   const QRCode = require('qrcode');
 
-  ipcMain.handle('system:start-lan-server', async (event, { projectId, projectName }) => {
+  ipcMain.handle('system:start-lan-server', async (event, { projectId, projectName, lang }) => {
     try {
       const webContents = event.sender;
       const window = BrowserWindow.fromWebContents(webContents);
       
-      const result = startLANServer(window);
+      const result = startLANServer(window, lang);
       if (result.success) {
         const url = `http://${result.ip}:${result.port}?projectId=${projectId || ''}&projectName=${encodeURIComponent(projectName || 'Genel')}`;
         const qrCodeDataUrl = await QRCode.toDataURL(url);

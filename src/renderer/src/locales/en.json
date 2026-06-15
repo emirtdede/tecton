@@ -89,7 +89,13 @@
     "dateFormatSelection": "Date Format Selection",
     "timeFormatSelection": "Time Format Selection",
     "time24h": "24 Hours (14:30)",
-    "time12h": "12 Hours AM/PM (02:30 PM)"
+    "time12h": "12 Hours AM/PM (02:30 PM)",
+    "backup_error": "Backup Error:",
+    "optimize_success": "Database optimized successfully.",
+    "optimize_error": "Optimization Error:",
+    "cloud_folder_success": "Silent cloud backup folder set successfully:",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_error": "Restore error:"
   },
   "dashboard": {
     "title": "Personnel Management",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Action successfully undone!",
+    "undo_error": "Undo failed:",
+    "delete_worker_title": "Delete Personnel",
+    "delete_worker_msg": "Are you sure you want to delete this personnel (move to recycle bin)? System data will not be permanently deleted, but removed from lists."
   },
   "worker_profile": {
     "back": "Back",
@@ -186,7 +196,7 @@
     "auto_deduct_notice": "* The given advance will be automatically deducted from Cash (Cash Out).",
     "current_balance": "Current Balance",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
     "help_title": "Worker Profile Guide",
     "help_desc": "The worker profile displays all financial and working history of the selected employee on a single screen.",
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "All Company (Global)",
+    "headquarters": "Headquarters / General",
+    "relatedProject": "Related Site",
+    "projectFilterLabel": "Project Filter",
+    "reportTitle": "Cash Transactions Report",
+    "netBalance": "Net Cash Balance",
+    "expense": "Expense",
+    "income": "Income",
+    "tags": "Tags",
+    "delete_title": "Delete Cash Transaction",
+    "delete_confirm": "Are you sure you want to delete this cash transaction? This action will permanently affect the cash balance."
   },
   "logs": {
     "title": "System Logs",
@@ -245,6 +266,8 @@
     "no_logs": "No logs found in the selected range.",
     "filter_type": "Log Type",
     "type_all": "All Log Types",
+    "filter_project": "Construction Site",
+    "project_all": "All Construction Sites",
     "guide": {
       "title": "System Logs Guide",
       "intro": "The System Logs page allows you to chronologically track critical database transactions, system events, and potential errors occurring in the application.",
@@ -278,7 +301,9 @@
     "phone": "Phone",
     "all": "All",
     "page_info": "Page",
-    "page_guide": "Page Guide"
+    "page_guide": "Page Guide",
+    "error_occurred": "Error:",
+    "required_field": "Please fill out this field."
   },
   "worker_modal": {
     "title_new": "Add New Personnel",
@@ -312,7 +337,8 @@
     "period": "PERIODIC",
     "earned": "Earned:",
     "advance": "Advance:",
-    "total_balance": "TOTAL BALANCE"
+    "total_balance": "TOTAL BALANCE",
+    "error": "Error retrieving report:"
   },
   "about": {
     "title": "About & Help",
@@ -342,10 +368,18 @@
     "col_tc": "TC Identity No",
     "col_phone": "Phone",
     "col_wage": "Daily Wage",
+    "col_start_date": "Start Date",
+    "col_group": "Group",
+    "col_status": "Status (Active/Passive)",
+    "col_tags": "Tags",
     "tip_name": "(Required) Enter First and Last Name",
     "tip_tc": "(Optional) Enter valid 11-Digit TC",
     "tip_phone": "(Optional) Enter phone number",
     "tip_wage": "(Optional) Enter numerical value",
+    "tip_start_date": "(Optional) Enter date in YYYY-MM-DD format",
+    "tip_group": "(Optional) Enter group name",
+    "tip_status": "(Optional) Enter Active or Passive",
+    "tip_tags": "(Optional) Enter tags separated by commas",
     "hero_title": "Electronic Journal Ledger: Digital Trust and Transparency for Your Construction Site",
     "hero_subtitle": "The Future of Construction Site Management, Today's Reality.",
     "hero_desc": "Traditional journal ledgers wear out in the intense work tempo of the field, are prone to calculation errors, and cause confusions that damage the trust between worker and employer. Electronic Journal Ledger is a next-generation financial management assistant that elevates this chaotic process to millimeter precision and corporate discipline.",
@@ -400,7 +434,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "Delete Site",
+    "delete_msg": "Are you sure you want to delete this site? Data linked to the site will not be deleted directly but will be hidden from lists."
   },
   "filters": {
     "sort": "Sort:",
@@ -448,7 +484,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "No Image"
   },
   "subcontractor": {
     "title": "🚜 Subcontractor Ledgers",
@@ -490,7 +527,7 @@
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
     "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
+    "upload_mobile_desc": "Connect your phone to the **same WiFi network** and scan the QR code below:",
     "delete_title": "Delete Report",
     "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
     "help_title": "Quality Control Guide",
@@ -512,6 +549,7 @@
     "save_btn": "Save / Update Journal",
     "weather_loading": "Reading from clouds...",
     "weather_no_location": "Could not retrieve weather since site location is not specified.",
+    "weather_error": "No internet connection or weather service is unreachable.",
     "worker_count_badge": "Workers",
     "no_results": "No journal entries found matching the search criteria.",
     "empty_state": "No daily journal entries found yet.",
@@ -525,7 +563,11 @@
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
     "delete_title": "Delete Journal",
     "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "Weather Description"
+    "weatherDesc": "Weather Description",
+    "weather_not_found": "Specified location not found: \"{{location}}\". Please check the city/district name.",
+    "weather_unauthorized": "Weather API key is invalid or expired. Please update it in Settings.",
+    "weather_offline": "No internet connection or weather service is unreachable.",
+    "weather_api_error": "Weather service returned an error."
   },
   "materials": {
     "title": "🚚 Delivery Note & Material Entry",
@@ -541,7 +583,7 @@
     "view_photo": "View",
     "no_photo": "None",
     "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
+    "upload_mobile_desc": "Connect your mobile to the **same WiFi network** and scan the QR code:",
     "delete_title": "Delete Document",
     "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
     "help_title": "Delivery Note Guide",
@@ -551,7 +593,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Photo successfully received from mobile device!",
+    "photo_error": "Failed to save photo:",
+    "photo_upload_error": "Error processing photo:",
+    "lan_error": "Local server could not be started:",
+    "qr_link": "Link:"
   },
   "production": {
     "title": "📐 Quantity Survey & Production Tracking",
@@ -634,7 +681,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -710,16 +757,16 @@
     "journal": {
       "title": "Journal Guide",
       "step1": {
-        "title": "1. Weather Integration",
-        "desc": "Weather is automatically fetched."
+        "title": "1. Weather & Status",
+        "desc": "Record daily weather and general status."
       },
       "step2": {
-        "title": "2. Auto Worker Count",
-        "desc": "Active worker count is automatically calculated."
+        "title": "2. Chronological Log",
+        "desc": "Log important events sequentially."
       },
       "step3": {
-        "title": "3. Edit Lock Policy",
-        "desc": "Old records are locked to protect past data."
+        "title": "3. History",
+        "desc": "Look back at previous days easily."
       }
     },
     "quality": {
@@ -774,7 +821,8 @@
         "desc": "Record incomes and expenses."
       },
       "step2": {
-        "title": "2. Monthly Financial Status"
+        "title": "2. Monthly Financial Status",
+        "desc": "View monthly cash flow and balance."
       },
       "step3": {
         "title": "3. Exporting",
@@ -795,11 +843,34 @@
         "title": "Project Separation",
         "desc": "Filter your recycle bin by project."
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. Production Records",
+        "desc": "Record daily production."
+      },
+      "step2": {
+        "title": "2. Archive and Details",
+        "desc": "Write notes to keep a chronological archive."
+      },
+      "step3": {
+        "title": "3. Search and Filters",
+        "desc": "Filter by date range or unit."
+      },
+      "title": "Production Guide"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "Account Statement",
+    "forwardBalance": "Forwarded Balance",
+    "periodEarned": "Period Earned",
+    "periodAdvance": "Period Advance",
+    "netBalance": "Net Balance",
+    "group": "Group",
+    "phone": "Phone",
+    "id_tc": "ID/TC"
   },
   "recycle": {
     "desc": "List deleted records here and restore them back to their original places.",
@@ -832,13 +903,23 @@
       "subcontractor": "Subcontractor Ledger",
       "project": "Project Record"
     },
-    "allProjectsOption": "All Projects"
+    "allProjectsOption": "All Projects",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_confirm_msg": "Are you sure you want to restore this record? It will be moved back to its original location.",
+    "restore_error": "Restore error:"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
     "recordsCount": "({{count}} Records)",
     "restore": "Restore",
-    "restored": "Restored"
+    "restored": "Restored",
+    "filter": "Filter",
+    "dateRange": "Date Range",
+    "creationDate": "Creation Date",
+    "date": "Date",
+    "actionType": "Action Type",
+    "description": "Description",
+    "amount": "Amount"
   },
   "sidebar": {
     "recycleBin": "Recycle Bin",
@@ -855,5 +936,78 @@
     "quality": "No quality control reports for this site yet.",
     "subcontractor": "No subcontractor registered for this site yet.",
     "media": "No media records found matching the criteria."
+  },
+  "pdf": {
+    "signatureWorker": "Personnel (Name/Surname - Signature)",
+    "signatureCompany": "Company Representative (Stamp/Signature)"
+  },
+  "global.searchPlaceholder": "Search...",
+  "recycle.filterAllRecords": "All Records",
+  "recycle.filterAllTypes": "All Record Types",
+  "recycle.filterAllProjects": "All Projects",
+  "global.startDate": "Start Date",
+  "global.endDate": "End Date",
+  "guides.recycle.title": "Recycle Bin Guide",
+  "guides.recycle.step2.title": "Restoring Data",
+  "guides.recycle.step3.title": "Project Separation",
+  "worker.advanceBadge": "Advance",
+  "recycle.tableProject": "Project / Site",
+  "worker.group": "Group",
+  "worker.phone": "Phone",
+  "pdf_project_site": "Project / Site",
+  "recycle_th_type": "Record Type",
+  "recycle_th_project": "Project / Site",
+  "recycle_th_content": "Content / Title",
+  "recycle_th_date": "Deleted At",
+  "recycle_th_action": "Action",
+  "recycle_type_project": "Project Record",
+  "recycle_type_worker": "Personnel Record",
+  "recycle_type_material": "Delivery Note / Material",
+  "recycle_type_journal": "Daily Journal",
+  "recycle_type_quality": "Quality Control Report",
+  "recycle_type_subcontractor": "Subcontractor Ledger",
+  "recycle_type_cash": "Cash Transaction",
+  "recycle_guide_title": "Recycle Bin Guide",
+  "recycle_guide_h1": "How it Works?",
+  "recycle_guide_p1": "Deleted records are soft-deleted and listed here.",
+  "recycle_guide_h2": "Restoring Data",
+  "recycle_guide_p2": "Use the restore button to recover records.",
+  "recycle_guide_h3": "Project Separation",
+  "recycle_guide_p3": "Filter your recycle bin by project.",
+  "recycle_page_title": "Recycle Bin",
+  "recycle_page_desc": "List deleted records here and restore them back to their original places.",
+  "sidebar_recycle_btn": "Recycle Bin",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "Edit",
+  "common.edit": "Edit",
+  "Tam Gün": "Full Day",
+  "Yarım Gün": "Half Day",
+  "Mesai": "Overtime",
+  "Normal çalışma": "Normal work",
+  "spotlight_search_placeholder": "Search in the site command center...",
+  "spotlight_desc_personnel": "Personnel list and current balance summaries",
+  "spotlight_desc_projects": "Construction sites, locations, and project statuses",
+  "spotlight_desc_production": "Quantity records and production progress tracking",
+  "spotlight_desc_materials": "Incoming materials and concrete delivery notes",
+  "spotlight_desc_journal": "Site daily logs and automatic weather",
+  "spotlight_desc_quality": "Minutes, manufacturing defects, and quality reports",
+  "spotlight_desc_subcontractor": "External subcontractor accounts (excavators, caterers, etc.)",
+  "spotlight_desc_media": "Photo receipt and minutes gallery",
+  "spotlight_desc_cash": "Cash flow movements and summary cash register",
+  "spotlight_desc_settings": "Theme, language, cloud backup, and general settings",
+  "spotlight_badge_menu": "MENU",
+  "spotlight_badge_personnel": "PERSONNEL",
+  "spotlight_badge_project": "SITE",
+  "spotlight_badge_faq": "FAQ",
+  "spotlight_faq_1_label": "How is the cash balance calculated?",
+  "spotlight_faq_1_desc": "Cash In - Cash Out. Advances are automatically recorded as cash out.",
+  "spotlight_faq_2_label": "How is a system backup (Restore) done?",
+  "spotlight_faq_2_desc": "It is done by dragging and dropping the .sqlite backup on the Settings page.",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "Multiplier",
+  "settings_logs": {
+    "error_read": "Failed to read logs:"
   }
 }

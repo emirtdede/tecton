@@ -10,6 +10,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
   const [journals, setJournals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const containerRef = useRef(null);
@@ -86,13 +87,33 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
       if (!activeProject || !activeProject.location) return;
       setWeatherLoading(true);
       if (window.api && window.api.system.getWeather) {
-        const res = await window.api.system.getWeather({ location: activeProject.location, lang: i18n.language });
+        const res = await window.api.system.getWeather({ location: activeProject.location, lang: i18n.language, date: formData.journal_date });
         if (res.success) {
           setFormData(prev => ({
             ...prev,
             weather_temp: res.temp.toString(),
             weather_desc: res.desc,
             weather_icon: res.icon
+          }));
+          setWeatherError('');
+        } else {
+          let errorMessage = res.message;
+          if (res.errorType === 'not_found') {
+            errorMessage = t('journal.weather_not_found', 'Belirtilen konum bulunamadı: "{{location}}". Lütfen il/ilçe adını kontrol edin.', { location: activeProject.location });
+          } else if (res.errorType === 'unauthorized') {
+            errorMessage = t('journal.weather_unauthorized', 'Hava durumu API anahtarı geçersiz veya süresi dolmuş. Lütfen Ayarlar sayfasından güncelleyin.');
+          } else if (res.errorType === 'offline') {
+            errorMessage = t('journal.weather_offline', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.');
+          } else if (res.errorType === 'api_error') {
+            errorMessage = t('journal.weather_api_error', 'Hava durumu servisi hata döndürdü.');
+          }
+          
+          setWeatherError(errorMessage || t('journal.weather_error', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.'));
+          setFormData(prev => ({
+            ...prev,
+            weather_temp: '',
+            weather_desc: '',
+            weather_icon: ''
           }));
         }
       }
@@ -259,9 +280,11 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
               <span className="form-label" style={{ marginBottom: '0.25rem' }}>{t('journal.weather', 'Hava Durumu')}</span>
               {weatherLoading ? (
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('journal.weather_loading', 'Bulutlardan okunuyor...')}</span>
+              ) : weatherError ? (
+                <span style={{ fontSize: '0.9rem', color: 'var(--danger-text)', fontWeight: 'bold' }}>⚠️ {weatherError}</span>
               ) : formData.weather_desc ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <img src={`http://openweathermap.org/img/wn/${formData.weather_icon}.png`} alt="Weather Icon" style={{ width: '30px', height: '30px' }} />
+                  {formData.weather_icon && <img src={`http://openweathermap.org/img/wn/${formData.weather_icon}.png`} alt="Weather Icon" style={{ width: '30px', height: '30px' }} />}
                   <strong style={{ fontSize: '0.95rem', color: '#fff' }}>{formData.weather_temp} °C, {formData.weather_desc.toUpperCase()}</strong>
                 </div>
               ) : (

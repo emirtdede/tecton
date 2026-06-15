@@ -4,12 +4,13 @@ import { exportToExcel, exportToCSV, exportToJSON } from '../utils/exportUtils';
 import TagInput from './ui/TagInput';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
-import { formatCurrency, formatDate, getCurrencySymbol } from '../utils/formatUtils';
+import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe } from '../utils/formatUtils';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 import GuideDrawer from './ui/GuideDrawer';
 
-const CashRegister = () => {
+const CashRegister = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
@@ -32,6 +33,19 @@ const CashRegister = () => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
   };
+
+  // Project Filter state (initialized dynamically based on active workspace)
+  const [filterProject, setFilterProject] = useState(() => {
+    return activeProjectId ? String(activeProjectId) : 'all';
+  });
+
+  useEffect(() => {
+    if (activeProjectId) {
+      setFilterProject(String(activeProjectId));
+    } else {
+      setFilterProject('all');
+    }
+  }, [activeProjectId]);
 
   // Filters State
   const [filterStartDate, setFilterStartDate] = useState(getFirstDayOfCurrentMonth());
@@ -63,9 +77,17 @@ const CashRegister = () => {
     trans_date: new Date().toISOString().split('T')[0],
     type: 'Nakit Girişi', // 'Nakit Girişi' | 'Nakit Çıkışı'
     amount: '',
-    description: ''
+    description: '',
+    project_id: activeProjectId ? String(activeProjectId) : ''
   });
   const [cashTags, setCashTags] = useState([]);
+
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      project_id: activeProjectId ? String(activeProjectId) : ''
+    }));
+  }, [activeProjectId]);
 
   // Confirmation Modal State
   const [confirmModalState, setConfirmModalState] = useState({
@@ -86,7 +108,7 @@ const CashRegister = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, filterStartDate, filterEndDate, filterType]);
+  }, [searchQuery, filterStartDate, filterEndDate, filterType, filterProject]);
 
   const fetchCashData = async () => {
     if (window.api) {
@@ -109,15 +131,15 @@ const CashRegister = () => {
       setTransactions(data);
       
       const parts = reportDate.split('-');
-      fetchReportData(parseInt(parts[0]), parseInt(parts[1]));
+      fetchReportData(parseInt(parts[0]), parseInt(parts[1]), filterProject);
       
       setLoading(false);
     }
   };
 
-  const fetchReportData = async (year, month) => {
+  const fetchReportData = async (year, month, projectId) => {
     if (window.api) {
-      const res = await window.api.finance.companyReport(year, month);
+      const res = await window.api.finance.companyReport(year, month, projectId);
       if (res.success) {
         setReportData(res);
       }
@@ -132,10 +154,10 @@ const CashRegister = () => {
     if (reportDate) {
       const parts = reportDate.split('-');
       if (parts.length >= 2) {
-        fetchReportData(parseInt(parts[0]), parseInt(parts[1]));
+        fetchReportData(parseInt(parts[0]), parseInt(parts[1]), filterProject);
       }
     }
-  }, [reportDate]);
+  }, [reportDate, filterProject]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -148,7 +170,14 @@ const CashRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (window.api && formData.amount > 0) {
-      const dataToSave = { ...formData, tags: JSON.stringify(cashTags) };
+      const dataToSave = { 
+        trans_date: formData.trans_date,
+        type: formData.type,
+        amount: formData.amount,
+        description: formData.description,
+        project_id: formData.project_id ? Number(formData.project_id) : null,
+        tags: JSON.stringify(cashTags) 
+      };
       await window.api.db.create('cash_register', dataToSave);
       setFormData(prev => ({ ...prev, amount: '', description: '' }));
       setCashTags([]);
@@ -159,8 +188,8 @@ const CashRegister = () => {
   const handleDelete = (id) => {
     setConfirmModalState({
       isOpen: true,
-      title: 'Kasa İşlemini Sil',
-      message: 'Bu kasa işlemini silmek istediğinize emin misiniz? Bu işlem kasa bakiyesini kalıcı olarak etkileyecektir.',
+      title: t('cash.delete_title', 'Kasa İşlemini Sil'),
+      message: t('cash.delete_confirm', 'Bu kasa işlemini silmek istediğinize emin misiniz? Bu işlem kasa bakiyesini kalıcı olarak etkileyecektir.'),
       onConfirm: async () => {
         await window.api.db.delete('cash_register', id);
         fetchCashData();
@@ -172,41 +201,176 @@ const CashRegister = () => {
     return <div className="text-center"><div className="loading-spinner"></div></div>;
   }
 
-  const isPositive = balance >= 0;
+  // Calculate project name
+  const getProjectName = (projId) => {
+    if (!projId) return t('cash.headquarters');
+    const proj = projects.find(p => p.id === projId);
+    return proj ? proj.name : t('cash.headquarters');
+  };
 
+  // Recalculate dynamic totals based on the selected project filter
+  const projectFilteredTransactions = transactions.filter(t => {
+    if (filterProject === 'merkez') {
+      return !t.project_id;
+    } else if (filterProject !== 'all') {
+      return t.project_id === Number(filterProject);
+    }
+    return true;
+  });
+
+  let projTotalIn = 0;
+  let projTotalOut = 0;
+  projectFilteredTransactions.forEach(t => {
+    if (t.type === 'Nakit Girişi') projTotalIn += t.amount;
+    else if (t.type === 'Nakit Çıkışı') projTotalOut += t.amount;
+  });
+  const projNetBalance = projTotalIn - projTotalOut;
+
+  // Filtered transactions for current listing (includes dates, search query and type filters)
   const filteredTransactions = transactions.filter(t => {
     let matchStart = true;
     let matchEnd = true;
     let matchType = true;
     let matchSearch = true;
+    let matchProject = true;
     
     if (filterStartDate) matchStart = t.trans_date >= filterStartDate;
     if (filterEndDate) matchEnd = t.trans_date <= filterEndDate;
     if (filterType) matchType = t.type === filterType;
     if (searchQuery) matchSearch = t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchStart && matchEnd && matchType && matchSearch;
+    if (filterProject === 'merkez') {
+      matchProject = !t.project_id;
+    } else if (filterProject !== 'all') {
+      matchProject = t.project_id === Number(filterProject);
+    }
+    
+    return matchStart && matchEnd && matchType && matchSearch && matchProject;
   });
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
   const paginatedTransactions = filteredTransactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.width;
-    const getFormatFromBase64 = (base64) => {
-      if (!base64) return 'PNG';
-      const match = base64.match(/^data:image\/([a-zA-Z+]+);base64,/);
-      if (match && match[1]) {
-        const ext = match[1].toUpperCase();
-        if (ext === 'JPEG' || ext === 'JPG') return 'JPEG';
-        if (ext === 'PNG') return 'PNG';
-        if (ext === 'WEBP') return 'WEBP';
-        return ext;
-      }
-      return 'PNG';
-    };
+  const generatePDF = async () => {
+    const projFilterText = filterProject === 'all' 
+      ? t('cash.allCompany') 
+      : filterProject === 'merkez' 
+        ? t('cash.headquarters') 
+        : getProjectName(Number(filterProject));
+    
+    const reportDateStr = new Date().toLocaleDateString(i18n.language === 'tr' ? 'tr-TR' : 'en-US') + ' ' + new Date().toLocaleTimeString(i18n.language === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' });
 
+    // Group items into chunks of 18 items per page to prevent text/row cut-off
+    const pdfItemsPerPage = 18;
+    const chunks = [];
+    for (let i = 0; i < filteredTransactions.length; i += pdfItemsPerPage) {
+      chunks.push(filteredTransactions.slice(i, i + pdfItemsPerPage));
+    }
+
+    if (chunks.length === 0) {
+      chunks.push([]);
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 190;
+    const position = 15;
+
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index];
+      
+      // Create a temporary container styled as a clean A4 sheet
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.width = '800px';
+      container.style.background = '#ffffff';
+      container.style.color = '#1e293b';
+      container.style.fontFamily = "'Inter', 'Noto Sans', 'Arial', sans-serif";
+      container.style.padding = '40px';
+      
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+          <div>
+            ${companyLogo ? `<img src="${companyLogo}" style="max-width: 150px; max-height: 50px; margin-bottom: 10px; display: block;" />` : ''}
+            <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${companyName || ''}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 18px; font-weight: bold; color: #6389b9; margin-bottom: 8px; font-family: inherit;">${t('cash.reportTitle', 'Kasa Hareketleri Raporu').toUpperCase()}</div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.filter', 'Filtre')}:</strong> ${projFilterText}</div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${filterStartDate || 'Tümü'} / ${filterEndDate || 'Tümü'}</div>
+            <div style="font-size: 11px; color: #64748b; font-family: inherit;"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${reportDateStr}</div>
+          </div>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;" />
+        
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 13px; color: #64748b; font-weight: 500; font-family: inherit;">${t('cash.netBalance', 'Net Kasa Bakiyesi')}:</span>
+          <span style="font-size: 18px; font-weight: bold; color: ${projNetBalance >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">
+            ${formatCurrencySafe(projNetBalance, i18n.language)}
+          </span>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #334155; font-family: inherit;">
+          <thead>
+            <tr style="background: #1e3a8a; color: #ffffff;">
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.date', 'Tarih')}</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.type', 'İşlem Türü')}</th>
+              <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.amount', 'Tutar')}</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('pdf_project_site', 'Project / Site')}</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.desc', 'Açıklama')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${chunk.length === 0 ? `
+              <tr>
+                <td colspan="5" style="padding: 20px; text-align: center; color: #64748b; font-family: inherit;">
+                  ${t('cash.table.empty', 'Kasa işlemi bulunamadı.')}
+                </td>
+              </tr>
+            ` : chunk.map(t_row => {
+              const typeText = t_row.type === 'Nakit Girişi' 
+                ? t('cash.income', 'Nakit Girişi') 
+                : t('cash.expense', 'Nakit Çıkışı');
+              return `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${t_row.trans_date}</td>
+                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${typeText}</td>
+                  <td style="padding: 8px 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: 500; font-family: inherit;">${formatCurrencySafe(t_row.amount, i18n.language)}</td>
+                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${getProjectName(t_row.project_id)}</td>
+                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${t_row.description || '-'}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+
+      document.body.appendChild(container);
+      
+      // Wait for fonts to load
+      await document.fonts.ready;
+      
+      const canvas = await html2canvas(container, {
+        scale: 2.5,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+      
+      document.body.removeChild(container);
+      
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      
+      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+      
+      if (index < chunks.length - 1) {
+        pdf.addPage();
+      }
+    }
+    
     const trMap = { 'ç':'c', 'ğ':'g', 'ş':'s', 'ö':'o', 'ü':'u', 'ı':'i', 'Ç':'C', 'Ğ':'G', 'Ş':'S', 'Ö':'O', 'Ü':'U', 'İ':'I' };
     const toEn = (str) => {
       if (!str) return '';
@@ -215,75 +379,17 @@ const CashRegister = () => {
       s = s.replace(/₺/g, 'TL');
       return s;
     };
-    
-    // Header
-    let textStartY = 20;
 
-    if (companyLogo) {
-      try {
-        doc.addImage(companyLogo, getFormatFromBase64(companyLogo), pageWidth / 2 - 15, 10, 30, 15);
-        textStartY = 35;
-      } catch (err) {
-        console.error('Error adding logo to PDF', err);
-      }
-    }
-
-    doc.setFontSize(22);
-    doc.setTextColor(30, 58, 138);
-    doc.text(toEn(companyName), pageWidth / 2, textStartY, { align: 'center' });
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text(toEn(t('cash.title')), pageWidth / 2, textStartY + 10, { align: 'center' });
-    doc.setFontSize(10);
-    doc.text(`Tarih Araligi: ${filterStartDate || 'Tumu'} / ${filterEndDate || 'Tumu'}`, 14, textStartY + 25);
-    
-    // Summary Box
-    doc.setDrawColor(200, 200, 200);
-    doc.setFillColor(249, 250, 251);
-    doc.roundedRect(14, textStartY + 30, pageWidth - 28, 20, 3, 3, 'FD');
-    
-    doc.setFontSize(11);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Net Kasa Bakiyesi:', 20, textStartY + 42);
-    
-    doc.setFontSize(14);
-    doc.setTextColor(balance >= 0 ? 34 : 239, balance >= 0 ? 197 : 68, balance >= 0 ? 94 : 68);
-    doc.text(`${balance} TL`, 60, textStartY + 42);
-
-    // Table
-    const tableColumn = ["Tarih", "Islem Turu", "Tutar (TL)", "Aciklama"];
-    const tableRows = [];
-
-    filteredTransactions.forEach(t_row => {
-      const rowData = [
-        t_row.trans_date,
-        toEn(t_row.type),
-        `${t_row.amount} TL`,
-        toEn(t_row.description || '-')
-      ];
-      tableRows.push(rowData);
-    });
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: textStartY + 60,
-      theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 3 },
-      headStyles: { fillColor: [30, 58, 138], textColor: 255, fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [249, 250, 251] },
-      margin: { top: 20 }
-    });
-
-    doc.save(`${toEn(companyName)}_Kasa_Raporu.pdf`);
+    pdf.save(`${toEn(companyName || 'Kasa')}_Raporu.pdf`);
   };
 
   const handleExport = (format) => {
     const dataToExport = filteredTransactions.map(t_row => ({
       [t('cash.table.date')]: t_row.trans_date,
       [t('cash.table.type')]: t_row.type,
-      [t('cash.table.desc')]: t_row.description || '-',
-      [t('cash.table.amount')]: t_row.amount
+      [t('cash.table.amount')]: t_row.amount,
+      [t('pdf_project_site', 'Project / Site')]: getProjectName(t_row.project_id),
+      [t('cash.table.desc')]: t_row.description || '-'
     }));
 
     if (format === 'excel') exportToExcel(dataToExport, t('cash.title'));
@@ -293,7 +399,7 @@ const CashRegister = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
       <header className="header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <h2 style={{ margin: 0 }}>{t('cash.title')}</h2>
@@ -320,17 +426,33 @@ const CashRegister = () => {
         {/* Left Column: Balance, Report & Form */}
         <div className="left-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          {/* Main Balance */}
-          <div className="glass-card balance-card" style={{ textAlign: 'center', padding: '2rem' }}>
-            <h3 className="card-subtitle">{t('cash.net_balance')}</h3>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: '700', 
-              marginTop: '0.5rem',
-              color: isPositive ? 'var(--success-text)' : 'var(--danger-text)',
-              textShadow: isPositive ? 'var(--success-shadow)' : 'var(--danger-shadow)'
-            }}>
-              {formatCurrency(balance, i18n.language)}
+          {/* Main Balance Row */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="glass-card balance-card" style={{ textAlign: 'center', padding: '1.5rem' }}>
+              <h3 className="card-subtitle">{t('cash.net_balance')}</h3>
+              <div style={{ 
+                fontSize: '2.5rem', 
+                fontWeight: '700', 
+                marginTop: '0.25rem',
+                color: projNetBalance >= 0 ? 'var(--success-text)' : 'var(--danger-text)',
+                textShadow: projNetBalance >= 0 ? 'var(--success-shadow)' : 'var(--danger-shadow)'
+              }}>
+                {formatCurrency(projNetBalance, i18n.language)}
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="glass-card" style={{ textAlign: 'center', padding: '1rem', background: 'var(--success-bg-light)', border: '1px solid var(--success-border)', boxShadow: 'var(--card-shadow)' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.total_in')}</h4>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--success-text)', marginTop: '0.25rem' }}>
+                  {formatCurrency(projTotalIn, i18n.language)}
+                </div>
+              </div>
+              <div className="glass-card" style={{ textAlign: 'center', padding: '1rem', background: 'var(--danger-bg-light)', border: '1px solid var(--danger-border)', boxShadow: 'var(--card-shadow)' }}>
+                <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.total_out')}</h4>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--danger-text)', marginTop: '0.25rem' }}>
+                  {formatCurrency(projTotalOut, i18n.language)}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -393,6 +515,20 @@ const CashRegister = () => {
                 </select>
               </div>
               <div className="form-group">
+                <label className="form-label">{t('cash.relatedProject')}</label>
+                <select name="project_id" className="form-input" value={formData.project_id} onChange={handleChange}>
+                  <option value="">{t('cash.headquarters')}</option>
+                  {activeProjectId && (
+                    <option value={activeProjectId}>
+                      {t('common.active_project', 'Aktif Şantiye')}: {projects.find(p => p.id === activeProjectId)?.name}
+                    </option>
+                  )}
+                  {projects.filter(p => p.id !== activeProjectId).map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
                 <label className="form-label">{t('cash.table.amount')} ({getCurrencySymbol(i18n.language)})</label>
                 <input type="number" name="amount" className="form-input" min="1" step="0.01" value={formData.amount} onChange={handleChange} required />
               </div>
@@ -401,7 +537,7 @@ const CashRegister = () => {
                 <input type="text" name="description" className="form-input" value={formData.description} onChange={handleChange} placeholder={t('cash.desc_ph')} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Etiketler</label>
+                <label className="form-label">{t('cash.tags', 'Etiketler')}</label>
                 <TagInput tags={cashTags} setTags={setCashTags} placeholder={t('cash.tags_ph')} />
               </div>
               <button 
@@ -428,22 +564,35 @@ const CashRegister = () => {
             </select>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-            <div style={{ flex: 1 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.start_date')}</label>
-              <CustomDatePicker className="form-input" value={filterStartDate} onChange={e => handleStartDateChange(e.target.value)} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.end_date')}</label>
-              <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => handleEndDateChange(e.target.value)} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.trans_dir')}</label>
-              <select className="form-input" value={filterType} onChange={e => setFilterType(e.target.value)}>
-                <option value="">{t('cash.all')}</option>
-                <option value="Nakit Girişi">{t('cash.table.income')}</option>
-                <option value="Nakit Çıkışı">{t('cash.table.expense')}</option>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('recycle.tableProject', 'Şantiye')}</label>
+              <select className="form-input" value={filterProject} onChange={e => setFilterProject(e.target.value)}>
+                <option value="all">{t('cash.allCompany')}</option>
+                <option value="merkez">{t('cash.headquarters')}</option>
+                {projects.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
               </select>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1 }}>
+                <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.start_date')}</label>
+                <CustomDatePicker className="form-input" value={filterStartDate} onChange={e => handleStartDateChange(e.target.value)} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.end_date')}</label>
+                <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => handleEndDateChange(e.target.value)} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.trans_dir')}</label>
+                <select className="form-input" value={filterType} onChange={e => setFilterType(e.target.value)}>
+                  <option value="">{t('cash.all')}</option>
+                  <option value="Nakit Girişi">{t('cash.table.income')}</option>
+                  <option value="Nakit Çıkışı">{t('cash.table.expense')}</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -512,6 +661,17 @@ const CashRegister = () => {
                       </div>
                       <div className="card-subtitle" style={{ fontSize: '0.9rem' }}>
                         {tr.description || '-'}
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+                        <span style={{ 
+                          fontSize: '0.75rem', 
+                          padding: '0.1rem 0.4rem', 
+                          borderRadius: '4px', 
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          color: 'var(--text-muted)'
+                        }}>
+                          📁 {getProjectName(tr.project_id)}
+                        </span>
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>

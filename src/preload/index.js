@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld('api', {
     createAdvance: (data) => ipcRenderer.invoke('finance:create-advance', { data }),
     workerReport: (worker_id, year, month) => ipcRenderer.invoke('finance:worker-report', { worker_id, year, month }),
     workerStatement: (params) => ipcRenderer.invoke('finance:worker-statement', params),
-    companyReport: (year, month) => ipcRenderer.invoke('finance:company-report', { year, month }),
+    companyReport: (year, month, projectId) => ipcRenderer.invoke('finance:company-report', { year, month, projectId }),
     groupStatement: (params) => ipcRenderer.invoke('finance:group-statement', params)
   },
   system: {

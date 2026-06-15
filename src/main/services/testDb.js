@@ -76,7 +76,8 @@ async function setupTestDB() {
       record_id INTEGER,
       action TEXT,
       old_values TEXT,
-      new_values TEXT
+      new_values TEXT,
+      project_id INTEGER
     );
 
     CREATE TABLE IF NOT EXISTS projects (

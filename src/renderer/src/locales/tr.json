@@ -75,7 +75,7 @@
     "logo_uploaded": "Logo yüklendi",
     "backup_desc": "Export the entire database to safely store it manually on your computer or an external drive.",
     "vacuum_desc": "Cleans up unused data blocks in the background and reduces database size, making the application faster. (Recommended once a month)",
-    "regionalFormatSettings": "Bölgesel Format Ayarları",
+    "regionalFormatSettings": "Bölgesel Biçim Ayarları",
     "currencyOverride": "Para Birimi Seçimi",
     "dateFormatOverride": "Tarih Formatı Seçimi",
     "timeFormatOverride": "Saat Formatı Seçimi",
@@ -85,7 +85,13 @@
     "dateFormatSelection": "Tarih Formatı Seçimi",
     "timeFormatSelection": "Saat Formatı Seçimi",
     "time24h": "24 Saat (14:30)",
-    "time12h": "12 Saat AM/PM (02:30 PM)"
+    "time12h": "12 Saat AM/PM (02:30 PM)",
+    "backup_error": "Yedekleme Hatası:",
+    "optimize_success": "Veritabanı başarıyla optimize edildi.",
+    "optimize_error": "Optimizasyon Hatası:",
+    "cloud_folder_success": "Sessiz bulut yedekleme klasörü başarıyla ayarlandı:",
+    "restore_confirm_title": "Geri Yükleme Onayı",
+    "restore_error": "Geri yükleme hatası:"
   },
   "projects": {
     "title": "Şantiye (Lokasyon) Yönetimi",
@@ -106,7 +112,9 @@
     "help_h2": "2. Konum ve Hava Durumu",
     "help_p2": "Şantiyeye bir konum (Örn: 'Istanbul, TR') girildiğinde, günlük hava durumu bilgisi otomatik çekilir.",
     "help_h3": "3. Arama ve Filtreleme",
-    "help_p3": "Projeler arasında anlık arama yapabilir, sayfalama yapısıyla projelerinizi listeleyebilirsiniz."
+    "help_p3": "Projeler arasında anlık arama yapabilir, sayfalama yapısıyla projelerinizi listeleyebilirsiniz.",
+    "delete_title": "Şantiyeyi Sil",
+    "delete_msg": "Bu şantiyeyi silmek istediğinize emin misiniz? Şantiyeye bağlı veriler doğrudan silinmez ancak listelerden gizlenir."
   },
   "dashboard": {
     "title": "Personel Yönetimi",
@@ -128,7 +136,11 @@
     "help_h2": "2. Grup Analizi",
     "help_p2": "Çalışanları gruplara (Örn: Elektrikçiler, Demirciler) ayırarak, hangi gruba ne kadar maliyet yapıldığını gözlemleyebilirsiniz.",
     "help_h3": "3. Ekstre ve Hesap Kartı",
-    "help_p3": "Herhangi bir personelin adına tıklayarak detaylı hesap kartına ulaşabilir, tarih aralığı bazlı filtreleyip PDF ekstre çıktısı alabilirsiniz."
+    "help_p3": "Herhangi bir personelin adına tıklayarak detaylı hesap kartına ulaşabilir, tarih aralığı bazlı filtreleyip PDF ekstre çıktısı alabilirsiniz.",
+    "undo_success": "İşlem başarıyla geri alındı!",
+    "undo_error": "Geri alma başarısız oldu:",
+    "delete_worker_title": "Personeli Sil",
+    "delete_worker_msg": "Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır."
   },
   "worker_profile": {
     "back": "Geri Dön",
@@ -251,7 +263,18 @@
     "help_h2": "2. Aylık Mali Durum",
     "help_p2": "Aylık toplam gelir, gider, işçilik maliyeti ve net kasa değişimini anlık izleyin.",
     "help_h3": "3. Filtreleme ve Çıktı",
-    "help_p3": "Tarih aralığı bazlı filtreleme yapabilir ve raporları Excel ya da PDF formatında indirebilirsiniz."
+    "help_p3": "Tarih aralığı bazlı filtreleme yapabilir ve raporları Excel ya da PDF formatında indirebilirsiniz.",
+    "allCompany": "Tüm Firma (Global Kasa)",
+    "headquarters": "Merkez Kasa / Genel",
+    "relatedProject": "İlgili Şantiye",
+    "projectFilterLabel": "Şantiye Filtresi",
+    "reportTitle": "Kasa Hareketleri Raporu",
+    "netBalance": "Net Kasa Bakiyesi",
+    "expense": "Nakit Çıkışı",
+    "income": "Nakit Girişi",
+    "tags": "Etiketler",
+    "delete_title": "Kasa İşlemini Sil",
+    "delete_confirm": "Bu kasa işlemini silmek istediğinize emin misiniz? Bu işlem kasa bakiyesini kalıcı olarak etkileyecektir."
   },
   "logs": {
     "title": "Sistem Kayıtları",
@@ -262,6 +285,8 @@
     "no_logs": "Seçili aralıkta log bulunamadı.",
     "filter_type": "Log Türü",
     "type_all": "Tüm Log Türleri",
+    "filter_project": "Şantiye",
+    "project_all": "Tüm Şantiyeler",
     "guide": {
       "title": "Sistem Kayıtları Kılavuzu",
       "intro": "Sistem Kayıtları sayfası, uygulamada gerçekleşen kritik veritabanı işlemlerini, sistem olaylarını ve olası hataları kronolojik olarak takip etmenizi sağlar.",
@@ -274,7 +299,7 @@
     }
   },
   "common": {
-    "cancel": "Vazgeç",
+    "cancel": "İptal",
     "confirm": "Onayla",
     "delete": "Sil",
     "empty_data": "Gösterilecek veri bulunamadı.",
@@ -295,7 +320,9 @@
     "phone": "Telefon",
     "all": "Tümü",
     "page_info": "Sayfa",
-    "page_guide": "Sayfa Kılavuzu"
+    "page_guide": "Sayfa Kılavuzu",
+    "error_occurred": "Hata:",
+    "required_field": "Lütfen bu alanı doldurun."
   },
   "worker_modal": {
     "title_new": "Yeni Personel Ekle",
@@ -329,7 +356,8 @@
     "period": "DÖNEMSEL",
     "earned": "Hak Ediş:",
     "advance": "Avans:",
-    "total_balance": "GENEL BAKİYE"
+    "total_balance": "GENEL BAKİYE",
+    "error": "Rapor alınırken hata oluştu:"
   },
   "about": {
     "title": "Hakkında & Yardım",
@@ -365,10 +393,18 @@
     "col_tc": "TC Kimlik No",
     "col_phone": "Telefon",
     "col_wage": "Günlük Yevmiye (TL)",
+    "col_start_date": "İşe Başlama Tarihi",
+    "col_group": "Bağlı Olduğu Grup",
+    "col_status": "Durum (Aktif/Pasif)",
+    "col_tags": "Etiketler",
     "tip_name": "(Zorunlu) Ad ve Soyad girin",
     "tip_tc": "(Opsiyonel) 11 Haneli geçerli TC girin",
     "tip_phone": "(Opsiyonel) Telefon no girin",
     "tip_wage": "(Opsiyonel) Sayısal değer girin",
+    "tip_start_date": "(Opsiyonel) YYYY-MM-DD formatında tarih girin",
+    "tip_group": "(Opsiyonel) Grup adını girin",
+    "tip_status": "(Opsiyonel) Aktif veya Pasif yazın",
+    "tip_tags": "(Opsiyonel) Virgülle ayırarak etiketleri girin",
     "hero_title": "Elektronik Yevmiye Defteri: Şantiyeniz İçin Dijital Güven ve Şeffaflık",
     "hero_subtitle": "Geleceğin Şantiye Yönetimi, Bugünün Gerçekliği.",
     "hero_desc": "Geleneksel yevmiye defterleri, sahadaki yoğun çalışma temposunda yıpranır, hesap hatalarına gebedir ve işçi-işveren arasındaki güveni zedeleyen kafa karışıklıklarına yol açar. Elektronik Yevmiye Defteri, bu kaotik süreci milimetrik bir hassasiyete ve kurumsal bir disipline taşıyan, yeni nesil bir finansal yönetim asistanıdır.",
@@ -444,7 +480,8 @@
     "help_h2": "2. Hızlı Detay",
     "help_p2": "Herhangi bir görsele tıklayarak orijinal boyutta inceleyebilir ve ilişkili olduğu tutanak veya irsaliyeye ulaşabilirsiniz.",
     "help_h3": "3. Kategori Filtresi",
-    "help_p3": "Görselleri sadece İrsaliye fotoğrafları veya sadece Kalite Kontrol fotoğrafları olacak şekilde filtreleyebilirsiniz."
+    "help_p3": "Görselleri sadece İrsaliye fotoğrafları veya sadece Kalite Kontrol fotoğrafları olacak şekilde filtreleyebilirsiniz.",
+    "no_image": "Görsel Yok"
   },
   "subcontractor": {
     "title": "🚜 Taşeron ve Alt Yüklenici Carileri",
@@ -485,10 +522,10 @@
     "no_results": "Arama kriterlerine uygun tutanak kaydı bulunamadı.",
     "empty_state": "Henüz şantiye kalite kontrol tutanağı bulunmuyor.",
     "open_photo": "Tutanak Görselini Aç",
-    "upload_mobile_title": "Mobil Fotoğraf Yükle",
-    "upload_mobile_desc": "Telefonunuzu ve bilgisayarınızı **aynı WiFi ağına** bağlayın, ardından aşağıdaki QR kodu kameranızla taratın:",
-    "delete_title": "Tutanak Sil",
-    "delete_confirm": "Bu kalite kontrol tutanağını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+    "upload_mobile_title": "Tutanak Fotoğrafı Yükle",
+    "upload_mobile_desc": "Telefonunuzu **aynı WiFi ağına** bağlayıp aşağıdaki QR kodu okutun:",
+    "delete_title": "Raporu Sil",
+    "delete_confirm": "Bu kalite kontrol raporunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
     "help_title": "Kalite Kontrol Kılavuzu",
     "help_desc": "Kalite Kontrol ve Şantiye Tutanakları, sahadaki teknik aksaklıkları ve imalat hatalarını takip etmek için tasarlanmıştır.",
     "help_h1": "1. Tutanak Durumu",
@@ -508,6 +545,7 @@
     "save_btn": "Jurnali Kaydet / Güncelle",
     "weather_loading": "Bulutlardan okunuyor...",
     "weather_no_location": "Şantiye konumu girilmediği için çekilemedi.",
+    "weather_error": "İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.",
     "worker_count_badge": "Çalışan",
     "no_results": "Arama kriterlerine uygun jurnal kaydı bulunamadı.",
     "empty_state": "Henüz günlük jurnal kaydı bulunmuyor.",
@@ -521,7 +559,11 @@
     "help_p3": "Geçmişe dönük veri güvenliğini korumak amacıyla, jurnal kayıtları sadece oluşturuldukları gün düzenlenebilir. Eski günlerin kayıtları kilitlenir.",
     "delete_title": "Jurnali Sil",
     "delete_confirm": "Bu günlük jurnal kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
-    "weatherDesc": "Hava Durumu Açıklaması"
+    "weatherDesc": "Hava Durumu Açıklaması",
+    "weather_not_found": "Belirtilen konum bulunamadı: \"{{location}}\". Lütfen il/ilçe adını kontrol edin.",
+    "weather_unauthorized": "Hava durumu API anahtarı geçersiz veya süresi dolmuş. Lütfen Ayarlar sayfasından güncelleyin.",
+    "weather_offline": "İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.",
+    "weather_api_error": "Hava durumu servisi hata döndürdü."
   },
   "materials": {
     "title": "🚚 İrsaliye ve Malzeme Girişi",
@@ -547,7 +589,12 @@
     "help_h2": "2. Evrak Fotoğrafı Ekleme",
     "help_p2": "İrsaliye evraklarının fotoğraflarını bilgisayardan seçerek veya mobil QR kod ile yükleyerek dijital arşiv oluşturabilirsiniz.",
     "help_h3": "3. Akıllı Arama",
-    "help_p3": "Açıklamalarda, tedarikçi isimlerinde veya irsaliye numaralarında anlık arama yapabilirsiniz."
+    "help_p3": "Açıklamalarda, tedarikçi isimlerinde veya irsaliye numaralarında anlık arama yapabilirsiniz.",
+    "photo_success": "Mobil cihazdan çekilen fotoğraf başarıyla alındı!",
+    "photo_error": "Fotoğraf kaydedilemedi:",
+    "photo_upload_error": "Fotoğraf işlenirken hata oluştu:",
+    "lan_error": "Yerel sunucu başlatılamadı:",
+    "qr_link": "Bağlantı:"
   },
   "production": {
     "title": "📐 Metraj ve İmalat Takibi",
@@ -630,13 +677,13 @@
   "recycle.startDateLabel": "Başlangıç",
   "recycle.endDateLabel": "Bitiş",
   "recycle.dateOrderError": "Başlangıç tarihi bitiş tarihinden sonra olamaz.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parametreler",
   "guides": {
     "site": {
-      "title": "Şantiye Yönetimi Rehberi",
+      "title": "Şantiye Yönetim Rehberi",
       "step1": {
-        "title": "1. Aktif Çalışma Alanı",
+        "title": "1. Aktif Şantiye",
         "desc": "Aktif olarak ayarlamak için bir proje seçin."
       },
       "step2": {
@@ -656,18 +703,18 @@
       },
       "step2": {
         "title": "2. Grup Analizi",
-        "desc": "Giderleri grup kategorisine göre analiz edin."
+        "desc": "Harcamaları grup kategorisine göre analiz edin."
       },
       "step3": {
-        "title": "3. Puantaj ve Ekstreler",
-        "desc": "Puantajı görüntülemek için isme tıklayın."
+        "title": "3. Puantaj ve Hesap Ekstresi",
+        "desc": "Puantajı görüntülemek için ada tıklayın."
       }
     },
     "quantity": {
-      "title": "Metraj Rehberi",
+      "title": "Üretim Rehberi",
       "step1": {
-        "title": "1. İmalat Kayıtları",
-        "desc": "Günlük imalatları kaydedin."
+        "title": "1. Üretim Kayıtları",
+        "desc": "Günlük üretimi kaydedin."
       },
       "step2": {
         "title": "2. Arşiv ve Detaylar",
@@ -686,36 +733,37 @@
       },
       "step2": {
         "title": "2. Belge Fotoğrafları",
-        "desc": "Dijital arşiv için belge fotoğraflarını yükleyin."
+        "desc": "Dijital arşiv için irsaliye fotoğraflarını yükleyin."
       },
       "step3": {
-        "title": "3. Akıllı Arama"
+        "title": "3. Akıllı Arama",
+        "desc": "İrsaliye numaralarında veya tedarikçilerde arama yapın."
       }
     },
     "journal": {
-      "title": "Jurnal Rehberi",
+      "title": "Yevmiye Rehberi",
       "step1": {
-        "title": "1. Hava Durumu Entegrasyonu",
-        "desc": "Hava durumu otomatik olarak çekilir."
+        "title": "1. Hava Durumu",
+        "desc": "Günlük hava durumunu ve genel durumu kaydedin."
       },
       "step2": {
-        "title": "2. Otomatik Personel Sayısı",
-        "desc": "Aktif çalışan sayısı otomatik olarak hesaplanır."
+        "title": "2. Kronolojik Kayıt",
+        "desc": "Önemli olayları sırasıyla kaydedin."
       },
       "step3": {
-        "title": "3. Düzenleme Kilidi Politikası",
-        "desc": "Geçmiş verileri korumak için eski kayıtlar kilitlenir."
+        "title": "3. Geçmiş",
+        "desc": "Önceki günlere kolayca göz atın."
       }
     },
     "quality": {
-      "title": "Kalite Kontrol Rehberi",
+      "title": "Kalite Rehberi",
       "step1": {
-        "title": "1. Tutanak Durumları",
+        "title": "1. Rapor Durumları",
         "desc": "Sorun çözüldüğünde durumu güncelleyin."
       },
       "step2": {
-        "title": "2. Görsel Kanıtlar",
-        "desc": "Belirlenen sorunların fotoğraflarını ekleyin."
+        "title": "2. Görsel Kanıt",
+        "desc": "Tespit edilen sorunların fotoğraflarını ekleyin."
       },
       "step3": {
         "title": "3. Filtreleme",
@@ -734,7 +782,7 @@
       },
       "step3": {
         "title": "3. Güncelleme ve Düzenleme",
-        "desc": "Günlük yevmiyeleri istediğiniz zaman güncelleyin."
+        "desc": "Günlük yevmiyeleri dilediğiniz zaman güncelleyin."
       }
     },
     "media": {
@@ -749,17 +797,18 @@
       },
       "step3": {
         "title": "3. Kategori Filtreleri",
-        "desc": "İrsaliye veya kalite tutanaklarına göre filtreleyin."
+        "desc": "İrsaliye veya kalite raporlarına göre filtreleyin."
       }
     },
     "cash": {
-      "title": "Kasa Yönetimi Rehberi",
+      "title": "Kasa Yönetim Rehberi",
       "step1": {
-        "desc": "Gelirleri ve giderleri kaydedin."
+        "desc": "Gelir ve giderleri kaydedin.",
+        "title": "1. Gelir/Gider Kayıtları"
       },
       "step2": {
         "title": "2. Aylık Finansal Durum",
-        "desc": "Net nakit değişimlerini anında takip edin."
+        "desc": "Aylık nakit akışını ve bakiyeyi görüntüleyin."
       },
       "step3": {
         "title": "3. Dışa Aktarma",
@@ -780,11 +829,34 @@
         "title": "Proje Ayrımı",
         "desc": "Çöp kutunuzu projelere göre filtreleyin."
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. Üretim Kayıtları",
+        "desc": "Günlük üretimi kaydedin."
+      },
+      "step2": {
+        "title": "2. Arşiv ve Detaylar",
+        "desc": "Kronolojik bir arşiv tutmak için notlar yazın."
+      },
+      "step3": {
+        "title": "3. Arama ve Filtreler",
+        "desc": "Tarih aralığına veya birime göre filtreleyin."
+      },
+      "title": "Üretim Rehberi"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "AVANS"
+    "advanceBadge": "AVANS",
+    "statementTitle": "Cari Hesap Ekstresi",
+    "forwardBalance": "Devreden Bakiye",
+    "periodEarned": "Dönem Hak Edişi",
+    "periodAdvance": "Dönem Avansı",
+    "netBalance": "Net Bakiye",
+    "group": "Grup",
+    "phone": "Telefon",
+    "id_tc": "Kimlik/TC"
   },
   "recycle": {
     "desc": "Silinen kayıtları burada listeleyin ve orijinal yerlerine geri yükleyin.",
@@ -817,28 +889,111 @@
       "subcontractor": "Taşeron Cari Kaydı",
       "project": "Şantiye Kaydı"
     },
-    "allProjectsOption": "Tüm Projeler"
+    "allProjectsOption": "Tüm Projeler",
+    "restore_confirm_title": "Geri Yükleme Onayı",
+    "restore_confirm_msg": "Bu kaydı geri yüklemek istediğinize emin misiniz? Kayıt, silinmeden önceki asıl yerine eklenecektir.",
+    "restore_error": "Geri yükleme hatası:"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
     "recordsCount": "({{count}} Kayıt)",
     "restore": "Geri Yükle",
-    "restored": "Geri Yüklendi"
+    "restored": "Geri Yüklendi",
+    "filter": "Filtre",
+    "dateRange": "Tarih Aralığı",
+    "creationDate": "Oluşturma Tarihi",
+    "date": "Tarih",
+    "actionType": "İşlem Türü",
+    "description": "Açıklama",
+    "amount": "Tutar"
   },
   "sidebar": {
-    "recycleBin": "Çöp Kutusu",
-    "spotlight": "Spotlight"
+    "recycleBin": "Geri Dönüşüm Kutusu",
+    "spotlight": "Spotlight Araması"
   },
   "anomaly": {
-    "noAnomalies": "Sistem Anomalisi Bulunmuyor",
-    "allUpToDate": "Tüm finansal bakiyeler ve İSG belgeleri günceldir."
+    "noAnomalies": "Sistem Anomalisi Yok",
+    "allUpToDate": "Tüm finansal bakiyeler ve İSG belgeleri güncel."
   },
   "empty": {
-    "production": "Bu şantiye için henüz bir imalat kaydı girilmemiş.",
-    "delivery": "Henüz irsaliye kaydı bulunmuyor.",
-    "journal": "Henüz günlük jurnal kaydı bulunmuyor.",
-    "quality": "Bu şantiye için henüz kalite kontrol raporu bulunmuyor.",
-    "subcontractor": "Bu şantiye için henüz taşeron kaydedilmemiş.",
-    "media": "Arama kriterlerine uygun medya kaydı bulunamadı."
+    "production": "Bu şantiye için henüz üretim kaydı girilmedi.",
+    "delivery": "Henüz teslimat kaydı bulunamadı.",
+    "journal": "Henüz günlük yevmiye kaydı bulunamadı.",
+    "quality": "Bu şantiye için henüz kalite raporu yok.",
+    "subcontractor": "Bu şantiye için henüz kayıtlı taşeron yok.",
+    "media": "Kriterlere uygun medya kaydı bulunamadı."
+  },
+  "pdf": {
+    "signatureWorker": "Personel (Ad/Soyad - İmza)",
+    "signatureCompany": "Firma Yetkilisi (Kaşe/İmza)"
+  },
+  "global.searchPlaceholder": "Ara...",
+  "recycle.filterAllRecords": "Tüm Kayıtlar",
+  "recycle.filterAllTypes": "Tüm Kayıt Türleri",
+  "recycle.filterAllProjects": "Tüm Şantiyeler",
+  "global.startDate": "Başlangıç Tarihi",
+  "global.endDate": "Bitiş Tarihi",
+  "guides.recycle.title": "Çöp Kutusu Rehberi",
+  "guides.recycle.step2.title": "Veri Kurtarma",
+  "guides.recycle.step3.title": "Şantiye Ayrımı",
+  "worker.advanceBadge": "Avans",
+  "recycle.tableProject": "Proje / Şantiye",
+  "worker.group": "Grup",
+  "worker.phone": "Telefon",
+  "pdf_project_site": "Proje / Şantiye",
+  "recycle_th_type": "Kayıt Türü",
+  "recycle_th_project": "Proje / Şantiye",
+  "recycle_th_content": "İçerik / Başlık",
+  "recycle_th_date": "Silinme Tarihi",
+  "recycle_th_action": "İşlem",
+  "recycle_type_project": "Şantiye Kaydı",
+  "recycle_type_worker": "Personel Kaydı",
+  "recycle_type_material": "İrsaliye / Malzeme",
+  "recycle_type_journal": "Günlük Jurnal",
+  "recycle_type_quality": "Kalite Raporu",
+  "recycle_type_subcontractor": "Taşeron Cari Kaydı",
+  "recycle_type_cash": "Kasa Hareketi",
+  "recycle_guide_title": "Çöp Kutusu Rehberi",
+  "recycle_guide_h1": "Nasıl Çalışır?",
+  "recycle_guide_p1": "Silinen kayıtlar tamamen yok edilmez, burada listelenir.",
+  "recycle_guide_h2": "Veri Kurtarma",
+  "recycle_guide_p2": "Geri yükle butonunu kullanarak kayıtları kurtarın.",
+  "recycle_guide_h3": "Şantiye Ayrımı",
+  "recycle_guide_p3": "Çöp kutunuzu şantiyelere göre filtreleyin.",
+  "recycle_page_title": "Çöp Kutusu",
+  "recycle_page_desc": "Silinen kayıtları buradan inceleyip orijinal yerlerine geri yükleyebilirsiniz.",
+  "sidebar_recycle_btn": "Çöp Kutusu",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "Düzenle",
+  "common.edit": "Düzenle",
+  "Tam Gün": "Tam Gün",
+  "Yarım Gün": "Yarım Gün",
+  "Mesai": "Mesai",
+  "Normal çalışma": "Normal çalışma",
+  "spotlight_search_placeholder": "Şantiye komuta merkezinde ara...",
+  "spotlight_desc_personnel": "Personel listesi ve cari bakiye özetleri",
+  "spotlight_desc_projects": "Şantiyeler, lokasyonlar ve proje durumları",
+  "spotlight_desc_production": "Metraj kayıtları ve imalat ilerleme takibi",
+  "spotlight_desc_materials": "Gelen malzemeler ve beton irsaliyeleri",
+  "spotlight_desc_journal": "Şantiye günlükleri ve otomatik hava durumu",
+  "spotlight_desc_quality": "Tutanaklar, imalat hataları ve kalite raporları",
+  "spotlight_desc_subcontractor": "Hafriyatçı, yemekçi vb. dış yüklenici carileri",
+  "spotlight_desc_media": "Fotoğraflı irsaliye ve tutanak galerisi",
+  "spotlight_desc_cash": "Nakit giriş/çıkış hareketleri ve özet kasa",
+  "spotlight_desc_settings": "Tema, dil, bulut yedekleme ve genel ayarlar",
+  "spotlight_badge_menu": "MENÜ",
+  "spotlight_badge_personnel": "PERSONEL",
+  "spotlight_badge_project": "ŞANTİYE",
+  "spotlight_badge_faq": "SSS",
+  "spotlight_faq_1_label": "Kasa bakiyesi nasıl hesaplanır?",
+  "spotlight_faq_1_desc": "Nakit Giriş - Nakit Çıkış. Avanslar otomatik kasa çıkışı yazılır.",
+  "spotlight_faq_2_label": "Sistem yedeği (Geri Yükleme) nasıl yapılır?",
+  "spotlight_faq_2_desc": "Settings sayfasında .sqlite yedeğini sürükleyip bırakarak yapılır.",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "Çarpan",
+  "settings_logs": {
+    "error_read": "Loglar okunamadı:"
   }
 }

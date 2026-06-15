@@ -31,6 +31,24 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const [qrModal, setQrModal] = useState({ isOpen: false, qrCode: '', url: '' });
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
   const [lightboxImage, setLightboxImage] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage('');
+    }, 3000);
+  };
+
+  const renderDescription = (text) => {
+    const parts = text.split('**');
+    return parts.map((part, index) => {
+      if (index % 2 === 1) {
+        return <strong key={index} style={{ color: '#ffffff', fontWeight: 'bold' }}>{part}</strong>;
+      }
+      return part;
+    });
+  };
 
   // Search & Pagination states
   const [searchQuery, setSearchQuery] = useState('');
@@ -95,8 +113,9 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
         if (data.projectId == activeProjectId) {
           setFormData(prev => ({ ...prev, photo_path: data.relativePath }));
           loadPhotoPreview(data.relativePath);
-          // Show alert and close QR Modal
-          alert('✓ Mobil cihazdan çekilen fotoğraf başarıyla alındı!');
+          // Show non-blocking toast and close QR Modal
+          // Local showToast removed, using global ToastManager
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', '✓ Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
           setQrModal({ isOpen: false, qrCode: '', url: '' });
           window.api.system.stopLANServer();
         }
@@ -131,11 +150,11 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             setFormData(prev => ({ ...prev, photo_path: saveRes.relativePath }));
             setPhotoPreview(compressedBase64);
           } else {
-            alert('Fotoğraf kaydedilemedi: ' + saveRes.message);
+            window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_error', 'Fotoğraf kaydedilemedi:') + ' ' + saveRes.message, type: 'error' } }));
           }
         }
       } catch (err) {
-        alert('Fotoğraf işlenirken hata oluştu: ' + err.message);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_upload_error', 'Fotoğraf işlenirken hata oluştu:') + ' ' + err.message, type: 'error' } }));
       }
     }
   };
@@ -144,7 +163,8 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
     if (window.api && window.api.system.startLANServer && activeProject) {
       const res = await window.api.system.startLANServer({
         projectId: activeProjectId,
-        projectName: activeProject.name
+        projectName: activeProject.name,
+        lang: i18n.language
       });
       if (res.success) {
         setQrModal({
@@ -153,7 +173,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
           url: res.url
         });
       } else {
-        alert('Yerel sunucu başlatılamadı: ' + res.message);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.lan_error', 'Yerel sunucu başlatılamadı:') + ' ' + res.message, type: 'error' } }));
       }
     }
   };
@@ -703,7 +723,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
           >
             <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--primary)' }}>📲 {t('materials.upload_mobile_title', 'Mobil Fotoğraf Yükle')}</h3>
             <p className="card-subtitle" style={{ marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-              {t('materials.upload_mobile_desc', 'Telefonunuzu ve bilgisayarınızı **aynı WiFi ağına** bağlayın, ardından QR kodu kameranızla taratın:')}
+              {renderDescription(t('materials.upload_mobile_desc', 'Telefonunuzu ve bilgisayarınızı **aynı WiFi ağına** bağlayın, ardından QR kodu kameranızla taratın:'))}
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
               <div style={{ background: '#fff', padding: '1rem', borderRadius: '16px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)', width: '212px', height: '212px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -711,7 +731,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
               </div>
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-              Link: <code style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{qrModal.url}</code>
+              {t('materials.qr_link', 'Bağlantı:')} <code style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{qrModal.url}</code>
             </div>
             <button className="btn btn-danger" onClick={handleCloseQRModal} style={{ width: '100%', marginTop: '1.5rem', height: '42px', fontWeight: 'bold' }}>{t('common.cancel', 'İptal Et')}</button>
           </div>
@@ -745,6 +765,28 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
         h3={t('guides.delivery.step3.title')} 
         p3={t('guides.delivery.step3.desc')} 
       />
+
+      {toastMessage && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(16, 185, 129, 0.95)',
+          color: '#fff',
+          padding: '0.75rem 1.5rem',
+          borderRadius: '8px',
+          zIndex: 10000,
+          boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          fontWeight: 'bold',
+          pointerEvents: 'none',
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 };

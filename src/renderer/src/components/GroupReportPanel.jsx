@@ -41,11 +41,15 @@ const GroupReportPanel = ({ activeProjectId, workers, balances }) => {
   const fetchGroupReport = async () => {
     if (window.api && window.api.finance) {
       setLoading(true);
-      const res = await window.api.finance.groupStatement({ start_date: startDate, end_date: endDate, project_id: activeProjectId });
-      if (res.success) {
-        setReportData(res.groups);
-      } else {
-        alert('Rapor alınırken hata oluştu: ' + res.message);
+      try {
+        const res = await window.api.finance.groupStatement({ start_date: startDate, end_date: endDate, project_id: activeProjectId });
+        if (res.success) {
+          setReportData(res.groups);
+        } else {
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('group_report.error', 'Rapor alınırken hata oluştu:') + ' ' + res.message, type: 'error' } }));
+        }
+      } catch (err) {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('group_report.error', 'Rapor alınırken hata oluştu:') + ' ' + err.message, type: 'error' } }));
       }
       
       const settings = await window.api.db.read('app_settings');

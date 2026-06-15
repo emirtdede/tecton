@@ -29,13 +29,13 @@ describe('LAN Server Service', () => {
       }
     };
 
-    const result = startLANServer(mockWindow);
+    const result = startLANServer(mockWindow, 'en');
     expect(result.success).toBe(true);
     expect(result.port).toBe(5001);
     expect(result.ip).toBeDefined();
 
-    // Verify calling it again returns same server info
-    const secondResult = startLANServer(mockWindow);
+    // Verify calling it again with a different language returns same server info
+    const secondResult = startLANServer(mockWindow, 'tr');
     expect(secondResult.port).toBe(5001);
 
     // Stop server

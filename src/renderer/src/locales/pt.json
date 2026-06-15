@@ -75,21 +75,27 @@
     "restore_invalid_file": "Arraste um arquivo de banco de dados SQLite válido (.sqlite ou .db).",
     "system_maintenance": "Manutenção do Sistema",
     "logo_uploaded": "Logotipo carregado",
-    "parameters": "Parameters",
+    "parameters": "Parâmetros",
     "regionalSettings": "Regional Format Settings",
     "customCurrency": "Currency Override",
     "customDateFormat": "Date Format Override",
     "customTimeFormat": "Time Format Override",
-    "autoByLanguage": "Automatic (By Language)",
-    "regionalFormatSettings": "Regional Format Settings",
+    "autoByLanguage": "Automático (por idioma)",
+    "regionalFormatSettings": "Configurações regionais",
     "currencyOverride": "Currency Selection",
     "dateFormatOverride": "Date Format Selection",
     "timeFormatOverride": "Time Format Selection",
-    "currencySelection": "Currency Selection",
-    "dateFormatSelection": "Date Format Selection",
-    "timeFormatSelection": "Time Format Selection",
+    "currencySelection": "Seleção de moeda",
+    "dateFormatSelection": "Formato de data",
+    "timeFormatSelection": "Formato de hora",
     "time24h": "24 Hours (14:30)",
-    "time12h": "12 Hours AM/PM (02:30 PM)"
+    "time12h": "12 Hours AM/PM (02:30 PM)",
+    "backup_error": "Backup Error:",
+    "optimize_success": "Database optimized successfully.",
+    "optimize_error": "Optimization Error:",
+    "cloud_folder_success": "Silent cloud backup folder set successfully:",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_error": "Restore error:"
   },
   "dashboard": {
     "title": "Gestão de Pessoal",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Action successfully undone!",
+    "undo_error": "Undo failed:",
+    "delete_worker_title": "Excluir Pessoal",
+    "delete_worker_msg": "Tem certeza de que deseja excluir este pessoal (mover para a lixeira)? Os dados do sistema não serão excluídos permanentemente, mas removidos das listas."
   },
   "worker_profile": {
     "back": "Voltar",
@@ -194,7 +204,7 @@
     "help_h3": "3. PDF Reconciliation",
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
   },
   "cash": {
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "Toda a empresa (Global)",
+    "headquarters": "Caixa central / Geral",
+    "relatedProject": "Obra relacionada",
+    "projectFilterLabel": "Filtro de obra",
+    "reportTitle": "Relatório de transações de caixa",
+    "netBalance": "Saldo líquido de caixa",
+    "expense": "Despesa",
+    "income": "Receita",
+    "tags": "Tags",
+    "delete_title": "Excluir transação em dinheiro",
+    "delete_confirm": "Tem certeza de que deseja excluir esta transação em dinheiro? Esta ação afetará permanentemente o saldo de caixa."
   },
   "logs": {
     "title": "Logs do Sistema",
@@ -254,10 +275,12 @@
       "large_data_desc": "Ao atualizar imagens como logotipos, códigos Base64 longos são salvos. É normal ver blocos de texto longos nos logs; isso confirma que os envios foram gravados com sucesso.",
       "filter_export_title": "3. Busca, filtragem e exportação",
       "filter_export_desc": "Filtre por data, palavra-chave ou tipo de log. Baixe os logs nos formatos Excel, CSV, JSON, Markdown ou Texto."
-    }
+    },
+    "filter_project": "Obra",
+    "project_all": "Todos os Canteiros de Obras"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "Cancelar",
     "confirm": "Confirmar",
     "delete": "Excluir",
     "empty_data": "Nenhum dado encontrado para exibição.",
@@ -278,7 +301,9 @@
     "phone": "Telefone",
     "all": "Tudo",
     "page_info": "Página",
-    "page_guide": "Guia de Página"
+    "page_guide": "Guia de Página",
+    "error_occurred": "Error:",
+    "required_field": "Por favor, preencha este campo."
   },
   "worker_modal": {
     "title_new": "Adicionar Novo Pessoal",
@@ -312,7 +337,8 @@
     "period": "PERIÓDICO",
     "earned": "Ganho:",
     "advance": "Adiantamento:",
-    "total_balance": "SALDO TOTAL"
+    "total_balance": "SALDO TOTAL",
+    "error": "Error retrieving report:"
   },
   "about": {
     "title": "Sobre & Ajuda",
@@ -402,7 +428,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "Excluir site",
+    "delete_msg": "Tem certeza? Os dados ficarão ocultos."
   },
   "filters": {
     "sort": "Ordenação:",
@@ -450,7 +478,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "Sem imagem"
   },
   "subcontractor": {
     "title": "🚜 Razões de subempreiteiros",
@@ -462,7 +491,7 @@
     "table_name": "Subcontractor / Company",
     "table_wage": "Daily Rate",
     "table_status": "Status",
-    "table_action": "Action",
+    "table_action": "Ação",
     "help_title": "Subcontractor Ledger Guide",
     "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
     "help_h1": "1. Daily Rate and Ledger Entry",
@@ -491,10 +520,10 @@
     "no_results": "No reports found matching the search criteria.",
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
-    "delete_title": "Delete Report",
-    "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
+    "upload_mobile_title": "Carregar do celular",
+    "upload_mobile_desc": "Conecte-se ao **mesmo WiFi** e leia o QR:",
+    "delete_title": "Excluir relatório",
+    "delete_confirm": "Tem certeza de que deseja excluir este relatório de controle de qualidade? Esta ação não pode ser desfeita.",
     "help_title": "Quality Control Guide",
     "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
     "help_h1": "1. Report Statuses",
@@ -508,7 +537,7 @@
     "title": "📓 Diário de obra diário",
     "worker_count": "Número de funcionários ativos",
     "weather": "Estado do tempo",
-    "temperature": "Temperature",
+    "temperature": "Temperatura",
     "notes": "Notas do diário / Trabalhos realizados",
     "notes_ph": "ex. Armadura dos pilares do 2º andar montada, lançamento de concreto C30...",
     "save_btn": "Salvar / Atualizar diário",
@@ -525,9 +554,14 @@
     "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
     "help_h3": "3. Edit Lock Policy",
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
-    "delete_title": "Delete Journal",
-    "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "Weather Description"
+    "delete_title": "Excluir diário",
+    "delete_confirm": "Tem certeza de que deseja excluir esta entrada diária? Esta ação não pode ser desfeita.",
+    "weatherDesc": "Descrição do clima",
+    "weather_error": "Sem conexão com a internet ou o serviço de meteorologia está inacessível.",
+    "weather_not_found": "Localização especificada não encontrada: \"{{location}}\". Verifique o nome da cidade/distrito.",
+    "weather_unauthorized": "A chave da API de clima é inválida ou expirou. Atualize-a nas Configurações.",
+    "weather_offline": "Sem conexão com a internet ou serviço de clima inacessível.",
+    "weather_api_error": "O serviço de clima retornou um erro."
   },
   "materials": {
     "title": "🚚 Nota de entrega & entrada de materiais",
@@ -539,13 +573,13 @@
     "document_photo": "Foto do documento",
     "no_results": "No delivery notes found matching the search criteria.",
     "empty_state": "No delivery notes found yet.",
-    "photo": "Photo",
+    "photo": "Foto",
     "view_photo": "View",
     "no_photo": "None",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
-    "delete_title": "Delete Document",
-    "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
+    "upload_mobile_title": "Enviar Foto do Celular",
+    "upload_mobile_desc": "Conecte seu celular à **mesma rede WiFi** e escaneie o código QR:",
+    "delete_title": "Excluir documento",
+    "delete_confirm": "Tem certeza de que deseja excluir esta entrada de nota de entrega? Esta ação não pode ser desfeita.",
     "help_title": "Delivery Note Guide",
     "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
     "help_h1": "1. Supplier & Material Type",
@@ -553,7 +587,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Photo successfully received from mobile device!",
+    "photo_error": "Failed to save photo:",
+    "photo_upload_error": "Error processing photo:",
+    "lan_error": "Local server could not be started:",
+    "qr_link": "Link:"
   },
   "production": {
     "title": "📐 Medições & acompanhamento de produção",
@@ -561,8 +600,8 @@
     "item_name_ph": "ex. Alvenaria de tijolo",
     "no_results": "No production records found matching the search criteria.",
     "empty_state": "No production entries recorded for this construction site yet.",
-    "delete_title": "Delete Record",
-    "delete_confirm": "Are you sure you want to delete this production record? This action cannot be undone.",
+    "delete_title": "Excluir registro",
+    "delete_confirm": "Tem certeza de que deseja excluir este registro de produção? Esta ação não pode ser desfeita.",
     "help_title": "Quantity Survey Guide",
     "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
     "help_h1": "1. Production Item Records",
@@ -589,13 +628,13 @@
   "settings.customDateFormat": "Date Format Override",
   "settings.customTimeFormat": "Time Format Override",
   "settings.autoByLanguage": "Automatic (By Language)",
-  "sidebar.recycleBin": "Recycle Bin",
+  "sidebar.recycleBin": "Lixeira",
   "recycle.title": "Recycle Bin",
   "recycle.desc": "List deleted records here and restore them back to their original places.",
   "recycle.type": "Record Type",
   "recycle.content": "Content / Title",
   "recycle.deletedAt": "Deleted At",
-  "recycle.restoreSuccess": "Record successfully restored.",
+  "recycle.restoreSuccess": "Registro restaurado com sucesso.",
   "recycle.emptyState": "No deleted records found.",
   "recycle.itemType.worker": "Personnel Record",
   "recycle.itemType.transaction": "Cash Transaction",
@@ -603,16 +642,16 @@
   "recycle.itemType.journal": "Daily Journal",
   "recycle.itemType.quality": "Quality Control Report",
   "recycle.itemType.subcontractor": "Subcontractor Ledger Record",
-  "global.restore": "Restore",
+  "global.restore": "Restaurar",
   "recycle.searchPlaceholder": "Search...",
   "recycle.searchAll": "Search Everywhere",
   "recycle.allTypes": "All Record Types",
   "recycle.startDate": "Start Date",
   "recycle.endDate": "End Date",
-  "recycle.restored": "Restored",
+  "recycle.restored": "Restaurado",
   "recycle.hideRestored": "Hide Restored",
   "recycle.showRestored": "Show Restored",
-  "recycle.successTitle": "Success",
+  "recycle.successTitle": "Sucesso",
   "common.ok": "OK",
   "common.error": "Error",
   "recycle.itemType.project": "Project Record",
@@ -636,7 +675,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -650,18 +689,18 @@
   },
   "guides": {
     "site": {
-      "title": "Site Management Guide",
+      "title": "Guia de gerenciamento do site",
       "step1": {
-        "title": "1. Active Workspace",
-        "desc": "Select a project to set as active."
+        "title": "1. Espaço de trabalho ativo",
+        "desc": "Selecione um projeto para definir como ativo."
       },
       "step2": {
-        "title": "2. Location and Weather",
-        "desc": "Specify a location to automatically retrieve daily weather."
+        "title": "2. Localização e clima",
+        "desc": "Especifique um local para recuperar automaticamente o clima diário."
       },
       "step3": {
-        "title": "3. Search and Pagination",
-        "desc": "Search instantly between construction sites."
+        "title": "3. Pesquisa e paginação",
+        "desc": "Pesquise instantaneamente entre os canteiros de obras."
       }
     },
     "personnel": {
@@ -671,116 +710,117 @@
         "desc": "Use the Excel template to upload a bulk list."
       },
       "step2": {
-        "title": "2. Group Analysis",
-        "desc": "Analyze expenses according to group category."
+        "title": "2. Análise de grupo",
+        "desc": "Analisar despesas por categoria de grupo."
       },
       "step3": {
-        "title": "3. Timesheets and Statements",
-        "desc": "Click on the name to view the timesheet."
+        "title": "3. Planilhas de horas e extratos",
+        "desc": "Clique no nome para visualizar a planilha."
       }
     },
     "quantity": {
-      "title": "Production Guide",
+      "title": "Guia de Produção",
       "step1": {
-        "title": "1. Production Records",
-        "desc": "Record daily production."
+        "title": "1. Registros",
+        "desc": "Registros."
       },
       "step2": {
-        "title": "2. Archive and Details",
-        "desc": "Write notes to keep a chronological archive."
+        "title": "2. Arquivo",
+        "desc": "Arquivo."
       },
       "step3": {
-        "title": "3. Search and Filters",
-        "desc": "Filter by date range or unit."
+        "title": "3. Busca",
+        "desc": "Filtros."
       }
     },
     "delivery": {
-      "title": "Delivery Guide",
+      "title": "Guia de Entrega",
       "step1": {
-        "title": "1. Supplier and Material",
-        "desc": "Record supplier and material names."
+        "title": "1. Fornecedor",
+        "desc": "Fornecedor."
       },
       "step2": {
-        "title": "2. Document Photos",
-        "desc": "Upload document photos for digital archive."
+        "title": "2. Fotos",
+        "desc": "Fotos."
       },
       "step3": {
-        "title": "3. Smart Search",
-        "desc": "Search in delivery note numbers or suppliers."
+        "title": "3. Busca",
+        "desc": "Busca."
       }
     },
     "journal": {
-      "title": "Journal Guide",
+      "title": "Guia do Diário",
       "step1": {
-        "title": "1. Weather Integration",
-        "desc": "Weather is automatically fetched."
+        "title": "1. Clima",
+        "desc": "Clima."
       },
       "step2": {
-        "title": "2. Auto Worker Count",
-        "desc": "Active worker count is automatically calculated."
+        "title": "2. Diário",
+        "desc": "Diário."
       },
       "step3": {
-        "title": "3. Edit Lock Policy",
-        "desc": "Old records are locked to protect past data."
+        "title": "3. Histórico",
+        "desc": "Histórico."
       }
     },
     "quality": {
-      "title": "Quality Guide",
+      "title": "Guia de Qualidade",
       "step1": {
-        "title": "1. Report Statuses",
-        "desc": "Update the status when the issue is resolved."
+        "title": "1. Status do Relatório",
+        "desc": "Atualize ao resolver."
       },
       "step2": {
-        "title": "2. Visual Evidence",
-        "desc": "Add photos of identified issues."
+        "title": "2. Evidência Visual",
+        "desc": "Adicione fotos."
       },
       "step3": {
-        "title": "3. Filtering",
-        "desc": "Filter to track open issues."
+        "title": "3. Filtragem",
+        "desc": "Filtre problemas abertos."
       }
     },
     "subcontractor": {
-      "title": "Subcontractor Guide",
+      "title": "Guia do Subcontratado",
       "step1": {
-        "title": "1. Daily Wage",
-        "desc": "Track daily wages of subcontractors."
+        "title": "1. Salário Diário",
+        "desc": "Rastreie os salários."
       },
       "step2": {
-        "title": "2. Search and Filtering",
-        "desc": "Search in the subcontractor list."
+        "title": "2. Busca e Filtro",
+        "desc": "Busque na lista."
       },
       "step3": {
-        "title": "3. Update and Edit",
-        "desc": "Update daily wages at any time."
+        "title": "3. Atualização",
+        "desc": "Atualize a qualquer momento."
       }
     },
     "media": {
-      "title": "Media Guide",
+      "title": "Guia de Mídia",
       "step1": {
-        "title": "1. Visual Timeline",
-        "desc": "Examine site images chronologically."
+        "title": "1. Linha do Tempo",
+        "desc": "Examine as imagens cronologicamente."
       },
       "step2": {
-        "title": "2. Quick Details",
-        "desc": "Click on any photo to view in full size."
+        "title": "2. Detalhes Rápidos",
+        "desc": "Clique na foto para ver em tamanho real."
       },
       "step3": {
-        "title": "3. Category Filters",
-        "desc": "Filter by delivery note or quality reports."
+        "title": "3. Filtros de Categoria",
+        "desc": "Filtre por nota de entrega ou relatórios de qualidade."
       }
     },
     "cash": {
-      "title": "Cash Management Guide",
+      "title": "Guia de gestão de caixa",
       "step1": {
-        "title": "1. Income/Expense Records",
-        "desc": "Record incomes and expenses."
+        "title": "1. Receitas/Despesas",
+        "desc": "Registre receitas e despesas."
       },
       "step2": {
-        "title": "2. Monthly Financial Status"
+        "title": "2. Status financeiro mensal",
+        "desc": "Veja o fluxo de caixa mensal e o saldo."
       },
       "step3": {
-        "title": "3. Exporting",
-        "desc": "Download transactions as PDF or Excel."
+        "title": "3. Exportação",
+        "desc": "Baixe as transações em PDF ou Excel."
       }
     },
     "recycle": {
@@ -797,11 +837,34 @@
         "title": "Project Separation",
         "desc": "Filter your recycle bin by project."
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. Registros",
+        "desc": "Registros."
+      },
+      "step2": {
+        "title": "2. Arquivo",
+        "desc": "Arquivo."
+      },
+      "step3": {
+        "title": "3. Busca",
+        "desc": "Filtros."
+      },
+      "title": "Guia de Produção"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "Extrato de Conta",
+    "forwardBalance": "Saldo Anterior",
+    "periodEarned": "Ganho no Período",
+    "periodAdvance": "Adiantamento do Período",
+    "netBalance": "Saldo Líquido",
+    "group": "Grupo",
+    "phone": "Telefone",
+    "id_tc": "ID/Documento"
   },
   "recycle": {
     "desc": "List deleted records here and restore them back to their original places.",
@@ -812,7 +875,7 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "tableRecordType": "Record Type",
-    "tableProject": "Project / Site",
+    "tableProject": "Projeto / Site",
     "tableContent": "Content / Title",
     "tableDeletedAt": "Deleted At",
     "tableAction": "Action",
@@ -834,28 +897,111 @@
       "subcontractor": "Subcontractor Ledger",
       "project": "Project Record"
     },
-    "allProjectsOption": "All Projects"
+    "allProjectsOption": "All Projects",
+    "restore_confirm_title": "Confirmação de Restauração",
+    "restore_confirm_msg": "Tem certeza de que deseja restaurar este registro? Ele será movido de volta ao seu local original.",
+    "restore_error": "Erro de restauração:"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
-    "recordsCount": "({{count}} Records)",
-    "restore": "Restore",
-    "restored": "Restored"
+    "recordsCount": "({{count}} Registros)",
+    "restore": "Restaurar",
+    "restored": "Restaurado",
+    "filter": "Filtrar",
+    "dateRange": "Intervalo de datas",
+    "creationDate": "Data de criação",
+    "date": "Data",
+    "actionType": "Tipo de Operação",
+    "description": "Descrição",
+    "amount": "Valor"
   },
   "sidebar": {
-    "recycleBin": "Recycle Bin",
+    "recycleBin": "Lixeira",
     "spotlight": "Spotlight"
   },
   "anomaly": {
-    "noAnomalies": "No System Anomalies",
-    "allUpToDate": "All financial balances and HSE documents are up to date."
+    "noAnomalies": "Sem Anomalias",
+    "allUpToDate": "Todos os saldos estão atualizados."
   },
   "empty": {
-    "production": "No production records entered for this site yet.",
-    "delivery": "No delivery records found yet.",
-    "journal": "No daily journal records found yet.",
-    "quality": "No quality control reports for this site yet.",
-    "subcontractor": "No subcontractor registered for this site yet.",
-    "media": "No media records found matching the criteria."
+    "production": "Ainda não há registros de produção.",
+    "delivery": "Sem registros de entrega.",
+    "journal": "Sem diários.",
+    "quality": "Sem relatórios de qualidade.",
+    "subcontractor": "Nenhum subcontratado.",
+    "media": "Nenhuma mídia encontrada."
+  },
+  "pdf": {
+    "signatureWorker": "Pessoal (Nome/Assinatura)",
+    "signatureCompany": "Representante da Empresa (Carimbo/Assinatura)"
+  },
+  "global.searchPlaceholder": "Buscar...",
+  "recycle.filterAllRecords": "Todos os registros",
+  "recycle.filterAllTypes": "Todos os tipos",
+  "recycle.filterAllProjects": "Todas as obras",
+  "global.startDate": "Data de início",
+  "global.endDate": "Data de término",
+  "guides.recycle.title": "Guia da Lixeira",
+  "guides.recycle.step2.title": "Restauração de dados",
+  "guides.recycle.step3.title": "Separação de obras",
+  "worker.advanceBadge": "Adiantamento",
+  "recycle.tableProject": "Projeto / Site",
+  "worker.group": "Grupo",
+  "worker.phone": "Telefone",
+  "pdf_project_site": "Projeto / Site",
+  "recycle_th_type": "Tipo de Registro",
+  "recycle_th_project": "Projeto / Site",
+  "recycle_th_content": "Conteúdo / Título",
+  "recycle_th_date": "Excluído em",
+  "recycle_th_action": "Ação",
+  "recycle_type_project": "Registro do Projeto",
+  "recycle_type_worker": "Registro de Pessoal",
+  "recycle_type_material": "Nota de Entrega / Material",
+  "recycle_type_journal": "Diário de Obra",
+  "recycle_type_quality": "Relatório de Qualidade",
+  "recycle_type_subcontractor": "Livro de Subcontratado",
+  "recycle_type_cash": "Transação em Dinheiro",
+  "recycle_guide_title": "Guia da Lixeira",
+  "recycle_guide_h1": "Como Funciona?",
+  "recycle_guide_p1": "Os registros excluídos são mantidos provisoriamente aqui.",
+  "recycle_guide_h2": "Restaurando Dados",
+  "recycle_guide_p2": "Use o botão restaurar para recuperar os registros.",
+  "recycle_guide_h3": "Separação de Projetos",
+  "recycle_guide_p3": "Filtre sua lixeira por projeto.",
+  "recycle_page_title": "Lixeira",
+  "recycle_page_desc": "Liste os registros excluídos aqui e restaure-os aos seus lugares originais.",
+  "sidebar_recycle_btn": "Lixeira",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "Editar",
+  "common.edit": "Editar",
+  "Tam Gün": "Dia todo",
+  "Yarım Gün": "Meio dia",
+  "Mesai": "Horas extras",
+  "Normal çalışma": "Trabalho normal",
+  "spotlight_search_placeholder": "Pesquisar no centro de comando da obra...",
+  "spotlight_desc_personnel": "Lista de pessoal e resumos de saldo atual",
+  "spotlight_desc_projects": "Canteiros de obras, locais e status de projetos",
+  "spotlight_desc_production": "Registros de quantidade e rastreamento de progresso",
+  "spotlight_desc_materials": "Materiais de entrada e notas de entrega de concreto",
+  "spotlight_desc_journal": "Diários do local e clima automático",
+  "spotlight_desc_quality": "Atas, defeitos de fabricação e relatórios de qualidade",
+  "spotlight_desc_subcontractor": "Contas de subcontratados (escavadeiras, catering, etc.)",
+  "spotlight_desc_media": "Galeria de recibos com fotos e atas",
+  "spotlight_desc_cash": "Movimentos de fluxo de caixa e registro de caixa",
+  "spotlight_desc_settings": "Tema, idioma, backup em nuvem e configurações",
+  "spotlight_badge_menu": "MENU",
+  "spotlight_badge_personnel": "PESSOAL",
+  "spotlight_badge_project": "OBRA",
+  "spotlight_badge_faq": "FAQ",
+  "spotlight_faq_1_label": "Como o saldo de caixa é calculado?",
+  "spotlight_faq_1_desc": "Entradas - Saídas. Adiantamentos são registrados como saídas.",
+  "spotlight_faq_2_label": "Como é feito o backup do sistema (Restaurar)?",
+  "spotlight_faq_2_desc": "Arrastando e soltando o backup .sqlite em Configurações.",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "Multiplicador",
+  "settings_logs": {
+    "error_read": "Failed to read logs:"
   }
 }

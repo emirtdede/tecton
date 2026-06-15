@@ -15,6 +15,9 @@ const SystemLogs = () => {
   const [filterText, setFilterText] = useState('');
   const [selectedType, setSelectedType] = useState('');
   
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
+  
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
@@ -46,17 +49,31 @@ const SystemLogs = () => {
   }, [currentPage]);
 
   useEffect(() => {
+    const fetchProjects = async () => {
+      if (window.api && window.api.db) {
+        const projs = await window.api.db.read('projects');
+        setProjects(projs || []);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
     setCurrentPage(1);
-  }, [filterText, startDate, endDate, selectedType]);
+  }, [filterText, startDate, endDate, selectedType, selectedProjectId]);
 
   const fetchLogs = async () => {
     if (window.api) {
       setLoading(true);
-      const res = await window.api.system.readLogs(startDate, endDate);
-      if (res.success) {
-        setLogs(res.logs);
-      } else {
-        alert('Loglar okunamadı: ' + res.message);
+      try {
+        const res = await window.api.system.readLogs(startDate, endDate);
+        if (res.success) {
+          setLogs(res.logs);
+        } else {
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings_logs.error_read', 'Loglar okunamadı:') + ' ' + res.message, type: 'error' } }));
+        }
+      } catch (error) {
+        console.error(error);
       }
       setLoading(false);
     }
@@ -65,6 +82,9 @@ const SystemLogs = () => {
   useEffect(() => {
     fetchLogs();
   }, [startDate, endDate]);
+
+  const selectedProject = projects.find(p => String(p.id) === String(selectedProjectId));
+  const selectedProjectName = selectedProject ? selectedProject.name : '';
 
   const filteredLogs = logs.filter(log => {
     if (filterText && !log.toLowerCase().includes(filterText.toLowerCase())) {
@@ -76,6 +96,11 @@ const SystemLogs = () => {
       if (selectedType === 'db_create' && !log.includes('[DB CREATE]')) return false;
       if (selectedType === 'db_update' && !log.includes('[DB UPDATE]')) return false;
       if (selectedType === 'db_delete' && !log.includes('[DB DELETE]')) return false;
+    }
+    if (selectedProjectId && selectedProjectName) {
+      if (!log.includes(`[Şantiye: ${selectedProjectName}]`) && !log.includes(`[Project: ${selectedProjectName}]`)) {
+        return false;
+      }
     }
     return true;
   }).reverse(); // Show latest first
@@ -218,6 +243,22 @@ const SystemLogs = () => {
             <option value="db_create">➕ DB Create</option>
             <option value="db_update">🔄 DB Update</option>
             <option value="db_delete">🗑️ DB Delete</option>
+          </select>
+        </div>
+        <div style={{ flex: 1, minWidth: '180px' }}>
+          <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('logs.filter_project', 'Şantiye')}</label>
+          <select
+            className="form-input"
+            value={selectedProjectId}
+            onChange={e => setSelectedProjectId(e.target.value)}
+            style={{ width: '100%' }}
+          >
+            <option value="">{t('logs.project_all', 'Tüm Şantiyeler')}</option>
+            {projects.map(proj => (
+              <option key={proj.id} value={proj.id}>
+                🏢 {proj.name}
+              </option>
+            ))}
           </select>
         </div>
         <div style={{ flex: 1, minWidth: '120px' }}>

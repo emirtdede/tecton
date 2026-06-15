@@ -81,15 +81,21 @@
     "customDateFormat": "Date Format Override",
     "customTimeFormat": "Time Format Override",
     "autoByLanguage": "Автоматически (по языку)",
-    "regionalFormatSettings": "Настройки регионального формата",
+    "regionalFormatSettings": "Региональные настройки",
     "currencyOverride": "Currency Selection",
     "dateFormatOverride": "Date Format Selection",
     "timeFormatOverride": "Time Format Selection",
     "currencySelection": "Выбор валюты",
-    "dateFormatSelection": "Выбор формата даты",
-    "timeFormatSelection": "Выбор формата времени",
+    "dateFormatSelection": "Формат даты",
+    "timeFormatSelection": "Формат времени",
     "time24h": "24 часа (14:30)",
-    "time12h": "12 часов AM/PM (02:30 PM)"
+    "time12h": "12 часов AM/PM (02:30 PM)",
+    "backup_error": "Ошибка резервного копирования:",
+    "optimize_success": "База данных успешно оптимизирована.",
+    "optimize_error": "Ошибка оптимизации:",
+    "cloud_folder_success": "Папка тихого облачного резервного копирования успешно задана:",
+    "restore_confirm_title": "Подтверждение восстановления",
+    "restore_error": "Ошибка восстановления:"
   },
   "dashboard": {
     "title": "Управление персоналом",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Действие успешно отменено!",
+    "undo_error": "Не удалось отменить:",
+    "delete_worker_title": "Удалить Персонал",
+    "delete_worker_msg": "Вы уверены, что хотите удалить этого сотрудника (переместить в корзину)? Системные данные не будут окончательно удалены, но будут скрыты из списков."
   },
   "worker_profile": {
     "back": "Назад",
@@ -194,7 +204,7 @@
     "help_h3": "3. PDF Reconciliation",
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Зарегистрированный номер телефона персонала не найден.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
   },
   "cash": {
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "Вся компания (Глобально)",
+    "headquarters": "Главная касса / Общее",
+    "relatedProject": "Связанный объект",
+    "projectFilterLabel": "Фильтр объектов",
+    "reportTitle": "Отчет по кассовым операциям",
+    "netBalance": "Чистый баланс кассы",
+    "expense": "Расход",
+    "income": "Приход",
+    "tags": "Теги",
+    "delete_title": "Удалить кассовую операцию",
+    "delete_confirm": "Вы уверены, что хотите удалить эту кассовую операцию? Это действие навсегда повлияет на остаток наличных."
   },
   "logs": {
     "title": "Системные журналы",
@@ -254,10 +275,12 @@
       "large_data_desc": "При обновлении логотипов сохраняются длинные коды Base64. Длинные блоки текста в логах — это нормально; это подтверждает успешное сохранение изображений.",
       "filter_export_title": "3. Поиск, фильтрация и экспорт",
       "filter_export_desc": "Фильтруйте по дате, ключевому слову или типу лога. Скачивайте логи в форматах Excel, CSV, JSON, Markdown или Текст."
-    }
+    },
+    "filter_project": "Строительный объект",
+    "project_all": "Все строительные объекты"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "Отмена",
     "confirm": "Подтвердить",
     "delete": "Удалить",
     "empty_data": "Не найдено данных для отображения.",
@@ -278,7 +301,9 @@
     "phone": "Телефон",
     "all": "Все",
     "page_info": "Страница",
-    "page_guide": "Руководство по странице"
+    "page_guide": "Руководство по странице",
+    "error_occurred": "Ошибка:",
+    "required_field": "Пожалуйста, заполните это поле."
   },
   "worker_modal": {
     "title_new": "Добавить нового сотрудника",
@@ -312,7 +337,8 @@
     "period": "ПЕРИОДИЧЕСКИЙ",
     "earned": "Заработано:",
     "advance": "Аванс:",
-    "total_balance": "ОБЩИЙ БАЛАНС"
+    "total_balance": "ОБЩИЙ БАЛАНС",
+    "error": "Ошибка при получении отчета:"
   },
   "about": {
     "title": "О программе и Помощь",
@@ -402,7 +428,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "Удалить сайт",
+    "delete_msg": "Вы уверены? Данные будут скрыты."
   },
   "filters": {
     "sort": "Сортировка:",
@@ -450,7 +478,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "Нет изображения"
   },
   "subcontractor": {
     "title": "🚜 Счета субподрядчиков",
@@ -462,7 +491,7 @@
     "table_name": "Subcontractor / Company",
     "table_wage": "Daily Rate",
     "table_status": "Status",
-    "table_action": "Action",
+    "table_action": "Действие",
     "help_title": "Subcontractor Ledger Guide",
     "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
     "help_h1": "1. Daily Rate and Ledger Entry",
@@ -491,10 +520,10 @@
     "no_results": "No reports found matching the search criteria.",
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
-    "delete_title": "Delete Report",
-    "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
+    "upload_mobile_title": "Загрузить с телефона",
+    "upload_mobile_desc": "Подключитесь к **тому же WiFi** и отсканируйте QR:",
+    "delete_title": "Удалить отчет",
+    "delete_confirm": "Вы уверены, что хотите удалить этот отчет о контроле качества? Это действие нельзя отменить.",
     "help_title": "Quality Control Guide",
     "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
     "help_h1": "1. Report Statuses",
@@ -525,9 +554,14 @@
     "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
     "help_h3": "3. Edit Lock Policy",
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
-    "delete_title": "Delete Journal",
-    "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "Описание погоды"
+    "delete_title": "Удалить журнал",
+    "delete_confirm": "Вы уверены, что хотите удалить эту запись в журнале? Это действие нельзя отменить.",
+    "weatherDesc": "Описание погоды",
+    "weather_error": "Нет подключения к интернету или служба погоды недоступна.",
+    "weather_not_found": "Указанное место не найдено: \"{{location}}\". Пожалуйста, проверьте название города.",
+    "weather_unauthorized": "Ключ API погоды недействителен или истек. Пожалуйста, обновите его в настройках.",
+    "weather_offline": "Нет подключения к интернету или служба погоды недоступна.",
+    "weather_api_error": "Служба погоды вернула ошибку."
   },
   "materials": {
     "title": "🚚 Накладная и поступление материалов",
@@ -539,13 +573,13 @@
     "document_photo": "Фото документа",
     "no_results": "No delivery notes found matching the search criteria.",
     "empty_state": "No delivery notes found yet.",
-    "photo": "Photo",
+    "photo": "Фото",
     "view_photo": "View",
     "no_photo": "None",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
-    "delete_title": "Delete Document",
-    "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
+    "upload_mobile_title": "Загрузить Фото с Мобильного",
+    "upload_mobile_desc": "Подключите мобильный к **той же сети WiFi** и отсканируйте QR-код:",
+    "delete_title": "Удалить документ",
+    "delete_confirm": "Вы уверены, что хотите удалить эту запись накладной? Это действие нельзя отменить.",
     "help_title": "Delivery Note Guide",
     "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
     "help_h1": "1. Supplier & Material Type",
@@ -553,7 +587,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Фото успешно получено с мобильного устройства!",
+    "photo_error": "Не удалось сохранить фото:",
+    "photo_upload_error": "Ошибка при обработке фото:",
+    "lan_error": "Не удалось запустить локальный сервер:",
+    "qr_link": "Ссылка:"
   },
   "production": {
     "title": "📐 Замеры и отслеживание объемов работ",
@@ -561,8 +600,8 @@
     "item_name_ph": "напр., Кладка кирпичной стены",
     "no_results": "No production records found matching the search criteria.",
     "empty_state": "No production entries recorded for this construction site yet.",
-    "delete_title": "Delete Record",
-    "delete_confirm": "Are you sure you want to delete this production record? This action cannot be undone.",
+    "delete_title": "Удалить запись",
+    "delete_confirm": "Вы уверены, что хотите удалить эту производственную запись? Это действие нельзя отменить.",
     "help_title": "Quantity Survey Guide",
     "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
     "help_h1": "1. Production Item Records",
@@ -589,13 +628,13 @@
   "settings.customDateFormat": "Date Format Override",
   "settings.customTimeFormat": "Time Format Override",
   "settings.autoByLanguage": "Automatic (By Language)",
-  "sidebar.recycleBin": "Recycle Bin",
+  "sidebar.recycleBin": "Корзина",
   "recycle.title": "Recycle Bin",
   "recycle.desc": "List deleted records here and restore them back to their original places.",
   "recycle.type": "Record Type",
   "recycle.content": "Content / Title",
   "recycle.deletedAt": "Deleted At",
-  "recycle.restoreSuccess": "Record successfully restored.",
+  "recycle.restoreSuccess": "Запись успешно восстановлена.",
   "recycle.emptyState": "No deleted records found.",
   "recycle.itemType.worker": "Personnel Record",
   "recycle.itemType.transaction": "Cash Transaction",
@@ -603,17 +642,17 @@
   "recycle.itemType.journal": "Daily Journal",
   "recycle.itemType.quality": "Quality Control Report",
   "recycle.itemType.subcontractor": "Subcontractor Ledger Record",
-  "global.restore": "Restore",
+  "global.restore": "Восстановить",
   "recycle.searchPlaceholder": "Search...",
   "recycle.searchAll": "Search Everywhere",
   "recycle.allTypes": "All Record Types",
   "recycle.startDate": "Start Date",
   "recycle.endDate": "End Date",
-  "recycle.restored": "Restored",
+  "recycle.restored": "Восстановлено",
   "recycle.hideRestored": "Hide Restored",
   "recycle.showRestored": "Show Restored",
-  "recycle.successTitle": "Success",
-  "common.ok": "OK",
+  "recycle.successTitle": "Успех",
+  "common.ok": "ОК",
   "common.error": "Error",
   "recycle.itemType.project": "Project Record",
   "recycle.project": "Project / Site",
@@ -636,7 +675,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -652,16 +691,16 @@
     "site": {
       "title": "Руководство по управлению объектом",
       "step1": {
-        "title": "1. Активная рабочая область",
-        "desc": "Выберите проект, чтобы сделать его активным."
+        "title": "1. Активное рабочее пространство",
+        "desc": "Выберите проект, чтобы установить его как активный."
       },
       "step2": {
         "title": "2. Местоположение и погода",
-        "desc": "Укажите местоположение для автоматического получения погоды."
+        "desc": "Укажите местоположение для автоматического получения ежедневной погоды."
       },
       "step3": {
-        "title": "3. Поиск и разбивка на страницы",
-        "desc": "Мгновенный поиск среди строительных объектов."
+        "title": "3. Поиск и нумерация страниц",
+        "desc": "Мгновенный поиск между строительными площадками."
       }
     },
     "personnel": {
@@ -671,98 +710,98 @@
         "desc": "Используйте шаблон Excel для массовой загрузки."
       },
       "step2": {
-        "title": "2. Анализ группы",
+        "title": "2. Групповой анализ",
         "desc": "Анализируйте расходы по категориям групп."
       },
       "step3": {
-        "title": "3. Табели учета рабочего времени",
+        "title": "3. Табели рабочего времени",
         "desc": "Нажмите на имя, чтобы просмотреть табель."
       }
     },
     "quantity": {
       "title": "Руководство по производству",
       "step1": {
-        "title": "1. Производственные записи",
-        "desc": "Записывайте ежедневное производство."
+        "title": "1. Записи",
+        "desc": "Записи."
       },
       "step2": {
-        "title": "2. Архив и детали",
-        "desc": "Пишите заметки для хронологического архива."
+        "title": "2. Архив",
+        "desc": "Архив."
       },
       "step3": {
-        "title": "3. Поиск и фильтры",
-        "desc": "Фильтрация по диапазону дат или единицам измерения."
+        "title": "3. Поиск",
+        "desc": "Поиск."
       }
     },
     "delivery": {
       "title": "Руководство по доставке",
       "step1": {
-        "title": "1. Поставщик и материал",
-        "desc": "Записывайте имена поставщиков и материалы."
+        "title": "1. Поставщик",
+        "desc": "Поставщик."
       },
       "step2": {
-        "title": "2. Фотографии документов",
-        "desc": "Загружайте фотографии документов для архива."
+        "title": "2. Фото",
+        "desc": "Фото."
       },
       "step3": {
-        "title": "3. Умный поиск",
-        "desc": "Поиск по номерам накладных или поставщикам."
+        "title": "3. Поиск",
+        "desc": "Поиск."
       }
     },
     "journal": {
       "title": "Руководство по журналу",
       "step1": {
-        "title": "1. Интеграция погоды",
-        "desc": "Погода загружается автоматически."
+        "title": "1. Погода",
+        "desc": "Погода."
       },
       "step2": {
-        "title": "2. Автоматический подсчет рабочих",
-        "desc": "Количество активных рабочих рассчитывается автоматически."
+        "title": "2. Журнал",
+        "desc": "События."
       },
       "step3": {
-        "title": "3. Политика блокировки редактирования",
-        "desc": "Старые записи блокируются для защиты данных."
+        "title": "3. История",
+        "desc": "История."
       }
     },
     "quality": {
       "title": "Руководство по качеству",
       "step1": {
         "title": "1. Статусы отчетов",
-        "desc": "Обновите статус, когда проблема будет решена."
+        "desc": "Обновите статус после решения."
       },
       "step2": {
         "title": "2. Визуальные доказательства",
-        "desc": "Добавьте фотографии выявленных проблем."
+        "desc": "Добавьте фотографии."
       },
       "step3": {
         "title": "3. Фильтрация",
-        "desc": "Фильтруйте для отслеживания открытых проблем."
+        "desc": "Фильтрация открытых проблем."
       }
     },
     "subcontractor": {
-      "title": "Руководство для субподрядчиков",
+      "title": "Руководство субподрядчика",
       "step1": {
         "title": "1. Дневная заработная плата",
-        "desc": "Отслеживайте дневную заработную плату субподрядчиков."
+        "desc": "Отслеживание дневной ЗП."
       },
       "step2": {
         "title": "2. Поиск и фильтрация",
-        "desc": "Поиск в списке субподрядчиков."
+        "desc": "Поиск в списке."
       },
       "step3": {
-        "title": "3. Обновление и редактирование",
-        "desc": "Обновляйте дневную заработную плату в любое время."
+        "title": "3. Обновление",
+        "desc": "Обновление ЗП в любое время."
       }
     },
     "media": {
-      "title": "Руководство по медиа",
+      "title": "Медиа руководство",
       "step1": {
-        "title": "1. Визуальная временная шкала",
-        "desc": "Изучайте изображения объектов в хронологическом порядке."
+        "title": "1. Визуальная хронология",
+        "desc": "Изучайте изображения в хронологическом порядке."
       },
       "step2": {
         "title": "2. Быстрые детали",
-        "desc": "Нажмите на любую фотографию, чтобы просмотреть в полном размере."
+        "desc": "Нажмите на фото для просмотра в полном размере."
       },
       "step3": {
         "title": "3. Фильтры категорий",
@@ -770,14 +809,14 @@
       }
     },
     "cash": {
-      "title": "Руководство по управлению наличностью",
+      "title": "Руководство по управлению кассой",
       "step1": {
-        "title": "1. Записи о доходах/расходах",
+        "title": "1. Доходы/Расходы",
         "desc": "Записывайте доходы и расходы."
       },
       "step2": {
-        "title": "2. Ежемесячный финансовый статус",
-        "desc": "Мгновенно отслеживайте изменения чистой наличности."
+        "title": "2. Ежемесячный статус",
+        "desc": "Просматривайте ежемесячный денежный поток и баланс."
       },
       "step3": {
         "title": "3. Экспорт",
@@ -798,11 +837,34 @@
         "title": "Разделение проектов",
         "desc": "Фильтруйте корзину по проектам."
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. Записи",
+        "desc": "Записи."
+      },
+      "step2": {
+        "title": "2. Архив",
+        "desc": "Архив."
+      },
+      "step3": {
+        "title": "3. Поиск",
+        "desc": "Поиск."
+      },
+      "title": "Руководство по производству"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "Выписка по счету",
+    "forwardBalance": "Перенесенный остаток",
+    "periodEarned": "Начислено за период",
+    "periodAdvance": "Аванс за период",
+    "netBalance": "Чистый баланс",
+    "group": "Группа",
+    "phone": "Телефон",
+    "id_tc": "ID/ИНН"
   },
   "recycle": {
     "desc": "Список удаленных записей и их восстановление.",
@@ -813,7 +875,7 @@
     "startDate": "Дата начала",
     "endDate": "Дата окончания",
     "tableRecordType": "Тип записи",
-    "tableProject": "Проект / Участок",
+    "tableProject": "Проект / Сайт",
     "tableContent": "Содержание / Заголовок",
     "tableDeletedAt": "Удалено",
     "tableAction": "Действие",
@@ -835,28 +897,111 @@
       "subcontractor": "Журнал субподрядчиков",
       "project": "Запись проекта"
     },
-    "allProjectsOption": "Все проекты"
+    "allProjectsOption": "Все проекты",
+    "restore_confirm_title": "Подтверждение Восстановления",
+    "restore_confirm_msg": "Вы уверены, что хотите восстановить эту запись? Она будет возвращена на свое исходное место.",
+    "restore_error": "Ошибка восстановления:"
   },
   "global": {
     "spotlight": "Поиск: Ctrl + K",
-    "recordsCount": "({{count}} Записей)",
+    "recordsCount": "({{count}} записей)",
     "restore": "Восстановить",
-    "restored": "Восстановлено"
+    "restored": "Восстановлено",
+    "filter": "Фильтр",
+    "dateRange": "Период",
+    "creationDate": "Дата создания",
+    "date": "Дата",
+    "actionType": "Тип операции",
+    "description": "Описание",
+    "amount": "Сумма"
   },
   "sidebar": {
     "recycleBin": "Корзина",
-    "spotlight": "Поиск Spotlight"
+    "spotlight": "Spotlight"
   },
   "anomaly": {
-    "noAnomalies": "Системных аномалий нет",
-    "allUpToDate": "Все финансовые балансы и документы актуальны."
+    "noAnomalies": "Нет системных аномалий",
+    "allUpToDate": "Все балансы обновлены."
   },
   "empty": {
-    "production": "Для этого участка пока нет производственных записей.",
-    "delivery": "Накладных пока нет.",
-    "journal": "Журналов пока нет.",
+    "production": "Производственных записей пока нет.",
+    "delivery": "Записей о доставке пока нет.",
+    "journal": "Журнальных записей пока нет.",
     "quality": "Отчетов о качестве пока нет.",
-    "subcontractor": "Субподрядчиков пока нет.",
-    "media": "Медиазаписи, соответствующие критериям, не найдены."
+    "subcontractor": "Субподрядчики пока не зарегистрированы.",
+    "media": "Медиафайлы не найдены."
+  },
+  "pdf": {
+    "signatureWorker": "Сотрудник (ФИО - Подпись)",
+    "signatureCompany": "Представитель компании (Печать/Подпись)"
+  },
+  "global.searchPlaceholder": "Поиск...",
+  "recycle.filterAllRecords": "Все записи",
+  "recycle.filterAllTypes": "Все типы записей",
+  "recycle.filterAllProjects": "Все объекты",
+  "global.startDate": "Дата начала",
+  "global.endDate": "Дата окончания",
+  "guides.recycle.title": "Руководство по корзине",
+  "guides.recycle.step2.title": "Восстановление данных",
+  "guides.recycle.step3.title": "Разделение объектов",
+  "worker.advanceBadge": "Аванс",
+  "recycle.tableProject": "Проект / Сайт",
+  "worker.group": "Группа",
+  "worker.phone": "Телефон",
+  "pdf_project_site": "Проект / Сайт",
+  "recycle_th_type": "Тип Записи",
+  "recycle_th_project": "Проект / Сайт",
+  "recycle_th_content": "Контент / Заголовок",
+  "recycle_th_date": "Удалено",
+  "recycle_th_action": "Действие",
+  "recycle_type_project": "Запись о Проекте",
+  "recycle_type_worker": "Запись о Персонале",
+  "recycle_type_material": "Накладная / Материал",
+  "recycle_type_journal": "Ежедневный Журнал",
+  "recycle_type_quality": "Отчет по Качеству",
+  "recycle_type_subcontractor": "Книга Субподрядчика",
+  "recycle_type_cash": "Кассовая Операция",
+  "recycle_guide_title": "Руководство по Корзине",
+  "recycle_guide_h1": "Как это работает?",
+  "recycle_guide_p1": "Удаленные записи временно сохраняются и отображаются здесь.",
+  "recycle_guide_h2": "Восстановление Данных",
+  "recycle_guide_p2": "Используйте кнопку восстановления для возврата записей.",
+  "recycle_guide_h3": "Разделение Проектов",
+  "recycle_guide_p3": "Фильтруйте корзину по проектам.",
+  "recycle_page_title": "Корзина",
+  "recycle_page_desc": "Просматривайте удаленные записи и восстанавливайте их на прежние места.",
+  "sidebar_recycle_btn": "Корзина",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "Редактировать",
+  "common.edit": "Редактировать",
+  "Tam Gün": "Полный день",
+  "Yarım Gün": "Полдня",
+  "Mesai": "Сверхурочные",
+  "Normal çalışma": "Нормальная работа",
+  "spotlight_search_placeholder": "Поиск в командном центре объекта...",
+  "spotlight_desc_personnel": "Список персонала и сводки текущего баланса",
+  "spotlight_desc_projects": "Строительные площадки, объекты и статусы проектов",
+  "spotlight_desc_production": "Учет объемов и отслеживание хода работ",
+  "spotlight_desc_materials": "Поступающие материалы и накладные на бетон",
+  "spotlight_desc_journal": "Ежедневные журналы и автоматическая погода",
+  "spotlight_desc_quality": "Протоколы, производственные дефекты и отчеты",
+  "spotlight_desc_subcontractor": "Счета внешних субподрядчиков (экскаваторы, питание и т.д.)",
+  "spotlight_desc_media": "Галерея фоточеков и протоколов",
+  "spotlight_desc_cash": "Движение денежных средств и сводная касса",
+  "spotlight_desc_settings": "Тема, язык, облачное резервное копирование и настройки",
+  "spotlight_badge_menu": "МЕНЮ",
+  "spotlight_badge_personnel": "ПЕРСОНАЛ",
+  "spotlight_badge_project": "ОБЪЕКТ",
+  "spotlight_badge_faq": "FAQ",
+  "spotlight_faq_1_label": "Как рассчитывается остаток денежных средств?",
+  "spotlight_faq_1_desc": "Приход - Расход. Авансы автоматически записываются как расход.",
+  "spotlight_faq_2_label": "Как сделать резервную копию системы?",
+  "spotlight_faq_2_desc": "Путем перетаскивания файла .sqlite на страницу настроек.",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "Множитель",
+  "settings_logs": {
+    "error_read": "Не удалось прочитать журналы:"
   }
 }

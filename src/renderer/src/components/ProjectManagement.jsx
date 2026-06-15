@@ -17,6 +17,14 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 
+  // Drag and Drop States
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  // Edit Project States
+  const [editingProjectId, setEditingProjectId] = useState(null);
+  const [editFormData, setEditFormData] = useState({ name: '', location: '' });
+
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
@@ -29,6 +37,13 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
       const data = await window.api.db.read('projects');
       setProjects(data);
       setLoading(false);
+    }
+  };
+
+  const fetchProjectsSilent = async () => {
+    if (window.api && window.api.db) {
+      const data = await window.api.db.read('projects');
+      setProjects(data);
     }
   };
 
@@ -69,6 +84,79 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
       }
       setConfirmModal({ isOpen: false, id: null });
       fetchProjects();
+    }
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (e, index) => {
+    const globalIdx = (currentPage - 1) * itemsPerPage + index;
+    setDraggedIndex(globalIdx);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', globalIdx);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    const globalIdx = (currentPage - 1) * itemsPerPage + index;
+    if (globalIdx !== dragOverIndex) {
+      setDragOverIndex(globalIdx);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = async (e, index) => {
+    e.preventDefault();
+    const targetGlobalIdx = (currentPage - 1) * itemsPerPage + index;
+    if (draggedIndex === null || draggedIndex === targetGlobalIdx) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const updated = [...projects];
+    const [draggedItem] = updated.splice(draggedIndex, 1);
+    updated.splice(targetGlobalIdx, 0, draggedItem);
+
+    // Optimistic state update to make drag-and-drop feel instant
+    setProjects(updated);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+
+    if (window.api && window.api.db) {
+      // Save order silently to avoid page jumping and skeleton loader flashes
+      for (let i = 0; i < updated.length; i++) {
+        await window.api.db.update('projects', updated[i].id, { sort_order: i });
+      }
+      await fetchProjectsSilent();
+    }
+  };
+
+  // Edit Handlers
+  const handleStartEdit = (proj) => {
+    setEditingProjectId(proj.id);
+    setEditFormData({ name: proj.name, location: proj.location || '' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProjectId(null);
+    setEditFormData({ name: '', location: '' });
+  };
+
+  const handleSaveEdit = async (projId) => {
+    if (!editFormData.name.trim()) return;
+
+    if (window.api && window.api.db) {
+      await window.api.db.update('projects', projId, {
+        name: editFormData.name.trim(),
+        location: editFormData.location.trim()
+      });
+      setEditingProjectId(null);
+      setEditFormData({ name: '', location: '' });
+      await fetchProjectsSilent();
     }
   };
 
@@ -178,44 +266,167 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {paginatedProjects.map(proj => {
+          {paginatedProjects.map((proj, idx) => {
             const isActive = proj.id === activeProjectId;
+            const globalIndex = projects.findIndex(p => p.id === proj.id);
+            const isDragging = globalIndex === draggedIndex;
+            const isDragOver = globalIndex === dragOverIndex;
+            const isEditing = proj.id === editingProjectId;
             return (
               <div 
                 key={proj.id} 
                 className="glass-card" 
+                draggable={!searchQuery && !isEditing}
+                onDragStart={(e) => handleDragStart(e, idx)}
+                onDragOver={(e) => handleDragOver(e, idx)}
+                onDragEnd={handleDragEnd}
+                onDrop={(e) => handleDrop(e, idx)}
                 style={{ 
                   flexDirection: 'row', 
                   justifyContent: 'space-between', 
                   alignItems: 'center',
-                  border: isActive ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                  background: isActive ? 'rgba(139, 92, 246, 0.05)' : 'var(--glass-bg)',
-                  padding: '1.25rem'
+                  border: isDragging 
+                    ? '1px dashed var(--primary)' 
+                    : isDragOver 
+                    ? '1px solid var(--primary)' 
+                    : isActive 
+                    ? '1px solid var(--primary)' 
+                    : '1px solid var(--glass-border)',
+                  background: isDragging
+                    ? 'transparent'
+                    : isDragOver
+                    ? 'rgba(139, 92, 246, 0.1)'
+                    : isActive 
+                    ? 'rgba(139, 92, 246, 0.05)' 
+                    : 'var(--glass-bg)',
+                  padding: '1.25rem',
+                  opacity: isDragging ? 0.5 : 1,
+                  transform: isDragging ? 'scale(0.98)' : 'none',
+                  transition: 'all 0.2s ease',
+                  cursor: !searchQuery && !isEditing ? 'grab' : 'default'
                 }}
               >
-                <div>
-                  <h3 className="card-title" style={{ color: isActive ? '#c4b5fd' : '#fff' }}>
-                    {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--primary)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: '#fff' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
-                  </h3>
-                  <p className="card-subtitle">📍 {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  {!isActive && (
-                    <button 
-                      className="btn" 
-                      onClick={() => onSelectProject(proj.id)}
-                      style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                  {!searchQuery && !isEditing && (
+                    <div 
+                      style={{ 
+                        color: 'var(--text-muted)', 
+                        cursor: 'grab', 
+                        fontSize: '1.2rem',
+                        userSelect: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '0.25rem',
+                        opacity: 0.5,
+                        transition: 'opacity 0.2s'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                      onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
+                      title={t('projects.drag_to_reorder', 'Sürükleyerek yeniden sırala')}
                     >
-                      {t('projects.select_workspace', 'Çalışma Alanı Seç')}
-                    </button>
+                      ⋮⋮
+                    </div>
                   )}
-                  <button 
-                    className="btn btn-danger" 
-                    onClick={() => handleDelete(proj.id)}
-                    style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
-                  >
-                    {t('common.delete', 'Sil')}
-                  </button>
+                  {isEditing ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, paddingRight: '1rem' }} onDragStart={(e) => e.stopPropagation()} draggable={false}>
+                      <input 
+                        type="text" 
+                        className="form-input" 
+                        value={editFormData.name} 
+                        onChange={e => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
+                        style={{ fontSize: '0.9rem', padding: '0.4rem 0.8rem', width: '100%', maxWidth: '350px', marginBottom: 0 }}
+                        required
+                        placeholder={t('projects.name_label', 'Şantiye / Proje Adı')}
+                      />
+                      <input 
+                        type="text" 
+                        className="form-input" 
+                        value={editFormData.location} 
+                        onChange={e => setEditFormData(prev => ({ ...prev, location: e.target.value }))}
+                        style={{ fontSize: '0.85rem', padding: '0.3rem 0.8rem', width: '100%', maxWidth: '350px', marginBottom: 0 }}
+                        placeholder={t('projects.location_label', 'Lokasyon / Adres')}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="card-title" style={{ color: isActive ? '#c4b5fd' : '#fff', marginBottom: '0.25rem' }}>
+                        {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--primary)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: '#fff' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
+                      </h3>
+                      <p className="card-subtitle" style={{ margin: 0 }}>📍 {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }} onDragStart={(e) => e.stopPropagation()} draggable={false}>
+                  {isEditing ? (
+                    <>
+                      <button 
+                        className="btn btn-primary" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveEdit(proj.id);
+                        }}
+                        style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+                        draggable={false}
+                        onDragStart={(e) => e.stopPropagation()}
+                      >
+                        {t('common.save', 'Kaydet')}
+                      </button>
+                      <button 
+                        className="btn" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelEdit();
+                        }}
+                        style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)' }}
+                        draggable={false}
+                        onDragStart={(e) => e.stopPropagation()}
+                      >
+                        {t('common.cancel', 'Vazgeç')}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button 
+                        className="btn" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStartEdit(proj);
+                        }}
+                        style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', background: 'rgba(255, 255, 255, 0.05)' }}
+                        draggable={false}
+                        onDragStart={(e) => e.stopPropagation()}
+                      >
+                        {t('common.edit', 'Düzenle')}
+                      </button>
+                      {!isActive && (
+                        <button 
+                          className="btn" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectProject(proj.id);
+                          }}
+                          style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+                          draggable={false}
+                          onDragStart={(e) => e.stopPropagation()}
+                        >
+                          {t('projects.select_workspace', 'Çalışma Alanı Seç')}
+                        </button>
+                      )}
+                      <button 
+                        className="btn btn-danger" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(proj.id);
+                        }}
+                        style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+                        draggable={false}
+                        onDragStart={(e) => e.stopPropagation()}
+                      >
+                        {t('common.delete', 'Sil')}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             );
@@ -267,8 +478,8 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
       isOpen={confirmModal.isOpen}
       onClose={() => setConfirmModal({ isOpen: false, id: null })}
       onConfirm={confirmDelete}
-      title="Şantiyeyi Sil"
-      message="Bu şantiyeyi silmek istediğinize emin misiniz? Şantiyeye bağlı veriler doğrudan silinmez ancak listelerden gizlenir."
+      title={t('projects.delete_title', 'Şantiyeyi Sil')}
+      message={t('projects.delete_msg', 'Bu şantiyeyi silmek istediğinize emin misiniz? Şantiyeye bağlı veriler doğrudan silinmez ancak listelerden gizlenir.')}
     />
 
     <GuideDrawer 

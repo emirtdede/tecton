@@ -32,7 +32,8 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
       for (const m of materials) {
         items.push({
           id: `material_${m.id}`,
-          type: 'İrsaliye / Fiş',
+          type: 'material',
+          typeLabel: t('filters.delivery_note', 'İrsaliye / Fiş'),
           title: `${m.supplier} - ${m.material_type}`,
           date: m.receipt_date,
           photo_path: m.photo_path || null
@@ -43,7 +44,8 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
       for (const r of reports) {
         items.push({
           id: `report_${r.id}`,
-          type: 'Kalite Tutanak',
+          type: 'report',
+          typeLabel: t('filters.quality_report', 'Kalite Tutanak'),
           title: r.title,
           date: r.report_date,
           photo_path: r.photo_path || null
@@ -87,7 +89,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
   const filteredItems = mediaItems.filter(item => {
     const matchesSearch = !searchQuery || 
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.type.toLowerCase().includes(searchQuery.toLowerCase());
+      item.typeLabel.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesType = !filterType || 
       (filterType === 'material' && item.id.startsWith('material_')) ||
@@ -269,20 +271,20 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                     border: '1px dashed rgba(255, 255, 255, 0.08)'
                   }}>
                     📄
-                    <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--text-muted)' }}>Görsel Yok</span>
+                    <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--text-muted)' }}>{t('media.no_image', 'Görsel Yok')}</span>
                   </div>
                 )}
                 <div style={{ padding: '0.5rem 0.25rem 0.25rem 0.25rem' }}>
                   <span style={{ 
                     fontSize: '0.7rem', 
                     fontWeight: '700', 
-                    color: item.type === 'Kalite Tutanak' ? 'var(--danger)' : 'var(--success)',
-                    background: item.type === 'Kalite Tutanak' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+                    color: item.type === 'report' ? 'var(--danger)' : 'var(--success)',
+                    background: item.type === 'report' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
                     padding: '2px 6px',
                     borderRadius: '4px',
                     textTransform: 'uppercase'
                   }}>
-                    {item.type}
+                    {item.typeLabel}
                   </span>
                   <h4 style={{ fontSize: '0.85rem', margin: '0.5rem 0 0.25rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#fff' }}>
                     {item.title}

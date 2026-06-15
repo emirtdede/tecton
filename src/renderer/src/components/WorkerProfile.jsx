@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 import { exportToExcel, exportToCSV, exportToJSON } from '../utils/exportUtils';
 import TagInput from './ui/TagInput';
 import ConfirmationModal from './ui/ConfirmationModal';
@@ -205,7 +206,7 @@ const WorkerProfile = ({ worker, onBack }) => {
         setAvansTags([]);
         fetchProfileData();
       } else {
-        alert('Hata: ' + res.message);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + res.message, type: 'error' } }));
       }
     }
   };
@@ -306,7 +307,7 @@ const WorkerProfile = ({ worker, onBack }) => {
 
   const handleWhatsAppSend = () => {
     if (!worker || !worker.phone) {
-      alert(t('worker_profile.whatsapp_no_phone', 'Personelin kayıtlı telefon numarası bulunamadı.'));
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('worker_profile.whatsapp_no_phone', 'Personelin kayıtlı telefon numarası bulunamadı.'), type: 'warning' } }));
       return;
     }
     
@@ -338,29 +339,189 @@ const WorkerProfile = ({ worker, onBack }) => {
   };
 
   const generatePDF = async () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.width;
-    const getFormatFromBase64 = (base64) => {
-      if (!base64) return 'PNG';
-      const match = base64.match(/^data:image\/([a-zA-Z+]+);base64,/);
-      if (match && match[1]) {
-        const ext = match[1].toUpperCase();
-        if (ext === 'JPEG' || ext === 'JPG') return 'JPEG';
-        if (ext === 'PNG') return 'PNG';
-        if (ext === 'WEBP') return 'WEBP';
-        return ext;
-      }
-      return 'PNG';
-    };
+    const reportDateStr = new Date().toLocaleDateString(i18n.language === 'tr' ? 'tr-TR' : 'en-US') + ' ' + new Date().toLocaleTimeString(i18n.language === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' });
 
-    const getImageDimensions = (base64) => {
-      return new Promise((resolve) => {
-        const img = new window.Image();
-        img.onload = () => resolve({ w: img.width, h: img.height });
-        img.onerror = () => resolve(null);
-        img.src = base64;
+    // Group items into chunks of 15 items per page to prevent text/row cut-off
+    const pdfItemsPerPage = 15;
+    const chunks = [];
+    const transactionsList = cReport.islemler || [];
+    for (let i = 0; i < transactionsList.length; i += pdfItemsPerPage) {
+      chunks.push(transactionsList.slice(i, i + pdfItemsPerPage));
+    }
+
+    if (chunks.length === 0) {
+      chunks.push([]);
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 190;
+    const position = 15;
+
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index];
+      
+      // Create a temporary container styled as a clean A4 sheet
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.style.width = '800px';
+      container.style.background = '#ffffff';
+      container.style.color = '#1e293b';
+      container.style.fontFamily = "'Inter', 'Noto Sans', 'Arial', sans-serif";
+      container.style.padding = '40px';
+      
+      const isFirstPage = index === 0;
+      const isLastPage = index === chunks.length - 1;
+      
+      // Build top header HTML
+      let headerHtml = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+          <div>
+            ${companyLogo && isFirstPage ? `<img src="${companyLogo}" style="max-width: 150px; max-height: 50px; margin-bottom: 10px; display: block;" />` : ''}
+            <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${companyName || ''}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 18px; font-weight: bold; color: #6389b9; margin-bottom: 8px; font-family: inherit;">${t('worker.statementTitle', 'Cari Hesap Ekstresi').toUpperCase()}</div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.filter', 'Filtre')}:</strong> ${projectName ? projectName : t('global.unspecified', 'Belirtilmemiş')}</div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${filterStartDate || 'Tümü'} / ${filterEndDate || 'Tümü'}</div>
+            <div style="font-size: 11px; color: #64748b; font-family: inherit;"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${reportDateStr}</div>
+          </div>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;" />
+      `;
+      
+      // Build worker info header HTML
+      let workerInfoHtml = `
+        <div style="margin-bottom: 20px; font-family: inherit;">
+          <div style="font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; font-family: inherit;">${worker.full_name}</div>
+          <div style="font-size: 11px; color: #64748b; display: flex; gap: 15px; flex-wrap: wrap; font-family: inherit;">
+            ${worker.tc_no ? `<span><strong>${t('worker.id_tc', 'ID/TC')}:</strong> ${worker.tc_no}</span>` : ''}
+            <span><strong>${t('recycle.tableProject', 'Şantiye')}:</strong> ${projectName ? projectName : t('global.unspecified', 'Belirtilmemiş')}</span>
+            <span><strong>${t('worker.group', 'Grup')}:</strong> ${groupName ? groupName : t('global.unspecified', 'Belirtilmemiş')}</span>
+            <span><strong>${t('worker.phone', 'Telefon')}:</strong> ${worker.phone || '-'}</span>
+          </div>
+        </div>
+      `;
+
+      // Build summary cards HTML (only on the first page)
+      let summaryCardsHtml = '';
+      if (isFirstPage) {
+        summaryCardsHtml = `
+          <div style="display: flex; gap: 10px; margin-bottom: 25px; font-family: inherit;">
+            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.forwardBalance', 'Devreden Bakiye')}</div>
+              <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${formatCurrencySafe(cReport.devredenBakiye, i18n.language)}</div>
+            </div>
+            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.periodEarned', 'Dönem Hak Edişi')}</div>
+              <div style="font-size: 14px; font-weight: bold; color: #16a34a; font-family: inherit;">+${formatCurrencySafe(cReport.donemHakEdis, i18n.language)}</div>
+            </div>
+            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.periodAdvance', 'Dönem Avansı')}</div>
+              <div style="font-size: 14px; font-weight: bold; color: #dc2626; font-family: inherit;">-${formatCurrencySafe(cReport.donemAvans, i18n.language)}</div>
+            </div>
+            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.netBalance', 'Net Bakiye')}</div>
+              <div style="font-size: 14px; font-weight: bold; color: ${cReport.yeniBakiye >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">${formatCurrencySafe(cReport.yeniBakiye, i18n.language)}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Build table rows HTML
+      let tableRowsHtml = '';
+      if (chunk.length === 0) {
+        tableRowsHtml = `
+          <tr>
+            <td colspan="4" style="padding: 20px; text-align: center; color: #64748b; font-family: inherit;">
+              ${t('worker_profile.no_period_data', 'Bu dönemde herhangi bir işlem bulunamadı.')}
+            </td>
+          </tr>
+        `;
+      } else {
+        tableRowsHtml = chunk.map(item => {
+            const typeText = item.isIncome 
+              ? t('worker_profile.filter.type_timesheet', 'Puantaj') 
+              : t('worker.advanceBadge', 'Avans');
+          const amountSign = item.isIncome ? '+' : '-';
+          const amountColor = item.isIncome ? '#16a34a' : '#dc2626';
+          return `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${formatDate(item.date, i18n.language)}</td>
+              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${typeText}</td>
+              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${item.desc || '-'}</td>
+              <td style="padding: 8px 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: 500; color: ${amountColor}; font-family: inherit;">${amountSign}${formatCurrencySafe(item.amount, i18n.language)}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Build table HTML
+      let tableHtml = `
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #334155; font-family: inherit;">
+          <thead>
+            <tr style="background: #1e3a8a; color: #ffffff;">
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.date', 'Tarih')}</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.actionType', 'İşlem Türü')}</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.description', 'Açıklama')}</th>
+              <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.amount', 'Tutar')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRowsHtml}
+          </tbody>
+        </table>
+      `;
+
+      // Build signature block HTML (only on the last page)
+      let signatureHtml = '';
+      if (isLastPage) {
+        signatureHtml = `
+          <div style="margin-top: 60px; display: flex; justify-content: space-between; font-family: inherit;">
+            <div style="width: 250px; text-align: center; font-family: inherit;">
+              <hr style="border: 0; border-top: 1px solid #94a3b8; margin-bottom: 8px;" />
+              <div style="font-size: 11px; font-weight: 500; color: #334155; font-family: inherit;">${t('pdf.signatureWorker', 'Personel (Ad/Soyad - İmza)')}</div>
+            </div>
+            <div style="width: 250px; text-align: center; font-family: inherit;">
+              <hr style="border: 0; border-top: 1px solid #94a3b8; margin-bottom: 8px;" />
+              <div style="font-size: 11px; font-weight: 500; color: #334155; font-family: inherit;">${t('pdf.signatureCompany', 'Firma Yetkilisi (Kaşe/İmza)')}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        ${headerHtml}
+        ${workerInfoHtml}
+        ${summaryCardsHtml}
+        ${tableHtml}
+        ${signatureHtml}
+      `;
+
+      document.body.appendChild(container);
+      
+      // Wait for fonts to load
+      await document.fonts.ready;
+      
+      const canvas = await html2canvas(container, {
+        scale: 2.5,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
       });
-    };
+      
+      document.body.removeChild(container);
+      
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      
+      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+      
+      if (index < chunks.length - 1) {
+        pdf.addPage();
+      }
+    }
 
     const trMap = { 'ç':'c', 'ğ':'g', 'ş':'s', 'ö':'o', 'ü':'u', 'ı':'i', 'Ç':'C', 'Ğ':'G', 'Ş':'S', 'Ö':'O', 'Ü':'U', 'İ':'I' };
     const toEn = (str) => {
@@ -370,222 +531,25 @@ const WorkerProfile = ({ worker, onBack }) => {
       s = s.replace(/₺/g, 'TL');
       return s;
     };
-    
-    // 1. HEADER (Flexbox Two Columns)
-    let currentY = 15;
-    
-    // Left Top: Company Logo
-    if (companyLogo) {
-      try {
-        const dims = await getImageDimensions(companyLogo);
-        if (dims) {
-          const maxHeight = 15;
-          const maxWidth = 50;
-          let drawW = dims.w;
-          let drawH = dims.h;
-          
-          if (drawH > maxHeight) {
-            drawW = drawW * (maxHeight / drawH);
-            drawH = maxHeight;
-          }
-          if (drawW > maxWidth) {
-            drawH = drawH * (maxWidth / drawW);
-            drawW = maxWidth;
-          }
-          
-          doc.addImage(companyLogo, getFormatFromBase64(companyLogo), 14, currentY, drawW, drawH);
-          currentY += 20;
-        } else {
-          doc.addImage(companyLogo, getFormatFromBase64(companyLogo), 14, currentY, 40, 15);
-          currentY += 20;
-        }
-      } catch (err) {
-        console.error('Error adding logo to PDF', err);
-      }
-    }
-    
-    // Left Top: Company Name
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(30, 41, 59); // text-slate-800
-    doc.text(toEn(companyName), 14, currentY + 5);
-    
-    // Right Top: Title and Date
-    doc.setFontSize(16);
-    doc.setTextColor(148, 163, 184); // text-slate-400
-    doc.text('CARI HESAP EKSTRESI', pageWidth - 14, currentY - 3, { align: 'right' });
-    
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 116, 139); // text-slate-500
-    doc.text(`Tarih Araligi: ${filterStartDate || 'Tumu'} - ${filterEndDate || 'Tumu'}`, pageWidth - 14, currentY + 3, { align: 'right' });
-    
-    currentY += 12;
-    
-    // Thin separator line
-    doc.setDrawColor(226, 232, 240); // border-slate-200
-    doc.setLineWidth(0.5);
-    doc.line(14, currentY, pageWidth - 14, currentY);
-    currentY += 8;
 
-    // 2. PERSONNEL INFO & SUMMARY CARDS
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(30, 41, 59);
-    doc.text(`${toEn(worker.full_name)}`, 14, currentY + 4);
-    
-    let infoY = currentY + 9;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(148, 163, 184);
-    
-    if (worker.tc_no) {
-      doc.text(`ID/TC: ${worker.tc_no}`, 14, infoY);
-      infoY += 5;
-    }
-    
-    doc.text(`Santiye: ${worker.project ? toEn(worker.project) : toEn(t('global.unspecified', 'Belirtilmemis'))}`, 14, infoY);
-    infoY += 5;
-    doc.text(`Grup: ${worker.group ? toEn(worker.group) : toEn(t('global.unspecified', 'Belirtilmemis'))}`, 14, infoY);
-    infoY += 5;
-    doc.text(`Telefon: ${worker.phone ? toEn(worker.phone) : toEn(t('global.unspecified', 'Belirtilmemis'))}`, 14, infoY);
-    
-    currentY = infoY + 6;
-    
-    // Grid/Flex Cards (4 columns)
-    const cardGap = 4;
-    const cardWidth = (pageWidth - 28 - (cardGap * 3)) / 4; 
-    
-    // Card 1
-    doc.setFillColor(255, 255, 255); // bg-white
-    doc.setDrawColor(203, 213, 225); // border-slate-300
-    doc.setLineWidth(0.2);
-    doc.rect(14, currentY, cardWidth, 18, 'FD');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(71, 85, 105);
-    doc.text('Devreden Bakiye', 14 + cardWidth/2, currentY + 7, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(30, 41, 59);
-    doc.text(formatCurrencySafe(cReport.devredenBakiye, i18n.language), 14 + cardWidth/2, currentY + 13, { align: 'center' });
-
-    // Card 2
-    doc.setFillColor(255, 255, 255); // bg-white
-    doc.setDrawColor(203, 213, 225); // border-slate-300
-    doc.setLineWidth(0.2);
-    doc.rect(14 + cardWidth + cardGap, currentY, cardWidth, 18, 'FD');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(71, 85, 105);
-    doc.text('Donem Hak Edisi', 14 + cardWidth + cardGap + cardWidth/2, currentY + 7, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(30, 41, 59);
-    doc.text('+' + formatCurrencySafe(cReport.donemHakEdis, i18n.language), 14 + cardWidth + cardGap + cardWidth/2, currentY + 13, { align: 'center' });
-
-    // Card 3
-    doc.setFillColor(255, 255, 255); // bg-white
-    doc.setDrawColor(203, 213, 225); // border-slate-300
-    doc.setLineWidth(0.2);
-    doc.rect(14 + (cardWidth + cardGap)*2, currentY, cardWidth, 18, 'FD');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(71, 85, 105);
-    doc.text('Donem Avans', 14 + (cardWidth + cardGap)*2 + cardWidth/2, currentY + 7, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(30, 41, 59);
-    doc.text('-' + formatCurrencySafe(cReport.donemAvans, i18n.language), 14 + (cardWidth + cardGap)*2 + cardWidth/2, currentY + 13, { align: 'center' });
-
-    // Card 4 (Net Bakiye)
-    doc.setFillColor(255, 255, 255); // bg-white
-    doc.setDrawColor(203, 213, 225); // border-slate-300
-    doc.setLineWidth(0.2);
-    doc.rect(14 + (cardWidth + cardGap)*3, currentY, cardWidth, 18, 'FD');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(71, 85, 105); 
-    doc.text('NET BAKIYE', 14 + (cardWidth + cardGap)*3 + cardWidth/2, currentY + 7, { align: 'center' });
-    doc.setFontSize(10); 
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(30, 41, 59);
-    doc.text(formatCurrencySafe(cReport.yeniBakiye, i18n.language), 14 + (cardWidth + cardGap)*3 + cardWidth/2, currentY + 13, { align: 'center' });
-    
-    currentY += 28;
-
-    // 3. TABLE
-    if (cReport.islemler.length > 0) {
-      const tBody = cReport.islemler.map(item => [
-        item.date, 
-        toEn(item.type), 
-        toEn(item.desc), 
-        (item.isIncome ? '+' : '-') + formatCurrencySafe(item.amount, i18n.language)
-      ]);
-      
-      autoTable(doc, {
-        startY: currentY,
-        head: [['Tarih', 'Islem Turu', 'Aciklama', 'Tutar']],
-        body: tBody,
-        theme: 'plain', 
-        headStyles: { 
-          fillColor: [248, 250, 252], // bg-slate-50
-          textColor: [71, 85, 105],   // text-slate-600
-          fontStyle: 'bold',
-          lineWidth: { bottom: 0.5 },
-          lineColor: [203, 213, 225]  // border-slate-300
-        },
-        bodyStyles: { 
-          textColor: [30, 41, 59],
-          lineWidth: { bottom: 0.1 },
-          lineColor: [241, 245, 249]  // border-slate-100
-        },
-        columnStyles: {
-          3: { halign: 'right' }
-        },
-        margin: { left: 14, right: 14 }
-      });
-      
-      currentY = doc.lastAutoTable.finalY + 30;
-    } else {
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.setTextColor(148, 163, 184);
-      doc.text('Bu donemde herhangi bir islem bulunamadi.', 14, currentY);
-      currentY += 30;
-    }
-    
-    // 4. SIGNATURE FOOTER
-    const pageHeight = doc.internal.pageSize.height;
-    if (currentY + 20 > pageHeight) {
-      doc.addPage();
-      currentY = 30;
-    } else {
-      currentY += 10;
-    }
-    
-    // Draw signature lines
-    doc.setDrawColor(148, 163, 184); // slate-400
-    doc.setLineWidth(0.3);
-    
-    // Left signature line
-    doc.line(14, currentY, 64, currentY); 
-    // Right signature line
-    const rightX = pageWidth - 14;
-    doc.line(rightX - 50, currentY, rightX, currentY);
-    
-    currentY += 5;
-    
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(30, 41, 59);
-    doc.text('Personel (Ad/Soyad - Imza)', 14, currentY);
-    doc.text('Firma Yetkilisi (Kase/Imza)', rightX, currentY, { align: 'right' });
-    
-    doc.save(`${toEn(worker.full_name)}_Hesap_Ekstresi.pdf`);
+    pdf.save(`${toEn(worker.full_name)}_Hesap_Ekstresi.pdf`);
   };
 
   const isPositive = balance >= 0;
+
+  let parsedTags = [];
+  if (worker.tags) {
+    try {
+      parsedTags = JSON.parse(worker.tags);
+    } catch (e) {
+      if (typeof worker.tags === 'string') {
+        parsedTags = worker.tags.split(',').map(t => t.trim()).filter(Boolean);
+      }
+    }
+  }
+  if (!Array.isArray(parsedTags)) {
+    parsedTags = [];
+  }
 
   return (
     <div className="worker-profile" style={{ fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
@@ -627,6 +591,11 @@ const WorkerProfile = ({ worker, onBack }) => {
                   👥 {groupName}
                 </span>
               )}
+              {parsedTags.map((tag, idx) => (
+                <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                  🏷️ {tag}
+                </span>
+              ))}
             </div>
             <p className="card-subtitle mb-4">{worker.tc_no ? `${t('worker.idLabel', 'ID')}: ${worker.tc_no}` : ''} | {worker.phone}</p>
             
@@ -829,7 +798,7 @@ const WorkerProfile = ({ worker, onBack }) => {
           </div>
         </div>
 
-        <div className="right-panel glass-card">
+        <div className="right-panel glass-card" style={{ marginTop: '2rem' }}>
           <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', marginBottom: '1.5rem', gap: '1rem', paddingBottom: '0.5rem' }}>
             <h3 
               className="card-title" 
@@ -860,7 +829,8 @@ const WorkerProfile = ({ worker, onBack }) => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
                 {timesheets.map(ts => {
-                  const typeName = workTypes.find(wt => wt.id == ts.work_type_id)?.name || t('worker_profile.unknown');
+                  const rawName = workTypes.find(wt => wt.id == ts.work_type_id)?.name;
+                  const typeName = rawName ? t(rawName, rawName) : t('worker_profile.unknown');
                   return (
                     <div key={ts.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
@@ -869,7 +839,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                           {t('worker_profile.wage_history_label')}: {formatCurrency(ts.applied_wage, i18n.language)} (x{ts.applied_multiplier})
                           {ts.overtime_hours > 0 && ` | +${ts.overtime_hours} ${t('worker_profile.overtime_hours_suffix')}`}
                         </div>
-                        {ts.notes && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{t('worker_profile.note_label')}: {ts.notes}</div>}
+                        {ts.notes && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{t('worker_profile.note_label')}: {t(ts.notes, ts.notes)}</div>}
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontWeight: 'bold', color: 'var(--success-text)', fontSize: '1.1rem' }}>+{formatCurrency(ts.earned_amount, i18n.language)}</div>
@@ -915,7 +885,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                 cReport.islemler.map(item => (
                   <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: '1px solid var(--glass-border)', background: item.isIncome ? 'var(--success-bg-light)' : 'var(--danger-bg-light)' }}>
                     <div>
-                      <div style={{ fontWeight: '600' }}>{formatDate(item.date, i18n.language)} <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: item.isIncome ? 'var(--success-text)' : 'var(--danger-text)', border: `1px solid var(${item.isIncome ? '--success-text' : '--danger-text'})`, padding: '2px 6px', borderRadius: '4px' }}>{item.isIncome ? t('worker_profile.filter.type_timesheet', 'Puantaj') : t('worker.advanceBadge', 'AVANS')}</span></div>
+                      <div style={{ fontWeight: '600' }}>{formatDate(item.date, i18n.language)} <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: item.isIncome ? 'var(--success-text)' : 'var(--danger-text)', border: `1px solid var(${item.isIncome ? '--success-text' : '--danger-text'})`, padding: '2px 6px', borderRadius: '4px' }}>{item.isIncome ? t('worker_profile.filter.type_timesheet', 'Puantaj') : t('worker.advanceBadge', 'Avans')}</span></div>
                       <div className="card-subtitle" style={{ marginTop: '0.25rem' }}>{item.desc}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>

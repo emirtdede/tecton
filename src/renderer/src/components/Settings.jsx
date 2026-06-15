@@ -60,31 +60,39 @@ const Settings = ({ activeTab = 'genel' }) => {
   };
 
   const handleRestore = async (table, id) => {
-    if (window.api && window.api.db && window.api.db.restoreRecord) {
-      const res = await window.api.db.restoreRecord(table, id);
-      if (res.success) {
-        setModalConfig({
-          isOpen: true,
-          title: t('recycle.successTitle', 'Başarılı'),
-          message: t('recycle.restoreSuccess', 'Veri başarıyla eski yerine geri yüklendi.'),
-          type: 'primary',
-          confirmText: t('common.ok', 'Tamam'),
-          cancelText: '',
-          onConfirm: () => {}
-        });
-        setRestoredKeys(prev => [...prev, `${table}_${id}`]);
-      } else {
-        setModalConfig({
-          isOpen: true,
-          title: t('common.error', 'Hata'),
-          message: 'Geri yükleme hatası: ' + res.message,
-          type: 'danger',
-          confirmText: t('common.ok', 'Tamam'),
-          cancelText: '',
-          onConfirm: () => {}
-        });
+    setModalConfig({
+      isOpen: true,
+      title: t('recycle.restore_confirm_title', 'Geri Yükleme Onayı'),
+      message: t('recycle.restore_confirm_msg', 'Bu kaydı geri yüklemek istediğinize emin misiniz? Kayıt, silinmeden önceki asıl yerine eklenecektir.'),
+      type: 'primary',
+      onConfirm: async () => {
+        if (window.api && window.api.db && window.api.db.restoreRecord) {
+          const res = await window.api.db.restoreRecord(table, id);
+          if (res.success) {
+            setModalConfig({
+              isOpen: true,
+              title: t('recycle.successTitle', 'Başarılı'),
+              message: t('recycle.restoreSuccess', 'Veri başarıyla eski yerine geri yüklendi.'),
+              type: 'primary',
+              confirmText: t('common.ok', 'Tamam'),
+              cancelText: '',
+              onConfirm: () => {}
+            });
+            setRestoredKeys(prev => [...prev, `${table}_${id}`]);
+          } else {
+            setModalConfig({
+              isOpen: true,
+              title: t('common.error', 'Hata'),
+              message: t('recycle.restore_error', 'Geri yükleme hatası:') + ' ' + res.message,
+              type: 'danger',
+              confirmText: t('common.ok', 'Tamam'),
+              cancelText: '',
+              onConfirm: () => {}
+            });
+          }
+        }
       }
-    }
+    });
   };
 
   const handleStartDateChange = (e) => {
@@ -348,9 +356,9 @@ const Settings = ({ activeTab = 'genel' }) => {
     if (window.api) {
       const res = await window.api.system.backupDB();
       if (res.success) {
-        alert(res.message);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: res.message, type: 'success' } }));
       } else if (res.message !== 'İşlem iptal edildi') {
-        alert('Yedekleme Hatası: ' + res.message);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.backup_error', 'Yedekleme Hatası:') + ' ' + res.message, type: 'error' } }));
       }
     }
   };
@@ -364,8 +372,8 @@ const Settings = ({ activeTab = 'genel' }) => {
       onConfirm: async () => {
         if (window.api && window.api.system.vacuumDB) {
           const res = await window.api.system.vacuumDB();
-          if (res.success) alert('Veritabanı başarıyla optimize edildi.');
-          else alert('Optimizasyon Hatası: ' + res.message);
+          if (res.success) window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.optimize_success', 'Veritabanı başarıyla optimize edildi.'), type: 'success' } }));
+          else window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.optimize_error', 'Optimizasyon Hatası:') + ' ' + res.message, type: 'error' } }));
         }
       }
     });
@@ -375,7 +383,7 @@ const Settings = ({ activeTab = 'genel' }) => {
     if (window.api && window.api.system.setCloudFolder) {
       const res = await window.api.system.setCloudFolder();
       if (res.success) {
-        alert('Sessiz bulut yedekleme klasörü başarıyla ayarlandı:\n' + res.folderPath);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.cloud_folder_success', 'Sessiz bulut yedekleme klasörü başarıyla ayarlandı:') + '\n' + res.folderPath, type: 'success' } }));
         fetchData();
       }
     }
@@ -779,7 +787,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                   />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">{t('settings.multiplier', 'Çarpan')}</label>
+                  <label className="form-label">{t('multiplier', 'Çarpan')}</label>
                   <input 
                     type="number" 
                     step="0.1"
@@ -952,14 +960,20 @@ const Settings = ({ activeTab = 'genel' }) => {
                       e.preventDefault();
                       const file = e.dataTransfer.files[0];
                       if (file && (file.name.endsWith('.sqlite') || file.name.endsWith('.db'))) {
-                        if (window.confirm(t('settings.restore_confirm', 'Veritabanını geri yüklemek istediğinize emin misiniz? Mevcut tüm verileriniz silinecektir!'))) {
-                          const res = await window.api.system.restoreDBFile({ filePath: file.path });
-                          if (res && !res.success) {
-                            alert('Geri yükleme hatası: ' + res.message);
+                        setModalConfig({
+                          isOpen: true,
+                          title: t('settings.restore_confirm_title', 'Geri Yükleme Onayı'),
+                          message: t('settings.restore_confirm', 'Veritabanını geri yüklemek istediğinize emin misiniz? Mevcut tüm verileriniz silinecektir!'),
+                          type: 'danger',
+                          onConfirm: async () => {
+                            const res = await window.api.system.restoreDBFile({ filePath: file.path });
+                            if (res && !res.success) {
+                              window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_error', 'Geri yükleme hatası:') + ' ' + res.message, type: 'error' } }));
+                            }
                           }
-                        }
+                        });
                       } else {
-                        alert(t('settings.restore_invalid_file', 'Lütfen geçerli bir SQLite (.sqlite veya .db) veritabanı dosyası sürükleyin.'));
+                        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_invalid_file', 'Lütfen geçerli bir SQLite (.sqlite veya .db) veritabanı dosyası sürükleyin.'), type: 'warning' } }));
                       }
                     }}
                     style={{
@@ -1020,7 +1034,7 @@ const Settings = ({ activeTab = 'genel' }) => {
           <div ref={recycleContainerRef} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <h3 className="card-title" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                🗑️ {t('recycle.title', 'Geri Dönüşüm & Çöp Kutusu')}
+                🗑️ {t('recycle_page_title', 'Geri Dönüşüm & Çöp Kutusu')}
               </div>
               <span 
                 onClick={() => setIsGuideOpen(true)}
@@ -1040,7 +1054,7 @@ const Settings = ({ activeTab = 'genel' }) => {
               </span>
             </h3>
             <p className="card-subtitle" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              {t('recycle.desc')}
+              {t('recycle_page_desc', 'Silinen kayıtları buradan inceleyip orijinal yerlerine geri yükleyebilirsiniz.')}
             </p>
 
             {/* Filters & Search Bar */}
@@ -1059,7 +1073,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                 <input 
                   type="text"
                   className="form-input"
-                  placeholder={t('recycle.search')}
+                  placeholder={t('global.searchPlaceholder', 'Ara...')}
                   value={recycleSearch}
                   onChange={e => setRecycleSearch(e.target.value)}
                   style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
@@ -1096,7 +1110,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                 onChange={e => setRecycleRestoreStatus(e.target.value)}
                 style={{ flex: 1, minWidth: '180px', marginBottom: 0 }}
               >
-                <option value="all">{t('recycle.allRecordsOption')}</option>
+                <option value="all">{t('recycle.filterAllRecords', 'Tüm Kayıtlar')}</option>
                 <option value="only_deleted">{t('recycle.onlyDeleted')}</option>
                 <option value="only_restored">{t('recycle.onlyRestored')}</option>
               </select>
@@ -1108,7 +1122,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                 onChange={e => setRecycleFilterType(e.target.value)}
                 style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}
               >
-                <option value="">{t('recycle.allRecordTypesOption')}</option>
+                <option value="">{t('recycle.filterAllTypes', 'Tüm Kayıt Türleri')}</option>
                 <option value="workers">{t('recycle.type.personnel')}</option>
                 <option value="transactions">{t('recycle.type.cash')}</option>
                 <option value="materials">{t('recycle.type.delivery')}</option>
@@ -1125,7 +1139,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                 onChange={e => setRecycleFilterProject(e.target.value)}
                 style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}
               >
-                <option value="">{t('recycle.allProjectsOption')}</option>
+                <option value="">{t('recycle.filterAllProjects', 'Tüm Şantiyeler')}</option>
                 {allProjects.map(proj => (
                   <option key={proj.id} value={proj.id}>
                     {proj.name} {proj.is_deleted ? `(${t('recycle.deletedProjectShort', 'Silindi')})` : ''}
@@ -1136,28 +1150,28 @@ const Settings = ({ activeTab = 'genel' }) => {
               {/* Start Date */}
               <div style={{ flex: 1.2, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  {t('recycle.startDate')}
+                  {t('global.startDate', 'Başlangıç Tarihi')}
                 </span>
                 <CustomDatePicker 
                   className="form-input" 
                   value={recycleStartDate} 
                   onChange={handleStartDateChange} 
                   style={{ marginBottom: 0 }}
-                  placeholder={t('recycle.startDate')}
+                  placeholder={t('global.startDate', 'Başlangıç Tarihi')}
                 />
               </div>
 
               {/* End Date */}
               <div style={{ flex: 1.2, minWidth: '150px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  {t('recycle.endDate')}
+                  {t('global.endDate', 'Bitiş Tarihi')}
                 </span>
                 <CustomDatePicker 
                   className="form-input" 
                   value={recycleEndDate} 
                   onChange={handleEndDateChange} 
                   style={{ marginBottom: 0 }}
-                  placeholder={t('recycle.endDate')}
+                  placeholder={t('global.endDate', 'Bitiş Tarihi')}
                 />
               </div>
             </div>
@@ -1239,23 +1253,23 @@ const Settings = ({ activeTab = 'genel' }) => {
                     <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left' }}>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle.tableRecordType')}</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle.tableProject')}</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle.tableContent')}</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle.tableDeletedAt')}</th>
-                          <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>{t('recycle.tableAction')}</th>
+                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_type', 'Record Type')}</th>
+                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_project', 'Project / Site')}</th>
+                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_content', 'Content / Title')}</th>
+                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_date', 'Deleted At')}</th>
+                          <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>{t('recycle_th_action', 'Action')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {displayedItems.map((item, idx) => {
                           const typeTranslationMap = {
-                            workers: t('recycle.type.personnel', 'Personel Kaydı'),
-                            transactions: t('recycle.type.cash', 'Kasa Hareketi'),
-                            materials: t('recycle.type.delivery', 'İrsaliye / Malzeme'),
-                            daily_journals: t('recycle.type.journal', 'Günlük Jurnal'),
-                            quality_reports: t('recycle.type.quality', 'Kalite Kontrol Tutanağı'),
-                            subcontractor_ledgers: t('recycle.type.subcontractor', 'Taşeron Cari Kaydı'),
-                            projects: t('recycle.type.project', 'Şantiye Kaydı')
+                            workers: t('recycle_type_worker', 'Personnel Record'),
+                            transactions: t('recycle_type_cash', 'Cash Transaction'),
+                            materials: t('recycle_type_material', 'Delivery Note / Material'),
+                            daily_journals: t('recycle_type_journal', 'Daily Journal'),
+                            quality_reports: t('recycle_type_quality', 'Quality Control Report'),
+                            subcontractor_ledgers: t('recycle_type_subcontractor', 'Subcontractor Ledger'),
+                            projects: t('recycle_type_project', 'Project Record')
                           };
                           const typeLabel = typeTranslationMap[item.table] || item.table;
                           const itemKey = `${item.table}_${item.id}`;
@@ -1381,14 +1395,14 @@ const Settings = ({ activeTab = 'genel' }) => {
       <GuideDrawer 
         isOpen={isGuideOpen} 
         onClose={() => setIsGuideOpen(false)} 
-        title={t('guides.recycle.title')} 
+        title={t('recycle_guide_title', 'Recycle Bin Guide')} 
         desc="" 
-        h1={t('guides.recycle.step1.title')} 
-        p1={t('guides.recycle.step1.desc')} 
-        h2={t('guides.recycle.step2.title')} 
-        p2={t('guides.recycle.step2.desc')} 
-        h3={t('guides.recycle.step3.title')} 
-        p3={t('guides.recycle.step3.desc')} 
+        h1={t('recycle_guide_h1', 'How it Works?')} 
+        p1={t('recycle_guide_p1', 'Deleted records are soft-deleted and listed here.')} 
+        h2={t('recycle_guide_h2', 'Restoring Data')} 
+        p2={t('recycle_guide_p2', 'Use the restore button to recover records.')} 
+        h3={t('recycle_guide_h3', 'Project Separation')} 
+        p3={t('recycle_guide_p3', 'Filter your recycle bin by project.')} 
       />
 
       <ConfirmationModal 

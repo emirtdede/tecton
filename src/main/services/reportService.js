@@ -123,23 +123,39 @@ async function generateWorkerStatement(db, worker_id, start_date, end_date) {
   }
 }
 
-async function generateCompanyFinancialSummary(db, year, month) {
+async function generateCompanyFinancialSummary(db, year, month, project_id) {
   try {
     const monthStr = month.toString().padStart(2, '0');
     const monthPrefix = `${year}-${monthStr}`;
 
     // 1. Total wages earned by ALL workers in this month
-    const timesheets = await db.all(
-      `SELECT SUM(earned_amount) as total FROM timesheets WHERE is_deleted = 0 AND work_date LIKE ?`,
-      [`${monthPrefix}%`]
-    );
+    let timesheetsQuery = `SELECT SUM(earned_amount) as total FROM timesheets WHERE is_deleted = 0 AND work_date LIKE ?`;
+    const timesheetsParams = [`${monthPrefix}%`];
+    if (project_id && project_id !== 'all') {
+      if (project_id === 'merkez') {
+        timesheetsQuery += ` AND project_id IS NULL`;
+      } else {
+        timesheetsQuery += ` AND project_id = ?`;
+        timesheetsParams.push(Number(project_id));
+      }
+    }
+    const timesheets = await db.all(timesheetsQuery, timesheetsParams);
     const totalWageCost = timesheets[0]?.total || 0;
 
     // 2. Total Cash Inflows and Outflows in this month
-    const cashRegister = await db.all(
-      `SELECT type, SUM(amount) as total FROM cash_register WHERE is_deleted = 0 AND trans_date LIKE ? GROUP BY type`,
-      [`${monthPrefix}%`]
-    );
+    let cashQuery = `SELECT type, SUM(amount) as total FROM cash_register WHERE is_deleted = 0 AND trans_date LIKE ?`;
+    const cashParams = [`${monthPrefix}%`];
+    if (project_id && project_id !== 'all') {
+      if (project_id === 'merkez') {
+        cashQuery += ` AND project_id IS NULL`;
+      } else {
+        cashQuery += ` AND project_id = ?`;
+        cashParams.push(Number(project_id));
+      }
+    }
+    cashQuery += ` GROUP BY type`;
+
+    const cashRegister = await db.all(cashQuery, cashParams);
 
     let totalCashIn = 0;
     let totalCashOut = 0;

@@ -89,7 +89,13 @@
     "dateFormatSelection": "日期格式选择",
     "timeFormatSelection": "时间格式选择",
     "time24h": "24小时（14:30）",
-    "time12h": "12小时 AM/PM（02:30 PM）"
+    "time12h": "12小时 AM/PM（02:30 PM）",
+    "backup_error": "Backup Error:",
+    "optimize_success": "Database optimized successfully.",
+    "optimize_error": "Optimization Error:",
+    "cloud_folder_success": "Silent cloud backup folder set successfully:",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_error": "Restore error:"
   },
   "dashboard": {
     "title": "人员管理",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Action successfully undone!",
+    "undo_error": "Undo failed:",
+    "delete_worker_title": "删除人员",
+    "delete_worker_msg": "您确定要删除此人员（移至回收站）吗？系统数据不会被永久删除，但会从列表中移除。"
   },
   "worker_profile": {
     "back": "返回",
@@ -194,7 +204,7 @@
     "help_h3": "3. PDF Reconciliation",
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
   },
   "cash": {
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "全公司（全局）",
+    "headquarters": "总部出纳 / 通用",
+    "relatedProject": "相关工地",
+    "projectFilterLabel": "项目过滤器",
+    "reportTitle": "现金交易报告",
+    "netBalance": "净现金余额",
+    "expense": "支出",
+    "income": "收入",
+    "tags": "标签",
+    "delete_title": "删除现金交易",
+    "delete_confirm": "您确定要删除此现金交易吗？此操作将永久影响现金余额。"
   },
   "logs": {
     "title": "系统日志",
@@ -254,10 +275,12 @@
       "large_data_desc": "更新标志等图像文件时，长 Base64 文本代码会保存到数据库中。日志行中出现很长的文本块是正常的；这确认了图像上传已成功记录。",
       "filter_export_title": "3. 搜索、过滤与导出",
       "filter_export_desc": "您可以按日期范围、关键字或日志类型进行过滤。还可以将日志下载为 Excel、CSV、JSON、Markdown 或纯文本。"
-    }
+    },
+    "filter_project": "施工现场",
+    "project_all": "所有施工现场"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "取消",
     "confirm": "确认",
     "delete": "删除",
     "empty_data": "没有找到可显示的数据。",
@@ -278,7 +301,9 @@
     "phone": "电话",
     "all": "全部",
     "page_info": "页",
-    "page_guide": "页面指南"
+    "page_guide": "页面指南",
+    "error_occurred": "Error:",
+    "required_field": "请填写此字段。"
   },
   "worker_modal": {
     "title_new": "添加新人员",
@@ -312,7 +337,8 @@
     "period": "周期",
     "earned": "已赚取:",
     "advance": "预支:",
-    "total_balance": "总余额"
+    "total_balance": "总余额",
+    "error": "Error retrieving report:"
   },
   "about": {
     "title": "关于与帮助",
@@ -402,7 +428,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "删除站点",
+    "delete_msg": "确定要删除吗？数据将被隐藏。"
   },
   "filters": {
     "sort": "排序:",
@@ -450,7 +478,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "无图像"
   },
   "subcontractor": {
     "title": "🚜 分包商账目",
@@ -462,7 +491,7 @@
     "table_name": "Subcontractor / Company",
     "table_wage": "Daily Rate",
     "table_status": "Status",
-    "table_action": "Action",
+    "table_action": "操作",
     "help_title": "Subcontractor Ledger Guide",
     "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
     "help_h1": "1. Daily Rate and Ledger Entry",
@@ -491,10 +520,10 @@
     "no_results": "No reports found matching the search criteria.",
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
-    "delete_title": "Delete Report",
-    "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
+    "upload_mobile_title": "从手机上传",
+    "upload_mobile_desc": "连接到**相同的WiFi**并扫描QR:",
+    "delete_title": "删除报告",
+    "delete_confirm": "您确定要删除此质量控制报告吗？此操作无法撤销。",
     "help_title": "Quality Control Guide",
     "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
     "help_h1": "1. Report Statuses",
@@ -525,9 +554,14 @@
     "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
     "help_h3": "3. Edit Lock Policy",
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
-    "delete_title": "Delete Journal",
-    "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "天气描述"
+    "delete_title": "删除日志",
+    "delete_confirm": "您确定要删除此每日日志条目吗？此操作无法撤消。",
+    "weatherDesc": "天气描述",
+    "weather_error": "无网络连接或无法访问天气服务。",
+    "weather_not_found": "找不到指定位置：\"{{location}}\"。请检查城市/区域名称。",
+    "weather_unauthorized": "天气 API 密钥无效或已过期。请在设置中更新它。",
+    "weather_offline": "无网络连接或无法访问天气服务。",
+    "weather_api_error": "天气服务返回错误。"
   },
   "materials": {
     "title": "🚚 送货单 & 材料入库",
@@ -539,13 +573,13 @@
     "document_photo": "单据照片",
     "no_results": "No delivery notes found matching the search criteria.",
     "empty_state": "No delivery notes found yet.",
-    "photo": "Photo",
+    "photo": "照片",
     "view_photo": "View",
     "no_photo": "None",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
-    "delete_title": "Delete Document",
-    "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
+    "upload_mobile_title": "从手机上传照片",
+    "upload_mobile_desc": "将您的手机连接到**同一 WiFi 网络**并扫描二维码：",
+    "delete_title": "删除文件",
+    "delete_confirm": "您确定要删除此送货单条目吗？此操作无法撤销。",
     "help_title": "Delivery Note Guide",
     "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
     "help_h1": "1. Supplier & Material Type",
@@ -553,7 +587,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Photo successfully received from mobile device!",
+    "photo_error": "Failed to save photo:",
+    "photo_upload_error": "Error processing photo:",
+    "lan_error": "Local server could not be started:",
+    "qr_link": "链接："
   },
   "production": {
     "title": "📐 工程量测算 & 施工进度跟踪",
@@ -561,8 +600,8 @@
     "item_name_ph": "例：砌砖墙",
     "no_results": "No production records found matching the search criteria.",
     "empty_state": "No production entries recorded for this construction site yet.",
-    "delete_title": "Delete Record",
-    "delete_confirm": "Are you sure you want to delete this production record? This action cannot be undone.",
+    "delete_title": "删除记录",
+    "delete_confirm": "您确定要删除此生产记录吗？此操作无法撤销。",
     "help_title": "Quantity Survey Guide",
     "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
     "help_h1": "1. Production Item Records",
@@ -589,13 +628,13 @@
   "settings.customDateFormat": "Date Format Override",
   "settings.customTimeFormat": "Time Format Override",
   "settings.autoByLanguage": "Automatic (By Language)",
-  "sidebar.recycleBin": "Recycle Bin",
+  "sidebar.recycleBin": "回收站",
   "recycle.title": "Recycle Bin",
   "recycle.desc": "List deleted records here and restore them back to their original places.",
   "recycle.type": "Record Type",
   "recycle.content": "Content / Title",
   "recycle.deletedAt": "Deleted At",
-  "recycle.restoreSuccess": "Record successfully restored.",
+  "recycle.restoreSuccess": "记录已成功恢复。",
   "recycle.emptyState": "No deleted records found.",
   "recycle.itemType.worker": "Personnel Record",
   "recycle.itemType.transaction": "Cash Transaction",
@@ -603,17 +642,17 @@
   "recycle.itemType.journal": "Daily Journal",
   "recycle.itemType.quality": "Quality Control Report",
   "recycle.itemType.subcontractor": "Subcontractor Ledger Record",
-  "global.restore": "Restore",
+  "global.restore": "恢复",
   "recycle.searchPlaceholder": "Search...",
   "recycle.searchAll": "Search Everywhere",
   "recycle.allTypes": "All Record Types",
   "recycle.startDate": "Start Date",
   "recycle.endDate": "End Date",
-  "recycle.restored": "Restored",
+  "recycle.restored": "已恢复",
   "recycle.hideRestored": "Hide Restored",
   "recycle.showRestored": "Show Restored",
-  "recycle.successTitle": "Success",
-  "common.ok": "OK",
+  "recycle.successTitle": "成功",
+  "common.ok": "好的",
   "common.error": "Error",
   "recycle.itemType.project": "Project Record",
   "recycle.project": "Project / Site",
@@ -636,7 +675,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -650,10 +689,10 @@
   },
   "guides": {
     "site": {
-      "title": "网站管理指南",
+      "title": "站点管理指南",
       "step1": {
-        "title": "1. 活跃的工作空间",
-        "desc": "选择一个项目设置为活跃。"
+        "title": "1. 活动工作区",
+        "desc": "选择一个项目设置为活动项目。"
       },
       "step2": {
         "title": "2. 位置和天气",
@@ -672,56 +711,56 @@
       },
       "step2": {
         "title": "2. 群组分析",
-        "desc": "根据组类别分析费用。"
+        "desc": "按群组类别分析费用。"
       },
       "step3": {
-        "title": "3. 时间表和声明",
-        "desc": "点击名称查看时间表。"
+        "title": "3. 时间表和报表",
+        "desc": "单击名称查看时间表。"
       }
     },
     "quantity": {
       "title": "生产指南",
       "step1": {
-        "title": "1. 生产记录",
-        "desc": "记录日常生产。"
+        "title": "1. 记录",
+        "desc": "记录."
       },
       "step2": {
-        "title": "2. 存档和详细信息",
-        "desc": "记笔记以保持按时间顺序的存档。"
+        "title": "2. 档案",
+        "desc": "档案."
       },
       "step3": {
-        "title": "3. 搜索和过滤器",
-        "desc": "按日期范围或单位过滤。"
+        "title": "3. 搜索",
+        "desc": "过滤."
       }
     },
     "delivery": {
       "title": "交付指南",
       "step1": {
-        "title": "1. 供应商和材料",
-        "desc": "记录供应商和材料名称。"
+        "title": "1. 供应商",
+        "desc": "供应商."
       },
       "step2": {
-        "title": "2. 文件照片",
-        "desc": "上传文件照片进行数字存档。"
+        "title": "2. 照片",
+        "desc": "照片."
       },
       "step3": {
-        "title": "3. 智能搜索",
-        "desc": "在送货单号或供应商中搜索。"
+        "title": "3. 搜索",
+        "desc": "搜索."
       }
     },
     "journal": {
       "title": "日记指南",
       "step1": {
-        "title": "1. 天气整合",
-        "desc": "天气是自动获取的。"
+        "title": "1. 天气",
+        "desc": "天气."
       },
       "step2": {
-        "title": "2. 自动计算工人人数",
-        "desc": "自动计算活跃工人人数。"
+        "title": "2. 日志",
+        "desc": "事件."
       },
       "step3": {
-        "title": "3. 编辑锁定政策",
-        "desc": "旧记录被锁定以保护过去的数据。"
+        "title": "3. 历史",
+        "desc": "历史."
       }
     },
     "quality": {
@@ -732,7 +771,7 @@
       },
       "step2": {
         "title": "2. 视觉证据",
-        "desc": "添加已发现问题的照片。"
+        "desc": "添加问题的照片。"
       },
       "step3": {
         "title": "3. 过滤",
@@ -742,27 +781,27 @@
     "subcontractor": {
       "title": "分包商指南",
       "step1": {
-        "title": "1. 日薪",
-        "desc": "跟踪分包商的日薪。"
+        "title": "1. 日工资",
+        "desc": "跟踪分包商的日工资。"
       },
       "step2": {
         "title": "2. 搜索和过滤",
-        "desc": "在分包商列表中搜索。"
+        "desc": "在列表中搜索。"
       },
       "step3": {
         "title": "3. 更新和编辑",
-        "desc": "随时更新日薪。"
+        "desc": "随时更新日工资。"
       }
     },
     "media": {
       "title": "媒体指南",
       "step1": {
         "title": "1. 视觉时间线",
-        "desc": "按时间顺序检查站点图像。"
+        "desc": "按时间顺序检查图片。"
       },
       "step2": {
         "title": "2. 快速详细信息",
-        "desc": "点击任何照片以全尺寸查看。"
+        "desc": "点击照片查看全尺寸。"
       },
       "step3": {
         "title": "3. 类别过滤器",
@@ -777,11 +816,11 @@
       },
       "step2": {
         "title": "2. 每月财务状况",
-        "desc": "即时跟踪净现金变化。"
+        "desc": "查看每月现金流和余额。"
       },
       "step3": {
         "title": "3. 导出",
-        "desc": "将交易下载为PDF或Excel。"
+        "desc": "将交易下载为 PDF 或 Excel。"
       }
     },
     "recycle": {
@@ -798,11 +837,34 @@
         "title": "项目分离",
         "desc": "按项目过滤回收站。"
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. 记录",
+        "desc": "记录."
+      },
+      "step2": {
+        "title": "2. 档案",
+        "desc": "档案."
+      },
+      "step3": {
+        "title": "3. 搜索",
+        "desc": "过滤."
+      },
+      "title": "生产指南"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "对账单",
+    "forwardBalance": "上期结转余额",
+    "periodEarned": "本期实得",
+    "periodAdvance": "本期预支",
+    "netBalance": "净余额",
+    "group": "群组",
+    "phone": "电话",
+    "id_tc": "ID/身份证号"
   },
   "recycle": {
     "desc": "在此列出已删除的记录，并将其恢复到原始位置。",
@@ -813,7 +875,7 @@
     "startDate": "开始日期",
     "endDate": "结束日期",
     "tableRecordType": "记录类型",
-    "tableProject": "项目/现场",
+    "tableProject": "项目 / 站点",
     "tableContent": "内容/标题",
     "tableDeletedAt": "删除时间",
     "tableAction": "操作",
@@ -835,28 +897,111 @@
       "subcontractor": "分包商分类账",
       "project": "项目记录"
     },
-    "allProjectsOption": "所有项目"
+    "allProjectsOption": "所有项目",
+    "restore_confirm_title": "恢复确认",
+    "restore_confirm_msg": "您确定要恢复此记录吗？它将被移回其原始位置。",
+    "restore_error": "恢复错误："
   },
   "global": {
     "spotlight": "聚光灯：Ctrl + K",
     "recordsCount": "({{count}} 条记录)",
     "restore": "恢复",
-    "restored": "已恢复"
+    "restored": "已恢复",
+    "filter": "筛选",
+    "dateRange": "日期范围",
+    "creationDate": "创建日期",
+    "date": "日期",
+    "actionType": "交易类型",
+    "description": "描述",
+    "amount": "金额"
   },
   "sidebar": {
     "recycleBin": "回收站",
-    "spotlight": "搜索"
+    "spotlight": "聚焦搜索"
   },
   "anomaly": {
-    "noAnomalies": "没有系统异常",
-    "allUpToDate": "所有财务余额和HSE文件都是最新的。"
+    "noAnomalies": "无系统异常",
+    "allUpToDate": "所有财务余额和HSE文件均是最新的。"
   },
   "empty": {
-    "production": "尚未输入此站点的生产记录。",
-    "delivery": "还没有交货记录。",
-    "journal": "还没有日记记录。",
-    "quality": "还没有质量报告。",
-    "subcontractor": "还没有注册的分包商。",
-    "media": "找不到符合条件的媒体记录。"
+    "production": "该站点尚未输入生产记录。",
+    "delivery": "尚未找到交货记录。",
+    "journal": "尚未找到每日日志记录。",
+    "quality": "该站点尚未有质量控制报告。",
+    "subcontractor": "该站点尚未注册分包商。",
+    "media": "未找到匹配的媒体记录。"
+  },
+  "pdf": {
+    "signatureWorker": "员工 (姓名 - 签字)",
+    "signatureCompany": "公司代表 (盖章/签字)"
+  },
+  "global.searchPlaceholder": "搜索...",
+  "recycle.filterAllRecords": "所有记录",
+  "recycle.filterAllTypes": "所有类型",
+  "recycle.filterAllProjects": "所有项目",
+  "global.startDate": "开始日期",
+  "global.endDate": "结束日期",
+  "guides.recycle.title": "回收站指南",
+  "guides.recycle.step2.title": "数据恢复",
+  "guides.recycle.step3.title": "项目分离",
+  "worker.advanceBadge": "预支",
+  "recycle.tableProject": "项目 / 站点",
+  "worker.group": "组",
+  "worker.phone": "电话",
+  "pdf_project_site": "项目 / 站点",
+  "recycle_th_type": "记录类型",
+  "recycle_th_project": "项目 / 站点",
+  "recycle_th_content": "内容 / 标题",
+  "recycle_th_date": "删除时间",
+  "recycle_th_action": "操作",
+  "recycle_type_project": "项目记录",
+  "recycle_type_worker": "人事记录",
+  "recycle_type_material": "交货单 / 物料",
+  "recycle_type_journal": "工作日志",
+  "recycle_type_quality": "质量报告",
+  "recycle_type_subcontractor": "分包商台账",
+  "recycle_type_cash": "现金交易",
+  "recycle_guide_title": "回收站指南",
+  "recycle_guide_h1": "它是如何工作的？",
+  "recycle_guide_p1": "已删除的记录会被软删除并在此列出。",
+  "recycle_guide_h2": "恢复数据",
+  "recycle_guide_p2": "使用恢复按钮找回记录。",
+  "recycle_guide_h3": "项目分离",
+  "recycle_guide_p3": "按项目过滤您的回收站。",
+  "recycle_page_title": "回收站",
+  "recycle_page_desc": "在此处列出已删除的记录并将其恢复到原位。",
+  "sidebar_recycle_btn": "回收站",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "编辑",
+  "common.edit": "编辑",
+  "Tam Gün": "全天",
+  "Yarım Gün": "半天",
+  "Mesai": "加班",
+  "Normal çalışma": "正常工作",
+  "spotlight_search_placeholder": "在站点指挥中心搜索...",
+  "spotlight_desc_personnel": "人员名单和当前余额汇总",
+  "spotlight_desc_projects": "建筑工地、地点和项目状态",
+  "spotlight_desc_production": "数量记录和生产进度跟踪",
+  "spotlight_desc_materials": "进货材料和混凝土交货单",
+  "spotlight_desc_journal": "站点日常日志和自动天气",
+  "spotlight_desc_quality": "会议纪要、制造缺陷和质量报告",
+  "spotlight_desc_subcontractor": "外部子承包商账户（挖掘机、餐饮等）",
+  "spotlight_desc_media": "带照片的收据和会议纪要画廊",
+  "spotlight_desc_cash": "现金流动态和汇总收银机",
+  "spotlight_desc_settings": "主题、语言、云备份和常规设置",
+  "spotlight_badge_menu": "菜单",
+  "spotlight_badge_personnel": "人员",
+  "spotlight_badge_project": "站点",
+  "spotlight_badge_faq": "常见问题",
+  "spotlight_faq_1_label": "现金余额是如何计算的？",
+  "spotlight_faq_1_desc": "现金流入 - 现金流出。预付款自动记录为流出。",
+  "spotlight_faq_2_label": "如何进行系统备份（恢复）？",
+  "spotlight_faq_2_desc": "通过在设置页面拖放 .sqlite 备份。",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "乘数",
+  "settings_logs": {
+    "error_read": "Failed to read logs:"
   }
 }

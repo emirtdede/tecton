@@ -258,7 +258,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                 }} 
                 style={{ height: '42px' }}
               >
-                Vazgeç
+                {t('common.cancel', 'Vazgeç')}
               </button>
             )}
           </div>

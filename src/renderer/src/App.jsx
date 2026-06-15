@@ -8,6 +8,7 @@ import GroupReportPanel from './components/GroupReportPanel';
 import ConfirmationModal from './components/ui/ConfirmationModal';
 import Spotlight from './components/ui/Spotlight';
 import GuideDrawer from './components/ui/GuideDrawer';
+import ToastManager from './components/ui/ToastManager';
 
 // New ERP Modules
 import ProjectManagement from './components/ProjectManagement';
@@ -242,8 +243,8 @@ function App() {
   const handleDeleteWorker = (id) => {
     setConfirmModalState({
       isOpen: true,
-      title: 'Personeli Sil',
-      message: 'Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır.',
+      title: t('dashboard.delete_worker_title', 'Personeli Sil'),
+      message: t('dashboard.delete_worker_msg', 'Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır.'),
       onConfirm: async () => {
         if (window.api && window.api.db) {
           await window.api.db.delete('workers', id);
@@ -280,6 +281,16 @@ function App() {
       'Telefon': w.phone || '-',
       'Günlük Yevmiye (TL)': w.daily_wage,
       'Bağlı Olduğu Grup': workerGroups.find(g => g.id === w.group_id)?.name || '-',
+      'Şantiye': projects.find(p => p.id == w.project_id)?.name || '-',
+      'Durum': w.status === 'active' ? 'Aktif' : (w.status === 'passive' ? 'Pasif' : w.status || '-'),
+      'Etiketler': (() => {
+        try {
+          const parsed = w.tags ? JSON.parse(w.tags) : [];
+          return Array.isArray(parsed) ? parsed.join(', ') : '-';
+        } catch (e) {
+          return w.tags || '-';
+        }
+      })(),
       'Net Bakiye (TL)': balances[w.id] || 0,
       'İşe Başlama': w.start_date
     }));
@@ -299,9 +310,100 @@ function App() {
         if (window.api && window.api.system.createSnapshot) {
           await window.api.system.createSnapshot();
         }
+
+        // Get a mutable local copy of current worker groups and workers
+        let localGroups = [...workerGroups];
+        let currentWorkersList = [...workers];
+
         for (const worker of result.data) {
-          // Bind imported workers to active project
-          await window.api.db.create('workers', { ...worker, project_id: activeProjectId });
+          const { group_name, ...cleanWorker } = worker;
+          let resolvedGroupId = null;
+
+          if (group_name) {
+            const trimmedName = group_name.trim();
+            const lowerName = trimmedName.toLowerCase();
+            const matchedGroup = localGroups.find(
+              (g) => g.name && g.name.trim().toLowerCase() === lowerName
+            );
+
+            if (matchedGroup) {
+              resolvedGroupId = matchedGroup.id;
+            } else {
+              // Create new group in the database
+              const createRes = await window.api.db.create('worker_groups', { name: trimmedName });
+              if (createRes && createRes.success) {
+                resolvedGroupId = createRes.id;
+                localGroups.push({ id: createRes.id, name: trimmedName });
+              }
+            }
+          }
+
+          // Check if worker already exists using professional identity matching rules
+          const incomingTc = cleanWorker.tc_no ? cleanWorker.tc_no.trim() : '';
+          const incomingPhone = cleanWorker.phone ? cleanWorker.phone.replace(/\D/g, '') : '';
+          const incomingName = cleanWorker.full_name.trim().toLowerCase();
+
+          const existingWorker = currentWorkersList.find(w => {
+            const existingTc = w.tc_no ? w.tc_no.trim() : '';
+            const existingPhone = w.phone ? w.phone.replace(/\D/g, '') : '';
+            const existingName = w.full_name.trim().toLowerCase();
+
+            // 1. Match by TC No (must be non-empty)
+            if (incomingTc && existingTc && incomingTc === existingTc) {
+              return true;
+            }
+            // 2. Match by Phone (must be non-empty)
+            if (incomingPhone && existingPhone && incomingPhone === existingPhone) {
+              return true;
+            }
+            // 3. Match by Name if both TC and Phone match or are empty (meaning no conflict)
+            if (incomingName === existingName) {
+              const tcConflict = incomingTc && existingTc && incomingTc !== existingTc;
+              const phoneConflict = incomingPhone && existingPhone && incomingPhone !== existingPhone;
+              if (!tcConflict && !phoneConflict) {
+                return true;
+              }
+            }
+            return false;
+          });
+
+          if (existingWorker) {
+            const updateData = {
+              full_name: cleanWorker.full_name,
+              tc_no: cleanWorker.tc_no || existingWorker.tc_no,
+              phone: cleanWorker.phone || existingWorker.phone,
+              daily_wage: cleanWorker.daily_wage || existingWorker.daily_wage,
+              group_id: resolvedGroupId || existingWorker.group_id,
+              start_date: cleanWorker.start_date || existingWorker.start_date,
+              status: cleanWorker.status || existingWorker.status,
+              tags: cleanWorker.tags, // Overwrite with Excel tags so edits/deletions take effect!
+              project_id: activeProjectId // Bind to active project
+            };
+
+            await window.api.db.update('workers', existingWorker.id, updateData);
+            
+            // Update local list to prevent duplicate matching within the same batch
+            const idx = currentWorkersList.findIndex(w => w.id === existingWorker.id);
+            if (idx !== -1) {
+              currentWorkersList[idx] = { ...existingWorker, ...updateData };
+            }
+          } else {
+            // Create new worker
+            const createRes = await window.api.db.create('workers', {
+              ...cleanWorker,
+              group_id: resolvedGroupId,
+              project_id: activeProjectId
+            });
+
+            if (createRes && createRes.success) {
+              currentWorkersList.push({
+                id: createRes.id,
+                ...cleanWorker,
+                group_id: resolvedGroupId,
+                project_id: activeProjectId
+              });
+            }
+          }
         }
         fetchWorkers();
         setUndoAvailable(true);
@@ -309,7 +411,7 @@ function App() {
         setTimeout(() => setUndoAvailable(false), 15000);
       }
     } catch (err) {
-      alert(err.message);
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + err.message, type: 'error' } }));
       e.target.value = null;
     }
   };
@@ -318,11 +420,11 @@ function App() {
     if (window.api && window.api.system.restoreSnapshot) {
       const res = await window.api.system.restoreSnapshot();
       if (res.success) {
-        alert('İşlem başarıyla geri alındı!');
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('dashboard.undo_success', 'İşlem başarıyla geri alındı!'), type: 'success' } }));
         setUndoAvailable(false);
         fetchWorkers();
       } else {
-        alert('Geri alma başarısız oldu: ' + res.message);
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('dashboard.undo_error', 'Geri alma başarısız oldu:') + ' ' + res.message, type: 'error' } }));
       }
     }
   };
@@ -337,6 +439,7 @@ function App() {
 
   return (
     <>
+      <ToastManager />
       {sidebarState === 'hidden' && (
         <button
           type="button"
@@ -526,14 +629,14 @@ function App() {
                   style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 >
                   <span className="sidebar-icon">🗑️</span>
-                  <span className="sidebar-text">{t('sidebar.recycleBin', 'Çöp Kutusu')}</span>
+                  <span className="sidebar-text">{t('sidebar_recycle_btn', 'Çöp Kutusu')}</span>
                 </div>
               </div>
             </div>
           </nav>
 
           <div className="sidebar-footer" style={{ textAlign: 'center' }}>
-            <div>{t('global.spotlight')}</div>
+            <div>{t('sidebar_spotlight', 'Spotlight: Ctrl + K')}</div>
           </div>
         </aside>
 
@@ -548,7 +651,7 @@ function App() {
           ) : view === 'hakkinda' ? (
             <AboutHelp />
           ) : view === 'kasa' ? (
-            <CashRegister />
+            <CashRegister activeProjectId={activeProjectId} projects={projects} />
           ) : view === 'projects' ? (
             <ProjectManagement onSelectProject={(id) => setActiveProjectId(id)} activeProjectId={activeProjectId} />
           ) : view === 'production' ? (

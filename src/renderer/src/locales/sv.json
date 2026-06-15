@@ -75,21 +75,27 @@
     "restore_invalid_file": "Dra en giltig SQLite (.sqlite eller .db) databasfil.",
     "system_maintenance": "Systemunderhåll",
     "logo_uploaded": "Logotyp uppladdad",
-    "parameters": "Parameters",
+    "parameters": "Parametrar",
     "regionalSettings": "Regional Format Settings",
     "customCurrency": "Currency Override",
     "customDateFormat": "Date Format Override",
     "customTimeFormat": "Time Format Override",
-    "autoByLanguage": "Automatic (By Language)",
-    "regionalFormatSettings": "Regional Format Settings",
+    "autoByLanguage": "Automatiskt (efter språk)",
+    "regionalFormatSettings": "Regionala formatinställningar",
     "currencyOverride": "Currency Selection",
     "dateFormatOverride": "Date Format Selection",
     "timeFormatOverride": "Time Format Selection",
-    "currencySelection": "Currency Selection",
-    "dateFormatSelection": "Date Format Selection",
-    "timeFormatSelection": "Time Format Selection",
+    "currencySelection": "Valutaval",
+    "dateFormatSelection": "Datumformat",
+    "timeFormatSelection": "Tidsformat",
     "time24h": "24 Hours (14:30)",
-    "time12h": "12 Hours AM/PM (02:30 PM)"
+    "time12h": "12 Hours AM/PM (02:30 PM)",
+    "backup_error": "Backup Error:",
+    "optimize_success": "Database optimized successfully.",
+    "optimize_error": "Optimization Error:",
+    "cloud_folder_success": "Silent cloud backup folder set successfully:",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_error": "Restore error:"
   },
   "dashboard": {
     "title": "Personalhantering",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Action successfully undone!",
+    "undo_error": "Undo failed:",
+    "delete_worker_title": "Ta Bort Personal",
+    "delete_worker_msg": "Är du säker på att du vill ta bort denna personal (flytta till papperskorgen)? Systemdata kommer inte att raderas permanent, men tas bort från listor."
   },
   "worker_profile": {
     "back": "Tillbaka",
@@ -194,7 +204,7 @@
     "help_h3": "3. PDF Reconciliation",
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
   },
   "cash": {
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "Hela företaget (Global)",
+    "headquarters": "Huvudkassa / Allmänt",
+    "relatedProject": "Relaterad byggarbetsplats",
+    "projectFilterLabel": "Projektfilter",
+    "reportTitle": "Kasserapport",
+    "netBalance": "Nettokassasaldo",
+    "expense": "Utgift",
+    "income": "Inkomst",
+    "tags": "Taggar",
+    "delete_title": "Ta bort kontanttransaktion",
+    "delete_confirm": "Är du säker på att du vill ta bort den här kontanttransaktionen? Denna åtgärd kommer permanent att påverka kassasaldot."
   },
   "logs": {
     "title": "Systemloggar",
@@ -254,10 +275,12 @@
       "large_data_desc": "Vid uppdatering av logotyper sparas långa Base64-textkoder. Det er normalt att se långa textblock i loggarna; detta bekräftar att bildöverföringar har sparats.",
       "filter_export_title": "3. Sök, filtrering och export",
       "filter_export_desc": "Filtrera efter datum, sökord eller loggtyp. Ladda ner loggfiler som Excel, CSV, JSON, Markdown eller Text."
-    }
+    },
+    "filter_project": "Byggarbetsplats",
+    "project_all": "Alla byggeplatser"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "Avbryt",
     "confirm": "Bekräfta",
     "delete": "Radera",
     "empty_data": "Inga data hittades att visa.",
@@ -278,7 +301,9 @@
     "phone": "Telefon",
     "all": "Alla",
     "page_info": "Sida",
-    "page_guide": "Sida guide"
+    "page_guide": "Sida guide",
+    "error_occurred": "Error:",
+    "required_field": "Vänligen fyll i detta fält."
   },
   "worker_modal": {
     "title_new": "Lägg till ny personal",
@@ -312,7 +337,8 @@
     "period": "PERIODISK",
     "earned": "Intjänat:",
     "advance": "Förskott:",
-    "total_balance": "TOTALT SALDO"
+    "total_balance": "TOTALT SALDO",
+    "error": "Error retrieving report:"
   },
   "about": {
     "title": "Om & Hjälp",
@@ -402,7 +428,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "Radera arbetsplats",
+    "delete_msg": "Är du säker? Datan döljs."
   },
   "filters": {
     "sort": "Sortering:",
@@ -450,7 +478,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "Ingen bild"
   },
   "subcontractor": {
     "title": "🚜 Huvudböcker för underentreprenörer",
@@ -462,7 +491,7 @@
     "table_name": "Subcontractor / Company",
     "table_wage": "Daily Rate",
     "table_status": "Status",
-    "table_action": "Action",
+    "table_action": "Åtgärd",
     "help_title": "Subcontractor Ledger Guide",
     "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
     "help_h1": "1. Daily Rate and Ledger Entry",
@@ -491,10 +520,10 @@
     "no_results": "No reports found matching the search criteria.",
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
-    "delete_title": "Delete Report",
-    "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
+    "upload_mobile_title": "Ladda upp från mobil",
+    "upload_mobile_desc": "Anslut till **samma WiFi** och skanna QR:",
+    "delete_title": "Ta bort rapport",
+    "delete_confirm": "Är du säker på att du vill ta bort den här kvalitetskontrollrapporten? Denna åtgärd kan inte ångras.",
     "help_title": "Quality Control Guide",
     "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
     "help_h1": "1. Report Statuses",
@@ -508,7 +537,7 @@
     "title": "📓 Dagsjournal för byggarbetsplats",
     "worker_count": "Antal verksamma medarbetare",
     "weather": "Väderstatus",
-    "temperature": "Temperature",
+    "temperature": "Temperatur",
     "notes": "Dagsjournalanteckningar / Utfört arbete",
     "notes_ph": "t.ex. Pelararmering 2:a våningen bunden, C30 betong gjuten...",
     "save_btn": "Spara / Uppdatera journal",
@@ -525,9 +554,14 @@
     "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
     "help_h3": "3. Edit Lock Policy",
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
-    "delete_title": "Delete Journal",
-    "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "Weather Description"
+    "delete_title": "Ta bort journal",
+    "delete_confirm": "Är du säker på att du vill ta bort den här dagliga journalposten? Denna åtgärd kan inte ångras.",
+    "weatherDesc": "Väderbeskrivning",
+    "weather_error": "Ingen internetanslutning eller så är vädertjänsten oåtkomlig.",
+    "weather_not_found": "Angiven plats hittades inte: \"{{location}}\". Vänligen kontrollera stadens/områdets namn.",
+    "weather_unauthorized": "Väder-API-nyckeln är ogiltig eller har gått ut. Uppdatera den i Inställningar.",
+    "weather_offline": "Ingen internetanslutning eller vädertjänsten kan inte nås.",
+    "weather_api_error": "Vädertjänsten returnerade ett fel."
   },
   "materials": {
     "title": "🚚 Följeseddel & Materialregistrering",
@@ -539,13 +573,13 @@
     "document_photo": "Dokumentbild",
     "no_results": "No delivery notes found matching the search criteria.",
     "empty_state": "No delivery notes found yet.",
-    "photo": "Photo",
+    "photo": "Foto",
     "view_photo": "View",
     "no_photo": "None",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
-    "delete_title": "Delete Document",
-    "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
+    "upload_mobile_title": "Ladda Upp Foto från Mobil",
+    "upload_mobile_desc": "Anslut din mobil till **samma WiFi-nätverk** och skanna QR-koden:",
+    "delete_title": "Ta bort dokument",
+    "delete_confirm": "Är du säker på att du vill ta bort den här följesedeln? Denna åtgärd kan inte ångras.",
     "help_title": "Delivery Note Guide",
     "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
     "help_h1": "1. Supplier & Material Type",
@@ -553,7 +587,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Photo successfully received from mobile device!",
+    "photo_error": "Failed to save photo:",
+    "photo_upload_error": "Error processing photo:",
+    "lan_error": "Local server could not be started:",
+    "qr_link": "Länk:"
   },
   "production": {
     "title": "📐 Mängdförteckning & Produktionsspårning",
@@ -561,8 +600,8 @@
     "item_name_ph": "t.ex. Murning av tegelvägg",
     "no_results": "No production records found matching the search criteria.",
     "empty_state": "No production entries recorded for this construction site yet.",
-    "delete_title": "Delete Record",
-    "delete_confirm": "Are you sure you want to delete this production record? This action cannot be undone.",
+    "delete_title": "Ta bort post",
+    "delete_confirm": "Är du säker på att du vill ta bort den här produktionsposten? Denna åtgärd kan inte ångras.",
     "help_title": "Quantity Survey Guide",
     "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
     "help_h1": "1. Production Item Records",
@@ -589,13 +628,13 @@
   "settings.customDateFormat": "Date Format Override",
   "settings.customTimeFormat": "Time Format Override",
   "settings.autoByLanguage": "Automatic (By Language)",
-  "sidebar.recycleBin": "Recycle Bin",
+  "sidebar.recycleBin": "Papperskorg",
   "recycle.title": "Recycle Bin",
   "recycle.desc": "List deleted records here and restore them back to their original places.",
   "recycle.type": "Record Type",
   "recycle.content": "Content / Title",
   "recycle.deletedAt": "Deleted At",
-  "recycle.restoreSuccess": "Record successfully restored.",
+  "recycle.restoreSuccess": "Posten återställdes framgångsrikt.",
   "recycle.emptyState": "No deleted records found.",
   "recycle.itemType.worker": "Personnel Record",
   "recycle.itemType.transaction": "Cash Transaction",
@@ -603,16 +642,16 @@
   "recycle.itemType.journal": "Daily Journal",
   "recycle.itemType.quality": "Quality Control Report",
   "recycle.itemType.subcontractor": "Subcontractor Ledger Record",
-  "global.restore": "Restore",
+  "global.restore": "Återställ",
   "recycle.searchPlaceholder": "Search...",
   "recycle.searchAll": "Search Everywhere",
   "recycle.allTypes": "All Record Types",
   "recycle.startDate": "Start Date",
   "recycle.endDate": "End Date",
-  "recycle.restored": "Restored",
+  "recycle.restored": "Återställd",
   "recycle.hideRestored": "Hide Restored",
   "recycle.showRestored": "Show Restored",
-  "recycle.successTitle": "Success",
+  "recycle.successTitle": "Framgång",
   "common.ok": "OK",
   "common.error": "Error",
   "recycle.itemType.project": "Project Record",
@@ -636,7 +675,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -650,18 +689,18 @@
   },
   "guides": {
     "site": {
-      "title": "Site Management Guide",
+      "title": "Handbok för platshantering",
       "step1": {
-        "title": "1. Active Workspace",
-        "desc": "Select a project to set as active."
+        "title": "1. Aktiv arbetsyta",
+        "desc": "Välj ett projekt att ställa in som aktivt."
       },
       "step2": {
-        "title": "2. Location and Weather",
-        "desc": "Specify a location to automatically retrieve daily weather."
+        "title": "2. Plats och väder",
+        "desc": "Ange en plats för att automatiskt hämta dagligt väder."
       },
       "step3": {
-        "title": "3. Search and Pagination",
-        "desc": "Search instantly between construction sites."
+        "title": "3. Sökning och paginering",
+        "desc": "Sök omedelbart mellan byggarbetsplatser."
       }
     },
     "personnel": {
@@ -671,116 +710,117 @@
         "desc": "Use the Excel template to upload a bulk list."
       },
       "step2": {
-        "title": "2. Group Analysis",
-        "desc": "Analyze expenses according to group category."
+        "title": "2. Gruppanalys",
+        "desc": "Analysera utgifter per gruppkategori."
       },
       "step3": {
-        "title": "3. Timesheets and Statements",
-        "desc": "Click on the name to view the timesheet."
+        "title": "3. Tidrapporter och utdrag",
+        "desc": "Klicka på namnet för att se tidrapporten."
       }
     },
     "quantity": {
-      "title": "Production Guide",
+      "title": "Produktionsguide",
       "step1": {
-        "title": "1. Production Records",
-        "desc": "Record daily production."
+        "title": "1. Poster",
+        "desc": "Poster."
       },
       "step2": {
-        "title": "2. Archive and Details",
-        "desc": "Write notes to keep a chronological archive."
+        "title": "2. Arkiv",
+        "desc": "Arkiv."
       },
       "step3": {
-        "title": "3. Search and Filters",
-        "desc": "Filter by date range or unit."
+        "title": "3. Sök",
+        "desc": "Sök."
       }
     },
     "delivery": {
-      "title": "Delivery Guide",
+      "title": "Leveransguide",
       "step1": {
-        "title": "1. Supplier and Material",
-        "desc": "Record supplier and material names."
+        "title": "1. Leverantör",
+        "desc": "Leverantör."
       },
       "step2": {
-        "title": "2. Document Photos",
-        "desc": "Upload document photos for digital archive."
+        "title": "2. Foton",
+        "desc": "Foton."
       },
       "step3": {
-        "title": "3. Smart Search",
-        "desc": "Search in delivery note numbers or suppliers."
+        "title": "3. Sök",
+        "desc": "Sök."
       }
     },
     "journal": {
-      "title": "Journal Guide",
+      "title": "Dagboksguide",
       "step1": {
-        "title": "1. Weather Integration",
-        "desc": "Weather is automatically fetched."
+        "title": "1. Väder",
+        "desc": "Väder."
       },
       "step2": {
-        "title": "2. Auto Worker Count",
-        "desc": "Active worker count is automatically calculated."
+        "title": "2. Logg",
+        "desc": "Händelser."
       },
       "step3": {
-        "title": "3. Edit Lock Policy",
-        "desc": "Old records are locked to protect past data."
+        "title": "3. Historik",
+        "desc": "Historik."
       }
     },
     "quality": {
-      "title": "Quality Guide",
+      "title": "Kvalitetsguide",
       "step1": {
-        "title": "1. Report Statuses",
-        "desc": "Update the status when the issue is resolved."
+        "title": "1. Rapportstatus",
+        "desc": "Uppdatera när löst."
       },
       "step2": {
-        "title": "2. Visual Evidence",
-        "desc": "Add photos of identified issues."
+        "title": "2. Visuella bevis",
+        "desc": "Lägg till foton."
       },
       "step3": {
-        "title": "3. Filtering",
-        "desc": "Filter to track open issues."
+        "title": "3. Filtrering",
+        "desc": "Filtrera öppna problem."
       }
     },
     "subcontractor": {
-      "title": "Subcontractor Guide",
+      "title": "Underleverantörsguide",
       "step1": {
-        "title": "1. Daily Wage",
-        "desc": "Track daily wages of subcontractors."
+        "title": "1. Dagslön",
+        "desc": "Spåra dagslöner."
       },
       "step2": {
-        "title": "2. Search and Filtering",
-        "desc": "Search in the subcontractor list."
+        "title": "2. Sök och filtrera",
+        "desc": "Sök i listan."
       },
       "step3": {
-        "title": "3. Update and Edit",
-        "desc": "Update daily wages at any time."
+        "title": "3. Uppdatera",
+        "desc": "Uppdatera när som helst."
       }
     },
     "media": {
-      "title": "Media Guide",
+      "title": "Medieguide",
       "step1": {
-        "title": "1. Visual Timeline",
-        "desc": "Examine site images chronologically."
+        "title": "1. Visuell tidslinje",
+        "desc": "Undersök bilder kronologiskt."
       },
       "step2": {
-        "title": "2. Quick Details",
-        "desc": "Click on any photo to view in full size."
+        "title": "2. Snabba detaljer",
+        "desc": "Klicka på ett foto för att se det i full storlek."
       },
       "step3": {
-        "title": "3. Category Filters",
-        "desc": "Filter by delivery note or quality reports."
+        "title": "3. Kategorifilter",
+        "desc": "Filtrera efter följesedel eller kvalitetsrapporter."
       }
     },
     "cash": {
-      "title": "Cash Management Guide",
+      "title": "Guide för kassahantering",
       "step1": {
-        "title": "1. Income/Expense Records",
-        "desc": "Record incomes and expenses."
+        "title": "1. Inkomster/Utgifter",
+        "desc": "Registrera inkomster och utgifter."
       },
       "step2": {
-        "title": "2. Monthly Financial Status"
+        "title": "2. Månatlig ekonomisk status",
+        "desc": "Se månatligt kassaflöde och saldo."
       },
       "step3": {
-        "title": "3. Exporting",
-        "desc": "Download transactions as PDF or Excel."
+        "title": "3. Exportering",
+        "desc": "Ladda ner transaktioner som PDF eller Excel."
       }
     },
     "recycle": {
@@ -797,11 +837,34 @@
         "title": "Project Separation",
         "desc": "Filter your recycle bin by project."
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. Poster",
+        "desc": "Poster."
+      },
+      "step2": {
+        "title": "2. Arkiv",
+        "desc": "Arkiv."
+      },
+      "step3": {
+        "title": "3. Sök",
+        "desc": "Sök."
+      },
+      "title": "Produktionsguide"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "Kontoutdrag",
+    "forwardBalance": "Ingående balans",
+    "periodEarned": "Intjänat under perioden",
+    "periodAdvance": "Förskott under perioden",
+    "netBalance": "Nettosaldo",
+    "group": "Grupp",
+    "phone": "Telefon",
+    "id_tc": "ID/Personnummer"
   },
   "recycle": {
     "desc": "List deleted records here and restore them back to their original places.",
@@ -812,7 +875,7 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "tableRecordType": "Record Type",
-    "tableProject": "Project / Site",
+    "tableProject": "Projekt / Arbetsplats",
     "tableContent": "Content / Title",
     "tableDeletedAt": "Deleted At",
     "tableAction": "Action",
@@ -834,28 +897,111 @@
       "subcontractor": "Subcontractor Ledger",
       "project": "Project Record"
     },
-    "allProjectsOption": "All Projects"
+    "allProjectsOption": "All Projects",
+    "restore_confirm_title": "Bekräfta Återställning",
+    "restore_confirm_msg": "Är du säker på att du vill återställa denna post? Den kommer att flyttas tillbaka till sin ursprungliga plats.",
+    "restore_error": "Återställningsfel:"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
-    "recordsCount": "({{count}} Records)",
-    "restore": "Restore",
-    "restored": "Restored"
+    "recordsCount": "({{count}} poster)",
+    "restore": "Återställ",
+    "restored": "Återställd",
+    "filter": "Filtrera",
+    "dateRange": "Datumintervall",
+    "creationDate": "Skapad datum",
+    "date": "Datum",
+    "actionType": "Typ av åtgärd",
+    "description": "Beskrivning",
+    "amount": "Belopp"
   },
   "sidebar": {
-    "recycleBin": "Recycle Bin",
+    "recycleBin": "Papperskorg",
     "spotlight": "Spotlight"
   },
   "anomaly": {
-    "noAnomalies": "No System Anomalies",
-    "allUpToDate": "All financial balances and HSE documents are up to date."
+    "noAnomalies": "Inga systemanomalier",
+    "allUpToDate": "Alla saldon är uppdaterade."
   },
   "empty": {
-    "production": "No production records entered for this site yet.",
-    "delivery": "No delivery records found yet.",
-    "journal": "No daily journal records found yet.",
-    "quality": "No quality control reports for this site yet.",
-    "subcontractor": "No subcontractor registered for this site yet.",
-    "media": "No media records found matching the criteria."
+    "production": "Inga produktionsposter ännu.",
+    "delivery": "Inga leveransposter.",
+    "journal": "Inga dagboksposter.",
+    "quality": "Inga kvalitetsrapporter.",
+    "subcontractor": "Inga underleverantörer.",
+    "media": "Inga medier hittades."
+  },
+  "pdf": {
+    "signatureWorker": "Personal (Namn/Signatur)",
+    "signatureCompany": "Företagsrepresentant (Stämpel/Signatur)"
+  },
+  "global.searchPlaceholder": "Sök...",
+  "recycle.filterAllRecords": "Alla poster",
+  "recycle.filterAllTypes": "Alla posttyper",
+  "recycle.filterAllProjects": "Alla projekt",
+  "global.startDate": "Startdatum",
+  "global.endDate": "Slutdatum",
+  "guides.recycle.title": "Papperskorg Guide",
+  "guides.recycle.step2.title": "Dataåterställning",
+  "guides.recycle.step3.title": "Projektseparation",
+  "worker.advanceBadge": "Förskott",
+  "recycle.tableProject": "Projekt / Arbetsplats",
+  "worker.group": "Grupp",
+  "worker.phone": "Telefon",
+  "pdf_project_site": "Projekt / Arbetsplats",
+  "recycle_th_type": "Posttyp",
+  "recycle_th_project": "Projekt / Arbetsplats",
+  "recycle_th_content": "Innehåll / Titel",
+  "recycle_th_date": "Borttagen Den",
+  "recycle_th_action": "Åtgärd",
+  "recycle_type_project": "Projektpost",
+  "recycle_type_worker": "Personalpost",
+  "recycle_type_material": "Följesedel / Material",
+  "recycle_type_journal": "Dagbok",
+  "recycle_type_quality": "Kvalitetsrapport",
+  "recycle_type_subcontractor": "Underentreprenörsbok",
+  "recycle_type_cash": "Kontanttransaktion",
+  "recycle_guide_title": "Papperskorgsguide",
+  "recycle_guide_h1": "Hur fungerar det?",
+  "recycle_guide_p1": "Raderade poster sparas tillfälligt och listas här.",
+  "recycle_guide_h2": "Återställa Data",
+  "recycle_guide_p2": "Använd återställningsknappen för att få tillbaka poster.",
+  "recycle_guide_h3": "Projektseparering",
+  "recycle_guide_p3": "Filtrera din papperskorg per projekt.",
+  "recycle_page_title": "Papperskorg",
+  "recycle_page_desc": "Lista raderade poster här och återställ dem till sina ursprungliga platser.",
+  "sidebar_recycle_btn": "Papperskorg",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "Redigera",
+  "common.edit": "Redigera",
+  "Tam Gün": "Heldag",
+  "Yarım Gün": "Halvdag",
+  "Mesai": "Övertid",
+  "Normal çalışma": "Normalt arbete",
+  "spotlight_search_placeholder": "Sök i arbetsplatsens kommandocentral...",
+  "spotlight_desc_personnel": "Personallista och aktuella saldosammanfattningar",
+  "spotlight_desc_projects": "Byggarbetsplatser, platser och projektstatus",
+  "spotlight_desc_production": "Mängdregistreringar och spårning av framsteg",
+  "spotlight_desc_materials": "Inkommande material och betongföljesedlar",
+  "spotlight_desc_journal": "Dagliga loggböcker och automatiskt väder",
+  "spotlight_desc_quality": "Protokoll, tillverkningsfel och kvalitetsrapporter",
+  "spotlight_desc_subcontractor": "Externa underleverantörskonton (grävmaskiner, catering etc.)",
+  "spotlight_desc_media": "Galleri med fotokvitton och protokoll",
+  "spotlight_desc_cash": "Kassaflödesrörelser och sammanfattande kassa",
+  "spotlight_desc_settings": "Tema, språk, molnbackup och inställningar",
+  "spotlight_badge_menu": "MENY",
+  "spotlight_badge_personnel": "PERSONAL",
+  "spotlight_badge_project": "PLATS",
+  "spotlight_badge_faq": "FAQ",
+  "spotlight_faq_1_label": "Hur beräknas kassasaldot?",
+  "spotlight_faq_1_desc": "Pengar In - Pengar Ut. Förskott registreras som utgift.",
+  "spotlight_faq_2_label": "Hur görs en systembackup (Återställ)?",
+  "spotlight_faq_2_desc": "Genom att dra och släppa .sqlite-filen på Inställningar.",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "Multiplikator",
+  "settings_logs": {
+    "error_read": "Failed to read logs:"
   }
 }

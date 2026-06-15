@@ -57,6 +57,7 @@ describe('Reporting Service (Raporlama V3 TDD)', () => {
   });
 
   it('should correctly summarize Company Financials for the month', async () => {
+    // Let's test global first
     const report = await generateCompanyFinancialSummary(db, 2023, 9);
 
     expect(report.success).toBe(true);
@@ -73,5 +74,30 @@ describe('Reporting Service (Raporlama V3 TDD)', () => {
 
     // Net Cash Flow: 10000 - 2000 = 8000
     expect(report.summary.netCashFlow).toBe(8000);
+  });
+
+  it('should correctly filter Company Financials by project_id', async () => {
+    // Seed project-specific entries
+    // Project 1: Bodrum Marina
+    await db.run(`INSERT INTO timesheets (worker_id, work_date, applied_wage, applied_multiplier, earned_amount, project_id) VALUES (1, '2023-09-15', 1000, 1.0, 4000, 1)`);
+    await db.run(`INSERT INTO cash_register (trans_date, type, amount, description, project_id) VALUES ('2023-09-15', 'Nakit Girişi', 5000, 'Bodrum Avans', 1)`);
+    await db.run(`INSERT INTO cash_register (trans_date, type, amount, description, project_id) VALUES ('2023-09-16', 'Nakit Çıkışı', 2000, 'Bodrum Gider', 1)`);
+
+    // Fetch report for Project 1
+    const reportProj1 = await generateCompanyFinancialSummary(db, 2023, 9, '1');
+    expect(reportProj1.success).toBe(true);
+    expect(reportProj1.summary.totalWageCost).toBe(4000);
+    expect(reportProj1.summary.totalCashIn).toBe(5000);
+    expect(reportProj1.summary.totalCashOut).toBe(2000);
+    expect(reportProj1.summary.netCashFlow).toBe(3000);
+
+    // Fetch report for Headquarters ('merkez' -> project_id IS NULL)
+    // The previously seeded global ones had project_id = NULL
+    const reportMerkez = await generateCompanyFinancialSummary(db, 2023, 9, 'merkez');
+    expect(reportMerkez.success).toBe(true);
+    expect(reportMerkez.summary.totalWageCost).toBe(2500);
+    expect(reportMerkez.summary.totalCashIn).toBe(10000);
+    expect(reportMerkez.summary.totalCashOut).toBe(2000);
+    expect(reportMerkez.summary.netCashFlow).toBe(8000);
   });
 });

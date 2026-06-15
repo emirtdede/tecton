@@ -75,7 +75,7 @@
     "restore_invalid_file": "有効な SQLite (.sqlite または .db) データベース ファイルをドラッグしてください。",
     "system_maintenance": "システムメンテナンス",
     "logo_uploaded": "ロゴがアップロードされました",
-    "parameters": "パラメーター",
+    "parameters": "パラメータ",
     "regionalSettings": "Regional Format Settings",
     "customCurrency": "Currency Override",
     "customDateFormat": "Date Format Override",
@@ -86,10 +86,16 @@
     "dateFormatOverride": "Date Format Selection",
     "timeFormatOverride": "Time Format Selection",
     "currencySelection": "通貨の選択",
-    "dateFormatSelection": "日付形式の選択",
-    "timeFormatSelection": "時刻形式の選択",
+    "dateFormatSelection": "日付フォーマットの選択",
+    "timeFormatSelection": "時間フォーマットの選択",
     "time24h": "24時間（14:30）",
-    "time12h": "12時間 AM/PM（02:30 PM）"
+    "time12h": "12時間 AM/PM（02:30 PM）",
+    "backup_error": "Backup Error:",
+    "optimize_success": "Database optimized successfully.",
+    "optimize_error": "Optimization Error:",
+    "cloud_folder_success": "Silent cloud backup folder set successfully:",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_error": "Restore error:"
   },
   "dashboard": {
     "title": "人事管理",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Action successfully undone!",
+    "undo_error": "Undo failed:",
+    "delete_worker_title": "人員の削除",
+    "delete_worker_msg": "この人員を削除して（ごみ箱に移動）もよろしいですか？システムデータは完全に削除されませんが、リストから削除されます。"
   },
   "worker_profile": {
     "back": "戻る",
@@ -194,7 +204,7 @@
     "help_h3": "3. PDF Reconciliation",
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
   },
   "cash": {
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "全社（グローバル）",
+    "headquarters": "本社キャッシュ / 一般",
+    "relatedProject": "関連現場",
+    "projectFilterLabel": "現場フィルター",
+    "reportTitle": "レジ取引レポート",
+    "netBalance": "純現金残高",
+    "expense": "支出",
+    "income": "収入",
+    "tags": "タグ",
+    "delete_title": "現金取引を削除",
+    "delete_confirm": "この現金取引を削除してもよろしいですか？この操作は現金残高に恒久的な影響を与えます。"
   },
   "logs": {
     "title": "システムログ",
@@ -254,10 +275,12 @@
       "large_data_desc": "ロゴなどの画像を更新すると、長いBase64テキストコードが保存されます。ログに長いテキストブロックが表示されるのは正常であり、画像のアップロードが成功したことを示します。",
       "filter_export_title": "3. 検索、フィルター、エクスポート",
       "filter_export_desc": "日付範囲、キーワード、ログタイプでフィルターできます。Excel、CSV、JSON、Markdown、またはテキストとしてダウンロードも可能です。"
-    }
+    },
+    "filter_project": "現場",
+    "project_all": "すべての現場"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "キャンセル",
     "confirm": "確認",
     "delete": "削除",
     "empty_data": "表示するデータが見つかりませんでした。",
@@ -278,7 +301,9 @@
     "phone": "電話番号",
     "all": "すべて",
     "page_info": "ページ",
-    "page_guide": "ページガイド"
+    "page_guide": "ページガイド",
+    "error_occurred": "Error:",
+    "required_field": "このフィールドに入力してください。"
   },
   "worker_modal": {
     "title_new": "追加",
@@ -312,7 +337,8 @@
     "period": "期間",
     "earned": "獲得:",
     "advance": "前払い:",
-    "total_balance": "合計残高"
+    "total_balance": "合計残高",
+    "error": "Error retrieving report:"
   },
   "about": {
     "title": "概要とヘルプ",
@@ -402,7 +428,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "サイトを削除",
+    "delete_msg": "本当に削除しますか？データは非表示になります。"
   },
   "filters": {
     "sort": "並べ替え:",
@@ -450,7 +478,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "画像なし"
   },
   "subcontractor": {
     "title": "🚜 下請業者台帳",
@@ -462,7 +491,7 @@
     "table_name": "Subcontractor / Company",
     "table_wage": "Daily Rate",
     "table_status": "Status",
-    "table_action": "Action",
+    "table_action": "アクション",
     "help_title": "Subcontractor Ledger Guide",
     "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
     "help_h1": "1. Daily Rate and Ledger Entry",
@@ -491,10 +520,10 @@
     "no_results": "No reports found matching the search criteria.",
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
-    "delete_title": "Delete Report",
-    "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
+    "upload_mobile_title": "モバイルからアップロード",
+    "upload_mobile_desc": "**同じWiFi**に接続してQRをスキャンしてください:",
+    "delete_title": "レポートを削除",
+    "delete_confirm": "この品質管理レポートを削除してもよろしいですか？この操作は元に戻せません。",
     "help_title": "Quality Control Guide",
     "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
     "help_h1": "1. Report Statuses",
@@ -525,9 +554,14 @@
     "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
     "help_h3": "3. Edit Lock Policy",
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
-    "delete_title": "Delete Journal",
-    "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "天気の説明"
+    "delete_title": "ジャーナルを削除",
+    "delete_confirm": "この日誌エントリを削除してもよろしいですか？この操作は元に戻せません。",
+    "weatherDesc": "天気の説明",
+    "weather_error": "インターネット接続がないか、気象サービスにアクセスできません。",
+    "weather_not_found": "指定された場所が見つかりません: \"{{location}}\"。市区町村名を確認してください。",
+    "weather_unauthorized": "天気 API キーが無効または期限切れです。設定で更新してください。",
+    "weather_offline": "インターネット接続がないか、天気サービスにアクセスできません。",
+    "weather_api_error": "天気サービスがエラーを返しました。"
   },
   "materials": {
     "title": "🚚 納品書＆材料入力",
@@ -539,13 +573,13 @@
     "document_photo": "伝票写真",
     "no_results": "No delivery notes found matching the search criteria.",
     "empty_state": "No delivery notes found yet.",
-    "photo": "Photo",
+    "photo": "写真",
     "view_photo": "View",
     "no_photo": "None",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
-    "delete_title": "Delete Document",
-    "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
+    "upload_mobile_title": "モバイルから写真をアップロード",
+    "upload_mobile_desc": "モバイルを**同じWiFiネットワーク**に接続し、QRコードをスキャンします:",
+    "delete_title": "ドキュメントを削除",
+    "delete_confirm": "この納品書エントリを削除してもよろしいですか？この操作は元に戻せません。",
     "help_title": "Delivery Note Guide",
     "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
     "help_h1": "1. Supplier & Material Type",
@@ -553,7 +587,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Photo successfully received from mobile device!",
+    "photo_error": "Failed to save photo:",
+    "photo_upload_error": "Error processing photo:",
+    "lan_error": "Local server could not be started:",
+    "qr_link": "リンク:"
   },
   "production": {
     "title": "📐 出来高・施工管理",
@@ -561,8 +600,8 @@
     "item_name_ph": "例：レンガ積み工事",
     "no_results": "No production records found matching the search criteria.",
     "empty_state": "No production entries recorded for this construction site yet.",
-    "delete_title": "Delete Record",
-    "delete_confirm": "Are you sure you want to delete this production record? This action cannot be undone.",
+    "delete_title": "レコードを削除",
+    "delete_confirm": "この生産記録を削除してもよろしいですか？この操作は元に戻せません。",
     "help_title": "Quantity Survey Guide",
     "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
     "help_h1": "1. Production Item Records",
@@ -589,13 +628,13 @@
   "settings.customDateFormat": "Date Format Override",
   "settings.customTimeFormat": "Time Format Override",
   "settings.autoByLanguage": "Automatic (By Language)",
-  "sidebar.recycleBin": "Recycle Bin",
+  "sidebar.recycleBin": "ごみ箱",
   "recycle.title": "Recycle Bin",
   "recycle.desc": "List deleted records here and restore them back to their original places.",
   "recycle.type": "Record Type",
   "recycle.content": "Content / Title",
   "recycle.deletedAt": "Deleted At",
-  "recycle.restoreSuccess": "Record successfully restored.",
+  "recycle.restoreSuccess": "レコードが正常に復元されました。",
   "recycle.emptyState": "No deleted records found.",
   "recycle.itemType.worker": "Personnel Record",
   "recycle.itemType.transaction": "Cash Transaction",
@@ -603,16 +642,16 @@
   "recycle.itemType.journal": "Daily Journal",
   "recycle.itemType.quality": "Quality Control Report",
   "recycle.itemType.subcontractor": "Subcontractor Ledger Record",
-  "global.restore": "Restore",
+  "global.restore": "復元",
   "recycle.searchPlaceholder": "Search...",
   "recycle.searchAll": "Search Everywhere",
   "recycle.allTypes": "All Record Types",
   "recycle.startDate": "Start Date",
   "recycle.endDate": "End Date",
-  "recycle.restored": "Restored",
+  "recycle.restored": "復元済み",
   "recycle.hideRestored": "Hide Restored",
   "recycle.showRestored": "Show Restored",
-  "recycle.successTitle": "Success",
+  "recycle.successTitle": "成功",
   "common.ok": "OK",
   "common.error": "Error",
   "recycle.itemType.project": "Project Record",
@@ -636,7 +675,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -657,11 +696,11 @@
       },
       "step2": {
         "title": "2. 場所と天気",
-        "desc": "自動的に天気を取得する場所を指定します。"
+        "desc": "毎日の天気を自動的に取得する場所を指定します。"
       },
       "step3": {
         "title": "3. 検索とページネーション",
-        "desc": "建設現場間を即座に検索します。"
+        "desc": "建設現場を瞬時に検索します。"
       }
     },
     "personnel": {
@@ -672,7 +711,7 @@
       },
       "step2": {
         "title": "2. グループ分析",
-        "desc": "グループカテゴリに従って費用を分析します。"
+        "desc": "グループカテゴリごとに経費を分析します。"
       },
       "step3": {
         "title": "3. タイムシートと明細書",
@@ -682,83 +721,83 @@
     "quantity": {
       "title": "生産ガイド",
       "step1": {
-        "title": "1. 生産記録",
-        "desc": "毎日の生産を記録します。"
+        "title": "1. 記録",
+        "desc": "記録."
       },
       "step2": {
-        "title": "2. アーカイブと詳細",
-        "desc": "年代順のアーカイブを保持するためのメモを書きます。"
+        "title": "2. アーカイブ",
+        "desc": "アーカイブ."
       },
       "step3": {
-        "title": "3. 検索とフィルター",
-        "desc": "日付範囲または単位でフィルタリングします。"
+        "title": "3. 検索",
+        "desc": "検索."
       }
     },
     "delivery": {
-      "title": "納品ガイド",
+      "title": "配送ガイド",
       "step1": {
-        "title": "1. サプライヤーと材料",
-        "desc": "サプライヤー名と材料名を記録します。"
+        "title": "1. サプライヤー",
+        "desc": "サプライヤー."
       },
       "step2": {
-        "title": "2. ドキュメント写真",
-        "desc": "デジタルアーカイブ用にドキュメントの写真をアップロードします。"
+        "title": "2. 写真",
+        "desc": "写真."
       },
       "step3": {
-        "title": "3. スマート検索",
-        "desc": "納品書番号またはサプライヤーで検索します。"
+        "title": "3. 検索",
+        "desc": "検索."
       }
     },
     "journal": {
-      "title": "ジャーナルガイド",
+      "title": "日報ガイド",
       "step1": {
-        "title": "1. 天気統合",
-        "desc": "天気は自動的に取得されます。"
+        "title": "1. 天気",
+        "desc": "天気."
       },
       "step2": {
-        "title": "2. 自動労働者カウント",
-        "desc": "アクティブな労働者数が自動的に計算されます。"
+        "title": "2. ログ",
+        "desc": "ログ."
       },
       "step3": {
-        "title": "3. 編集ロックポリシー",
-        "desc": "古い記録は過去のデータを保護するためにロックされます。"
+        "title": "3. 履歴",
+        "desc": "履歴."
       }
     },
     "quality": {
       "title": "品質ガイド",
       "step1": {
-        "title": "1. レポートステータス",
-        "desc": "問題が解決したらステータスを更新します。"
+        "title": "1. 報告ステータス",
+        "desc": "解決後に更新します。"
       },
       "step2": {
         "title": "2. 視覚的証拠",
-        "desc": "特定された問題の写真を追加します。"
+        "desc": "写真を追加します。"
       },
       "step3": {
         "title": "3. フィルタリング",
-        "desc": "未解決の問題を追跡するためにフィルタリングします。"
+        "desc": "未解決の問題をフィルタリングします。"
       }
     },
     "subcontractor": {
-      "title": "下請け業者ガイド",
+      "title": "下請業者ガイド",
       "step1": {
         "title": "1. 日給",
-        "desc": "下請け業者の日給を追跡します。"
+        "desc": "日給を追跡します。"
       },
       "step2": {
-        "title": "2. 検索とフィルタリング",
-        "desc": "下請け業者リストで検索します。"
+        "title": "2. 検索とフィルタ",
+        "desc": "リストで検索します。"
       },
       "step3": {
         "title": "3. 更新と編集",
-        "desc": "いつでも日給を更新します。"
+        "desc": "いつでも更新できます。"
       }
     },
     "media": {
       "title": "メディアガイド",
       "step1": {
-        "title": "1. 視覚的なタイムライン",
-        "desc": "サイトの画像を年代順に調べます。"
+        "title": "1. 視覚的タイムライン",
+        "desc": "サイトの画像を時系列で調べます。"
       },
       "step2": {
         "title": "2. クイック詳細",
@@ -777,11 +816,11 @@
       },
       "step2": {
         "title": "2. 月次財務状況",
-        "desc": "純現金の変動を即座に追跡します。"
+        "desc": "月次のキャッシュフローと残高を表示します。"
       },
       "step3": {
         "title": "3. エクスポート",
-        "desc": "取引をPDFまたはExcelとしてダウンロードします。"
+        "desc": "トランザクションをPDFまたはExcelとしてダウンロードします。"
       }
     },
     "recycle": {
@@ -798,11 +837,34 @@
         "title": "プロジェクトの分離",
         "desc": "ごみ箱をプロジェクトでフィルタリングします。"
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. 記録",
+        "desc": "記録."
+      },
+      "step2": {
+        "title": "2. アーカイブ",
+        "desc": "アーカイブ."
+      },
+      "step3": {
+        "title": "3. 検索",
+        "desc": "検索."
+      },
+      "title": "生産ガイド"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "取引明細書",
+    "forwardBalance": "繰越残高",
+    "periodEarned": "当期支給額",
+    "periodAdvance": "期間前払金",
+    "netBalance": "純残高",
+    "group": "グループ",
+    "phone": "電話番号",
+    "id_tc": "ID/マイナンバー"
   },
   "recycle": {
     "desc": "削除された記録をここにリストし、元の場所に復元します。",
@@ -813,7 +875,7 @@
     "startDate": "開始日",
     "endDate": "終了日",
     "tableRecordType": "レコードタイプ",
-    "tableProject": "プロジェクト/サイト",
+    "tableProject": "プロジェクト / サイト",
     "tableContent": "内容/タイトル",
     "tableDeletedAt": "削除日時",
     "tableAction": "アクション",
@@ -835,28 +897,111 @@
       "subcontractor": "下請業者台帳",
       "project": "プロジェクト記録"
     },
-    "allProjectsOption": "すべてのプロジェクト"
+    "allProjectsOption": "すべてのプロジェクト",
+    "restore_confirm_title": "復元の確認",
+    "restore_confirm_msg": "このレコードを復元してもよろしいですか？元の場所に戻されます。",
+    "restore_error": "復元エラー："
   },
   "global": {
     "spotlight": "スポットライト: Ctrl + K",
-    "recordsCount": "({{count}} 件の記録)",
+    "recordsCount": "({{count}} レコード)",
     "restore": "復元",
-    "restored": "復元済み"
+    "restored": "復元済み",
+    "filter": "フィルター",
+    "dateRange": "期間",
+    "creationDate": "作成日",
+    "date": "日付",
+    "actionType": "取引区分",
+    "description": "摘要",
+    "amount": "金額"
   },
   "sidebar": {
     "recycleBin": "ごみ箱",
-    "spotlight": "スポットライト"
+    "spotlight": "Spotlight"
   },
   "anomaly": {
-    "noAnomalies": "システム異常はありません",
-    "allUpToDate": "すべての財務残高とHSE文書は最新です。"
+    "noAnomalies": "システムの異常なし",
+    "allUpToDate": "すべての残高は最新です。"
   },
   "empty": {
-    "production": "この現場の生産記録はまだありません。",
-    "delivery": "納品記録はまだありません。",
-    "journal": "日報はまだありません。",
-    "quality": "品質レポートはまだありません。",
-    "subcontractor": "登録された下請け業者はまだありません。",
-    "media": "条件に一致するメディア記録が見つかりません。"
+    "production": "生産記録がまだありません。",
+    "delivery": "配送記録がまだありません。",
+    "journal": "日報がまだありません。",
+    "quality": "品質報告がまだありません。",
+    "subcontractor": "下請業者がまだ登録されていません。",
+    "media": "メディア記録が見つかりません。"
+  },
+  "pdf": {
+    "signatureWorker": "担当者 (氏名 - 署名)",
+    "signatureCompany": "会社代表者 (角印/署名)"
+  },
+  "global.searchPlaceholder": "検索...",
+  "recycle.filterAllRecords": "すべての記録",
+  "recycle.filterAllTypes": "すべての種類",
+  "recycle.filterAllProjects": "すべての現場",
+  "global.startDate": "開始日",
+  "global.endDate": "終了日",
+  "guides.recycle.title": "ごみ箱ガイド",
+  "guides.recycle.step2.title": "データの復元",
+  "guides.recycle.step3.title": "現場の分離",
+  "worker.advanceBadge": "前払い",
+  "recycle.tableProject": "プロジェクト / サイト",
+  "worker.group": "グループ",
+  "worker.phone": "電話番号",
+  "pdf_project_site": "プロジェクト / サイト",
+  "recycle_th_type": "レコードタイプ",
+  "recycle_th_project": "プロジェクト / サイト",
+  "recycle_th_content": "内容 / タイトル",
+  "recycle_th_date": "削除日時",
+  "recycle_th_action": "アクション",
+  "recycle_type_project": "プロジェクト記録",
+  "recycle_type_worker": "人事記録",
+  "recycle_type_material": "納品書 / 資材",
+  "recycle_type_journal": "日報",
+  "recycle_type_quality": "品質管理レポート",
+  "recycle_type_subcontractor": "下請け業者台帳",
+  "recycle_type_cash": "現金取引",
+  "recycle_guide_title": "ごみ箱ガイド",
+  "recycle_guide_h1": "使い方",
+  "recycle_guide_p1": "削除されたレコードは論理削除され、ここに一覧表示されます。",
+  "recycle_guide_h2": "データの復元",
+  "recycle_guide_p2": "復元ボタンを使用してレコードを元に戻します。",
+  "recycle_guide_h3": "プロジェクトの分離",
+  "recycle_guide_p3": "ごみ箱をプロジェクトごとにフィルタリングします。",
+  "recycle_page_title": "ごみ箱",
+  "recycle_page_desc": "削除されたレコードをここに一覧表示し、元の場所に復元します。",
+  "sidebar_recycle_btn": "ごみ箱",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "編集",
+  "common.edit": "編集",
+  "Tam Gün": "一日中",
+  "Yarım Gün": "半日",
+  "Mesai": "残業",
+  "Normal çalışma": "通常の作業",
+  "spotlight_search_placeholder": "サイトコマンドセンターで検索...",
+  "spotlight_desc_personnel": "人員リストと現在の残高サマリー",
+  "spotlight_desc_projects": "建設現場、場所、およびプロジェクトのステータス",
+  "spotlight_desc_production": "数量記録と生産進捗状況の追跡",
+  "spotlight_desc_materials": "入荷資材とコンクリート納品書",
+  "spotlight_desc_journal": "サイトの毎日のログと自動天気",
+  "spotlight_desc_quality": "議事録、製造上の欠陥、および品質レポート",
+  "spotlight_desc_subcontractor": "外部の下請け業者のアカウント（掘削機、ケータリングなど）",
+  "spotlight_desc_media": "写真付き領収書と議事録のギャラリー",
+  "spotlight_desc_cash": "キャッシュフローの動きとサマリーレジ",
+  "spotlight_desc_settings": "テーマ、言語、クラウドバックアップ、および一般設定",
+  "spotlight_badge_menu": "メニュー",
+  "spotlight_badge_personnel": "人員",
+  "spotlight_badge_project": "サイト",
+  "spotlight_badge_faq": "FAQ",
+  "spotlight_faq_1_label": "現金残高はどのように計算されますか？",
+  "spotlight_faq_1_desc": "現金流入 - 現金流出。前払いは自動的に流出として記録されます。",
+  "spotlight_faq_2_label": "システムのバックアップ（復元）はどのように行われますか？",
+  "spotlight_faq_2_desc": "設定ページで.sqliteバックアップをドラッグ＆ドロップします。",
+  "sidebar_spotlight": "スポットライト: Ctrl + K",
+  "multiplier": "乗数",
+  "settings_logs": {
+    "error_read": "Failed to read logs:"
   }
 }

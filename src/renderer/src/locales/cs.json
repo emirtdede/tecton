@@ -75,21 +75,27 @@
     "restore_invalid_file": "Přetáhněte platný databázový soubor SQLite (.sqlite nebo .db).",
     "system_maintenance": "Údržba systému",
     "logo_uploaded": "Logo nahráno",
-    "parameters": "Parameters",
+    "parameters": "Parametry",
     "regionalSettings": "Regional Format Settings",
     "customCurrency": "Currency Override",
     "customDateFormat": "Date Format Override",
     "customTimeFormat": "Time Format Override",
-    "autoByLanguage": "Automatic (By Language)",
-    "regionalFormatSettings": "Regional Format Settings",
+    "autoByLanguage": "Automaticky (dle jazyka)",
+    "regionalFormatSettings": "Regionální nastavení",
     "currencyOverride": "Currency Selection",
     "dateFormatOverride": "Date Format Selection",
     "timeFormatOverride": "Time Format Selection",
-    "currencySelection": "Currency Selection",
-    "dateFormatSelection": "Date Format Selection",
-    "timeFormatSelection": "Time Format Selection",
+    "currencySelection": "Výběr měny",
+    "dateFormatSelection": "Formát data",
+    "timeFormatSelection": "Formát času",
     "time24h": "24 Hours (14:30)",
-    "time12h": "12 Hours AM/PM (02:30 PM)"
+    "time12h": "12 Hours AM/PM (02:30 PM)",
+    "backup_error": "Backup Error:",
+    "optimize_success": "Database optimized successfully.",
+    "optimize_error": "Optimization Error:",
+    "cloud_folder_success": "Silent cloud backup folder set successfully:",
+    "restore_confirm_title": "Restore Confirmation",
+    "restore_error": "Restore error:"
   },
   "dashboard": {
     "title": "Správa personálu",
@@ -111,7 +117,11 @@
     "help_h2": "2. Group Analysis",
     "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
     "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "undo_success": "Action successfully undone!",
+    "undo_error": "Undo failed:",
+    "delete_worker_title": "Odstranit personál",
+    "delete_worker_msg": "Opravdu chcete tento personál odstranit (přesunout do koše)? Systémová data nebudou trvale smazána, ale budou odstraněna ze seznamů."
   },
   "worker_profile": {
     "back": "Zpět",
@@ -194,7 +204,7 @@
     "help_h3": "3. PDF Reconciliation",
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Personnel's registered phone number not found.",
+    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
     "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
   },
   "cash": {
@@ -234,7 +244,18 @@
     "help_h2": "2. Monthly Financial Status",
     "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
     "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats."
+    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "allCompany": "Celá firma (Globální)",
+    "headquarters": "Centrální pokladna / Obecné",
+    "relatedProject": "Související staveniště",
+    "projectFilterLabel": "Filtr staveniště",
+    "reportTitle": "Zpráva o pokladních pohybech",
+    "netBalance": "Čistý zůstatek pokladny",
+    "expense": "Výdaj",
+    "income": "Příjem",
+    "tags": "Štítky",
+    "delete_title": "Smazat hotovostní transakci",
+    "delete_confirm": "Opravdu chcete smazat tuto hotovostní transakci? Tato akce trvale ovlivní zůstatek hotovosti."
   },
   "logs": {
     "title": "Protokoly",
@@ -254,10 +275,12 @@
       "large_data_desc": "Při aktualizaci loga se ukládají dlouhé kódy Base64. Dlouhé bloky textu v protokolu jsou normální; potvrzují úspěšné uložení obrázků.",
       "filter_export_title": "3. Hledání, filtrování a export",
       "filter_export_desc": "Filtrujte podle data, klíčového slova nebo typu. Stáhněte protokoly jako Excel, CSV, JSON, Markdown nebo Text."
-    }
+    },
+    "filter_project": "Staveniště",
+    "project_all": "Všechna staveniště"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "Zrušit",
     "confirm": "Potvrdit",
     "delete": "Odstranit",
     "empty_data": "Nebyla nalezena žádná data k zobrazení.",
@@ -278,7 +301,9 @@
     "phone": "Telefon",
     "all": "Vše",
     "page_info": "Stránka",
-    "page_guide": "Průvodce stránkou"
+    "page_guide": "Průvodce stránkou",
+    "error_occurred": "Error:",
+    "required_field": "Vyplňte prosím toto pole."
   },
   "worker_modal": {
     "title_new": "Přidat",
@@ -312,7 +337,8 @@
     "period": "OBDOBÍ",
     "earned": "Vyděláno:",
     "advance": "Záloha:",
-    "total_balance": "ZŮSTATEK"
+    "total_balance": "ZŮSTATEK",
+    "error": "Error retrieving report:"
   },
   "about": {
     "title": "O aplikaci & Nápověda",
@@ -402,7 +428,9 @@
     "help_h2": "2. Location & Weather",
     "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
     "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination."
+    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "delete_title": "Smazat web",
+    "delete_msg": "Opravdu smazat? Data budou skryta."
   },
   "filters": {
     "sort": "Seřadit:",
@@ -450,7 +478,8 @@
     "help_h2": "2. Quick Details",
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes."
+    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "no_image": "Žádný obrázek"
   },
   "subcontractor": {
     "title": "🚜 Knihy subdodavatelů",
@@ -462,7 +491,7 @@
     "table_name": "Subcontractor / Company",
     "table_wage": "Daily Rate",
     "table_status": "Status",
-    "table_action": "Action",
+    "table_action": "Akce",
     "help_title": "Subcontractor Ledger Guide",
     "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
     "help_h1": "1. Daily Rate and Ledger Entry",
@@ -491,10 +520,10 @@
     "no_results": "No reports found matching the search criteria.",
     "empty_state": "No quality control reports found for this construction site yet.",
     "open_photo": "Open Report Photo",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code below with your camera:",
-    "delete_title": "Delete Report",
-    "delete_confirm": "Are you sure you want to delete this quality control report? This action cannot be undone.",
+    "upload_mobile_title": "Nahrát z mobilu",
+    "upload_mobile_desc": "Připojte se k **stejné WiFi** a naskenujte QR:",
+    "delete_title": "Smazat zprávu",
+    "delete_confirm": "Opravdu chcete smazat tuto zprávu o kontrole kvality? Tuto akci nelze vrátit zpět.",
     "help_title": "Quality Control Guide",
     "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
     "help_h1": "1. Report Statuses",
@@ -508,7 +537,7 @@
     "title": "📓 Stavební deník",
     "worker_count": "Počet pracujících zaměstnanců",
     "weather": "Stav počasí",
-    "temperature": "Temperature",
+    "temperature": "Teplota",
     "notes": "Poznámky deníku / Provedené práce",
     "notes_ph": "např. Svázána výztuž sloupů ve 2. patře, nalití betonu C30...",
     "save_btn": "Uložit / Aktualizovat deník",
@@ -525,9 +554,14 @@
     "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
     "help_h3": "3. Edit Lock Policy",
     "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
-    "delete_title": "Delete Journal",
-    "delete_confirm": "Are you sure you want to delete this daily journal entry? This action cannot be undone.",
-    "weatherDesc": "Weather Description"
+    "delete_title": "Smazat deník",
+    "delete_confirm": "Opravdu chcete smazat tento denní záznam? Tuto akci nelze vrátit zpět.",
+    "weatherDesc": "Popis počasí",
+    "weather_error": "Žádné internetové připojení nebo meteorologická služba je nedostupná.",
+    "weather_not_found": "Zadaná poloha nenalezena: \"{{location}}\". Zkontrolujte prosím název města/okresu.",
+    "weather_unauthorized": "Klíč API pro počasí je neplatný nebo vypršel. Aktualizujte jej prosím v Nastavení.",
+    "weather_offline": "Žádné připojení k internetu nebo služba počasí je nedostupná.",
+    "weather_api_error": "Služba počasí vrátila chybu."
   },
   "materials": {
     "title": "🚚 Dodací list a zadání materiálu",
@@ -539,13 +573,13 @@
     "document_photo": "Fotka dokumentu",
     "no_results": "No delivery notes found matching the search criteria.",
     "empty_state": "No delivery notes found yet.",
-    "photo": "Photo",
+    "photo": "Fotografie",
     "view_photo": "View",
     "no_photo": "None",
-    "upload_mobile_title": "Upload Photo from Mobile",
-    "upload_mobile_desc": "Connect your phone and computer to the **same WiFi network**, then scan the QR code with your camera:",
-    "delete_title": "Delete Document",
-    "delete_confirm": "Are you sure you want to delete this delivery note entry? This action cannot be undone.",
+    "upload_mobile_title": "Nahrát fotku z mobilu",
+    "upload_mobile_desc": "Připojte mobil ke **stejné síti WiFi** a naskenujte QR kód:",
+    "delete_title": "Smazat dokument",
+    "delete_confirm": "Opravdu chcete smazat tento záznam o dodacím listu? Tuto akci nelze vrátit zpět.",
     "help_title": "Delivery Note Guide",
     "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
     "help_h1": "1. Supplier & Material Type",
@@ -553,7 +587,12 @@
     "help_h2": "2. Document Photos",
     "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
     "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers."
+    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "photo_success": "Photo successfully received from mobile device!",
+    "photo_error": "Failed to save photo:",
+    "photo_upload_error": "Error processing photo:",
+    "lan_error": "Local server could not be started:",
+    "qr_link": "Odkaz:"
   },
   "production": {
     "title": "📐 Výkaz výměr a sledování produkce",
@@ -561,8 +600,8 @@
     "item_name_ph": "např. Zdění cihlové zdi",
     "no_results": "No production records found matching the search criteria.",
     "empty_state": "No production entries recorded for this construction site yet.",
-    "delete_title": "Delete Record",
-    "delete_confirm": "Are you sure you want to delete this production record? This action cannot be undone.",
+    "delete_title": "Smazat záznam",
+    "delete_confirm": "Opravdu chcete smazat tento záznam o výrobě? Tuto akci nelze vrátit zpět.",
     "help_title": "Quantity Survey Guide",
     "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
     "help_h1": "1. Production Item Records",
@@ -589,13 +628,13 @@
   "settings.customDateFormat": "Date Format Override",
   "settings.customTimeFormat": "Time Format Override",
   "settings.autoByLanguage": "Automatic (By Language)",
-  "sidebar.recycleBin": "Recycle Bin",
+  "sidebar.recycleBin": "Koš",
   "recycle.title": "Recycle Bin",
   "recycle.desc": "List deleted records here and restore them back to their original places.",
   "recycle.type": "Record Type",
   "recycle.content": "Content / Title",
   "recycle.deletedAt": "Deleted At",
-  "recycle.restoreSuccess": "Record successfully restored.",
+  "recycle.restoreSuccess": "Záznam byl úspěšně obnoven.",
   "recycle.emptyState": "No deleted records found.",
   "recycle.itemType.worker": "Personnel Record",
   "recycle.itemType.transaction": "Cash Transaction",
@@ -603,16 +642,16 @@
   "recycle.itemType.journal": "Daily Journal",
   "recycle.itemType.quality": "Quality Control Report",
   "recycle.itemType.subcontractor": "Subcontractor Ledger Record",
-  "global.restore": "Restore",
+  "global.restore": "Obnovit",
   "recycle.searchPlaceholder": "Search...",
   "recycle.searchAll": "Search Everywhere",
   "recycle.allTypes": "All Record Types",
   "recycle.startDate": "Start Date",
   "recycle.endDate": "End Date",
-  "recycle.restored": "Restored",
+  "recycle.restored": "Obnoveno",
   "recycle.hideRestored": "Hide Restored",
   "recycle.showRestored": "Show Restored",
-  "recycle.successTitle": "Success",
+  "recycle.successTitle": "Úspěch",
   "common.ok": "OK",
   "common.error": "Error",
   "recycle.itemType.project": "Project Record",
@@ -636,7 +675,7 @@
   "recycle.startDateLabel": "Start Date",
   "recycle.endDateLabel": "End Date",
   "recycle.dateOrderError": "Start date cannot be after end date.",
-  "sidebar.spotlight": "Spotlight",
+  "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
     "help_title": "Personnel Management Guide",
@@ -650,18 +689,18 @@
   },
   "guides": {
     "site": {
-      "title": "Site Management Guide",
+      "title": "Průvodce správou webu",
       "step1": {
-        "title": "1. Active Workspace",
-        "desc": "Select a project to set as active."
+        "title": "1. Aktivní pracovní prostor",
+        "desc": "Vyberte projekt, který chcete nastavit jako aktivní."
       },
       "step2": {
-        "title": "2. Location and Weather",
-        "desc": "Specify a location to automatically retrieve daily weather."
+        "title": "2. Poloha a počasí",
+        "desc": "Zadejte polohu pro automatické načítání denního počasí."
       },
       "step3": {
-        "title": "3. Search and Pagination",
-        "desc": "Search instantly between construction sites."
+        "title": "3. Hledání a stránkování",
+        "desc": "Okamžité vyhledávání mezi staveništi."
       }
     },
     "personnel": {
@@ -671,116 +710,117 @@
         "desc": "Use the Excel template to upload a bulk list."
       },
       "step2": {
-        "title": "2. Group Analysis",
-        "desc": "Analyze expenses according to group category."
+        "title": "2. Analýza skupiny",
+        "desc": "Analyzujte výdaje podle kategorie skupiny."
       },
       "step3": {
-        "title": "3. Timesheets and Statements",
-        "desc": "Click on the name to view the timesheet."
+        "title": "3. Výkazy a prohlášení",
+        "desc": "Kliknutím na jméno zobrazíte výkaz práce."
       }
     },
     "quantity": {
-      "title": "Production Guide",
+      "title": "Průvodce produkcí",
       "step1": {
-        "title": "1. Production Records",
-        "desc": "Record daily production."
+        "title": "1. Záznamy",
+        "desc": "Zaznamenejte produkci."
       },
       "step2": {
-        "title": "2. Archive and Details",
-        "desc": "Write notes to keep a chronological archive."
+        "title": "2. Archiv",
+        "desc": "Poznámky."
       },
       "step3": {
-        "title": "3. Search and Filters",
-        "desc": "Filter by date range or unit."
+        "title": "3. Hledání",
+        "desc": "Filtry."
       }
     },
     "delivery": {
-      "title": "Delivery Guide",
+      "title": "Průvodce dodávkami",
       "step1": {
-        "title": "1. Supplier and Material",
-        "desc": "Record supplier and material names."
+        "title": "1. Dodavatel",
+        "desc": "Dodavatelé."
       },
       "step2": {
-        "title": "2. Document Photos",
-        "desc": "Upload document photos for digital archive."
+        "title": "2. Fotky",
+        "desc": "Fotky dokladů."
       },
       "step3": {
-        "title": "3. Smart Search",
-        "desc": "Search in delivery note numbers or suppliers."
+        "title": "3. Hledání",
+        "desc": "Hledat v seznamu."
       }
     },
     "journal": {
-      "title": "Journal Guide",
+      "title": "Průvodce deníkem",
       "step1": {
-        "title": "1. Weather Integration",
-        "desc": "Weather is automatically fetched."
+        "title": "1. Počasí",
+        "desc": "Počasí."
       },
       "step2": {
-        "title": "2. Auto Worker Count",
-        "desc": "Active worker count is automatically calculated."
+        "title": "2. Události",
+        "desc": "Události."
       },
       "step3": {
-        "title": "3. Edit Lock Policy",
-        "desc": "Old records are locked to protect past data."
+        "title": "3. Historie",
+        "desc": "Historie."
       }
     },
     "quality": {
-      "title": "Quality Guide",
+      "title": "Průvodce kvalitou",
       "step1": {
-        "title": "1. Report Statuses",
-        "desc": "Update the status when the issue is resolved."
+        "title": "1. Stavy reportů",
+        "desc": "Aktualizovat po vyřešení."
       },
       "step2": {
-        "title": "2. Visual Evidence",
-        "desc": "Add photos of identified issues."
+        "title": "2. Vizuální důkazy",
+        "desc": "Přidat fotky."
       },
       "step3": {
-        "title": "3. Filtering",
-        "desc": "Filter to track open issues."
+        "title": "3. Filtrování",
+        "desc": "Filtrovat otevřené problémy."
       }
     },
     "subcontractor": {
-      "title": "Subcontractor Guide",
+      "title": "Průvodce subdodavateli",
       "step1": {
-        "title": "1. Daily Wage",
-        "desc": "Track daily wages of subcontractors."
+        "title": "1. Denní mzda",
+        "desc": "Sledovat denní mzdy."
       },
       "step2": {
-        "title": "2. Search and Filtering",
-        "desc": "Search in the subcontractor list."
+        "title": "2. Hledání a filtrování",
+        "desc": "Hledat v seznamu."
       },
       "step3": {
-        "title": "3. Update and Edit",
-        "desc": "Update daily wages at any time."
+        "title": "3. Úprava",
+        "desc": "Aktualizovat kdykoliv."
       }
     },
     "media": {
-      "title": "Media Guide",
+      "title": "Průvodce médii",
       "step1": {
-        "title": "1. Visual Timeline",
-        "desc": "Examine site images chronologically."
+        "title": "1. Vizuální osa",
+        "desc": "Prohlížejte obrázky chronologicky."
       },
       "step2": {
-        "title": "2. Quick Details",
-        "desc": "Click on any photo to view in full size."
+        "title": "2. Rychlé detaily",
+        "desc": "Klikněte na fotku pro plnou velikost."
       },
       "step3": {
-        "title": "3. Category Filters",
-        "desc": "Filter by delivery note or quality reports."
+        "title": "3. Filtry kategorií",
+        "desc": "Filtrovat podle dodacího listu nebo zprávy o kvalitě."
       }
     },
     "cash": {
-      "title": "Cash Management Guide",
+      "title": "Průvodce pokladnou",
       "step1": {
-        "title": "1. Income/Expense Records",
-        "desc": "Record incomes and expenses."
+        "title": "1. Příjmy/Výdaje",
+        "desc": "Záznam příjmů a výdajů."
       },
       "step2": {
-        "title": "2. Monthly Financial Status"
+        "title": "2. Měsíční stav",
+        "desc": "Zobrazení měsíčního cash flow a zůstatku."
       },
       "step3": {
-        "title": "3. Exporting",
-        "desc": "Download transactions as PDF or Excel."
+        "title": "3. Export",
+        "desc": "Stáhnout jako PDF nebo Excel."
       }
     },
     "recycle": {
@@ -797,11 +837,34 @@
         "title": "Project Separation",
         "desc": "Filter your recycle bin by project."
       }
+    },
+    "production": {
+      "step1": {
+        "title": "1. Záznamy",
+        "desc": "Zaznamenejte produkci."
+      },
+      "step2": {
+        "title": "2. Archiv",
+        "desc": "Poznámky."
+      },
+      "step3": {
+        "title": "3. Hledání",
+        "desc": "Filtry."
+      },
+      "title": "Průvodce produkcí"
     }
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE"
+    "advanceBadge": "ADVANCE",
+    "statementTitle": "Výpis z účtu",
+    "forwardBalance": "Převod zůstatku",
+    "periodEarned": "Výdělek za období",
+    "periodAdvance": "Záloha za období",
+    "netBalance": "Čistý zůstatek",
+    "group": "Skupina",
+    "phone": "Telefon",
+    "id_tc": "ID/RČ"
   },
   "recycle": {
     "desc": "List deleted records here and restore them back to their original places.",
@@ -812,7 +875,7 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "tableRecordType": "Record Type",
-    "tableProject": "Project / Site",
+    "tableProject": "Projekt / Místo",
     "tableContent": "Content / Title",
     "tableDeletedAt": "Deleted At",
     "tableAction": "Action",
@@ -834,28 +897,111 @@
       "subcontractor": "Subcontractor Ledger",
       "project": "Project Record"
     },
-    "allProjectsOption": "All Projects"
+    "allProjectsOption": "All Projects",
+    "restore_confirm_title": "Potvrzení obnovy",
+    "restore_confirm_msg": "Opravdu chcete tento záznam obnovit? Bude přesunut zpět na původní místo.",
+    "restore_error": "Chyba obnovy:"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
-    "recordsCount": "({{count}} Records)",
-    "restore": "Restore",
-    "restored": "Restored"
+    "recordsCount": "({{count}} záznamů)",
+    "restore": "Obnovit",
+    "restored": "Obnoveno",
+    "filter": "Filtr",
+    "dateRange": "Časové období",
+    "creationDate": "Datum vytvoření",
+    "date": "Datum",
+    "actionType": "Typ transakce",
+    "description": "Popis",
+    "amount": "Částka"
   },
   "sidebar": {
-    "recycleBin": "Recycle Bin",
+    "recycleBin": "Koš",
     "spotlight": "Spotlight"
   },
   "anomaly": {
-    "noAnomalies": "No System Anomalies",
-    "allUpToDate": "All financial balances and HSE documents are up to date."
+    "noAnomalies": "Žádné systémové anomálie",
+    "allUpToDate": "Všechny finance a HSE jsou aktuální."
   },
   "empty": {
-    "production": "No production records entered for this site yet.",
-    "delivery": "No delivery records found yet.",
-    "journal": "No daily journal records found yet.",
-    "quality": "No quality control reports for this site yet.",
-    "subcontractor": "No subcontractor registered for this site yet.",
-    "media": "No media records found matching the criteria."
+    "production": "Zatím žádné produkční záznamy pro tento web.",
+    "delivery": "Zatím žádné záznamy o doručení.",
+    "journal": "Zatím žádné deníky.",
+    "quality": "Zatím žádné zprávy o kvalitě.",
+    "subcontractor": "Zatím žádný subdodavatel.",
+    "media": "Nenalezeny žádné mediální záznamy."
+  },
+  "pdf": {
+    "signatureWorker": "Pracovník (Jméno/Podpis)",
+    "signatureCompany": "Zástupce firmy (Razítko/Podpis)"
+  },
+  "global.searchPlaceholder": "Hledat...",
+  "recycle.filterAllRecords": "Všechny záznamy",
+  "recycle.filterAllTypes": "Všechny typy záznamů",
+  "recycle.filterAllProjects": "Všechny stavby",
+  "global.startDate": "Počáteční datum",
+  "global.endDate": "Konečné datum",
+  "guides.recycle.title": "Průvodce košem",
+  "guides.recycle.step2.title": "Obnova dat",
+  "guides.recycle.step3.title": "Oddělení staveb",
+  "worker.advanceBadge": "Záloha",
+  "recycle.tableProject": "Projekt / Místo",
+  "worker.group": "Skupina",
+  "worker.phone": "Telefon",
+  "pdf_project_site": "Projekt / Místo",
+  "recycle_th_type": "Typ Záznamu",
+  "recycle_th_project": "Projekt / Místo",
+  "recycle_th_content": "Obsah / Název",
+  "recycle_th_date": "Smazáno Dne",
+  "recycle_th_action": "Akce",
+  "recycle_type_project": "Záznam Projektu",
+  "recycle_type_worker": "Osobní Záznam",
+  "recycle_type_material": "Dodací List / Materiál",
+  "recycle_type_journal": "Denní Záznam",
+  "recycle_type_quality": "Zpráva o Kvalitě",
+  "recycle_type_subcontractor": "Účet Subdodavatele",
+  "recycle_type_cash": "Hotovostní Transakce",
+  "recycle_guide_title": "Průvodce Košem",
+  "recycle_guide_h1": "Jak to funguje?",
+  "recycle_guide_p1": "Smazané záznamy jsou dočasně odstraněny a zobrazeny zde.",
+  "recycle_guide_h2": "Obnovení Dat",
+  "recycle_guide_p2": "Použijte tlačítko obnovit k navrácení záznamů.",
+  "recycle_guide_h3": "Oddělení Projektů",
+  "recycle_guide_p3": "Filtrujte svůj koš podle projektu.",
+  "recycle_page_title": "Odpadkový Koš",
+  "recycle_page_desc": "Zde naleznete smazané záznamy a můžete je obnovit na jejich původní místa.",
+  "sidebar_recycle_btn": "Odpadkový Koš",
+  "__dummy_to_fix_json": {
+    "dummy": "dummy"
+  },
+  "dashboard.edit": "Upravit",
+  "common.edit": "Upravit",
+  "Tam Gün": "Celý den",
+  "Yarım Gün": "Půl dne",
+  "Mesai": "Přesčas",
+  "Normal çalışma": "Normální práce",
+  "spotlight_search_placeholder": "Hledat v řídicím centru webu...",
+  "spotlight_desc_personnel": "Seznam personálu a shrnutí aktuálního zůstatku",
+  "spotlight_desc_projects": "Staveniště, lokality a stavy projektů",
+  "spotlight_desc_production": "Záznamy o množství a sledování postupu výroby",
+  "spotlight_desc_materials": "Příchozí materiály a dodací listy betonu",
+  "spotlight_desc_journal": "Denní záznamy webu a automatické počasí",
+  "spotlight_desc_quality": "Zápisy, výrobní vady a zprávy o kvalitě",
+  "spotlight_desc_subcontractor": "Účty externích subdodavatelů (bagry, catering atd.)",
+  "spotlight_desc_media": "Galerie fotografií a záznamů",
+  "spotlight_desc_cash": "Pohyby peněžních toků a souhrnná pokladna",
+  "spotlight_desc_settings": "Téma, jazyk, cloudová záloha a obecná nastavení",
+  "spotlight_badge_menu": "MENU",
+  "spotlight_badge_personnel": "PERSONÁL",
+  "spotlight_badge_project": "MÍSTO",
+  "spotlight_badge_faq": "FAQ",
+  "spotlight_faq_1_label": "Jak se počítá zůstatek v pokladně?",
+  "spotlight_faq_1_desc": "Příjem - Výdej. Zálohy se automaticky zaznamenávají jako výdaje.",
+  "spotlight_faq_2_label": "Jak se dělá záloha systému (Obnova)?",
+  "spotlight_faq_2_desc": "Provádí se přetažením zálohy .sqlite na stránce Nastavení.",
+  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "multiplier": "Násobitel",
+  "settings_logs": {
+    "error_read": "Failed to read logs:"
   }
 }

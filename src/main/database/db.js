@@ -117,7 +117,9 @@ async function getDB() {
       action TEXT,
       old_values TEXT,
       new_values TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      project_id INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (project_id) REFERENCES projects (id)
     );
 
     CREATE TABLE IF NOT EXISTS projects (
@@ -208,6 +210,12 @@ async function getDB() {
 
   // Migrations for existing DB
   try {
+    await db.run('ALTER TABLE projects ADD COLUMN sort_order INTEGER DEFAULT 0');
+  } catch (err) {
+    // Column might already exist, ignore
+  }
+
+  try {
     await db.run('ALTER TABLE workers ADD COLUMN group_id INTEGER REFERENCES worker_groups(id)');
   } catch (err) {
     // Column might already exist, ignore
@@ -243,6 +251,13 @@ async function getDB() {
     } catch (err) {
       // Column might already exist, ignore
     }
+  }
+
+  // Audit Logs Project ID Migration
+  try {
+    await db.run('ALTER TABLE audit_logs ADD COLUMN project_id INTEGER REFERENCES projects(id)');
+  } catch (err) {
+    // Column might already exist, ignore
   }
 
   // Soft Delete Column Migrations for all main tables to ensure they have is_deleted and deleted_at

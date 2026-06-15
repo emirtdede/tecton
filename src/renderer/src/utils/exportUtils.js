@@ -94,14 +94,22 @@ export const generateExcelTemplate = (t) => {
     t('about.col_name'),
     t('about.col_tc'),
     t('about.col_phone'),
-    t('about.col_wage')
+    t('about.col_wage'),
+    t('about.col_start_date'),
+    t('about.col_group'),
+    t('about.col_status'),
+    t('about.col_tags')
   ];
   
   const tips = [
     t('about.tip_name'),
     t('about.tip_tc'),
     t('about.tip_phone'),
-    t('about.tip_wage')
+    t('about.tip_wage'),
+    t('about.tip_start_date'),
+    t('about.tip_group'),
+    t('about.tip_status'),
+    t('about.tip_tags')
   ];
 
   const worksheet = XLSX.utils.aoa_to_sheet([headers, tips]);
