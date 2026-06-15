@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "कार्मिक के लिए पंजीकृत फोन नंबर नहीं मिला।",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "टाइमशीट हटाएँ",
+    "timesheet_delete_msg": "क्या आप वाकई इस टाइमशीट रिकॉर्ड को हटाना चाहते हैं? इस एक्शन को वापस नहीं किया जा सकता।",
+    "advance_delete_title": "अग्रिम/लेनदेन हटाएँ",
+    "advance_delete_msg": "क्या आप वाकई इस अग्रिम को हटाना चाहते हैं? सिस्टम स्वचालित रूप से इस राशि को कैश रजिस्टर से रद्द कर देगा।"
   },
   "cash": {
     "title": "नकद प्रबंधन",
@@ -327,7 +331,8 @@
     "required_field": "कृपया इस फ़ील्ड को भरें।",
     "page": "पृष्ठ",
     "next_short": "अगला",
-    "yes": "हाँ"
+    "yes": "हाँ",
+    "no": "नहीं"
   },
   "worker_modal": {
     "title_new": "नया कर्मचारी जोड़ें",
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "कार्मिक अवकाश"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "पुनर्स्थापना की पुष्टि",
     "restore_confirm_msg": "क्या आप वाकई इस रिकॉर्ड को पुनर्स्थापित करना चाहते हैं? इसे इसके मूल स्थान पर वापस ले जाया जाएगा।",
-    "restore_error": "पुनर्स्थापना त्रुटि:"
+    "restore_error": "पुनर्स्थापना त्रुटि:",
+    "leave_title": "{{प्रकार}} छोड़ें ({{प्रारंभ}} - {{अंत}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "गुणक",
   "settings_logs": {
     "error_read": "लॉग पढ़ने में विफल:"
+  },
+  "recycle_type_worker_leaves": "कार्मिक अवकाश",
+  "leave_type": {
+    "Ücretsiz": "अवैतनिक",
+    "Ücretli": "चुकाया गया",
+    "Yıllık": "वार्षिक",
+    "Mazeret": "क्षमा",
+    "Sağlık": "चिकित्सा"
   }
 }

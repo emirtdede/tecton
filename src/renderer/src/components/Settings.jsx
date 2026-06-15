@@ -65,6 +65,8 @@ const Settings = ({ activeTab = 'genel' }) => {
       title: t('recycle.restore_confirm_title', 'Geri Yükleme Onayı'),
       message: t('recycle.restore_confirm_msg', 'Bu kaydı geri yüklemek istediğinize emin misiniz? Kayıt, silinmeden önceki asıl yerine eklenecektir.'),
       type: 'primary',
+      confirmText: t('common.yes', 'Evet'),
+      cancelText: t('common.no', 'Hayır'),
       onConfirm: async () => {
         if (window.api && window.api.db && window.api.db.restoreRecord) {
           const res = await window.api.db.restoreRecord(table, id);
@@ -1185,7 +1187,8 @@ const Settings = ({ activeTab = 'genel' }) => {
                   daily_journals: t('recycle.type.journal', 'Günlük Jurnal'),
                   quality_reports: t('recycle.type.quality', 'Kalite Kontrol Tutanağı'),
                   subcontractor_ledgers: t('recycle.type.subcontractor', 'Taşeron Cari Kaydı'),
-                  projects: t('recycle.type.project', 'Şantiye Kaydı')
+                  projects: t('recycle.type.project', 'Şantiye Kaydı'),
+                  worker_leaves: t('recycle.type.worker_leaves', 'Personel İzni')
                 };
                 const typeLabel = typeTranslationMap[item.table] || item.table;
                 const formattedDate = item.deleted_at ? new Date(item.deleted_at).toLocaleString() : '';
@@ -1269,7 +1272,8 @@ const Settings = ({ activeTab = 'genel' }) => {
                             daily_journals: t('recycle_type_journal', 'Daily Journal'),
                             quality_reports: t('recycle_type_quality', 'Quality Control Report'),
                             subcontractor_ledgers: t('recycle_type_subcontractor', 'Subcontractor Ledger'),
-                            projects: t('recycle_type_project', 'Project Record')
+                            projects: t('recycle_type_project', 'Project Record'),
+                            worker_leaves: t('recycle_type_worker_leaves', 'Personnel Leave')
                           };
                           const typeLabel = typeTranslationMap[item.table] || item.table;
                           const itemKey = `${item.table}_${item.id}`;
@@ -1291,7 +1295,18 @@ const Settings = ({ activeTab = 'genel' }) => {
                               <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                                 {item.project_name || '-'}
                               </td>
-                              <td style={{ padding: '1rem', fontWeight: '500', color: '#fff' }}>{item.title}</td>
+                              <td style={{ padding: '1rem', fontWeight: '500', color: '#fff' }}>
+                                {(() => {
+                                  if (item.table === 'worker_leaves') {
+                                    const match = item.title.match(/^(.*?) İzni \((.*?) - (.*?)\)$/);
+                                    if (match) {
+                                      const translatedType = t(`leave_type.${match[1]}`, match[1]);
+                                      return t('recycle.leave_title', { type: translatedType, start: match[2], end: match[3] }, `${translatedType} İzni (${match[2]} - ${match[3]})`);
+                                    }
+                                  }
+                                  return item.title;
+                                })()}
+                              </td>
                               <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                                 {item.deleted_at ? new Date(item.deleted_at).toLocaleString() : '-'}
                               </td>

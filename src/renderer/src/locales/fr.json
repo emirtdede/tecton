@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Numéro de téléphone enregistré introuvable pour le personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Supprimer la feuille de temps",
+    "timesheet_delete_msg": "Êtes-vous sûr de vouloir supprimer cet enregistrement de feuille de temps ? Cette action ne peut pas être annulée.",
+    "advance_delete_title": "Supprimer l'avance/la transaction",
+    "advance_delete_msg": "Êtes-vous sûr de vouloir supprimer cette avance ? Le système annulera également automatiquement ce montant de la caisse enregistreuse."
   },
   "cash": {
     "title": "Gestion de Caisse",
@@ -327,7 +331,8 @@
     "required_field": "Veuillez remplir ce champ.",
     "page": "Page",
     "next_short": "Suivant",
-    "yes": "Oui"
+    "yes": "Oui",
+    "no": "Non"
   },
   "worker_modal": {
     "title_new": "Ajouter du Personnel",
@@ -922,13 +927,15 @@
       "journal": "Journal quotidien",
       "quality": "Rapport de contrôle qualité",
       "subcontractor": "Registre des sous-traitants",
-      "project": "Dossier du projet"
+      "project": "Dossier du projet",
+      "worker_leaves": "Congé du personnel"
     },
     "allProjectsOption": "Tous les projets",
     "desc": "Listez les enregistrements supprimés ici et restaurez-les.",
     "restore_confirm_title": "Confirmation de Restauration",
     "restore_confirm_msg": "Êtes-vous sûr de vouloir restaurer cet enregistrement ? Il sera replacé à son emplacement d'origine.",
-    "restore_error": "Erreur de restauration :"
+    "restore_error": "Erreur de restauration :",
+    "leave_title": "{{type}} Quitter ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Recherche : Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Multiplicateur",
   "settings_logs": {
     "error_read": "Échec de la lecture des journaux :"
+  },
+  "recycle_type_worker_leaves": "Congé du personnel",
+  "leave_type": {
+    "Ücretsiz": "Non rémunéré",
+    "Ücretli": "Payé",
+    "Yıllık": "Annuel",
+    "Mazeret": "Excuse",
+    "Sağlık": "Médical"
   }
 }

@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Elimina scheda attività",
+    "timesheet_delete_msg": "Sei sicuro di voler eliminare questo record della scheda attività? Questa azione non può essere annullata.",
+    "advance_delete_title": "Elimina anticipo/transazione",
+    "advance_delete_msg": "Sei sicuro di voler eliminare questo anticipo? Il sistema cancellerà automaticamente anche tale importo dal Registratore di cassa."
   },
   "cash": {
     "title": "Cassa",
@@ -327,7 +331,8 @@
     "required_field": "Si prega di compilare questo campo.",
     "page": "Pagina",
     "next_short": "Successivo",
-    "yes": "Sì"
+    "yes": "SÌ",
+    "no": "NO"
   },
   "worker_modal": {
     "title_new": "Aggiungi",
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Congedo del personale"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Conferma Ripristino",
     "restore_confirm_msg": "Sei sicuro di voler ripristinare questo record? Verrà riportato nella sua posizione originale.",
-    "restore_error": "Errore di ripristino:"
+    "restore_error": "Errore di ripristino:",
+    "leave_title": "{{type}} Lascia ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Moltiplicatore",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Congedo del personale",
+  "leave_type": {
+    "Ücretsiz": "Non pagato",
+    "Ücretli": "Pagato",
+    "Yıllık": "Annuale",
+    "Mazeret": "Scusa",
+    "Sağlık": "Medico"
   }
 }

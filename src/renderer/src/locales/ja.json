@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "タイムシートの削除",
+    "timesheet_delete_msg": "このタイムシート レコードを削除してもよろしいですか?この操作は元に戻すことができません。",
+    "advance_delete_title": "前払い/取引の削除",
+    "advance_delete_msg": "この事前予約を削除してもよろしいですか?また、システムはこの金額をレジから自動的に取り消します。"
   },
   "cash": {
     "title": "レジ管理",
@@ -327,7 +331,8 @@
     "required_field": "このフィールドに入力してください。",
     "page": "ページ",
     "next_short": "次へ",
-    "yes": "はい"
+    "yes": "はい",
+    "no": "いいえ"
   },
   "worker_modal": {
     "title_new": "追加",
@@ -923,12 +928,14 @@
       "journal": "日報",
       "quality": "品質管理レポート",
       "subcontractor": "下請業者台帳",
-      "project": "プロジェクト記録"
+      "project": "プロジェクト記録",
+      "worker_leaves": "人事休暇"
     },
     "allProjectsOption": "すべてのプロジェクト",
     "restore_confirm_title": "復元の確認",
     "restore_confirm_msg": "このレコードを復元してもよろしいですか？元の場所に戻されます。",
-    "restore_error": "復元エラー："
+    "restore_error": "復元エラー：",
+    "leave_title": "{{type}} 退席 ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "スポットライト: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "乗数",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "人事休暇",
+  "leave_type": {
+    "Ücretsiz": "未払い",
+    "Ücretli": "有料",
+    "Yıllık": "年間",
+    "Mazeret": "言い訳",
+    "Sağlık": "医学"
   }
 }

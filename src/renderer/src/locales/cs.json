@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Smazat časový rozvrh",
+    "timesheet_delete_msg": "Opravdu chcete smazat tento záznam časového rozvrhu? Tuto akci nelze vrátit zpět.",
+    "advance_delete_title": "Smazat zálohu/transakci",
+    "advance_delete_msg": "Opravdu chcete tuto zálohu smazat? Systém také automaticky zruší tuto částku z Pokladny."
   },
   "cash": {
     "title": "Pokladna",
@@ -327,7 +331,8 @@
     "required_field": "Vyplňte prosím toto pole.",
     "page": "Strana",
     "next_short": "Další",
-    "yes": "Ano"
+    "yes": "Ano",
+    "no": "Žádný"
   },
   "worker_modal": {
     "title_new": "Přidat",
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Pracovní volno"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Potvrzení obnovy",
     "restore_confirm_msg": "Opravdu chcete tento záznam obnovit? Bude přesunut zpět na původní místo.",
-    "restore_error": "Chyba obnovy:"
+    "restore_error": "Chyba obnovy:",
+    "leave_title": "{{type}} Odejít ({{start}} – {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Násobitel",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Pracovní volno",
+  "leave_type": {
+    "Ücretsiz": "Nezaplaceno",
+    "Ücretli": "Zaplaceno",
+    "Yıllık": "Výroční",
+    "Mazeret": "Omluva",
+    "Sağlık": "Lékařský"
   }
 }

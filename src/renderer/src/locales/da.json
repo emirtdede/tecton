@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Slet timeseddel",
+    "timesheet_delete_msg": "Er du sikker på, at du vil slette denne timeseddelpost? Denne handling kan ikke fortrydes.",
+    "advance_delete_title": "Slet forskud/transaktion",
+    "advance_delete_msg": "Er du sikker på, at du vil slette dette forskud? Systemet vil også automatisk annullere dette beløb fra Kassen."
   },
   "cash": {
     "title": "Kassestyring",
@@ -327,7 +331,8 @@
     "required_field": "Udfyld venligigst dette felt.",
     "page": "Side",
     "next_short": "Næste",
-    "yes": "Ja"
+    "yes": "Ja",
+    "no": "Ingen"
   },
   "worker_modal": {
     "title_new": "Tilføj",
@@ -923,12 +928,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Personaleorlov"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Bekræft Gendannelse",
     "restore_confirm_msg": "Er du sikker på, at du vil gendanne denne post? Den vil blive flyttet tilbage til sin oprindelige placering.",
-    "restore_error": "Gendannelsesfejl:"
+    "restore_error": "Gendannelsesfejl:",
+    "leave_title": "{{type}} Forlad ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Multiplikator",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Personaleorlov",
+  "leave_type": {
+    "Ücretsiz": "Ubetalt",
+    "Ücretli": "Betalt",
+    "Yıllık": "Årlig",
+    "Mazeret": "Undskyldning",
+    "Sağlık": "Medicinsk"
   }
 }

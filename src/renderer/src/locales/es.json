@@ -226,7 +226,11 @@
     "help_p3": "Genere y comparta extractos oficiales en PDF con el logotipo de su empresa.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "No se encontró el número de teléfono registrado del personal.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Eliminar parte de horas",
+    "timesheet_delete_msg": "¿Está seguro de que desea eliminar este registro de la hoja de horas? Esta acción no se puede deshacer.",
+    "advance_delete_title": "Eliminar anticipo/transacción",
+    "advance_delete_msg": "¿Estás seguro de que quieres eliminar este avance? El sistema también cancelará automáticamente este importe de la Caja Registradora."
   },
   "cash": {
     "title": "Gestión de Caja",
@@ -327,7 +331,8 @@
     "required_field": "Por favor, complete este campo.",
     "page": "Página",
     "next_short": "Siguiente",
-    "yes": "Sí"
+    "yes": "Sí",
+    "no": "No"
   },
   "worker_modal": {
     "title_new": "Añadir Nuevo Personal",
@@ -923,12 +928,14 @@
       "journal": "Diario",
       "quality": "Informe de Control de Calidad",
       "subcontractor": "Libro de Subcontratistas",
-      "project": "Registro del Proyecto"
+      "project": "Registro del Proyecto",
+      "worker_leaves": "Licencia de personal"
     },
     "allProjectsOption": "Todos los proyectos",
     "restore_confirm_title": "Confirmación de Restauración",
     "restore_confirm_msg": "¿Estás seguro de que deseas restaurar este registro? Se moverá de vuelta a su ubicación original.",
-    "restore_error": "Error de restauración:"
+    "restore_error": "Error de restauración:",
+    "leave_title": "{{type}} Salir ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Búsqueda: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Multiplicador",
   "settings_logs": {
     "error_read": "Error al leer los registros:"
+  },
+  "recycle_type_worker_leaves": "Licencia de personal",
+  "leave_type": {
+    "Ücretsiz": "No pagado",
+    "Ücretli": "Pagado",
+    "Yıllık": "Anual",
+    "Mazeret": "Disculpar",
+    "Sağlık": "Médico"
   }
 }

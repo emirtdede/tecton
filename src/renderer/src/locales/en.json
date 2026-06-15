@@ -226,7 +226,11 @@
     "help_h2": "2. Carried Balance Report",
     "help_p2": "Generate date-range filtered statement reports that automatically calculate the carried over balance.",
     "help_h3": "3. PDF Reconciliation",
-    "help_p3": "Generate and share branded, official PDF statements complete with your company logo."
+    "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
+    "timesheet_delete_title": "Delete Timesheet",
+    "timesheet_delete_msg": "Are you sure you want to delete this timesheet record? This action cannot be undone.",
+    "advance_delete_title": "Delete Advance/Transaction",
+    "advance_delete_msg": "Are you sure you want to delete this advance? The system will also automatically cancel this amount from the Cash Register."
   },
   "cash": {
     "title": "Cash Management",
@@ -327,7 +331,8 @@
     "required_field": "Please fill out this field.",
     "page": "Page",
     "next_short": "Next",
-    "yes": "Yes"
+    "yes": "Yes",
+    "no": "No"
   },
   "worker_modal": {
     "title_new": "Add New Personnel",
@@ -929,12 +934,14 @@
       "journal": "Daily Journal",
       "quality": "Quality Control Report",
       "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record"
+      "project": "Project Record",
+      "worker_leaves": "Personnel Leave"
     },
     "allProjectsOption": "All Projects",
     "restore_confirm_title": "Restore Confirmation",
     "restore_confirm_msg": "Are you sure you want to restore this record? It will be moved back to its original location.",
-    "restore_error": "Restore error:"
+    "restore_error": "Restore error:",
+    "leave_title": "{{type}} Leave ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -1037,5 +1044,13 @@
   "multiplier": "Multiplier",
   "settings_logs": {
     "error_read": "Failed to read logs:"
+  },
+  "recycle_type_worker_leaves": "Personnel Leave",
+  "leave_type": {
+    "Ücretsiz": "Unpaid",
+    "Ücretli": "Paid",
+    "Yıllık": "Annual",
+    "Mazeret": "Excuse",
+    "Sağlık": "Medical"
   }
 }

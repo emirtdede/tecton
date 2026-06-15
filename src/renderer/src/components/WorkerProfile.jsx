@@ -372,8 +372,10 @@ const WorkerProfile = ({ worker, onBack }) => {
   const handleDeleteTimesheet = (id) => {
     setConfirmModalState({
       isOpen: true,
-      title: 'Puantajı Sil',
-      message: 'Bu puantaj kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.',
+      title: t('worker_profile.timesheet_delete_title', 'Puantajı Sil'),
+      message: t('worker_profile.timesheet_delete_msg', 'Bu puantaj kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.'),
+      confirmText: t('common.yes', 'Evet'),
+      cancelText: t('common.no', 'Hayır'),
       onConfirm: async () => {
         await window.api.db.delete('timesheets', id);
         fetchProfileData();
@@ -384,8 +386,10 @@ const WorkerProfile = ({ worker, onBack }) => {
   const handleDeleteTransaction = (id) => {
     setConfirmModalState({
       isOpen: true,
-      title: 'Avansı Sil',
-      message: 'Bu avansı silmek istediğinize emin misiniz? Sistem bu tutarı Kasa\'dan da otomatik olarak iptal edecektir.',
+      title: t('worker_profile.advance_delete_title', 'Avansı Sil'),
+      message: t('worker_profile.advance_delete_msg', 'Bu avansı silmek istediğinize emin misiniz? Sistem bu tutarı Kasa\'dan da otomatik olarak iptal edecektir.'),
+      confirmText: t('common.yes', 'Evet'),
+      cancelText: t('common.no', 'Hayır'),
       onConfirm: async () => {
         await window.api.finance.deleteTransaction(id);
         fetchProfileData();

@@ -226,7 +226,11 @@
     "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "Registrierte Telefonnummer für das Personal nicht gefunden.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "Stundenzettel löschen",
+    "timesheet_delete_msg": "Sind Sie sicher, dass Sie diesen Stundenzetteldatensatz löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "advance_delete_title": "Vorschuss/Transaktion löschen",
+    "advance_delete_msg": "Sind Sie sicher, dass Sie diesen Vorschuss löschen möchten? Das System löscht diesen Betrag auch automatisch aus der Registrierkasse."
   },
   "cash": {
     "title": "Kassenverwaltung",
@@ -327,7 +331,8 @@
     "required_field": "Bitte füllen Sie dieses Feld aus.",
     "page": "Seite",
     "next_short": "Weiter",
-    "yes": "Ja"
+    "yes": "Ja",
+    "no": "NEIN"
   },
   "worker_modal": {
     "title_new": "Neues Personal hinzufügen",
@@ -923,12 +928,14 @@
       "journal": "Tagesjournal",
       "quality": "Qualitätskontrollbericht",
       "subcontractor": "Subunternehmer-Buch",
-      "project": "Projektaufzeichnung"
+      "project": "Projektaufzeichnung",
+      "worker_leaves": "Personalurlaub"
     },
     "allProjectsOption": "Alle Projekte",
     "restore_confirm_title": "Wiederherstellung Bestätigen",
     "restore_confirm_msg": "Sind Sie sicher, dass Sie diesen Datensatz wiederherstellen möchten? Er wird an seinen ursprünglichen Ort zurückverschoben.",
-    "restore_error": "Wiederherstellungsfehler:"
+    "restore_error": "Wiederherstellungsfehler:",
+    "leave_title": "{{type}} Verlassen ({{start}} - {{end}})"
   },
   "global": {
     "spotlight": "Suchen: Strg + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "Multiplikator",
   "settings_logs": {
     "error_read": "Fehler beim Lesen der Protokolle:"
+  },
+  "recycle_type_worker_leaves": "Personalurlaub",
+  "leave_type": {
+    "Ücretsiz": "Unbezahlt",
+    "Ücretli": "Bezahlt",
+    "Yıllık": "Jährlich",
+    "Mazeret": "Entschuldigung",
+    "Sağlık": "Medizinisch"
   }
 }

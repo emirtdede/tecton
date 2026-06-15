@@ -226,7 +226,11 @@
     "help_p3": "قم بإنشاء ومشاركة كشوفات PDF رسمية تحمل شعار شركتك.",
     "whatsapp_send": "Send via WhatsApp",
     "whatsapp_no_phone": "لم يتم العثور على رقم هاتف مسجل للموظف.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information."
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "timesheet_delete_title": "حذف الجدول الزمني",
+    "timesheet_delete_msg": "هل أنت متأكد أنك تريد حذف سجل الجدول الزمني هذا؟ لا يمكن التراجع عن هذا الإجراء.",
+    "advance_delete_title": "حذف التقدم/المعاملة",
+    "advance_delete_msg": "هل أنت متأكد أنك تريد حذف هذا التقدم؟ سيقوم النظام أيضًا بإلغاء هذا المبلغ تلقائيًا من السجل النقدي."
   },
   "cash": {
     "title": "إدارة النقد",
@@ -327,7 +331,8 @@
     "required_field": "يرجى ملء هذا الحقل.",
     "page": "الصفحة",
     "next_short": "التالي",
-    "yes": "نعم"
+    "yes": "نعم",
+    "no": "لا"
   },
   "worker_modal": {
     "title_new": "إضافة موظف جديد",
@@ -923,12 +928,14 @@
       "journal": "اليومية",
       "quality": "تقرير مراقبة الجودة",
       "subcontractor": "دفتر المقاول من الباطن",
-      "project": "سجل المشروع"
+      "project": "سجل المشروع",
+      "worker_leaves": "إجازة الموظفين"
     },
     "allProjectsOption": "جميع المشاريع",
     "restore_confirm_title": "تأكيد الاستعادة",
     "restore_confirm_msg": "هل أنت متأكد أنك تريد استعادة هذا السجل؟ سيتم إرجاعه إلى موقعه الأصلي.",
-    "restore_error": "خطأ في الاستعادة:"
+    "restore_error": "خطأ في الاستعادة:",
+    "leave_title": "{{نوع}} مغادرة ({{بداية}} - {{نهاية}})"
   },
   "global": {
     "spotlight": "البحث: Ctrl + K",
@@ -1031,5 +1038,13 @@
   "multiplier": "المضاعف",
   "settings_logs": {
     "error_read": "فشلت قراءة السجلات:"
+  },
+  "recycle_type_worker_leaves": "إجازة الموظفين",
+  "leave_type": {
+    "Ücretsiz": "غير مدفوعة الأجر",
+    "Ücretli": "مدفوع",
+    "Yıllık": "سنوي",
+    "Mazeret": "عذر",
+    "Sağlık": "طبي"
   }
 }
