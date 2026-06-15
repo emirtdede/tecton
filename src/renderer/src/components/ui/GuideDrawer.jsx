@@ -11,7 +11,9 @@ const GuideDrawer = ({
   h2, 
   p2, 
   h3, 
-  p3 
+  p3,
+  h4,
+  p4
 }) => {
   const { t } = useTranslation();
   if (!isOpen) return null;
@@ -120,6 +122,19 @@ const GuideDrawer = ({
                 {p3 && (
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
                     {p3}
+                  </p>
+                )}
+              </div>
+            )}
+            
+            {h4 && (
+              <div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                  {h4}
+                </h4>
+                {p4 && (
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
+                    {p4}
                   </p>
                 )}
               </div>

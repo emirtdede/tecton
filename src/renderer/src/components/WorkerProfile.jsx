@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -25,7 +25,7 @@ const WorkerProfile = ({ worker, onBack }) => {
   
   // Dinamik Filtre State (Cari Hesap Ekstresi)
   const [filterStartDate, setFilterStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
-  const [filterEndDate, setFilterEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [filterEndDate, setFilterEndDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0]);
   const handleStartDateChange = (val) => {
     if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
       setFilterStartDate(filterEndDate);
@@ -33,6 +33,7 @@ const WorkerProfile = ({ worker, onBack }) => {
     } else {
       setFilterStartDate(val);
     }
+    setPagePuantaj(1); setPageAvans(1); setPageRapor(1); setPageIzin(1);
   };
   const handleEndDateChange = (val) => {
     if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
@@ -41,9 +42,91 @@ const WorkerProfile = ({ worker, onBack }) => {
     } else {
       setFilterEndDate(val);
     }
+    setPagePuantaj(1); setPageAvans(1); setPageRapor(1); setPageIzin(1);
   };
   const [filterText, setFilterText] = useState('');
   const [filterType, setFilterType] = useState('Tümü'); // 'Tümü' | 'Puantaj' | 'Avans'
+  
+  const [pagePuantaj, setPagePuantaj] = useState(1);
+  const [pageAvans, setPageAvans] = useState(1);
+  const [pageRapor, setPageRapor] = useState(1);
+  const [pageIzin, setPageIzin] = useState(1);
+  const ITEMS_PER_PAGE = 7;
+  
+  const historyRef = useRef(null);
+  const tabsRef = useRef(null);
+
+  const handleBottomTabClick = (tab) => {
+    setActiveTab(tab);
+    if (tabsRef.current) {
+      setTimeout(() => {
+        tabsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  };
+
+  
+  const renderPagination = (currentPage, totalItems, setPage) => {
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+    if (totalPages <= 1) return null;
+    
+    const handlePageChange = (newPage) => {
+      setPage(newPage);
+      setTimeout(() => {
+        if (historyRef.current) {
+          historyRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    };
+    
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+        <button 
+          type="button" 
+          disabled={currentPage === 1} 
+          onClick={() => handlePageChange(Math.max(1, currentPage - 1))} 
+          style={{ 
+            padding: '0.4rem 1rem', 
+            fontSize: '0.9rem', 
+            fontWeight: '600', 
+            background: 'rgba(255,255,255,0.03)', 
+            border: '1px solid var(--glass-border)', 
+            borderRadius: '8px', 
+            color: 'var(--text-main)',
+            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+            opacity: currentPage === 1 ? 0.5 : 1,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+          onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+        >
+          {t('common.prev', 'Önceki')}
+        </button>
+        <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>{t('common.page', 'Sayfa')} {currentPage} / {totalPages}</span>
+        <button 
+          type="button" 
+          disabled={currentPage === totalPages} 
+          onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} 
+          style={{ 
+            padding: '0.4rem 1rem', 
+            fontSize: '0.9rem', 
+            fontWeight: '600', 
+            background: 'rgba(255,255,255,0.03)', 
+            border: '1px solid var(--glass-border)', 
+            borderRadius: '8px', 
+            color: 'var(--text-main)',
+            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+            opacity: currentPage === totalPages ? 0.5 : 1,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+          onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+        >
+          {t('common.next_short', 'Sonraki')}
+        </button>
+      </div>
+    );
+  };
   
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState('');
@@ -65,6 +148,15 @@ const WorkerProfile = ({ worker, onBack }) => {
     notes: ''
   });
   const [avansTags, setAvansTags] = useState([]);
+
+  // Form State for Leaves
+  const [workerLeaves, setWorkerLeaves] = useState([]);
+  const [leaveData, setLeaveData] = useState({
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: new Date().toISOString().split('T')[0],
+    type: 'Ücretli',
+    description: ''
+  });
 
   // Confirmation Modal State
   const [confirmModalState, setConfirmModalState] = useState({
@@ -116,6 +208,11 @@ const WorkerProfile = ({ worker, onBack }) => {
         setTransactions(stmtRes.transactions);
         // We will store the summary for the report tab
         setReportSummary(stmtRes.summary);
+      }
+      
+      const leaves = await window.api.db.read('worker_leaves');
+      if (leaves) {
+        setWorkerLeaves(leaves.filter(l => l.worker_id === worker.id && l.is_deleted !== 1));
       }
       
       setLoading(false);
@@ -180,10 +277,58 @@ const WorkerProfile = ({ worker, onBack }) => {
         project_id: worker.project_id
       };
 
-      await window.api.db.create('timesheets', dataToSave);
-      setFormData(prev => ({ ...prev, overtime_hours: 0, notes: '' }));
-      setPuantajTags([]);
-      fetchProfileData(); 
+      const doSave = async () => {
+        await window.api.db.create('timesheets', dataToSave);
+        setFormData(prev => ({ ...prev, overtime_hours: 0, notes: '' }));
+        setPuantajTags([]);
+        
+        let needsFetch = true;
+        setFilterEndDate(current => {
+          if (dataToSave.work_date > current) { needsFetch = false; return dataToSave.work_date; }
+          return current;
+        });
+        setFilterStartDate(current => {
+          if (dataToSave.work_date < current) { needsFetch = false; return dataToSave.work_date; }
+          return current;
+        });
+        
+        if (needsFetch) {
+          fetchProfileData(); 
+        }
+      };
+
+      const wDate = new Date(formData.work_date);
+      const overlap = workerLeaves.find(l => {
+        const sDate = new Date(l.start_date);
+        const eDate = new Date(l.end_date);
+        return wDate >= sDate && wDate <= eDate;
+      });
+
+      if (overlap) {
+        let typeText = overlap.type;
+        if (overlap.type === 'Ücretli') typeText = t('worker_profile.leave_types.paid', 'Ücretli İzin');
+        else if (overlap.type === 'Ücretsiz') typeText = t('worker_profile.leave_types.unpaid', 'Ücretsiz İzin');
+        else if (overlap.type === 'Rapor') typeText = t('worker_profile.leave_types.medical', 'Raporlu');
+        
+        const typeReason = overlap.description ? `${typeText} / ${overlap.description}` : typeText;
+        let warningMsg = t('worker_profile.overlap_warning.message', 'Bu personel {{startDate}} - {{endDate}} tarihleri arasında {{type}} nedeniyle izinlidir. Yine de bu tarihe puantaj girmek istediğinize emin misiniz?');
+        warningMsg = warningMsg.replace('{{startDate}}', formatDate(overlap.start_date, i18n.language))
+                               .replace('{{endDate}}', formatDate(overlap.end_date, i18n.language))
+                               .replace('{{type}}', typeReason);
+
+        setConfirmModalState({
+          isOpen: true,
+          title: t('worker_profile.overlap_warning.title', 'Puantaj - İzin Çakışması'),
+          message: warningMsg,
+          confirmText: t('common.yes', 'Evet'),
+          onConfirm: async () => {
+            setConfirmModalState(prev => ({ ...prev, isOpen: false }));
+            await doSave();
+          }
+        });
+      } else {
+        await doSave();
+      }
     }
   };
 
@@ -204,7 +349,20 @@ const WorkerProfile = ({ worker, onBack }) => {
       if (res.success) {
         setAvansData(prev => ({ ...prev, amount: '', notes: '' }));
         setAvansTags([]);
-        fetchProfileData();
+        
+        let needsFetch = true;
+        setFilterEndDate(current => {
+          if (dataToSave.trans_date > current) { needsFetch = false; return dataToSave.trans_date; }
+          return current;
+        });
+        setFilterStartDate(current => {
+          if (dataToSave.trans_date < current) { needsFetch = false; return dataToSave.trans_date; }
+          return current;
+        });
+        
+        if (needsFetch) {
+          fetchProfileData();
+        }
       } else {
         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + res.message, type: 'error' } }));
       }
@@ -230,6 +388,48 @@ const WorkerProfile = ({ worker, onBack }) => {
       message: 'Bu avansı silmek istediğinize emin misiniz? Sistem bu tutarı Kasa\'dan da otomatik olarak iptal edecektir.',
       onConfirm: async () => {
         await window.api.finance.deleteTransaction(id);
+        fetchProfileData();
+      }
+    });
+  };
+
+  const handleLeaveChange = (e) => {
+    const { name, value } = e.target;
+    setLeaveData(prev => {
+      const nextData = { ...prev, [name]: value };
+      if (nextData.start_date && nextData.end_date && new Date(nextData.start_date) > new Date(nextData.end_date)) {
+        const temp = nextData.start_date;
+        nextData.start_date = nextData.end_date;
+        nextData.end_date = temp;
+      }
+      return nextData;
+    });
+  };
+
+  const handleSubmitLeave = async (e) => {
+    e.preventDefault();
+    if (window.api) {
+      const dataToSave = {
+        worker_id: worker.id,
+        start_date: leaveData.start_date,
+        end_date: leaveData.end_date,
+        type: leaveData.type,
+        description: leaveData.description,
+        project_id: worker.project_id
+      };
+      await window.api.db.create('worker_leaves', dataToSave);
+      setLeaveData(prev => ({ ...prev, description: '' }));
+      fetchProfileData();
+    }
+  };
+
+  const handleDeleteLeave = (id) => {
+    setConfirmModalState({
+      isOpen: true,
+      title: t('worker_profile.leave_form.delete_title', 'İzni Sil'),
+      message: t('worker_profile.leave_form.delete_message', 'Bu izin kaydını silmek istediğinize emin misiniz?'),
+      onConfirm: async () => {
+        await window.api.db.delete('worker_leaves', id);
         fetchProfileData();
       }
     });
@@ -632,6 +832,12 @@ const WorkerProfile = ({ worker, onBack }) => {
               >
                 {t('worker_profile.report')}
               </div>
+              <div 
+                style={{ flex: 1, padding: '1rem', textAlign: 'center', cursor: 'pointer', fontWeight: '500', background: activeTab === 'izinler' ? 'rgba(245, 158, 11, 0.2)' : 'transparent' }}
+                onClick={() => setActiveTab('izinler')}
+              >
+                {t('worker_profile.leaves', 'İzinler')}
+              </div>
             </div>
 
             <div style={{ padding: '1.5rem' }}>
@@ -688,19 +894,37 @@ const WorkerProfile = ({ worker, onBack }) => {
                   </div>
                   <button type="submit" className="btn btn-danger" style={{ width: '100%' }}>{t('worker_profile.advance_form.add_btn')}</button>
                 </form>
+              ) : activeTab === 'izinler' ? (
+                <form onSubmit={handleSubmitLeave}>
+                  <div className="form-group" style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ flex: 1 }}>
+                      <label className="form-label">{t('worker_profile.leave_form.start_date', 'Başlangıç')}</label>
+                      <CustomDatePicker name="start_date" className="form-input" value={leaveData.start_date} onChange={handleLeaveChange} required />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label className="form-label">{t('worker_profile.leave_form.end_date', 'Bitiş')}</label>
+                      <CustomDatePicker name="end_date" className="form-input" value={leaveData.end_date} onChange={handleLeaveChange} required />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">{t('worker_profile.leave_form.type', 'İzin Türü')}</label>
+                    <select name="type" className="form-input" value={leaveData.type} onChange={handleLeaveChange} required>
+                      <option value="Ücretli">{t('worker_profile.leave_types.paid', 'Ücretli İzin')}</option>
+                      <option value="Ücretsiz">{t('worker_profile.leave_types.unpaid', 'Ücretsiz İzin')}</option>
+                      <option value="Rapor">{t('worker_profile.leave_types.medical', 'Raporlu')}</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">{t('worker_profile.leave_form.description', 'Açıklama / Sebep')}</label>
+                    <input type="text" name="description" className="form-input" value={leaveData.description} onChange={handleLeaveChange} />
+                  </div>
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%', background: '#f59e0b', color: '#fff', border: 'none' }}>
+                    {t('worker_profile.leave_form.add_btn', 'İzin Ekle')}
+                  </button>
+                </form>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                   <h3 className="card-title mb-4">{t('worker_profile.account_statement')}</h3>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                    <div style={{ flex: 1 }}>
-                      <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('worker_profile.filter.start_date')}</label>
-                      <CustomDatePicker className="form-input" value={filterStartDate} onChange={e => handleStartDateChange(e.target.value)} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('worker_profile.filter.end_date')}</label>
-                      <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => handleEndDateChange(e.target.value)} />
-                    </div>
-                  </div>
                   
                   <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
                     <div style={{ flex: 2 }}>
@@ -798,43 +1022,74 @@ const WorkerProfile = ({ worker, onBack }) => {
           </div>
         </div>
 
-        <div className="right-panel glass-card" style={{ marginTop: '2rem' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', marginBottom: '1.5rem', gap: '1rem', paddingBottom: '0.5rem' }}>
+        <div ref={historyRef} className="right-panel glass-card" style={{ marginTop: '2rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap', paddingBottom: '1rem', borderBottom: '1px solid var(--glass-border)' }}>
+            <div style={{ flex: 1 }}>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('worker_profile.filter.start_date')}</label>
+              <CustomDatePicker className="form-input" value={filterStartDate} onChange={e => handleStartDateChange(e.target.value)} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('worker_profile.filter.end_date')}</label>
+              <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => handleEndDateChange(e.target.value)} />
+            </div>
+          </div>
+          <div ref={tabsRef} style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', marginBottom: '1.5rem', gap: '1rem', paddingBottom: '0.5rem' }}>
             <h3 
               className="card-title" 
-              style={{ cursor: 'pointer', color: activeTab === 'puantaj' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => setActiveTab('puantaj')}
+              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'puantaj' ? 'var(--text-main)' : 'var(--text-muted)' }}
+              onClick={() => handleBottomTabClick('puantaj')}
             >
               {t('worker_profile.timesheet_history')}
             </h3>
             <h3 
               className="card-title" 
-              style={{ cursor: 'pointer', color: activeTab === 'avans' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => setActiveTab('avans')}
+              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'avans' ? 'var(--text-main)' : 'var(--text-muted)' }}
+              onClick={() => handleBottomTabClick('avans')}
             >
               {t('worker_profile.advance_history')}
             </h3>
             <h3 
               className="card-title" 
-              style={{ cursor: 'pointer', color: activeTab === 'rapor' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => setActiveTab('rapor')}
+              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'rapor' ? 'var(--text-main)' : 'var(--text-muted)' }}
+              onClick={() => handleBottomTabClick('rapor')}
             >
               {t('worker_profile.monthly_report_view')}
             </h3>
+            <h3 
+              className="card-title" 
+              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'izinler' ? 'var(--text-main)' : 'var(--text-muted)' }}
+              onClick={() => handleBottomTabClick('izinler')}
+            >
+              {t('worker_profile.leave_history', 'İzin Geçmişi')}
+            </h3>
           </div>
           
-          {activeTab === 'puantaj' ? (
+          <div key={activeTab} style={{ animation: 'fadeIn 0.3s ease-out' }}>
+            {activeTab === 'puantaj' ? (
             timesheets.length === 0 ? (
               <p className="text-muted text-center" style={{ marginTop: '2rem' }}>{t('worker_profile.no_timesheet')}</p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
-                {timesheets.map(ts => {
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {[...timesheets].reverse().slice((pagePuantaj - 1) * ITEMS_PER_PAGE, pagePuantaj * ITEMS_PER_PAGE).map(ts => {
                   const rawName = workTypes.find(wt => wt.id == ts.work_type_id)?.name;
                   const typeName = rawName ? t(rawName, rawName) : t('worker_profile.unknown');
+                  
+                  const wDate = new Date(ts.work_date);
+                  const overlap = workerLeaves.find(l => {
+                    const sDate = new Date(l.start_date);
+                    const eDate = new Date(l.end_date);
+                    return wDate >= sDate && wDate <= eDate;
+                  });
+                  let leaveBadge = null;
+                  if (overlap) {
+                    const lType = overlap.type === 'Ücretli' ? t('worker_profile.leave_types.paid', 'Ücretli İzin') : overlap.type === 'Ücretsiz' ? t('worker_profile.leave_types.unpaid', 'Ücretsiz İzin') : t('worker_profile.leave_types.medical', 'Raporlu');
+                    leaveBadge = <span style={{ marginLeft: '10px', fontSize: '0.7rem', color: '#d97706', border: '1px solid #d97706', padding: '2px 6px', borderRadius: '4px' }}>{lType}</span>;
+                  }
+
                   return (
                     <div key={ts.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <div style={{ fontWeight: '600' }}>{formatDate(ts.work_date, i18n.language)} <span className="wage-badge" style={{ marginLeft: '10px' }}>{typeName}</span></div>
+                        <div style={{ fontWeight: '600' }}>{formatDate(ts.work_date, i18n.language)} <span className="wage-badge" style={{ marginLeft: '10px' }}>{typeName}</span>{leaveBadge}</div>
                         <div className="card-subtitle mt-4" style={{ marginTop: '0.5rem' }}>
                           {t('worker_profile.wage_history_label')}: {formatCurrency(ts.applied_wage, i18n.language)} (x{ts.applied_multiplier})
                           {ts.overtime_hours > 0 && ` | +${ts.overtime_hours} ${t('worker_profile.overtime_hours_suffix')}`}
@@ -848,14 +1103,15 @@ const WorkerProfile = ({ worker, onBack }) => {
                     </div>
                   )
                 })}
+                {renderPagination(pagePuantaj, timesheets.length, setPagePuantaj)}
               </div>
             )
           ) : activeTab === 'avans' ? (
             transactions.length === 0 ? (
               <p className="text-muted text-center" style={{ marginTop: '2rem' }}>{t('worker_profile.no_advance')}</p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
-                {transactions.map(tr => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {[...transactions].reverse().slice((pageAvans - 1) * ITEMS_PER_PAGE, pageAvans * ITEMS_PER_PAGE).map(tr => (
                   <div key={tr.id} style={{ background: 'var(--danger-bg-light)', border: '1px solid var(--danger-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ fontWeight: '600' }}>{formatDate(tr.trans_date, i18n.language)} <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: 'var(--danger-text)', border: '1px solid var(--danger-text)', padding: '2px 6px', borderRadius: '4px' }}>{t('worker_profile.advance_out')}</span></div>
@@ -867,11 +1123,12 @@ const WorkerProfile = ({ worker, onBack }) => {
                     </div>
                   </div>
                 ))}
+                {renderPagination(pageAvans, transactions.length, setPageAvans)}
               </div>
             )
           ) : null}
           {activeTab === 'rapor' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', borderBottom: '1px solid var(--glass-border)', background: 'var(--glass-bg)' }}>
                 <span style={{ fontWeight: '600' }}>{t('worker_profile.summary.carried_balance_report', 'Devreden Bakiye Raporu')}</span>
                 <div style={{ fontWeight: 'bold', color: cReport.devredenBakiye >= 0 ? 'var(--success-text)' : 'var(--danger-text)', fontSize: '1.1rem' }}>
@@ -882,7 +1139,8 @@ const WorkerProfile = ({ worker, onBack }) => {
               {cReport.islemler.length === 0 ? (
                 <p className="text-muted text-center" style={{ marginTop: '2rem' }}>{t('worker_profile.no_period_data')}</p>
               ) : (
-                cReport.islemler.map(item => (
+                <>
+                {cReport.islemler.slice((pageRapor - 1) * ITEMS_PER_PAGE, pageRapor * ITEMS_PER_PAGE).map(item => (
                   <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: '1px solid var(--glass-border)', background: item.isIncome ? 'var(--success-bg-light)' : 'var(--danger-bg-light)' }}>
                     <div>
                       <div style={{ fontWeight: '600' }}>{formatDate(item.date, i18n.language)} <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: item.isIncome ? 'var(--success-text)' : 'var(--danger-text)', border: `1px solid var(${item.isIncome ? '--success-text' : '--danger-text'})`, padding: '2px 6px', borderRadius: '4px' }}>{item.isIncome ? t('worker_profile.filter.type_timesheet', 'Puantaj') : t('worker.advanceBadge', 'Avans')}</span></div>
@@ -892,10 +1150,39 @@ const WorkerProfile = ({ worker, onBack }) => {
                       <div style={{ fontWeight: 'bold', color: item.isIncome ? 'var(--success-text)' : 'var(--danger-text)', fontSize: '1.1rem' }}>{item.isIncome ? '+' : '-'}{formatCurrency(item.amount, i18n.language)}</div>
                     </div>
                   </div>
-                ))
+                ))}
+                {renderPagination(pageRapor, cReport.islemler.length, setPageRapor)}
+                </>
               )}
             </div>
           )}
+          {activeTab === 'izinler' && (() => {
+            const fLeaves = workerLeaves.filter(l => l.start_date <= filterEndDate && l.end_date >= filterStartDate).sort((a,b) => new Date(b.start_date) - new Date(a.start_date));
+            return fLeaves.length === 0 ? (
+              <p className="text-muted text-center" style={{ marginTop: '2rem' }}>{t('worker_profile.no_leave', 'Henüz izin kaydı bulunmamaktadır.')}</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {fLeaves.slice((pageIzin - 1) * ITEMS_PER_PAGE, pageIzin * ITEMS_PER_PAGE).map(l => (
+                  <div key={l.id} style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontWeight: '600' }}>
+                        {formatDate(l.start_date, i18n.language)} - {formatDate(l.end_date, i18n.language)} 
+                        <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: '#d97706', border: '1px solid #d97706', padding: '2px 6px', borderRadius: '4px' }}>
+                          {l.type === 'Ücretli' ? t('worker_profile.leave_types.paid', 'Ücretli İzin') : l.type === 'Ücretsiz' ? t('worker_profile.leave_types.unpaid', 'Ücretsiz İzin') : t('worker_profile.leave_types.medical', 'Raporlu')}
+                        </span>
+                      </div>
+                      <div className="card-subtitle" style={{ marginTop: '0.5rem' }}>{l.description || '-'}</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <button onClick={() => handleDeleteLeave(l.id)} style={{ background: 'transparent', border: 'none', color: 'var(--danger-text)', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}>{t('common.delete')}</button>
+                    </div>
+                  </div>
+                ))}
+                {renderPagination(pageIzin, fLeaves.length, setPageIzin)}
+              </div>
+            );
+          })()}
+          </div>
         </div>
       </div>
 
@@ -905,6 +1192,7 @@ const WorkerProfile = ({ worker, onBack }) => {
         onConfirm={confirmModalState.onConfirm}
         title={confirmModalState.title}
         message={confirmModalState.message}
+        confirmText={confirmModalState.confirmText}
       />
 
       <GuideDrawer 
@@ -918,6 +1206,8 @@ const WorkerProfile = ({ worker, onBack }) => {
         p2={t('guides.personnel.step2.desc')} 
         h3={t('guides.personnel.step3.title')} 
         p3={t('guides.personnel.step3.desc')} 
+        h4={t('guides.personnel.step4.title')}
+        p4={t('guides.personnel.step4.desc')}
       />
     </div>
   );

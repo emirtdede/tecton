@@ -139,6 +139,27 @@
       "tags_label": "Balises",
       "tags_ph": "Ex : Chantier-A, Travaux de peinture"
     },
+    "leaves": "Congés",
+    "leave_form": {
+      "start_date": "Date de début",
+      "end_date": "Date de fin",
+      "type": "Type de congé",
+      "description": "Description / Motif",
+      "add_btn": "Ajouter un congé",
+      "delete_title": "Supprimer le congé",
+      "delete_message": "Êtes-vous sûr de vouloir supprimer cet enregistrement de congé ?"
+    },
+    "leave_types": {
+      "paid": "Congé payé",
+      "unpaid": "Congé sans solde",
+      "medical": "Congé maladie"
+    },
+    "leave_history": "Historique des congés",
+    "no_leave": "Aucun enregistrement de congé trouvé pour le moment.",
+    "overlap_warning": {
+      "title": "Feuille de temps - Chevauchement de congé",
+      "message": "Cet employé est en congé entre le {{startDate}} et le {{endDate}} en raison de {{type}}. Êtes-vous sûr de vouloir saisir une feuille de temps pour cette date ?"
+    },
     "advance_form": {
       "title": "Ajouter Avance",
       "date": "Date",
@@ -303,7 +324,10 @@
     "page_info": "Page",
     "page_guide": "Guide de page",
     "error_occurred": "Erreur :",
-    "required_field": "Veuillez remplir ce champ."
+    "required_field": "Veuillez remplir ce champ.",
+    "page": "Page",
+    "next_short": "Suivant",
+    "yes": "Oui"
   },
   "worker_modal": {
     "title_new": "Ajouter du Personnel",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Feuilles de temps et relevés",
         "desc": "Cliquez sur le nom pour voir la feuille de temps."
+      },
+      "step4": {
+        "title": "4. Gestion des Congés",
+        "desc": "Enregistrez les jours où le personnel est en congé ou en arrêt maladie."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "AVANCE",
     "statementTitle": "Relevé de Compte",
     "forwardBalance": "Solde Reporté",
     "periodEarned": "Gagné sur la Période",

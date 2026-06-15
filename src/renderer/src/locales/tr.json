@@ -158,6 +158,27 @@
       "tags_ph": "Örn: Şantiye-A, Boya İşi",
       "add_btn": "Puantaj Ekle"
     },
+    "leaves": "İzinler",
+    "leave_form": {
+      "start_date": "Başlangıç Tarihi",
+      "end_date": "Bitiş Tarihi",
+      "type": "İzin Türü",
+      "description": "Açıklama / Sebep",
+      "add_btn": "İzin Ekle",
+      "delete_title": "İzni Sil",
+      "delete_message": "Bu izin kaydını silmek istediğinize emin misiniz?"
+    },
+    "leave_types": {
+      "paid": "Ücretli İzin",
+      "unpaid": "Ücretsiz İzin",
+      "medical": "Raporlu"
+    },
+    "leave_history": "İzin Geçmişi",
+    "no_leave": "Henüz izin kaydı bulunmamaktadır.",
+    "overlap_warning": {
+      "title": "Puantaj - İzin Çakışması",
+      "message": "Bu personel {{startDate}} - {{endDate}} tarihleri arasında {{type}} nedeniyle izinlidir. Yine de bu tarihe puantaj girmek istediğinize emin misiniz?"
+    },
     "advance_form": {
       "title": "Avans Ekle",
       "date": "Tarih",
@@ -322,7 +343,10 @@
     "page_info": "Sayfa",
     "page_guide": "Sayfa Kılavuzu",
     "error_occurred": "Hata:",
-    "required_field": "Lütfen bu alanı doldurun."
+    "required_field": "Lütfen bu alanı doldurun.",
+    "page": "Sayfa",
+    "next_short": "Sonraki",
+    "yes": "Evet"
   },
   "worker_modal": {
     "title_new": "Yeni Personel Ekle",
@@ -708,6 +732,10 @@
       "step3": {
         "title": "3. Puantaj ve Hesap Ekstresi",
         "desc": "Puantajı görüntülemek için ada tıklayın."
+      },
+      "step4": {
+        "title": "4. İzin Yönetimi",
+        "desc": "Personelin raporlu veya izinli olduğu günleri kaydedin."
       }
     },
     "quantity": {

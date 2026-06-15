@@ -139,6 +139,27 @@
       "tags_label": "标签",
       "tags_ph": "例如：建筑工地-A，油漆工作"
     },
+    "leaves": "休假",
+    "leave_form": {
+      "start_date": "开始日期",
+      "end_date": "结束日期",
+      "type": "休假类型",
+      "description": "说明 / 原因",
+      "add_btn": "添加休假",
+      "delete_title": "删除休假",
+      "delete_message": "您确定要删除此休假记录吗？"
+    },
+    "leave_types": {
+      "paid": "带薪休假",
+      "unpaid": "无薪休假",
+      "medical": "病假"
+    },
+    "leave_history": "休假历史记录",
+    "no_leave": "尚未找到休假记录。",
+    "overlap_warning": {
+      "title": "时间表 - 休假重叠",
+      "message": "该员工由于 {{type}} 在 {{startDate}} 和 {{endDate}} 之间休假。您确定要输入此日期的时间表吗？"
+    },
     "advance_form": {
       "title": "添加预支",
       "date": "日期",
@@ -303,7 +324,10 @@
     "page_info": "页",
     "page_guide": "页面指南",
     "error_occurred": "Error:",
-    "required_field": "请填写此字段。"
+    "required_field": "请填写此字段。",
+    "page": "页",
+    "next_short": "下一页",
+    "yes": "是"
   },
   "worker_modal": {
     "title_new": "添加新人员",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. 时间表和报表",
         "desc": "单击名称查看时间表。"
+      },
+      "step4": {
+        "title": "4. 请假管理",
+        "desc": "记录人员休假或病假的日子。"
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "预支",
     "statementTitle": "对账单",
     "forwardBalance": "上期结转余额",
     "periodEarned": "本期实得",

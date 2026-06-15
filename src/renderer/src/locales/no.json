@@ -139,6 +139,27 @@
       "tags_label": "Tagger",
       "tags_ph": "Eks: Byggeplass-A, Malerarbeid"
     },
+    "leaves": "Fravær",
+    "leave_form": {
+      "start_date": "Startdato",
+      "end_date": "Sluttdato",
+      "type": "Fraværstype",
+      "description": "Beskrivelse / Årsak",
+      "add_btn": "Legg til fravær",
+      "delete_title": "Slett fravær",
+      "delete_message": "Er du sikker på at du vil slette denne fraværsregistreringen?"
+    },
+    "leave_types": {
+      "paid": "Betalt fravær",
+      "unpaid": "Ubetalt fravær",
+      "medical": "Sykemelding"
+    },
+    "leave_history": "Fraværshistorikk",
+    "no_leave": "Ingen fraværsregistreringer funnet ennå.",
+    "overlap_warning": {
+      "title": "Timeliste - Fraværsoverlapping",
+      "message": "Denne ansatte har fravær mellom {{startDate}} og {{endDate}} på grunn av {{type}}. Er du sikker på at du vil legge inn en timeliste for denne datoen?"
+    },
     "advance_form": {
       "title": "Legg til forskudd",
       "date": "Dato",
@@ -303,7 +324,10 @@
     "page_info": "Side",
     "page_guide": "Sideguide",
     "error_occurred": "Error:",
-    "required_field": "Vennligst fyll ut dette feltet."
+    "required_field": "Vennligst fyll ut dette feltet.",
+    "page": "Side",
+    "next_short": "Neste",
+    "yes": "Ja"
   },
   "worker_modal": {
     "title_new": "Legg til ansatt",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Timelister og utskrifter",
         "desc": "Klikk på navnet for å se timelisten."
+      },
+      "step4": {
+        "title": "4. Fraværshåndtering",
+        "desc": "Registrer dagene når personalet er på permisjon eller sykemeldt."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "FORSKUDD",
     "statementTitle": "Kontoutskrift",
     "forwardBalance": "Overført saldo",
     "periodEarned": "Opptjent i perioden",

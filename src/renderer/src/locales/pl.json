@@ -139,6 +139,27 @@
       "tags_label": "Tagi",
       "tags_ph": "Przykład: Plac budowy A, prace malarskie"
     },
+    "leaves": "Urlopy",
+    "leave_form": {
+      "start_date": "Data rozpoczęcia",
+      "end_date": "Data zakończenia",
+      "type": "Typ urlopu",
+      "description": "Opis / Powód",
+      "add_btn": "Dodaj urlop",
+      "delete_title": "Usuń urlop",
+      "delete_message": "Czy na pewno chcesz usunąć ten rekord urlopu?"
+    },
+    "leave_types": {
+      "paid": "Płatny urlop",
+      "unpaid": "Bezpłatny urlop",
+      "medical": "Zwolnienie lekarskie"
+    },
+    "leave_history": "Historia urlopów",
+    "no_leave": "Nie znaleziono jeszcze żadnych rekordów urlopów.",
+    "overlap_warning": {
+      "title": "Karta czasu pracy - Nakładanie się z urlopem",
+      "message": "Ten pracownik przebywa na urlopie w dniach od {{startDate}} do {{endDate}} z powodu {{type}}. Czy na pewno chcesz wprowadzić kartę czasu pracy na ten dzień?"
+    },
     "advance_form": {
       "title": "Dodaj zaliczkę",
       "date": "Data",
@@ -303,7 +324,10 @@
     "page_info": "Strona",
     "page_guide": "Przewodnik po stronie",
     "error_occurred": "Error:",
-    "required_field": "Proszę wypełnić to pole."
+    "required_field": "Proszę wypełnić to pole.",
+    "page": "Strona",
+    "next_short": "Następny",
+    "yes": "Tak"
   },
   "worker_modal": {
     "title_new": "Dodaj",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Karty czasu pracy i zestawienia",
         "desc": "Kliknij nazwisko, aby zobaczyć kartę czasu pracy."
+      },
+      "step4": {
+        "title": "4. Zarządzanie urlopami",
+        "desc": "Zapisz dni, w których personel przebywa na urlopie lub zwolnieniu lekarskim."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "ZALICZKA",
     "statementTitle": "Wyciąg z konta",
     "forwardBalance": "Bilans otwarcia",
     "periodEarned": "Zarobek w okresie",

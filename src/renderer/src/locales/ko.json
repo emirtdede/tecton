@@ -139,6 +139,27 @@
       "tags_label": "태그",
       "tags_ph": "예: 건설현장-A, 도장작업"
     },
+    "leaves": "휴가",
+    "leave_form": {
+      "start_date": "시작일",
+      "end_date": "종료일",
+      "type": "휴가 유형",
+      "description": "설명 / 사유",
+      "add_btn": "휴가 추가",
+      "delete_title": "휴가 삭제",
+      "delete_message": "이 휴가 기록을 삭제하시겠습니까?"
+    },
+    "leave_types": {
+      "paid": "유급 휴가",
+      "unpaid": "무급 휴가",
+      "medical": "병가"
+    },
+    "leave_history": "휴가 기록",
+    "no_leave": "아직 휴가 기록이 없습니다.",
+    "overlap_warning": {
+      "title": "타임시트 - 휴가 중복",
+      "message": "이 직원은 {{startDate}} 부터 {{endDate}} 까지 {{type}} 으로 인해 휴가 중입니다. 이 날짜에 타임시트를 입력하시겠습니까?"
+    },
     "advance_form": {
       "title": "가불 추가",
       "date": "날짜",
@@ -303,7 +324,10 @@
     "page_info": "페이지",
     "page_guide": "페이지 안내",
     "error_occurred": "Error:",
-    "required_field": "이 필드를 작성해 주세요."
+    "required_field": "이 필드를 작성해 주세요.",
+    "page": "페이지",
+    "next_short": "다음",
+    "yes": "예"
   },
   "worker_modal": {
     "title_new": "추가",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. 작업표 및 명세서",
         "desc": "이름을 클릭하여 작업표를 봅니다."
+      },
+      "step4": {
+        "title": "4. 휴가 관리",
+        "desc": "직원이 휴가 또는 병가 중인 날짜를 기록합니다。"
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "가불",
     "statementTitle": "거래 내역서",
     "forwardBalance": "이월 잔액",
     "periodEarned": "기간 급여",

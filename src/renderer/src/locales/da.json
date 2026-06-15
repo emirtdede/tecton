@@ -139,6 +139,27 @@
       "tags_label": "Tags",
       "tags_ph": "Eks: Byggeplads-A, malerarbejde"
     },
+    "leaves": "Fravær",
+    "leave_form": {
+      "start_date": "Startdato",
+      "end_date": "Slutdato",
+      "type": "Fraværstype",
+      "description": "Beskrivelse / Årsag",
+      "add_btn": "Tilføj fravær",
+      "delete_title": "Slet fravær",
+      "delete_message": "Er du sikker på, at du vil slette denne fraværsregistrering?"
+    },
+    "leave_types": {
+      "paid": "Betalt fravær",
+      "unpaid": "Ubetalt fravær",
+      "medical": "Sygemelding"
+    },
+    "leave_history": "Fraværshistorik",
+    "no_leave": "Der er endnu ikke fundet nogen fraværsregistreringer.",
+    "overlap_warning": {
+      "title": "Timeseddel - Fraværsoverlap",
+      "message": "Denne medarbejder er fraværende mellem {{startDate}} og {{endDate}} på grund af {{type}}. Er du sikker på, at du vil indtaste en timeseddel for denne dato?"
+    },
     "advance_form": {
       "title": "Tilføj forskud",
       "date": "Dato",
@@ -303,7 +324,10 @@
     "page_info": "Side",
     "page_guide": "Sideguide",
     "error_occurred": "Error:",
-    "required_field": "Udfyld venligigst dette felt."
+    "required_field": "Udfyld venligigst dette felt.",
+    "page": "Side",
+    "next_short": "Næste",
+    "yes": "Ja"
   },
   "worker_modal": {
     "title_new": "Tilføj",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Timesedler og erklæringer",
         "desc": "Klik på navnet for at se timesedlen."
+      },
+      "step4": {
+        "title": "4. Fraværshåndtering",
+        "desc": "Registrer de dage, hvor personalet er på orlov eller sygemeldt."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "FORSKUD",
     "statementTitle": "Kontoudtog",
     "forwardBalance": "Overført saldo",
     "periodEarned": "Optjent i perioden",

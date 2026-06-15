@@ -206,6 +206,21 @@ async function getDB() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (project_id) REFERENCES projects(id)
     );
+
+    CREATE TABLE IF NOT EXISTS worker_leaves (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      worker_id INTEGER NOT NULL,
+      project_id INTEGER,
+      start_date DATE NOT NULL,
+      end_date DATE NOT NULL,
+      type TEXT NOT NULL,
+      description TEXT,
+      is_deleted BOOLEAN DEFAULT 0,
+      deleted_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (worker_id) REFERENCES workers(id),
+      FOREIGN KEY (project_id) REFERENCES projects(id)
+    );
   `);
 
   // Migrations for existing DB
@@ -264,7 +279,8 @@ async function getDB() {
   const tablesForSoftDelete = [
     'workers', 'timesheets', 'transactions', 'cash_register',
     'projects', 'production_records', 'materials', 'daily_journals',
-    'quality_reports', 'subcontractor_ledgers', 'work_types', 'worker_groups'
+    'quality_reports', 'subcontractor_ledgers', 'work_types', 'worker_groups',
+    'worker_leaves'
   ];
   for (const t of tablesForSoftDelete) {
     try {
@@ -343,6 +359,12 @@ async function getDB() {
       table: 'projects',
       titleExpr: 'NEW.name',
       projIdExpr: 'NEW.id'
+    },
+    {
+      name: 'trg_worker_leaves_deleted',
+      table: 'worker_leaves',
+      titleExpr: "NEW.type || ' İzni (' || NEW.start_date || ' - ' || NEW.end_date || ')'",
+      projIdExpr: 'NEW.project_id'
     }
   ];
 

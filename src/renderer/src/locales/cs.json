@@ -139,6 +139,27 @@
       "tags_label": "Tagy",
       "tags_ph": "Př.: Staveniště-A, Malířské práce"
     },
+    "leaves": "Dovolená",
+    "leave_form": {
+      "start_date": "Datum zahájení",
+      "end_date": "Datum ukončení",
+      "type": "Typ dovolené",
+      "description": "Popis / Důvod",
+      "add_btn": "Přidat dovolenou",
+      "delete_title": "Smazat dovolenou",
+      "delete_message": "Opravdu chcete tento záznam o dovolené smazat?"
+    },
+    "leave_types": {
+      "paid": "Placená dovolená",
+      "unpaid": "Neplacená dovolená",
+      "medical": "Nemocenská"
+    },
+    "leave_history": "Historie dovolených",
+    "no_leave": "Zatím nebyly nalezeny žádné záznamy o dovolené.",
+    "overlap_warning": {
+      "title": "Pracovní výkaz - Překrývání dovolené",
+      "message": "Tento zaměstnanec je na dovolené od {{startDate}} do {{endDate}} z důvodu {{type}}. Jste si jisti, že chcete zadat pracovní výkaz pro toto datum?"
+    },
     "advance_form": {
       "title": "Přidat zálohu",
       "date": "Datum",
@@ -303,7 +324,10 @@
     "page_info": "Stránka",
     "page_guide": "Průvodce stránkou",
     "error_occurred": "Error:",
-    "required_field": "Vyplňte prosím toto pole."
+    "required_field": "Vyplňte prosím toto pole.",
+    "page": "Strana",
+    "next_short": "Další",
+    "yes": "Ano"
   },
   "worker_modal": {
     "title_new": "Přidat",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Výkazy a prohlášení",
         "desc": "Kliknutím na jméno zobrazíte výkaz práce."
+      },
+      "step4": {
+        "title": "4. Správa dovolené",
+        "desc": "Zaznamenejte dny, kdy je personál na dovolené nebo na nemocenské."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "ZÁLOHA",
     "statementTitle": "Výpis z účtu",
     "forwardBalance": "Převod zůstatku",
     "periodEarned": "Výdělek za období",

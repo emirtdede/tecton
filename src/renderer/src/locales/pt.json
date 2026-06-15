@@ -139,6 +139,27 @@
       "tags_label": "Etiquetas",
       "tags_ph": "Ex: Canteiro de Obras-A, Trabalhos de Pintura"
     },
+    "leaves": "Licenças",
+    "leave_form": {
+      "start_date": "Data de Início",
+      "end_date": "Data de Fim",
+      "type": "Tipo de Licença",
+      "description": "Descrição / Motivo",
+      "add_btn": "Adicionar Licença",
+      "delete_title": "Excluir Licença",
+      "delete_message": "Tem certeza de que deseja excluir este registro de licença?"
+    },
+    "leave_types": {
+      "paid": "Licença Remunerada",
+      "unpaid": "Licença Não Remunerada",
+      "medical": "Licença Médica"
+    },
+    "leave_history": "Histórico de Licenças",
+    "no_leave": "Nenhum registro de licença encontrado ainda.",
+    "overlap_warning": {
+      "title": "Folha de Horas - Sobreposição de Licença",
+      "message": "Este funcionário está de licença entre {{startDate}} e {{endDate}} devido a {{type}}. Tem certeza de que deseja inserir uma folha de horas para esta data?"
+    },
     "advance_form": {
       "title": "Adicionar Adiantamento",
       "date": "Data",
@@ -303,7 +324,10 @@
     "page_info": "Página",
     "page_guide": "Guia de Página",
     "error_occurred": "Error:",
-    "required_field": "Por favor, preencha este campo."
+    "required_field": "Por favor, preencha este campo.",
+    "page": "Página",
+    "next_short": "Próximo",
+    "yes": "Sim"
   },
   "worker_modal": {
     "title_new": "Adicionar Novo Pessoal",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Planilhas de horas e extratos",
         "desc": "Clique no nome para visualizar a planilha."
+      },
+      "step4": {
+        "title": "4. Gestão de Licenças",
+        "desc": "Registe os dias em que o pessoal está de licença ou baixa médica."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "ADIANTAMENTO",
     "statementTitle": "Extrato de Conta",
     "forwardBalance": "Saldo Anterior",
     "periodEarned": "Ganho no Período",

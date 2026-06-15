@@ -104,7 +104,7 @@ const CustomDatePicker = ({ value, onChange, className, required, style, name, p
         showMonthYearPicker={showMonthYearPicker}
         portalId="root"
       />
-      {date && !required && (
+      {date && (
         <button
           type="button"
           onClick={handleClear}

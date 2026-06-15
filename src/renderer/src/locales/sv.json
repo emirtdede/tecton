@@ -139,6 +139,27 @@
       "tags_label": "Taggar",
       "tags_ph": "Ex: Byggplats-A, Målningsarbete"
     },
+    "leaves": "Frånvaro",
+    "leave_form": {
+      "start_date": "Startdatum",
+      "end_date": "Slutdatum",
+      "type": "Typ av frånvaro",
+      "description": "Beskrivning / Orsak",
+      "add_btn": "Lägg till frånvaro",
+      "delete_title": "Ta bort frånvaro",
+      "delete_message": "Är du säker på att du vill ta bort denna frånvaropost?"
+    },
+    "leave_types": {
+      "paid": "Betald frånvaro",
+      "unpaid": "Obetald frånvaro",
+      "medical": "Sjukskrivning"
+    },
+    "leave_history": "Frånvarohistorik",
+    "no_leave": "Inga frånvaroposter hittades ännu.",
+    "overlap_warning": {
+      "title": "Tidrapport - Frånvaroöverlappning",
+      "message": "Denna medarbetare är frånvarande mellan {{startDate}} och {{endDate}} på grund av {{type}}. Är du säker på att du vill lägga in en tidrapport för detta datum?"
+    },
     "advance_form": {
       "title": "Lägg till förskott",
       "date": "Datum",
@@ -303,7 +324,10 @@
     "page_info": "Sida",
     "page_guide": "Sida guide",
     "error_occurred": "Error:",
-    "required_field": "Vänligen fyll i detta fält."
+    "required_field": "Vänligen fyll i detta fält.",
+    "page": "Sida",
+    "next_short": "Nästa",
+    "yes": "Ja"
   },
   "worker_modal": {
     "title_new": "Lägg till ny personal",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Tidrapporter och utdrag",
         "desc": "Klicka på namnet för att se tidrapporten."
+      },
+      "step4": {
+        "title": "4. Frånvarohantering",
+        "desc": "Registrera de dagar då personalen är ledig eller sjukskriven."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "FÖRSKOTT",
     "statementTitle": "Kontoutdrag",
     "forwardBalance": "Ingående balans",
     "periodEarned": "Intjänat under perioden",

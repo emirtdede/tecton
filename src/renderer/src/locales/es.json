@@ -139,6 +139,27 @@
       "tags_label": "Etiquetas",
       "tags_ph": "Ej: Sitio de Construcción-A, Trabajos de Pintura"
     },
+    "leaves": "Permisos",
+    "leave_form": {
+      "start_date": "Fecha de inicio",
+      "end_date": "Fecha de fin",
+      "type": "Tipo de permiso",
+      "description": "Descripción / Motivo",
+      "add_btn": "Añadir permiso",
+      "delete_title": "Eliminar permiso",
+      "delete_message": "¿Está seguro de que desea eliminar este registro de permiso?"
+    },
+    "leave_types": {
+      "paid": "Permiso retribuido",
+      "unpaid": "Permiso no retribuido",
+      "medical": "Baja médica"
+    },
+    "leave_history": "Historial de permisos",
+    "no_leave": "Aún no se han encontrado registros de permisos.",
+    "overlap_warning": {
+      "title": "Hoja de horas - Solapamiento de permisos",
+      "message": "Este empleado está de permiso entre {{startDate}} y {{endDate}} debido a {{type}}. ¿Está seguro de que desea introducir una hoja de horas para esta fecha?"
+    },
     "advance_form": {
       "title": "Añadir Anticipo",
       "date": "Fecha",
@@ -303,7 +324,10 @@
     "page_info": "Página",
     "page_guide": "Guía de página",
     "error_occurred": "Error:",
-    "required_field": "Por favor, complete este campo."
+    "required_field": "Por favor, complete este campo.",
+    "page": "Página",
+    "next_short": "Siguiente",
+    "yes": "Sí"
   },
   "worker_modal": {
     "title_new": "Añadir Nuevo Personal",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Partes de horas y declaraciones",
         "desc": "Haga clic en el nombre para ver el parte de horas."
+      },
+      "step4": {
+        "title": "4. Gestión de Permisos",
+        "desc": "Registre los días en que el personal está de baja o permiso médico."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "ANTICIPO",
     "statementTitle": "Estado de Cuenta",
     "forwardBalance": "Saldo Anterior",
     "periodEarned": "Ganado en el Período",

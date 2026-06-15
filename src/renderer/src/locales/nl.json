@@ -139,6 +139,27 @@
       "tags_label": "Labels",
       "tags_ph": "Bijv.: Bouwplaats-A, schilderwerkzaamheden"
     },
+    "leaves": "Verlof",
+    "leave_form": {
+      "start_date": "Startdatum",
+      "end_date": "Einddatum",
+      "type": "Verloftype",
+      "description": "Beschrijving / Reden",
+      "add_btn": "Verlof toevoegen",
+      "delete_title": "Verlof verwijderen",
+      "delete_message": "Weet je zeker dat je deze verlofregistratie wilt verwijderen?"
+    },
+    "leave_types": {
+      "paid": "Betaald verlof",
+      "unpaid": "Onbetaald verlof",
+      "medical": "Ziekteverlof"
+    },
+    "leave_history": "Verlofgeschiedenis",
+    "no_leave": "Nog geen verlofregistraties gevonden.",
+    "overlap_warning": {
+      "title": "Urenstaat - Verlof overlap",
+      "message": "Deze medewerker is met verlof tussen {{startDate}} en {{endDate}} vanwege {{type}}. Weet je zeker dat je voor deze datum een urenstaat wilt invoeren?"
+    },
     "advance_form": {
       "title": "Voorschot toevoegen",
       "date": "Datum",
@@ -303,7 +324,10 @@
     "page_info": "Pagina",
     "page_guide": "Paginagids",
     "error_occurred": "Error:",
-    "required_field": "Vul dit veld in."
+    "required_field": "Vul dit veld in.",
+    "page": "Pagina",
+    "next_short": "Volgende",
+    "yes": "Ja"
   },
   "worker_modal": {
     "title_new": "Toevoegen",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Urenstaten en afschriften",
         "desc": "Klik op de naam om de urenstaat te bekijken."
+      },
+      "step4": {
+        "title": "4. Verlofbeheer",
+        "desc": "Registreer de dagen waarop het personeel met verlof of ziekteverlof is."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "VOORSCHOT",
     "statementTitle": "Rekeningafschrift",
     "forwardBalance": "Overgedragen Saldo",
     "periodEarned": "Verdiend in Periode",

@@ -69,7 +69,7 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
   const [filterType, setFilterType] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 6;
   const cashListBodyRef = useRef(null);
 
   // Form State
@@ -99,10 +99,9 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
 
   useEffect(() => {
     if (cashListBodyRef.current) {
-      cashListBodyRef.current.scrollTo({ 
-        top: 0, 
-        behavior: 'smooth' 
-      });
+      setTimeout(() => {
+        cashListBodyRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 50);
     }
   }, [currentPage]);
 
@@ -552,7 +551,7 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
         </div>
 
         {/* Right Column: History */}
-        <div className="right-panel glass-card">
+        <div ref={cashListBodyRef} className="right-panel glass-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h3 className="card-title" style={{ marginBottom: 0 }}>{t('cash.cash_history')}</h3>
             <select className="btn" style={{ padding: '0.5rem' }} onChange={e => handleExport(e.target.value)} value="">
@@ -635,7 +634,7 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
               {searchQuery ? 'Arama kriterlerine uygun kasa hareketi bulunamadı.' : (t('common.empty_data') || 'Gösterilecek veri bulunamadı.')}
             </p>
           ) : (
-            <div ref={cashListBodyRef} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '800px', overflowY: 'auto', paddingRight: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {paginatedTransactions.map(tr => {
                 const isIncome = tr.type === 'Nakit Girişi';
                 return (
@@ -691,37 +690,49 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div style={{
-                  position: 'sticky',
-                  bottom: 0,
-                  background: 'var(--option-bg, #0f172a)',
-                  borderTop: '1px solid var(--glass-border)',
-                  zIndex: 10,
-                  padding: '1rem',
-                  marginTop: '1.5rem',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '0 0 12px 12px'
-                }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
                   <button 
-                    className="btn" 
+                    type="button" 
                     disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                    style={{ 
+                      padding: '0.4rem 1rem', 
+                      fontSize: '0.9rem', 
+                      fontWeight: '600', 
+                      background: 'rgba(255,255,255,0.03)', 
+                      border: '1px solid var(--glass-border)', 
+                      borderRadius: '8px', 
+                      color: 'var(--text-main)',
+                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                      opacity: currentPage === 1 ? 0.5 : 1,
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                    onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
                   >
                     {t('common.prev', 'Önceki')}
                   </button>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
                     {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
                   </span>
                   <button 
-                    className="btn" 
+                    type="button" 
                     disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                    style={{ 
+                      padding: '0.4rem 1rem', 
+                      fontSize: '0.9rem', 
+                      fontWeight: '600', 
+                      background: 'rgba(255,255,255,0.03)', 
+                      border: '1px solid var(--glass-border)', 
+                      borderRadius: '8px', 
+                      color: 'var(--text-main)',
+                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                      opacity: currentPage === totalPages ? 0.5 : 1,
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                    onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
                   >
                     {t('common.next', 'Sonraki')}
                   </button>

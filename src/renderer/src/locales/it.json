@@ -139,6 +139,27 @@
       "tags_label": "Tag",
       "tags_ph": "Es: Cantiere-A, Lavori di verniciatura"
     },
+    "leaves": "Permessi",
+    "leave_form": {
+      "start_date": "Data di inizio",
+      "end_date": "Data di fine",
+      "type": "Tipo di permesso",
+      "description": "Descrizione / Motivo",
+      "add_btn": "Aggiungi permesso",
+      "delete_title": "Elimina permesso",
+      "delete_message": "Sei sicuro di voler eliminare questo record di permesso?"
+    },
+    "leave_types": {
+      "paid": "Permesso retribuito",
+      "unpaid": "Permesso non retribuito",
+      "medical": "Congedo per malattia"
+    },
+    "leave_history": "Cronologia permessi",
+    "no_leave": "Nessun record di permessi trovato ancora.",
+    "overlap_warning": {
+      "title": "Foglio ore - Sovrapposizione permessi",
+      "message": "Questo dipendente è in permesso tra il {{startDate}} e il {{endDate}} a causa di {{type}}. Sei sicuro di voler inserire un foglio ore per questa data?"
+    },
     "advance_form": {
       "title": "Aggiungi anticipo",
       "date": "Data",
@@ -303,7 +324,10 @@
     "page_info": "Pagina",
     "page_guide": "Guida della pagina",
     "error_occurred": "Error:",
-    "required_field": "Si prega di compilare questo campo."
+    "required_field": "Si prega di compilare questo campo.",
+    "page": "Pagina",
+    "next_short": "Successivo",
+    "yes": "Sì"
   },
   "worker_modal": {
     "title_new": "Aggiungi",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Fogli ore e dichiarazioni",
         "desc": "Fai clic sul nome per visualizzare il foglio ore."
+      },
+      "step4": {
+        "title": "4. Gestione Permessi",
+        "desc": "Registra i giorni in cui il personale è in permesso o in congedo per malattia."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "ANTICIPO",
     "statementTitle": "Estratto Conto",
     "forwardBalance": "Saldo Precedente",
     "periodEarned": "Guadagnato nel Periodo",

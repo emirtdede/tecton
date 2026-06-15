@@ -139,6 +139,27 @@
       "tags_label": "Tags",
       "tags_ph": "Ex: Construction Site-A, Painting Work"
     },
+    "leaves": "Leaves",
+    "leave_form": {
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "type": "Leave Type",
+      "description": "Description / Reason",
+      "add_btn": "Add Leave",
+      "delete_title": "Delete Leave",
+      "delete_message": "Are you sure you want to delete this leave record?"
+    },
+    "leave_types": {
+      "paid": "Paid Leave",
+      "unpaid": "Unpaid Leave",
+      "medical": "Medical Leave"
+    },
+    "leave_history": "Leave History",
+    "no_leave": "No leave records found yet.",
+    "overlap_warning": {
+      "title": "Timesheet - Leave Overlap",
+      "message": "This personnel is on leave between {{startDate}} and {{endDate}} due to {{type}}. Are you sure you want to enter a timesheet for this date?"
+    },
     "advance_form": {
       "title": "Add Advance",
       "date": "Date",
@@ -303,7 +324,10 @@
     "page_info": "Page",
     "page_guide": "Page Guide",
     "error_occurred": "Error:",
-    "required_field": "Please fill out this field."
+    "required_field": "Please fill out this field.",
+    "page": "Page",
+    "next_short": "Next",
+    "yes": "Yes"
   },
   "worker_modal": {
     "title_new": "Add New Personnel",
@@ -722,6 +746,10 @@
       "step3": {
         "title": "3. Timesheets and Statements",
         "desc": "Click on the name to view the timesheet."
+      },
+      "step4": {
+        "title": "4. Leave Management",
+        "desc": "Record the days when the personnel is on leave or sick leave."
       }
     },
     "quantity": {

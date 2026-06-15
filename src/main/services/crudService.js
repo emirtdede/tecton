@@ -16,7 +16,8 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     'materials': 'Malzeme/İrsaliye',
     'daily_journals': 'Günlük Jurnal',
     'quality_reports': 'Kalite Tutanak',
-    'subcontractor_ledgers': 'Taşeron Cari'
+    'subcontractor_ledgers': 'Taşeron Cari',
+    'worker_leaves': 'Personel İzni'
   } : {
     'workers': 'Personnel',
     'worker_groups': 'Group',
@@ -30,7 +31,8 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     'materials': 'Material Receipt',
     'daily_journals': 'Daily Journal',
     'quality_reports': 'Quality Report',
-    'subcontractor_ledgers': 'Subcontractor Ledger'
+    'subcontractor_ledgers': 'Subcontractor Ledger',
+    'worker_leaves': 'Personnel Leave'
   };
 
   const tName = tMap[table_name] || table_name;
@@ -47,6 +49,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     if (table_name === 'quality_reports') return isTr ? `Yeni kalite tutanağı eklendi: ${new_values.title} (Durum: ${new_values.status})` : `New quality report added: ${new_values.title} (Status: ${new_values.status})`;
     if (table_name === 'subcontractor_ledgers') return isTr ? `Yeni taşeron eklendi: ${new_values.name} (${new_values.service_type})` : `New subcontractor added: ${new_values.name} (${new_values.service_type})`;
     if (table_name === 'worker_groups') return isTr ? `Yeni personel grubu eklendi: ${new_values.name}` : `New personnel group added: ${new_values.name}`;
+    if (table_name === 'worker_leaves') return isTr ? `Yeni personel izni eklendi: ${new_values.start_date} / ${new_values.end_date} (${new_values.type})` : `New personnel leave added: ${new_values.start_date} / ${new_values.end_date} (${new_values.type})`;
     return isTr ? `Sisteme yeni bir ${tName} kaydı eklendi.` : `New ${tName} record added to system.`;
   }
   
@@ -114,6 +117,10 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
         ? `Puantaj güncellendi. Tarih: ${date}, Tutar: ${earned} TL`
         : `Timesheet updated. Date: ${date}, Amount: ${earned} TL`;
     }
+    if (table_name === 'worker_leaves') {
+      const type = new_values.type || (old_values && old_values.type) || '';
+      return isTr ? `Personel izni güncellendi (${type}).` : `Personnel leave updated (${type}).`;
+    }
     return isTr ? `Bir ${tName} kaydı güncellendi.` : `A ${tName} record was updated.`;
   }
   
@@ -129,6 +136,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     if (table_name === 'quality_reports') return isTr ? `Kalite tutanağı silindi: ${old_values.title}` : `Quality report deleted: ${old_values.title}`;
     if (table_name === 'subcontractor_ledgers') return isTr ? `Taşeron silindi: ${old_values.name}` : `Subcontractor deleted: ${old_values.name}`;
     if (table_name === 'worker_groups') return isTr ? `Personel grubu silindi: ${old_values.name}` : `Personnel group deleted: ${old_values.name}`;
+    if (table_name === 'worker_leaves') return isTr ? `Personel izni silindi: ${old_values.start_date} - ${old_values.end_date} (${old_values.type})` : `Personnel leave deleted: ${old_values.start_date} - ${old_values.end_date} (${old_values.type})`;
     return isTr ? `Bir ${tName} kaydı silindi.` : `A ${tName} record was deleted.`;
   }
   return isTr ? `${action} işlemi gerçekleşti (${tName}).` : `${action} operation completed on (${tName}).`;

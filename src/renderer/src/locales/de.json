@@ -139,6 +139,27 @@
       "tags_label": "Schlagworte",
       "tags_ph": "Beispiel: Baustelle A, Malerarbeiten"
     },
+    "leaves": "Urlaub",
+    "leave_form": {
+      "start_date": "Startdatum",
+      "end_date": "Enddatum",
+      "type": "Urlaubsart",
+      "description": "Beschreibung / Grund",
+      "add_btn": "Urlaub hinzufügen",
+      "delete_title": "Urlaub löschen",
+      "delete_message": "Sind Sie sicher, dass Sie diesen Urlaubsdatensatz löschen möchten?"
+    },
+    "leave_types": {
+      "paid": "Bezahlter Urlaub",
+      "unpaid": "Unbezahlter Urlaub",
+      "medical": "Krankenstand"
+    },
+    "leave_history": "Urlaubsverlauf",
+    "no_leave": "Noch keine Urlaubsdatensätze gefunden.",
+    "overlap_warning": {
+      "title": "Stundenzettel - Urlaubsüberschneidung",
+      "message": "Dieser Mitarbeiter ist zwischen dem {{startDate}} und {{endDate}} wegen {{type}} beurlaubt. Sind Sie sicher, dass Sie für dieses Datum einen Stundenzettel eintragen möchten?"
+    },
     "advance_form": {
       "title": "Vorschuss hinzufügen",
       "date": "Datum",
@@ -303,7 +324,10 @@
     "page_info": "Seite",
     "page_guide": "Seitenleitfaden",
     "error_occurred": "Fehler:",
-    "required_field": "Bitte füllen Sie dieses Feld aus."
+    "required_field": "Bitte füllen Sie dieses Feld aus.",
+    "page": "Seite",
+    "next_short": "Weiter",
+    "yes": "Ja"
   },
   "worker_modal": {
     "title_new": "Neues Personal hinzufügen",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. Stundenzettel und Abrechnungen",
         "desc": "Klicken Sie auf den Namen, um den Stundenzettel anzuzeigen."
+      },
+      "step4": {
+        "title": "4. Urlaubsverwaltung",
+        "desc": "Erfassen Sie die Tage, an denen das Personal im Urlaub oder krankgeschrieben ist."
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ABSCHLAG",
+    "advanceBadge": "VORSCHUSS",
     "statementTitle": "Kontoauszug",
     "forwardBalance": "Vortragssaldo",
     "periodEarned": "Verdienst im Zeitraum",

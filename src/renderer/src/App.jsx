@@ -906,6 +906,8 @@ function App() {
         p2={t('guides.personnel.step2.desc')} 
         h3={t('guides.personnel.step3.title')} 
         p3={t('guides.personnel.step3.desc')} 
+        h4={t('guides.personnel.step4.title')}
+        p4={t('guides.personnel.step4.desc')}
       />
 
       {undoAvailable && (

@@ -139,6 +139,27 @@
       "tags_label": "タグ",
       "tags_ph": "例：工事現場A、塗装工事"
     },
+    "leaves": "休暇",
+    "leave_form": {
+      "start_date": "開始日",
+      "end_date": "終了日",
+      "type": "休暇の種類",
+      "description": "説明 / 理由",
+      "add_btn": "休暇を追加",
+      "delete_title": "休暇を削除",
+      "delete_message": "この休暇記録を削除してもよろしいですか？"
+    },
+    "leave_types": {
+      "paid": "有給休暇",
+      "unpaid": "無給休暇",
+      "medical": "病気休暇"
+    },
+    "leave_history": "休暇履歴",
+    "no_leave": "休暇記録はまだありません。",
+    "overlap_warning": {
+      "title": "タイムシート - 休暇の重複",
+      "message": "このスタッフは {{startDate}} から {{endDate}} まで {{type}} のため休暇中です。この日付にタイムシートを入力してもよろしいですか？"
+    },
     "advance_form": {
       "title": "前払いを追加",
       "date": "日付",
@@ -303,7 +324,10 @@
     "page_info": "ページ",
     "page_guide": "ページガイド",
     "error_occurred": "Error:",
-    "required_field": "このフィールドに入力してください。"
+    "required_field": "このフィールドに入力してください。",
+    "page": "ページ",
+    "next_short": "次へ",
+    "yes": "はい"
   },
   "worker_modal": {
     "title_new": "追加",
@@ -716,6 +740,10 @@
       "step3": {
         "title": "3. タイムシートと明細書",
         "desc": "名前をクリックしてタイムシートを表示します。"
+      },
+      "step4": {
+        "title": "4. 休暇管理",
+        "desc": "スタッフが休暇中または病休中の日を記録します。"
       }
     },
     "quantity": {
@@ -856,7 +884,7 @@
   },
   "worker": {
     "idLabel": "ID",
-    "advanceBadge": "ADVANCE",
+    "advanceBadge": "前払い",
     "statementTitle": "取引明細書",
     "forwardBalance": "繰越残高",
     "periodEarned": "当期支給額",
