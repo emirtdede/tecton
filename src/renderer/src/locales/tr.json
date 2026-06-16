@@ -73,8 +73,8 @@
     "file_select_button": "Dosya Seç",
     "file_not_selected": "Dosya seçilmedi",
     "logo_uploaded": "Logo yüklendi",
-    "backup_desc": "Export the entire database to safely store it manually on your computer or an external drive.",
-    "vacuum_desc": "Cleans up unused data blocks in the background and reduces database size, making the application faster. (Recommended once a month)",
+    "backup_desc": "Veritabanının tamamını manuel olarak bilgisayarınızda veya harici bir sürücüde güvenli bir şekilde saklamak için dışa aktarın.",
+    "vacuum_desc": "Arka planda kullanılmayan veri bloklarını temizler ve veritabanı boyutunu küçülterek uygulamayı daha hızlı hale getirir. (Ayda bir kez önerilir)",
     "regionalFormatSettings": "Bölgesel Biçim Ayarları",
     "currencyOverride": "Para Birimi Seçimi",
     "dateFormatOverride": "Tarih Formatı Seçimi",
@@ -930,7 +930,7 @@
     "leave_title": "{{type}} İzni ({{start}} - {{end}})"
   },
   "global": {
-    "spotlight": "Spotlight: Ctrl + K",
+    "spotlight": "Gündem: Ctrl + K",
     "recordsCount": "({{count}} Kayıt)",
     "restore": "Geri Yükle",
     "restored": "Geri Yüklendi",
@@ -999,7 +999,7 @@
   "recycle_page_desc": "Silinen kayıtları buradan inceleyip orijinal yerlerine geri yükleyebilirsiniz.",
   "sidebar_recycle_btn": "Çöp Kutusu",
   "__dummy_to_fix_json": {
-    "dummy": "dummy"
+    "dummy": "kukla"
   },
   "dashboard.edit": "Düzenle",
   "common.edit": "Düzenle",
@@ -1026,7 +1026,7 @@
   "spotlight_faq_1_desc": "Nakit Giriş - Nakit Çıkış. Avanslar otomatik kasa çıkışı yazılır.",
   "spotlight_faq_2_label": "Sistem yedeği (Geri Yükleme) nasıl yapılır?",
   "spotlight_faq_2_desc": "Settings sayfasında .sqlite yedeğini sürükleyip bırakarak yapılır.",
-  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "sidebar_spotlight": "Gündem: Ctrl + K",
   "multiplier": "Çarpan",
   "settings_logs": {
     "error_read": "Loglar okunamadı:"

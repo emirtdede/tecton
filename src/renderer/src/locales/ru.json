@@ -76,15 +76,15 @@
     "system_maintenance": "Обслуживание системы",
     "logo_uploaded": "Логотип загружен",
     "parameters": "Параметры",
-    "regionalSettings": "Regional Format Settings",
-    "customCurrency": "Currency Override",
-    "customDateFormat": "Date Format Override",
-    "customTimeFormat": "Time Format Override",
+    "regionalSettings": "Настройки регионального формата",
+    "customCurrency": "Переопределение валюты",
+    "customDateFormat": "Переопределение формата даты",
+    "customTimeFormat": "Переопределение формата времени",
     "autoByLanguage": "Автоматически (по языку)",
     "regionalFormatSettings": "Региональные настройки",
-    "currencyOverride": "Currency Selection",
-    "dateFormatOverride": "Date Format Selection",
-    "timeFormatOverride": "Time Format Selection",
+    "currencyOverride": "Выбор валюты",
+    "dateFormatOverride": "Выбор формата даты",
+    "timeFormatOverride": "Выбор формата времени",
     "currencySelection": "Выбор валюты",
     "dateFormatSelection": "Формат даты",
     "timeFormatSelection": "Формат времени",
@@ -110,14 +110,14 @@
     "delete": "Удалить",
     "net_balance": "Чистый баланс",
     "phone_not_found": "Телефон не указан",
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
+    "help_title": "Руководство по управлению персоналом",
+    "help_desc": "Панель управления персоналом позволяет отслеживать табели учета рабочего времени, доходы, авансы и платежные реквизиты ваших сотрудников.",
+    "help_h1": "1. Добавьте работников и Excel",
+    "help_p1": "Добавьте отдельных работников, используя верхнюю правую кнопку, или импортируйте пакетный список, загрузив шаблон Excel.",
+    "help_h2": "2. Групповой анализ",
+    "help_p2": "Анализируйте расходы и количество работников по категориям групп (например, электрики, слесари).",
+    "help_h3": "3. Оценочные карты и заявления",
+    "help_p3": "Щелкните имя любого работника, чтобы просмотреть его табели учета рабочего времени, рассчитать новые балансы и экспортировать подробные отчеты в формате PDF.",
     "undo_success": "Действие успешно отменено!",
     "undo_error": "Не удалось отменить:",
     "delete_worker_title": "Удалить Персонал",
@@ -169,8 +169,8 @@
       "tags_label": "Теги",
       "tags_ph": "Пример: проезд, личный",
       "notes_ph": "напр., Еженедельный аванс",
-      "delete_title": "Delete Advance",
-      "delete_confirm": "Are you sure you want to delete this advance? The system will automatically cancel this amount from the Cash Register as well."
+      "delete_title": "Удалить аванс",
+      "delete_confirm": "Вы уверены, что хотите удалить этот аванс? Система также автоматически аннулирует эту сумму из кассового аппарата."
     },
     "summary": {
       "previous_balance": "Предыдущий баланс",
@@ -178,7 +178,7 @@
       "period_advance": "Аванс",
       "new_balance": "Новый баланс",
       "carried_balance_report": "Отчет о переходящем балансе",
-      "advance_deduction": "Advance Deduction"
+      "advance_deduction": "Авансовый вычет"
     },
     "filter": {
       "start_date": "Начальная дата",
@@ -216,17 +216,17 @@
     "calculated_earned": "Начислено:",
     "auto_deduct_notice": "* Аванс будет автоматически вычтен из кассы.",
     "current_balance": "Текущий баланс",
-    "help_title": "Worker Profile Guide",
-    "help_desc": "The worker profile displays all financial and working history of the selected employee on a single screen.",
-    "help_h1": "1. Timesheets & Advances",
-    "help_p1": "Quickly enter daily timesheet records (standard hours or overtime) and cash advance logs.",
-    "help_h2": "2. Carried Balance Report",
-    "help_p2": "Generate date-range filtered statement reports that automatically calculate the carried over balance.",
-    "help_h3": "3. PDF Reconciliation",
-    "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
-    "whatsapp_send": "Send via WhatsApp",
+    "help_title": "Руководство по профилю работника",
+    "help_desc": "Профиль работника отображает всю финансовую и рабочую историю выбранного сотрудника на одном экране.",
+    "help_h1": "1. Табели учета рабочего времени и авансы",
+    "help_p1": "Быстро вводите ежедневные записи учета рабочего времени (стандартные часы или сверхурочные) и журналы выдачи наличных.",
+    "help_h2": "2. Отчет о балансе",
+    "help_p2": "Создавайте отчеты о выписках с фильтрацией по диапазону дат, которые автоматически рассчитывают перенесенный остаток.",
+    "help_h3": "3. Согласование PDF-файлов",
+    "help_p3": "Создавайте и делитесь фирменными официальными отчетами в формате PDF с логотипом вашей компании.",
+    "whatsapp_send": "Отправить через WhatsApp",
     "whatsapp_no_phone": "Зарегистрированный номер телефона персонала не найден.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "whatsapp_message_template": "Уважаемый {{name}}, выписка по вашему счету между {{startDate}} и {{endDate}}:\n\n- Всего заработано: {{earned}}\n- Общая сумма оплаченных/авансовых платежей: {{advance}}\n- Оставшийся баланс: {{balance}}\n\nПредставлено для вашего сведения.",
     "timesheet_delete_title": "Удалить расписание",
     "timesheet_delete_msg": "Вы уверены, что хотите удалить эту запись в расписании? Это действие невозможно отменить.",
     "advance_delete_title": "Удалить аванс/транзакцию",
@@ -262,14 +262,14 @@
     "tags_ph": "напр. Материал, Аренда",
     "search_placeholder": "Поиск в описаниях...",
     "new_transaction": "Новая кассовая операция",
-    "help_title": "Cash Register Guide",
-    "help_desc": "Cash Register is used to log all cash inflows and outflows on your construction site.",
-    "help_h1": "1. Income/Expense Entries",
-    "help_p1": "Record incomes (+) and expenses (-). Worker advances are automatically deducted from the register.",
-    "help_h2": "2. Monthly Financial Status",
-    "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
-    "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "help_title": "Руководство по кассовому аппарату",
+    "help_desc": "Кассовый аппарат используется для регистрации всех притоков и оттоков денежных средств на вашей строительной площадке.",
+    "help_h1": "1. Записи о доходах/расходах",
+    "help_p1": "Записывайте доходы (+) и расходы (-). Авансы работникам автоматически вычитаются из реестра.",
+    "help_h2": "2. Ежемесячный финансовый статус",
+    "help_p2": "Мгновенно отслеживайте общие доходы, общие расходы, затраты на рабочую силу и ежемесячные чистые денежные изменения.",
+    "help_h3": "3. Фильтрация и экспорт",
+    "help_p3": "Фильтруйте кассовые журналы по диапазону дат или типу транзакции и загружайте отчеты в форматах Excel или PDF.",
     "allCompany": "Вся компания (Глобально)",
     "headquarters": "Главная касса / Общее",
     "relatedProject": "Связанный объект",
@@ -332,7 +332,8 @@
     "page": "Страница",
     "next_short": "Вперед",
     "yes": "Да",
-    "no": "Нет"
+    "no": "Нет",
+    "error": "Ошибка"
   },
   "worker_modal": {
     "title_new": "Добавить нового сотрудника",
@@ -450,14 +451,14 @@
     "active_workspace": "Активная рабочая область",
     "location_unspecified": "Местоположение не указано",
     "select_workspace": "Выбрать рабочую область",
-    "help_title": "Construction Site Guide",
-    "help_desc": "Site Management allows you to add and manage different projects or locations.",
-    "help_h1": "1. Active Workspace",
-    "help_p1": "Select a project to set it as active. All transactions and reports will belong to this project.",
-    "help_h2": "2. Location & Weather",
-    "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
-    "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "help_title": "Руководство по строительной площадке",
+    "help_desc": "Управление сайтом позволяет добавлять различные проекты и местоположения и управлять ими.",
+    "help_h1": "1. Активное рабочее пространство",
+    "help_p1": "Выберите проект, чтобы сделать его активным. Все транзакции и отчеты будут принадлежать этому проекту.",
+    "help_h2": "2. Местоположение и погода",
+    "help_p2": "Укажите местоположение (например, «Стамбул, ТР»), чтобы автоматически получать ежедневные погодные условия.",
+    "help_h3": "3. Поиск и разбивка на страницы",
+    "help_p3": "Мгновенно осуществляйте поиск по строительным площадкам и эффективно составляйте списки проектов с помощью нумерации страниц.",
     "delete_title": "Удалить сайт",
     "delete_msg": "Вы уверены? Данные будут скрыты."
   },
@@ -500,14 +501,14 @@
   },
   "media": {
     "gallery_title": "📷 Медиагалерея объекта",
-    "help_title": "Media Gallery Guide",
-    "help_desc": "Site Media Gallery aggregates all photos uploaded through Delivery Notes and Quality Control.",
-    "help_h1": "1. Visual Timeline",
-    "help_p1": "Browse all construction site images sorted chronologically from newest to oldest.",
-    "help_h2": "2. Quick Details",
-    "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
-    "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "help_title": "Руководство по медиа-галерее",
+    "help_desc": "Медиа-галерея сайта объединяет все фотографии, загруженные через накладные и контроль качества.",
+    "help_h1": "1. Визуальная временная шкала",
+    "help_p1": "Просмотрите все изображения строительных площадок, отсортированные в хронологическом порядке от самых новых к самым старым.",
+    "help_h2": "2. Краткие сведения",
+    "help_p2": "Щелкните любую фотографию, чтобы просмотреть ее в полном размере и просмотреть соответствующую накладную или отчет о качестве.",
+    "help_h3": "3. Фильтры категорий",
+    "help_p3": "Фильтруйте материалы по типу (фотографии накладной или фотографии контроля качества) или осуществляйте поиск по примечаниям.",
     "no_image": "Нет изображения"
   },
   "subcontractor": {
@@ -517,22 +518,22 @@
     "service": "Сфера услуг",
     "service_ph": "напр., Аренда экскаватора / Раскопки",
     "wage": "Дневной тариф / Оплата (₺)",
-    "table_name": "Subcontractor / Company",
-    "table_wage": "Daily Rate",
-    "table_status": "Status",
+    "table_name": "Субподрядчик / Компания",
+    "table_wage": "Дневная ставка",
+    "table_status": "Статус",
     "table_action": "Действие",
-    "help_title": "Subcontractor Ledger Guide",
-    "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
-    "help_h1": "1. Daily Rate and Ledger Entry",
-    "help_p1": "The daily rate defined for each subcontractor is taken as the baseline for their scorecards and monthly statements.",
-    "help_h2": "2. Search and Filtering",
-    "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
-    "help_h3": "3. Updating and Editing",
-    "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
+    "help_title": "Руководство по книге субподрядчиков",
+    "help_desc": "Журналы субподрядчиков используются для отслеживания ежедневных ставок, услуг и контактных данных субподрядчиков или наемной техники, работающей на вашей строительной площадке.",
+    "help_h1": "1. Дневная ставка и запись в бухгалтерскую книгу",
+    "help_p1": "Дневная ставка, определенная для каждого субподрядчика, принимается за основу для их оценочных карточек и ежемесячных отчетов.",
+    "help_h2": "2. Поиск и фильтрация",
+    "help_p2": "Вы можете выполнять поиск в режиме реального времени в списке субподрядчиков по имени, услуге или телефону, а также легко перемещаться по большим записям с нумерацией страниц.",
+    "help_h3": "3. Обновление и редактирование",
+    "help_p3": "Вы можете обновить названия субподрядчиков, номера телефонов и ежедневные тарифы в любое время с помощью кнопки «Изменить».",
     "delete_title": "Удалить субподрядчика",
     "delete_confirm": "Вы уверены, что хотите удалить эту книгу субподрядчиков? Это действие невозможно отменить.",
-    "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "no_results": "Субподрядчики, соответствующие критериям поиска, не найдены.",
+    "empty_state": "На этой строительной площадке пока не зарегистрировано ни одного субподрядчика."
   },
   "quality": {
     "title": "🛡️ Контроль качества и отчеты с объекта",
@@ -546,21 +547,21 @@
     "detailed_description": "Подробное описание",
     "description_ph": "Детали выявленного замечания...",
     "add_report": "Добавить отчет",
-    "no_results": "No reports found matching the search criteria.",
-    "empty_state": "No quality control reports found for this construction site yet.",
-    "open_photo": "Open Report Photo",
+    "no_results": "Не найдено ни одного отчета, соответствующего критериям поиска.",
+    "empty_state": "Отчетов о контроле качества для этой строительной площадки пока не найдено.",
+    "open_photo": "Открыть фото отчета",
     "upload_mobile_title": "Загрузить с телефона",
     "upload_mobile_desc": "Подключитесь к **тому же WiFi** и отсканируйте QR:",
     "delete_title": "Удалить отчет",
     "delete_confirm": "Вы уверены, что хотите удалить этот отчет о контроле качества? Это действие нельзя отменить.",
-    "help_title": "Quality Control Guide",
-    "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
-    "help_h1": "1. Report Statuses",
-    "help_p1": "Log reports as 'OPEN' initially, and update them to 'RESOLVED' once the technical issue is solved.",
-    "help_h2": "2. Visual Evidence",
-    "help_p2": "Attach photos of identified issues and write detailed solution plans in the description area.",
-    "help_h3": "3. Filtering",
-    "help_p3": "Filter reports by resolution status or photo availability to track pending issues."
+    "help_title": "Руководство по контролю качества",
+    "help_desc": "Модуль контроля качества используется для регистрации структурных проблем, выводов о безопасности и отчетов об объекте.",
+    "help_h1": "1. Статусы отчетов",
+    "help_p1": "Первоначально регистрируйте отчеты как «ОТКРЫТЫЕ» и обновляйте их до «РЕШЕНО», как только техническая проблема будет решена.",
+    "help_h2": "2. Визуальные доказательства",
+    "help_p2": "Прикрепите фотографии выявленных проблем и напишите подробные планы решения в области описания.",
+    "help_h3": "3. Фильтрация",
+    "help_p3": "Фильтруйте отчеты по статусу разрешения или доступности фотографий, чтобы отслеживать нерешенные проблемы."
   },
   "journal": {
     "title": "📓 Ежедневный журнал объекта",
@@ -570,19 +571,19 @@
     "notes": "Заметки журнала / Выполненные работы",
     "notes_ph": "напр., Связана арматура колонн 2-го этажа, залит бетон C30...",
     "save_btn": "Сохранить / Обновить журнал",
-    "weather_loading": "Reading from clouds...",
-    "weather_no_location": "Could not retrieve weather since site location is not specified.",
-    "worker_count_badge": "Workers",
-    "no_results": "No journal entries found matching the search criteria.",
-    "empty_state": "No daily journal entries found yet.",
-    "help_title": "Daily Journal Guide",
-    "help_desc": "The Daily Journal is the official log where you chronologically archive daily field activities, working personnel counts, and weather conditions.",
-    "help_h1": "1. Weather Integration",
-    "help_p1": "When the location is specified on the Project page, the system automatically fetches the weather and temperature via OpenWeather API.",
-    "help_h2": "2. Auto Worker Calculation",
-    "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
-    "help_h3": "3. Edit Lock Policy",
-    "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
+    "weather_loading": "Читаю с облаков...",
+    "weather_no_location": "Не удалось получить информацию о погоде, поскольку не указано местоположение сайта.",
+    "worker_count_badge": "Рабочие",
+    "no_results": "Не найдено записей журнала, соответствующих критериям поиска.",
+    "empty_state": "Записи ежедневного журнала пока не найдены.",
+    "help_title": "Путеводитель по ежедневному журналу",
+    "help_desc": "Ежедневный журнал — это официальный журнал, в котором хронологически архивируются ежедневные полевые работы, количество работающего персонала и погодные условия.",
+    "help_h1": "1. Интеграция погоды",
+    "help_p1": "Когда местоположение указано на странице проекта, система автоматически получает информацию о погоде и температуре через API OpenWeather.",
+    "help_h2": "2. Расчет автоработника",
+    "help_p2": "Общее количество активных работников на эту дату автоматически рассчитывается на основе табелей учета рабочего времени и отражается в форме.",
+    "help_h3": "3. Изменить политику блокировки",
+    "help_p3": "Чтобы обеспечить целостность исторических данных, ежедневные журналы можно редактировать только в день их создания. Старые записи заблокированы.",
     "delete_title": "Удалить журнал",
     "delete_confirm": "Вы уверены, что хотите удалить эту запись в журнале? Это действие нельзя отменить.",
     "weatherDesc": "Описание погоды",
@@ -600,23 +601,23 @@
     "material_type_ph": "напр., Готовый бетон C30",
     "receipt_no": "Накладная / Номер квитанции",
     "document_photo": "Фото документа",
-    "no_results": "No delivery notes found matching the search criteria.",
-    "empty_state": "No delivery notes found yet.",
+    "no_results": "Не найдено накладных, соответствующих критериям поиска.",
+    "empty_state": "Накладных пока не обнаружено.",
     "photo": "Фото",
-    "view_photo": "View",
-    "no_photo": "None",
+    "view_photo": "Вид",
+    "no_photo": "Никто",
     "upload_mobile_title": "Загрузить Фото с Мобильного",
     "upload_mobile_desc": "Подключите мобильный к **той же сети WiFi** и отсканируйте QR-код:",
     "delete_title": "Удалить документ",
     "delete_confirm": "Вы уверены, что хотите удалить эту запись накладной? Это действие нельзя отменить.",
-    "help_title": "Delivery Note Guide",
-    "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
-    "help_h1": "1. Supplier & Material Type",
-    "help_p1": "Log supplier names, material types, units, quantities, and receipt/delivery note numbers.",
-    "help_h2": "2. Document Photos",
-    "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
-    "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
+    "help_title": "Руководство по накладной на поставку",
+    "help_desc": "Модуль «Накладная» используется для учета поступления строительных материалов и загрузки документов на поставку.",
+    "help_h1": "1. Поставщик и тип материала",
+    "help_p1": "Зарегистрируйте имена поставщиков, типы материалов, единицы измерения, количества и номера приходных/доставочных накладных.",
+    "help_h2": "2. Фотографии документов",
+    "help_p2": "Загрузите отсканированные документы или фотографии с ПК или используйте мобильный QR-код для создания цифрового архива.",
+    "help_h3": "3. Умный поиск",
+    "help_p3": "Мгновенный поиск по описаниям материалов, именам поставщиков или номерам накладных.",
     "photo_success": "Фото успешно получено с мобильного устройства!",
     "photo_error": "Не удалось сохранить фото:",
     "photo_upload_error": "Ошибка при обработке фото:",
@@ -627,30 +628,30 @@
     "title": "📐 Замеры и отслеживание объемов работ",
     "item_name": "Элемент работы",
     "item_name_ph": "напр., Кладка кирпичной стены",
-    "no_results": "No production records found matching the search criteria.",
-    "empty_state": "No production entries recorded for this construction site yet.",
+    "no_results": "Не найдено никаких производственных записей, соответствующих критериям поиска.",
+    "empty_state": "Для этой строительной площадки пока не зарегистрировано производственных записей.",
     "delete_title": "Удалить запись",
     "delete_confirm": "Вы уверены, что хотите удалить эту производственную запись? Это действие нельзя отменить.",
-    "help_title": "Quantity Survey Guide",
-    "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
-    "help_h1": "1. Production Item Records",
-    "help_p1": "Log daily or weekly production items, specifying their units (m², m³, kg, etc.) and quantities.",
-    "help_h2": "2. Archive & Details",
-    "help_p2": "Write notes for each entry to keep a chronological archive of progress in different blocks.",
-    "help_h3": "3. Search & Filters",
-    "help_p3": "Search through item names or notes, and filter them by date range or unit type."
+    "help_title": "Руководство по количественному обследованию",
+    "help_desc": "Модуль Quantity Survey используется для отслеживания строительных объектов, агрегатов и прогресса.",
+    "help_h1": "1. Записи о производстве продукции",
+    "help_p1": "Записывайте ежедневные или еженедельные производственные единицы, указывая их единицы измерения (м², м³, кг и т. д.) и количество.",
+    "help_h2": "2. Архив и подробности",
+    "help_p2": "Пишите примечания к каждой записи, чтобы вести хронологический архив прогресса в разных блоках.",
+    "help_h3": "3. Поиск и фильтры",
+    "help_p3": "Выполняйте поиск по названиям элементов или примечаниям и фильтруйте их по диапазону дат или типу единицы измерения."
   },
   "anomalies": {
-    "no_anomaly_title": "No System Anomalies",
-    "no_anomaly_desc": "All financial balances and HSE certificates are up-to-date.",
+    "no_anomaly_title": "Никаких системных аномалий",
+    "no_anomaly_desc": "Все финансовые балансы и сертификаты HSE актуальны.",
     "financial_warnings_title": "Финансовые предупреждения",
     "hse_expired_title": "Просроченные сертификаты ОТиТБ",
     "hse_expired_badge": "ПРОСРОЧЕНО!",
     "hse_expiring_title": "Истекающие сертификаты ОТиТБ",
     "days_left": "дней осталось",
     "more_people": "и еще {{count}} человек...",
-    "no_results": "No results found.",
-    "search_no_results": "No results matching the search criteria were found."
+    "no_results": "Результаты не найдены.",
+    "search_no_results": "Результаты, соответствующие критериям поиска, не найдены."
   },
   "settings.regionalSettings": "Regional Format Settings",
   "settings.customCurrency": "Currency Override",
@@ -707,63 +708,63 @@
   "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_title": "Руководство по управлению персоналом",
+    "help_desc": "Панель управления персоналом позволяет отслеживать табели учета рабочего времени, доходы, авансы и платежные реквизиты ваших сотрудников.",
+    "help_h1": "1. Добавьте работников и Excel",
+    "help_p1": "Добавьте отдельных работников, используя верхнюю правую кнопку, или импортируйте пакетный список, загрузив шаблон Excel.",
+    "help_h2": "2. Групповой анализ",
+    "help_p2": "Анализируйте расходы и количество работников по категориям групп (например, электрики, слесари).",
+    "help_h3": "3. Оценочные карты и заявления",
+    "help_p3": "Щелкните имя любого работника, чтобы просмотреть его табели учета рабочего времени, рассчитать новые балансы и экспортировать подробные отчеты в формате PDF."
   },
   "guides": {
     "site": {
-      "title": "Руководство по управлению объектом",
+      "title": "Руководство по управлению строительной площадкой",
       "step1": {
-        "title": "1. Активное рабочее пространство",
-        "desc": "Выберите проект, чтобы установить его как активный."
+        "title": "1. Действующая строительная площадка",
+        "desc": "Выберите проект, который нужно сделать активным."
       },
       "step2": {
         "title": "2. Местоположение и погода",
-        "desc": "Укажите местоположение для автоматического получения ежедневной погоды."
+        "desc": "Укажите местоположение, чтобы автоматически получать ежедневный прогноз погоды."
       },
       "step3": {
-        "title": "3. Поиск и нумерация страниц",
-        "desc": "Мгновенный поиск между строительными площадками."
+        "title": "3. Поиск и пейджинг",
+        "desc": "Мгновенный поиск по строительным площадкам."
       }
     },
     "personnel": {
-      "title": "Руководство для персонала",
+      "title": "Руководство по управлению персоналом",
       "step1": {
         "title": "1. Добавьте персонал и Excel",
         "desc": "Используйте шаблон Excel для массовой загрузки списка."
       },
       "step2": {
         "title": "2. Групповой анализ",
-        "desc": "Анализируйте затраты по категориям групп."
+        "desc": "Анализируйте расходы по категориям групп."
       },
       "step3": {
-        "title": "3. Система показателей и заявления",
-        "desc": "Нажмите на имя, чтобы увидеть табло."
+        "title": "3. Система показателей и выписка со счета",
+        "desc": "Нажмите на имя, чтобы просмотреть счет."
       },
       "step4": {
         "title": "4. Управление разрешениями",
-        "desc": "Запишите дни, когда персонал был отпущен или находился на больничном."
+        "desc": "Записывайте дни, когда персонал находится на больничном или в отпуске."
       }
     },
     "quantity": {
       "title": "Руководство по производству",
       "step1": {
-        "title": "1. Записи",
-        "desc": "Записи."
+        "title": "1. Производственные записи",
+        "desc": "Рекордное ежедневное производство."
       },
       "step2": {
-        "title": "2. Архив",
-        "desc": "Архив."
+        "title": "2. Архив и подробности",
+        "desc": "Пишите заметки, чтобы сохранить хронологический архив."
       },
       "step3": {
-        "title": "3. Поиск",
-        "desc": "Поиск."
+        "title": "3. Поиск и фильтры",
+        "desc": "Фильтровать по диапазону дат или единице измерения."
       }
     },
     "delivery": {
@@ -800,75 +801,75 @@
       "title": "Руководство по качеству",
       "step1": {
         "title": "1. Статусы отчетов",
-        "desc": "Обновите статус после решения."
+        "desc": "Обновите статус, когда проблема будет решена."
       },
       "step2": {
         "title": "2. Визуальные доказательства",
-        "desc": "Добавьте фотографии."
+        "desc": "Приложите фотографии обнаруженных проблем."
       },
       "step3": {
         "title": "3. Фильтрация",
-        "desc": "Фильтрация открытых проблем."
+        "desc": "Фильтруйте, чтобы отслеживать открытые проблемы."
       }
     },
     "subcontractor": {
       "title": "Руководство субподрядчика",
       "step1": {
-        "title": "1. Дневная заработная плата",
-        "desc": "Отслеживание дневной ЗП."
+        "title": "1. Ежедневная заработная плата",
+        "desc": "Следите за ежедневной заработной платой субподрядчиков."
       },
       "step2": {
         "title": "2. Поиск и фильтрация",
-        "desc": "Поиск в списке."
+        "desc": "Найдите список субподрядчиков."
       },
       "step3": {
-        "title": "3. Обновление",
-        "desc": "Обновление ЗП в любое время."
+        "title": "3. Обновить и изменить",
+        "desc": "Обновляйте ежедневные журналы в любое время."
       }
     },
     "media": {
-      "title": "Медиа руководство",
+      "title": "Медиа-гид",
       "step1": {
-        "title": "1. Визуальная хронология",
-        "desc": "Изучайте изображения в хронологическом порядке."
+        "title": "1. Визуальная временная шкала",
+        "desc": "Изучите изображения строительных площадок в хронологическом порядке."
       },
       "step2": {
-        "title": "2. Быстрые детали",
-        "desc": "Нажмите на фото для просмотра в полном размере."
+        "title": "2. Краткие сведения",
+        "desc": "Нажмите на любое фото, чтобы просмотреть его в полном размере."
       },
       "step3": {
         "title": "3. Фильтры категорий",
-        "desc": "Фильтрация по накладным или отчетам о качестве."
+        "desc": "Фильтрация по накладной или отчетам о качестве."
       }
     },
     "cash": {
-      "title": "Руководство по управлению кассой",
+      "title": "Руководство по управлению хранилищем",
       "step1": {
-        "title": "1. Доходы/Расходы",
-        "desc": "Записывайте доходы и расходы."
+        "title": "1. Отчеты о доходах/расходах",
+        "desc": "Фиксируйте доходы и расходы."
       },
       "step2": {
-        "title": "2. Ежемесячный статус",
-        "desc": "Просматривайте ежемесячный денежный поток и баланс."
+        "title": "2. Ежемесячная финансовая ситуация",
+        "desc": "Просмотр ежемесячного денежного потока и баланса."
       },
       "step3": {
         "title": "3. Экспорт",
-        "desc": "Скачивайте транзакции в формате PDF или Excel."
+        "desc": "Загрузите транзакции в формате PDF или Excel."
       }
     },
     "recycle": {
-      "title": "Руководство по корзине",
+      "title": "Руководство по мусору",
       "step1": {
         "title": "Как это работает?",
-        "desc": "Удаленные записи помещаются в корзину и перечисляются здесь."
+        "desc": "Здесь перечислены удаленные записи с возможностью мягкого удаления."
       },
       "step2": {
         "title": "Восстановление данных",
         "desc": "Используйте кнопку восстановления, чтобы восстановить записи."
       },
       "step3": {
-        "title": "Разделение проектов",
-        "desc": "Фильтруйте корзину по проектам."
+        "title": "Разделение проекта",
+        "desc": "Фильтруйте мусор по проектам."
       }
     },
     "production": {
@@ -901,10 +902,10 @@
   },
   "recycle": {
     "desc": "Список удаленных записей и их восстановление.",
-    "search": "Search...",
-    "allRecords": "All Records",
-    "allRecordTypes": "All Record Types",
-    "allProjects": "All Projects",
+    "search": "Поиск...",
+    "allRecords": "Все записи",
+    "allRecordTypes": "Все типы записей",
+    "allProjects": "Все проекты",
     "startDate": "Дата начала",
     "endDate": "Дата окончания",
     "tableRecordType": "Тип записи",
@@ -915,27 +916,54 @@
     "title": "Корзина",
     "guide": {
       "title": "Руководство по корзине",
-      "intro": "Удаленные записи попадают сюда."
+      "intro": "Удаленные записи попадают сюда.",
+      "how_it_works_title": "Как это работает?",
+      "how_it_works_desc": "Когда вы удаляете любую запись в системе, она не удаляется навсегда. Вместо этого он мягко удаляется и помещается в корзину.",
+      "restore_title": "Восстановление данных:",
+      "restore_desc": "Нажмите кнопку «Восстановить», чтобы восстановить запись за считанные секунды. Восстановленные элементы остаются в корзине как записи, доступные только для чтения или пассивные, для возможности отслеживания.",
+      "project_isolation_title": "Разделение проекта:",
+      "project_isolation_desc": "Каждая запись отображает проект, которому она принадлежит. Используйте фильтр проектов вверху, чтобы поддерживать порядок в мусорной корзине.",
+      "date_filter_title": "Фильтры по дате и поиск:",
+      "date_filter_desc": "Вы можете искать и фильтровать удаленные записи по дате удаления, типу или названию."
     },
     "allRecordsOption": "Все записи",
     "onlyDeleted": "Только удаленные",
     "onlyRestored": "Только восстановленные",
     "allRecordTypesOption": "Все типы записей",
-    "type": {
-      "personnel": "Личное дело",
-      "cash": "Денежная операция",
-      "delivery": "Накладная / Материал",
-      "journal": "Ежедневный журнал",
-      "quality": "Отчет по контролю качества",
-      "subcontractor": "Журнал субподрядчиков",
-      "project": "Запись проекта",
-      "worker_leaves": "Отпуск персонала"
-    },
+    "type": "Тип записи",
     "allProjectsOption": "Все проекты",
     "restore_confirm_title": "Подтверждение Восстановления",
     "restore_confirm_msg": "Вы уверены, что хотите восстановить эту запись? Она будет возвращена на свое исходное место.",
     "restore_error": "Ошибка восстановления:",
-    "leave_title": "{{type}} Выйти ({{start}} – {{end}})"
+    "leave_title": "{{type}} Выйти ({{start}} – {{end}})",
+    "content": "Содержание/Название",
+    "deletedAt": "Удален в",
+    "emptyState": "Удаленных записей не найдено.",
+    "itemType": {
+      "worker": "Кадровый учет",
+      "transaction": "Наличная сделка",
+      "material": "Накладная / Материал",
+      "journal": "Ежедневный журнал",
+      "quality": "Отчет о контроле качества",
+      "subcontractor": "Запись в книге субподрядчиков",
+      "project": "Запись проекта"
+    },
+    "searchPlaceholder": "Поиск...",
+    "searchAll": "Искать везде",
+    "allTypes": "Все типы записей",
+    "hideRestored": "Скрыть восстановленное",
+    "showRestored": "Показать восстановлено",
+    "project": "Проект/Сайт",
+    "deletedProjectShort": "Удалено",
+    "guideTitle": "Информация",
+    "restoreStatus": {
+      "all": "Все записи",
+      "onlyDeleted": "Только удалено",
+      "onlyRestored": "Только восстановлено"
+    },
+    "startDateLabel": "Дата начала",
+    "endDateLabel": "Дата окончания",
+    "dateOrderError": "Дата начала не может быть позже даты окончания."
   },
   "global": {
     "spotlight": "Поиск: Ctrl + K",
@@ -952,7 +980,7 @@
   },
   "sidebar": {
     "recycleBin": "Корзина",
-    "spotlight": "Spotlight"
+    "spotlight": "Прожектор"
   },
   "anomaly": {
     "noAnomalies": "Нет системных аномалий",
@@ -1007,7 +1035,7 @@
   "recycle_page_desc": "Просматривайте удаленные записи и восстанавливайте их на прежние места.",
   "sidebar_recycle_btn": "Корзина",
   "__dummy_to_fix_json": {
-    "dummy": "dummy"
+    "dummy": "дурачок"
   },
   "dashboard.edit": "Редактировать",
   "common.edit": "Редактировать",
@@ -1029,12 +1057,12 @@
   "spotlight_badge_menu": "МЕНЮ",
   "spotlight_badge_personnel": "ПЕРСОНАЛ",
   "spotlight_badge_project": "ОБЪЕКТ",
-  "spotlight_badge_faq": "FAQ",
+  "spotlight_badge_faq": "Часто задаваемые вопросы",
   "spotlight_faq_1_label": "Как рассчитывается остаток денежных средств?",
   "spotlight_faq_1_desc": "Приход - Расход. Авансы автоматически записываются как расход.",
   "spotlight_faq_2_label": "Как сделать резервную копию системы?",
   "spotlight_faq_2_desc": "Путем перетаскивания файла .sqlite на страницу настроек.",
-  "sidebar_spotlight": "Spotlight: Ctrl + K",
+  "sidebar_spotlight": "Прожектор: Ctrl + K",
   "multiplier": "Множитель",
   "settings_logs": {
     "error_read": "Не удалось прочитать журналы:"

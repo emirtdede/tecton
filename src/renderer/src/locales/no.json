@@ -76,26 +76,26 @@
     "system_maintenance": "Systemvedlikehold",
     "logo_uploaded": "Logo lastet opp",
     "parameters": "Parametere",
-    "regionalSettings": "Regional Format Settings",
-    "customCurrency": "Currency Override",
-    "customDateFormat": "Date Format Override",
-    "customTimeFormat": "Time Format Override",
+    "regionalSettings": "Regionale formatinnstillinger",
+    "customCurrency": "Valutaoverstyring",
+    "customDateFormat": "Overstyring av datoformat",
+    "customTimeFormat": "Overstyring av tidsformat",
     "autoByLanguage": "Automatisk (etter språk)",
     "regionalFormatSettings": "Regionale formatinnstillinger",
-    "currencyOverride": "Currency Selection",
-    "dateFormatOverride": "Date Format Selection",
-    "timeFormatOverride": "Time Format Selection",
+    "currencyOverride": "Valutavalg",
+    "dateFormatOverride": "Valg av datoformat",
+    "timeFormatOverride": "Valg av tidsformat",
     "currencySelection": "Valutavalg",
     "dateFormatSelection": "Datoformat",
     "timeFormatSelection": "Tidsformat",
-    "time24h": "24 Hours (14:30)",
-    "time12h": "12 Hours AM/PM (02:30 PM)",
-    "backup_error": "Backup Error:",
-    "optimize_success": "Database optimized successfully.",
-    "optimize_error": "Optimization Error:",
-    "cloud_folder_success": "Silent cloud backup folder set successfully:",
-    "restore_confirm_title": "Restore Confirmation",
-    "restore_error": "Restore error:"
+    "time24h": "24 timer (14:30)",
+    "time12h": "12 timer AM/PM (02:30 PM)",
+    "backup_error": "Sikkerhetskopieringsfeil:",
+    "optimize_success": "Database optimalisert.",
+    "optimize_error": "Optimaliseringsfeil:",
+    "cloud_folder_success": "Sikkerhetskopieringsmappen for stille sky er satt:",
+    "restore_confirm_title": "Gjenopprett bekreftelse",
+    "restore_error": "Gjenopprett feil:"
   },
   "dashboard": {
     "title": "Personaladministrasjon",
@@ -110,16 +110,16 @@
     "delete": "Slett",
     "net_balance": "Nettosaldo",
     "phone_not_found": "Telefon ikke angitt",
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements.",
-    "undo_success": "Action successfully undone!",
-    "undo_error": "Undo failed:",
+    "help_title": "Personalledelsesveiledning",
+    "help_desc": "Personaladministrasjonspanelet lar deg spore timelister, inntekter, forskudd og betalingsdetaljer for arbeiderne dine.",
+    "help_h1": "1. Legg til Workers & Excel",
+    "help_p1": "Legg til individuelle arbeidere ved å bruke knappen øverst til høyre eller importer en batchliste ved å laste ned Excel-malen.",
+    "help_h2": "2. Gruppeanalyse",
+    "help_p2": "Analyser utgifter og antall arbeidere etter gruppekategori (f.eks. elektrikere, jernarbeidere).",
+    "help_h3": "3. Scorekort og uttalelser",
+    "help_p3": "Klikk på hvilken som helst arbeiders navn for å se timelistene deres, beregne nye saldoer og eksportere detaljerte PDF-utskrifter.",
+    "undo_success": "Handlingen er angret!",
+    "undo_error": "Angre mislyktes:",
     "delete_worker_title": "Slett Personell",
     "delete_worker_msg": "Er du sikker på at du vil slette dette personellet (flytte til papirkurven)? Systemdata vil ikke bli permanent slettet, men fjernet fra lister."
   },
@@ -169,8 +169,8 @@
       "tags_label": "Tagger",
       "tags_ph": "Eks: reiseavgift, personlig",
       "notes_ph": "f.eks. Ukentlig forskudd",
-      "delete_title": "Delete Advance",
-      "delete_confirm": "Are you sure you want to delete this advance? The system will automatically cancel this amount from the Cash Register as well."
+      "delete_title": "Slett Advance",
+      "delete_confirm": "Er du sikker på at du vil slette dette forskuddet? Systemet vil automatisk kansellere dette beløpet fra Kassen også."
     },
     "summary": {
       "previous_balance": "Tidligere saldo",
@@ -178,7 +178,7 @@
       "period_advance": "Forskudd periode",
       "new_balance": "Ny saldo",
       "carried_balance_report": "Rapport for overført saldo",
-      "advance_deduction": "Advance Deduction"
+      "advance_deduction": "Forskuddstrekk"
     },
     "filter": {
       "start_date": "Startdato",
@@ -216,17 +216,17 @@
     "calculated_earned": "Beregnet inntekt:",
     "auto_deduct_notice": "* Forskuddet trekkes automatisk fra Kassen.",
     "current_balance": "Nåværende saldo",
-    "help_title": "Worker Profile Guide",
-    "help_desc": "The worker profile displays all financial and working history of the selected employee on a single screen.",
-    "help_h1": "1. Timesheets & Advances",
-    "help_p1": "Quickly enter daily timesheet records (standard hours or overtime) and cash advance logs.",
-    "help_h2": "2. Carried Balance Report",
-    "help_p2": "Generate date-range filtered statement reports that automatically calculate the carried over balance.",
-    "help_h3": "3. PDF Reconciliation",
-    "help_p3": "Generate and share branded, official PDF statements complete with your company logo.",
+    "help_title": "Arbeiderprofilveiledning",
+    "help_desc": "Arbeiderprofilen viser all økonomi- og arbeidshistorikk til den valgte ansatte på en enkelt skjerm.",
+    "help_h1": "1. Timelister og fremskritt",
+    "help_p1": "Skriv raskt inn daglige timelister (standard timer eller overtid) og kontantforskuddslogger.",
+    "help_h2": "2. Båret balanserapport",
+    "help_p2": "Generer datoperiodefiltrerte kontoutskriftsrapporter som automatisk beregner den overførte saldoen.",
+    "help_h3": "3. PDF-avstemming",
+    "help_p3": "Generer og del merkede, offisielle PDF-erklæringer komplett med firmalogoen din.",
     "whatsapp_send": "Send via WhatsApp",
-    "whatsapp_no_phone": "Registered phone number not found for the personnel.",
-    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} and {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid/Advance: {{advance}}\n- Remaining Balance: {{balance}}\n\nPresented for your information.",
+    "whatsapp_no_phone": "Finner ikke registrert telefonnummer for personellet.",
+    "whatsapp_message_template": "Kjære {{name}}, kontoutskriften din mellom {{startDate}} og {{endDate}}:\n\n- Totalt opptjent: {{earned}}\n– Totalt betalt/forskudd: {{forskudd}}\n- Gjenstående saldo: {{saldo}}\n\nPresentert for din informasjon.",
     "timesheet_delete_title": "Slett timeliste",
     "timesheet_delete_msg": "Er du sikker på at du vil slette denne timelisteposten? Denne handlingen kan ikke angres.",
     "advance_delete_title": "Slett forskudd/transaksjon",
@@ -262,14 +262,14 @@
     "tags_ph": "f.eks. Materiale",
     "search_placeholder": "Søk i beskrivelser...",
     "new_transaction": "Ny kontanttransaksjon",
-    "help_title": "Cash Register Guide",
-    "help_desc": "Cash Register is used to log all cash inflows and outflows on your construction site.",
-    "help_h1": "1. Income/Expense Entries",
-    "help_p1": "Record incomes (+) and expenses (-). Worker advances are automatically deducted from the register.",
-    "help_h2": "2. Monthly Financial Status",
-    "help_p2": "Track total incomes, total expenses, labor costs, and monthly net cash changes instantly.",
-    "help_h3": "3. Filtering & Export",
-    "help_p3": "Filter cash logs by date range or transaction type, and download reports in Excel or PDF formats.",
+    "help_title": "Kassaguide",
+    "help_desc": "Kasseapparat brukes til å logge alle inn- og utbetalinger på din byggeplass.",
+    "help_h1": "1. Inntekter/utgiftsposter",
+    "help_p1": "Registrer inntekter (+) og utgifter (-). Arbeiderforskudd trekkes automatisk fra registeret.",
+    "help_h2": "2. Månedlig økonomisk status",
+    "help_p2": "Spor totale inntekter, totale utgifter, lønnskostnader og månedlige netto kontantendringer umiddelbart.",
+    "help_h3": "3. Filtrering og eksport",
+    "help_p3": "Filtrer kontantlogger etter datoperiode eller transaksjonstype, og last ned rapporter i Excel- eller PDF-format.",
     "allCompany": "Hele firmaet (Global)",
     "headquarters": "Hovedkasse / Generelt",
     "relatedProject": "Relatert byggeplads",
@@ -327,12 +327,13 @@
     "all": "Alle",
     "page_info": "Side",
     "page_guide": "Sideguide",
-    "error_occurred": "Error:",
+    "error_occurred": "Feil:",
     "required_field": "Vennligst fyll ut dette feltet.",
     "page": "Side",
     "next_short": "Neste",
     "yes": "Ja",
-    "no": "Ingen"
+    "no": "Ingen",
+    "error": "Feil"
   },
   "worker_modal": {
     "title_new": "Legg til ansatt",
@@ -367,7 +368,7 @@
     "earned": "Opptjent:",
     "advance": "Forskudd:",
     "total_balance": "TOTAL SALDO",
-    "error": "Error retrieving report:"
+    "error": "Feil ved henting av rapporten:"
   },
   "about": {
     "title": "Om & Hjelp",
@@ -450,14 +451,14 @@
     "active_workspace": "Aktivt arbeidsområde",
     "location_unspecified": "Sted ikke angitt",
     "select_workspace": "Velg arbeidsområde",
-    "help_title": "Construction Site Guide",
-    "help_desc": "Site Management allows you to add and manage different projects or locations.",
-    "help_h1": "1. Active Workspace",
-    "help_p1": "Select a project to set it as active. All transactions and reports will belong to this project.",
-    "help_h2": "2. Location & Weather",
-    "help_p2": "Specify a location (e.g., 'Istanbul, TR') to automatically retrieve daily weather conditions.",
-    "help_h3": "3. Search & Paginate",
-    "help_p3": "Instantly search across construction sites and list projects efficiently using pagination.",
+    "help_title": "Byggeplassveiledning",
+    "help_desc": "Site Management lar deg legge til og administrere forskjellige prosjekter eller lokasjoner.",
+    "help_h1": "1. Aktivt arbeidsområde",
+    "help_p1": "Velg et prosjekt for å angi det som aktivt. Alle transaksjoner og rapporter vil tilhøre dette prosjektet.",
+    "help_h2": "2. Beliggenhet og vær",
+    "help_p2": "Angi en plassering (f.eks. 'Istanbul, TR') for automatisk å hente daglige værforhold.",
+    "help_h3": "3. Søk og paginer",
+    "help_p3": "Søk umiddelbart på tvers av byggeplasser og lister opp prosjekter effektivt ved hjelp av paginering.",
     "delete_title": "Slett nettsted",
     "delete_msg": "Er du sikker? Data vil bli skjult."
   },
@@ -500,14 +501,14 @@
   },
   "media": {
     "gallery_title": "📷 Mediegalleri for byggeplass",
-    "help_title": "Media Gallery Guide",
-    "help_desc": "Site Media Gallery aggregates all photos uploaded through Delivery Notes and Quality Control.",
-    "help_h1": "1. Visual Timeline",
-    "help_p1": "Browse all construction site images sorted chronologically from newest to oldest.",
-    "help_h2": "2. Quick Details",
-    "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
-    "help_h3": "3. Category Filters",
-    "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
+    "help_title": "Mediegalleriguide",
+    "help_desc": "Site Media Gallery samler alle bilder som er lastet opp gjennom leveringsnotater og kvalitetskontroll.",
+    "help_h1": "1. Visuell tidslinje",
+    "help_p1": "Bla gjennom alle byggeplassbilder sortert kronologisk fra nyeste til eldste.",
+    "help_h2": "2. Raske detaljer",
+    "help_p2": "Klikk på et bilde for å se det i full størrelse og se den tilhørende følgeseddelen eller kvalitetsrapporten.",
+    "help_h3": "3. Kategorifiltre",
+    "help_p3": "Filtrer media etter type (Leveringsnotatbilder vs. Kvalitetskontrollbilder) eller søk etter notater.",
     "no_image": "Ingen bilde"
   },
   "subcontractor": {
@@ -517,22 +518,22 @@
     "service": "Tjenesteområde",
     "service_ph": "f.eks. Gravemaskinutleie / Graving",
     "wage": "Daglønn / Sats (₺)",
-    "table_name": "Subcontractor / Company",
-    "table_wage": "Daily Rate",
+    "table_name": "Underleverandør / Bedrift",
+    "table_wage": "Daglig pris",
     "table_status": "Status",
     "table_action": "Handling",
-    "help_title": "Subcontractor Ledger Guide",
-    "help_desc": "Subcontractor Ledgers are used to track daily rates, services and contact details of subcontractors or hired machinery working on your construction site.",
-    "help_h1": "1. Daily Rate and Ledger Entry",
-    "help_p1": "The daily rate defined for each subcontractor is taken as the baseline for their scorecards and monthly statements.",
-    "help_h2": "2. Search and Filtering",
-    "help_p2": "You can perform real-time searches in the subcontractor list by name, service or phone, and easily navigate large records with pagination.",
-    "help_h3": "3. Updating and Editing",
-    "help_p3": "You can update subcontractor titles, phone numbers and daily rates at any time using the 'Edit' button.",
+    "help_title": "Ledger for underleverandører",
+    "help_desc": "Underleverandørreskontro brukes til å spore dagspriser, tjenester og kontaktinformasjon til underleverandører eller innleid maskiner som jobber på byggeplassen din.",
+    "help_h1": "1. Dagspris og Ledger Entry",
+    "help_p1": "Den daglige prisen som er definert for hver underleverandør, tas som utgangspunkt for deres målkort og månedlige uttalelser.",
+    "help_h2": "2. Søk og filtrering",
+    "help_p2": "Du kan utføre sanntidssøk i underleverandørlisten etter navn, tjeneste eller telefon, og enkelt navigere i store poster med paginering.",
+    "help_h3": "3. Oppdatering og redigering",
+    "help_p3": "Du kan når som helst oppdatere underleverandørtitler, telefonnumre og dagspriser ved å bruke 'Rediger'-knappen.",
     "delete_title": "Slett underleverandør",
     "delete_confirm": "Er du sikker på at du vil slette denne underleverandørreskontroen? Denne handlingen kan ikke angres.",
-    "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "no_results": "Ingen underleverandører funnet som samsvarer med søkekriteriene.",
+    "empty_state": "Ingen underleverandører registrert for denne byggeplassen ennå."
   },
   "quality": {
     "title": "🛡️ Kvalitetskontroll & Plassrapporter",
@@ -546,21 +547,21 @@
     "detailed_description": "Detaljert beskrivelse",
     "description_ph": "Detaljer om det identifiserte problemet...",
     "add_report": "Legg til rapport",
-    "no_results": "No reports found matching the search criteria.",
-    "empty_state": "No quality control reports found for this construction site yet.",
-    "open_photo": "Open Report Photo",
+    "no_results": "Ingen rapporter funnet som samsvarer med søkekriteriene.",
+    "empty_state": "Ingen kvalitetskontrollrapporter funnet for denne byggeplassen ennå.",
+    "open_photo": "Åpne Rapporter bilde",
     "upload_mobile_title": "Last opp fra mobil",
     "upload_mobile_desc": "Koble til **samme WiFi** og skann QR:",
     "delete_title": "Slett rapport",
     "delete_confirm": "Er du sikker på at du vil slette denne kvalitetskontrollrapporten? Denne handlingen kan ikke angres.",
-    "help_title": "Quality Control Guide",
-    "help_desc": "Quality Control module is used to log structural issues, safety findings, and site reports.",
-    "help_h1": "1. Report Statuses",
-    "help_p1": "Log reports as 'OPEN' initially, and update them to 'RESOLVED' once the technical issue is solved.",
-    "help_h2": "2. Visual Evidence",
-    "help_p2": "Attach photos of identified issues and write detailed solution plans in the description area.",
-    "help_h3": "3. Filtering",
-    "help_p3": "Filter reports by resolution status or photo availability to track pending issues."
+    "help_title": "Kvalitetskontrollveiledning",
+    "help_desc": "Kvalitetskontrollmodulen brukes til å logge strukturelle problemer, sikkerhetsfunn og stedsrapporter.",
+    "help_h1": "1. Rapportstatuser",
+    "help_p1": "Logg rapporter som 'ÅPEN' først, og oppdater dem til 'LØST' når det tekniske problemet er løst.",
+    "help_h2": "2. Visuelle bevis",
+    "help_p2": "Legg ved bilder av identifiserte problemer og skriv detaljerte løsningsplaner i beskrivelsesområdet.",
+    "help_h3": "3. Filtrering",
+    "help_p3": "Filtrer rapporter etter oppløsningsstatus eller bildetilgjengelighet for å spore ventende problemer."
   },
   "journal": {
     "title": "📓 Dagsjournal for byggeplass",
@@ -570,19 +571,19 @@
     "notes": "Dagsjournalnotater / Utført arbeid",
     "notes_ph": "f.eks. Søylearmering i 2. etasje bundet, C30 betong støpt...",
     "save_btn": "Gem / Oppdater journal",
-    "weather_loading": "Reading from clouds...",
-    "weather_no_location": "Could not retrieve weather since site location is not specified.",
-    "worker_count_badge": "Workers",
-    "no_results": "No journal entries found matching the search criteria.",
-    "empty_state": "No daily journal entries found yet.",
-    "help_title": "Daily Journal Guide",
-    "help_desc": "The Daily Journal is the official log where you chronologically archive daily field activities, working personnel counts, and weather conditions.",
-    "help_h1": "1. Weather Integration",
-    "help_p1": "When the location is specified on the Project page, the system automatically fetches the weather and temperature via OpenWeather API.",
-    "help_h2": "2. Auto Worker Calculation",
-    "help_p2": "The total worker count active on that date is automatically calculated from timesheets and reflected on the form.",
-    "help_h3": "3. Edit Lock Policy",
-    "help_p3": "To maintain historical data integrity, daily journals can only be edited on the day they are created. Older entries are locked.",
+    "weather_loading": "Leser fra skyer...",
+    "weather_no_location": "Kunne ikke hente vær siden stedets plassering ikke er spesifisert.",
+    "worker_count_badge": "Arbeidere",
+    "no_results": "Ingen journalposter funnet som samsvarer med søkekriteriene.",
+    "empty_state": "Ingen daglige journaloppføringer funnet ennå.",
+    "help_title": "Dagsbokguide",
+    "help_desc": "The Daily Journal er den offisielle loggen der du kronologisk arkiverer daglige feltaktiviteter, antall arbeidere og værforhold.",
+    "help_h1": "1. Værintegrasjon",
+    "help_p1": "Når plasseringen er spesifisert på prosjektsiden, henter systemet automatisk været og temperaturen via OpenWeather API.",
+    "help_h2": "2. Bilarbeiderberegning",
+    "help_p2": "Det totale antallet arbeidere som er aktive på den datoen, beregnes automatisk fra timelister og reflekteres på skjemaet.",
+    "help_h3": "3. Rediger låsepolicy",
+    "help_p3": "For å opprettholde historisk dataintegritet kan daglige journaler bare redigeres den dagen de opprettes. Eldre oppføringer er låst.",
     "delete_title": "Slett journal",
     "delete_confirm": "Er du sikker på at du vil slette denne daglige journalposten? Denne handlingen kan ikke angres.",
     "weatherDesc": "Værbeskrivelse",
@@ -600,57 +601,57 @@
     "material_type_ph": "f.eks. C30 Ferdigbetong",
     "receipt_no": "Følgeseddel / Kvitteringsnummer",
     "document_photo": "Dokumentbilde",
-    "no_results": "No delivery notes found matching the search criteria.",
-    "empty_state": "No delivery notes found yet.",
+    "no_results": "Ingen følgesedler funnet som samsvarer med søkekriteriene.",
+    "empty_state": "Ingen følgesedler funnet ennå.",
     "photo": "Bilde",
-    "view_photo": "View",
-    "no_photo": "None",
+    "view_photo": "Utsikt",
+    "no_photo": "Ingen",
     "upload_mobile_title": "Last Opp Bilde fra Mobil",
     "upload_mobile_desc": "Koble mobilen til **samme WiFi-nettverk** og skann QR-koden:",
     "delete_title": "Slett dokument",
     "delete_confirm": "Er du sikker på at du vil slette denne følgeseddelen? Denne handlingen kan ikke angres.",
-    "help_title": "Delivery Note Guide",
-    "help_desc": "Delivery Note module is used to log incoming construction materials and upload delivery documents.",
-    "help_h1": "1. Supplier & Material Type",
-    "help_p1": "Log supplier names, material types, units, quantities, and receipt/delivery note numbers.",
-    "help_h2": "2. Document Photos",
-    "help_p2": "Upload scanned documents or photos from PC or use mobile QR code to build a digital archive.",
-    "help_h3": "3. Smart Search",
-    "help_p3": "Search instantly through material descriptions, supplier names, or delivery note numbers.",
-    "photo_success": "Photo successfully received from mobile device!",
-    "photo_error": "Failed to save photo:",
-    "photo_upload_error": "Error processing photo:",
-    "lan_error": "Local server could not be started:",
+    "help_title": "Følgeseddelguide",
+    "help_desc": "Følgeseddelmodul brukes til å logge innkommende byggematerialer og laste opp leveringsdokumenter.",
+    "help_h1": "1. Leverandør og materialtype",
+    "help_p1": "Logg leverandørnavn, materialtyper, enheter, mengder og kvitterings-/følgeseddelnummer.",
+    "help_h2": "2. Dokumentbilder",
+    "help_p2": "Last opp skannede dokumenter eller bilder fra PC eller bruk mobil QR-kode for å bygge et digitalt arkiv.",
+    "help_h3": "3. Smart søk",
+    "help_p3": "Søk umiddelbart gjennom materialbeskrivelser, leverandørnavn eller følgeseddelnummer.",
+    "photo_success": "Bildet er mottatt fra mobilenheten!",
+    "photo_error": "Kunne ikke lagre bildet:",
+    "photo_upload_error": "Feil ved behandling av bildet:",
+    "lan_error": "Lokal server kunne ikke startes:",
     "qr_link": "Lenke:"
   },
   "production": {
     "title": "📐 Mengdeberegning & Produksjonssporing",
     "item_name": "Produksjonspost",
     "item_name_ph": "f.eks. Muring av mursteinsvegg",
-    "no_results": "No production records found matching the search criteria.",
-    "empty_state": "No production entries recorded for this construction site yet.",
+    "no_results": "Ingen produksjonsposter funnet som samsvarer med søkekriteriene.",
+    "empty_state": "Ingen produksjonsoppføringer registrert for denne byggeplassen ennå.",
     "delete_title": "Slett post",
     "delete_confirm": "Er du sikker på at du vil slette denne produksjonsposten? Denne handlingen kan ikke angres.",
-    "help_title": "Quantity Survey Guide",
-    "help_desc": "Quantity Survey module is used to track construction items, units, and progress.",
-    "help_h1": "1. Production Item Records",
-    "help_p1": "Log daily or weekly production items, specifying their units (m², m³, kg, etc.) and quantities.",
-    "help_h2": "2. Archive & Details",
-    "help_p2": "Write notes for each entry to keep a chronological archive of progress in different blocks.",
-    "help_h3": "3. Search & Filters",
-    "help_p3": "Search through item names or notes, and filter them by date range or unit type."
+    "help_title": "Veiledning for kvantumsundersøkelse",
+    "help_desc": "Quantity Survey-modulen brukes til å spore byggevarer, enheter og fremdrift.",
+    "help_h1": "1. Produksjonsposter",
+    "help_p1": "Logg daglige eller ukentlige produksjonsartikler, spesifiser deres enheter (m², m³, kg, etc.) og mengder.",
+    "help_h2": "2. Arkiv og detaljer",
+    "help_p2": "Skriv notater for hver oppføring for å holde et kronologisk arkiv over fremdriften i forskjellige blokker.",
+    "help_h3": "3. Søk og filtre",
+    "help_p3": "Søk gjennom elementnavn eller notater, og filtrer dem etter datoperiode eller enhetstype."
   },
   "anomalies": {
-    "no_anomaly_title": "No System Anomalies",
-    "no_anomaly_desc": "All financial balances and HSE certificates are up-to-date.",
+    "no_anomaly_title": "Ingen systemavvik",
+    "no_anomaly_desc": "Alle økonomiske saldoer og HMS-sertifikater er oppdatert.",
     "financial_warnings_title": "Finansielle advarsler",
     "hse_expired_title": "Utløpte HMS-sertifikater",
     "hse_expired_badge": "UTLØPT!",
     "hse_expiring_title": "HMS-sertifikater som utløper",
     "days_left": "dager igjen",
     "more_people": "og {{count}} flere personer...",
-    "no_results": "No results found.",
-    "search_no_results": "No results matching the search criteria were found."
+    "no_results": "Ingen resultater funnet.",
+    "search_no_results": "Ingen resultater som samsvarer med søkekriteriene ble funnet."
   },
   "settings.regionalSettings": "Regional Format Settings",
   "settings.customCurrency": "Currency Override",
@@ -707,63 +708,63 @@
   "sidebar.spotlight": "Spotlight: Ctrl + K",
   "settings.parameters": "Parameters",
   "workers": {
-    "help_title": "Personnel Management Guide",
-    "help_desc": "The Personnel Management panel allows you to track timesheets, earnings, advances, and payment details of your workers.",
-    "help_h1": "1. Add Workers & Excel",
-    "help_p1": "Add individual workers using the top right button or import a batch list by downloading the Excel template.",
-    "help_h2": "2. Group Analysis",
-    "help_p2": "Analyze expenses and worker counts by group category (e.g., Electricians, Ironworkers).",
-    "help_h3": "3. Scorecards & Statements",
-    "help_p3": "Click any worker's name to view their timesheets, calculate new balances, and export detailed PDF statements."
+    "help_title": "Personalledelsesveiledning",
+    "help_desc": "Personaladministrasjonspanelet lar deg spore timelister, inntekter, forskudd og betalingsdetaljer for arbeiderne dine.",
+    "help_h1": "1. Legg til Workers & Excel",
+    "help_p1": "Legg til individuelle arbeidere ved å bruke knappen øverst til høyre eller importer en batchliste ved å laste ned Excel-malen.",
+    "help_h2": "2. Gruppeanalyse",
+    "help_p2": "Analyser utgifter og antall arbeidere etter gruppekategori (f.eks. elektrikere, jernarbeidere).",
+    "help_h3": "3. Scorekort og uttalelser",
+    "help_p3": "Klikk på hvilken som helst arbeiders navn for å se timelistene deres, beregne nye saldoer og eksportere detaljerte PDF-utskrifter."
   },
   "guides": {
     "site": {
-      "title": "Site Management Guide",
+      "title": "Veiledning for byggeplassadministrasjon",
       "step1": {
-        "title": "1. Aktivt arbeidsområde",
-        "desc": "Velg et prosjekt som skal settes som aktivt."
+        "title": "1. Aktiv byggeplass",
+        "desc": "Velg et prosjekt som skal angis som aktivt."
       },
       "step2": {
-        "title": "2. Plassering og vær",
-        "desc": "Angi et sted for automatisk å hente daglig vær."
+        "title": "2. Beliggenhet og vær",
+        "desc": "Angi et sted for automatisk å motta daglig værmelding."
       },
       "step3": {
-        "title": "3. Søk og paginering",
-        "desc": "Søk øyeblikkelig mellom byggeplasser."
+        "title": "3. Søk og personsøking",
+        "desc": "Søk umiddelbart på tvers av byggeplasser."
       }
     },
     "personnel": {
-      "title": "Personalguide",
+      "title": "Personalledelsesveiledning",
       "step1": {
         "title": "1. Legg til Staff og Excel",
         "desc": "Bruk Excel-malen til å masseopplasting av en liste."
       },
       "step2": {
         "title": "2. Gruppeanalyse",
-        "desc": "Analyser kostnader etter gruppekategori."
+        "desc": "Analyser utgifter etter gruppekategori."
       },
       "step3": {
-        "title": "3. Målekort og uttalelser",
-        "desc": "Klikk på navnet for å se resultattavlen."
+        "title": "3. Målkort og kontoutskrift",
+        "desc": "Klikk på navnet for å se partituret."
       },
       "step4": {
         "title": "4. Tillatelsesbehandling",
-        "desc": "Registrer dagene da personellet er unnskyldt eller sykemeldt."
+        "desc": "Registrer dagene da personalet er sykemeldt eller i permisjon."
       }
     },
     "quantity": {
       "title": "Produksjonsguide",
       "step1": {
-        "title": "1. Poster",
-        "desc": "Poster."
+        "title": "1. Produksjonsrekord",
+        "desc": "Rekord daglig produksjon."
       },
       "step2": {
-        "title": "2. Arkiv",
-        "desc": "Arkiv."
+        "title": "2. Arkiv og detaljer",
+        "desc": "Skriv notater for å holde et kronologisk arkiv."
       },
       "step3": {
-        "title": "3. Søk",
-        "desc": "Filtre."
+        "title": "3. Søk og filtre",
+        "desc": "Filtrer etter datoperiode eller enhet."
       }
     },
     "delivery": {
@@ -799,76 +800,76 @@
     "quality": {
       "title": "Kvalitetsguide",
       "step1": {
-        "title": "1. Rapportstatus",
-        "desc": "Oppdater når løst."
+        "title": "1. Rapportstatuser",
+        "desc": "Oppdater statusen når problemet er løst."
       },
       "step2": {
-        "title": "2. Visuelt bevis",
-        "desc": "Legg til bilder."
+        "title": "2. Visuelle bevis",
+        "desc": "Inkluder bilder av eventuelle problemer som er oppdaget."
       },
       "step3": {
         "title": "3. Filtrering",
-        "desc": "Filtrer åpne problemer."
+        "desc": "Filter for å holde styr på åpne problemer."
       }
     },
     "subcontractor": {
-      "title": "Underleverandør Guide",
+      "title": "Underleverandørveiledning",
       "step1": {
-        "title": "1. Dagslønn",
-        "desc": "Spor dagslønninger."
+        "title": "1. Daglønn",
+        "desc": "Hold oversikt over underleverandørers dagslønn."
       },
       "step2": {
         "title": "2. Søk og filtrer",
-        "desc": "Søk i listen."
+        "desc": "Søk i underleverandørlisten."
       },
       "step3": {
-        "title": "3. Oppdater",
-        "desc": "Oppdater når som helst."
+        "title": "3. Oppdater og rediger",
+        "desc": "Oppdater daglige journaler når som helst."
       }
     },
     "media": {
       "title": "Medieguide",
       "step1": {
         "title": "1. Visuell tidslinje",
-        "desc": "Undersøk bilder kronologisk."
+        "desc": "Undersøk byggeplassbilder kronologisk."
       },
       "step2": {
         "title": "2. Raske detaljer",
-        "desc": "Klikk på et foto for å se i full størrelse."
+        "desc": "Klikk på et bilde for å se full størrelse."
       },
       "step3": {
         "title": "3. Kategorifiltre",
-        "desc": "Filtrer etter pakkseddel eller kvalitetsrapporter."
+        "desc": "Filtrer etter følgeseddel eller kvalitetsrapporter."
       }
     },
     "cash": {
-      "title": "Guide for kontanthåndtering",
+      "title": "Vault Management Guide",
       "step1": {
-        "title": "1. Inntekter/utgifter",
+        "title": "1. Inntekts-/utgiftsposter",
         "desc": "Registrer inntekter og utgifter."
       },
       "step2": {
-        "title": "2. Månedlig økonomisk status",
-        "desc": "Se månedlig kontantstrøm og saldo."
+        "title": "2. Månedlig økonomisk situasjon",
+        "desc": "Se månedlig kontantstrøm og balanse."
       },
       "step3": {
-        "title": "3. Eksport",
+        "title": "3. Eksporter",
         "desc": "Last ned transaksjoner som PDF eller Excel."
       }
     },
     "recycle": {
-      "title": "Recycle Bin Guide",
+      "title": "Søppelguide",
       "step1": {
-        "title": "How it Works?",
-        "desc": "Deleted records are soft-deleted and listed here."
+        "title": "Hvordan fungerer det?",
+        "desc": "Slettede poster er oppført her med myk sletting."
       },
       "step2": {
-        "title": "Restoring Data",
-        "desc": "Use the restore button to recover records."
+        "title": "Datagjenoppretting",
+        "desc": "Bruk gjenopprettingsknappen for å gjenopprette postene."
       },
       "step3": {
-        "title": "Project Separation",
-        "desc": "Filter your recycle bin by project."
+        "title": "Prosjektseparasjon",
+        "desc": "Filtrer søppelet ditt etter prosjekter."
       }
     },
     "production": {
@@ -900,42 +901,77 @@
     "id_tc": "ID/Personnummer"
   },
   "recycle": {
-    "desc": "List deleted records here and restore them back to their original places.",
-    "search": "Search...",
-    "allRecords": "All Records",
-    "allRecordTypes": "All Record Types",
-    "allProjects": "All Projects",
-    "startDate": "Start Date",
-    "endDate": "End Date",
+    "desc": "List opp slettede poster her og gjenopprett dem tilbake til de opprinnelige stedene.",
+    "search": "Søk...",
+    "allRecords": "Alle poster",
+    "allRecordTypes": "Alle posttyper",
+    "allProjects": "Alle prosjekter",
+    "startDate": "Startdato",
+    "endDate": "Sluttdato",
     "tableRecordType": "Record Type",
     "tableProject": "Prosjekt / Nettsted",
-    "tableContent": "Content / Title",
-    "tableDeletedAt": "Deleted At",
-    "tableAction": "Action",
-    "title": "Recycle Bin",
+    "tableContent": "Innhold / Tittel",
+    "tableDeletedAt": "Slettet kl",
+    "tableAction": "Handling",
+    "title": "Papirkurv",
     "guide": {
-      "title": "Recycle Bin Guide",
-      "intro": "Deleted records are soft-deleted and listed here."
+      "title": "Papirkurvguide",
+      "intro": "Slettede poster blir mykt slettet og listet opp her.",
+      "how_it_works_title": "Hvordan fungerer det?",
+      "how_it_works_desc": "Når du sletter en post i systemet, slettes den ikke permanent. I stedet blir den myk-slettet og oppført i denne papirkurven.",
+      "restore_title": "Gjenopprette data:",
+      "restore_desc": "Klikk på \"Gjenopprett\"-knappen for å gjenopprette posten på sekunder. Gjenopprettede gjenstander forblir i papirkurven som skrivebeskyttede/passive poster for sporbarhet.",
+      "project_isolation_title": "Prosjektseparasjon:",
+      "project_isolation_desc": "Hver post viser prosjektet den tilhører. Bruk prosjektfilteret øverst for å holde søppelbøtta organisert.",
+      "date_filter_title": "Datofiltre og søk:",
+      "date_filter_desc": "Du kan søke etter og filtrere slettede poster etter slettedato, type eller tittel."
     },
-    "allRecordsOption": "All Records",
-    "onlyDeleted": "Only Deleted",
-    "onlyRestored": "Only Restored",
-    "allRecordTypesOption": "All Record Types",
+    "allRecordsOption": "Alle poster",
+    "onlyDeleted": "Kun slettet",
+    "onlyRestored": "Kun restaurert",
+    "allRecordTypesOption": "Alle posttyper",
     "type": {
-      "personnel": "Personnel Record",
-      "cash": "Cash Transaction",
-      "delivery": "Delivery Note / Material",
-      "journal": "Daily Journal",
-      "quality": "Quality Control Report",
-      "subcontractor": "Subcontractor Ledger",
-      "project": "Project Record",
+      "personnel": "Personaljournal",
+      "cash": "Kontanttransaksjon",
+      "delivery": "Følgeseddel / Materiale",
+      "journal": "Dagsbok",
+      "quality": "Kvalitetskontrollrapport",
+      "subcontractor": "Underleverandørreskontro",
+      "project": "Prosjektrekord",
       "worker_leaves": "Permisjon for personell"
     },
-    "allProjectsOption": "All Projects",
+    "allProjectsOption": "Alle prosjekter",
     "restore_confirm_title": "Bekreft Gjenoppretting",
     "restore_confirm_msg": "Er du sikker på at du vil gjenopprette denne posten? Den vil bli flyttet tilbake til sin opprinnelige plassering.",
     "restore_error": "Gjenopprettingsfeil:",
-    "leave_title": "{{type}} Gå ({{start}} - {{end}})"
+    "leave_title": "{{type}} Gå ({{start}} - {{end}})",
+    "content": "Innhold / Tittel",
+    "deletedAt": "Slettet kl",
+    "emptyState": "Ingen slettede poster funnet.",
+    "itemType": {
+      "worker": "Personaljournal",
+      "transaction": "Kontanttransaksjon",
+      "material": "Følgeseddel / Materiale",
+      "journal": "Dagsbok",
+      "quality": "Kvalitetskontrollrapport",
+      "subcontractor": "Underleverandører Ledger Record",
+      "project": "Prosjektrekord"
+    },
+    "searchPlaceholder": "Søk...",
+    "searchAll": "Søk overalt",
+    "allTypes": "Alle posttyper",
+    "hideRestored": "Skjul gjenopprettet",
+    "showRestored": "Vis gjenopprettet",
+    "project": "Prosjekt / nettsted",
+    "deletedProjectShort": "Slettet",
+    "restoreStatus": {
+      "all": "Alle poster",
+      "onlyDeleted": "Kun slettet",
+      "onlyRestored": "Kun restaurert"
+    },
+    "startDateLabel": "Startdato",
+    "endDateLabel": "Sluttdato",
+    "dateOrderError": "Startdatoen kan ikke være etter sluttdatoen."
   },
   "global": {
     "spotlight": "Spotlight: Ctrl + K",
@@ -952,7 +988,7 @@
   },
   "sidebar": {
     "recycleBin": "Papirkurv",
-    "spotlight": "Spotlight"
+    "spotlight": "Søkelys"
   },
   "anomaly": {
     "noAnomalies": "Ingen systemavvik",
@@ -1037,7 +1073,7 @@
   "sidebar_spotlight": "Spotlight: Ctrl + K",
   "multiplier": "Multiplikator",
   "settings_logs": {
-    "error_read": "Failed to read logs:"
+    "error_read": "Kunne ikke lese logger:"
   },
   "recycle_type_worker_leaves": "Permisjon for personell",
   "leave_type": {
