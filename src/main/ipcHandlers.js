@@ -174,6 +174,10 @@ async function setupHandlers() {
       const standard_hours = Number(settingsMap['standard_daily_hours']) || 8;
       const overtime_multiplier = Number(settingsMap['overtime_multiplier']) || 1.5;
 
+      if (standard_hours <= 0) {
+        return { success: false, message: 'Çalışma saati 0 veya daha küçük olamaz.' };
+      }
+
       const wage = calculateWage({
         daily_wage,
         multiplier,
@@ -575,11 +579,39 @@ async function setupHandlers() {
         ? path.join(__dirname, '../../database.sqlite')
         : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 
+      // Verify new backup integrity BEFORE touching current DB
+      const sqlite3 = require('sqlite3');
+      const checkDB = new Promise((resolve) => {
+        const tempDb = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY, (err) => {
+          if (err) return resolve(false);
+          tempDb.get('PRAGMA integrity_check', (err, row) => {
+            tempDb.close();
+            if (err || row.integrity_check !== 'ok') resolve(false);
+            else resolve(true);
+          });
+        });
+      });
+
+      const isValid = await checkDB;
+      if (!isValid) {
+        return { success: false, message: 'RESTORE_CORRUPTED' };
+      }
+
+      // Snapshot the current database
+      const backupPath = path.join(path.dirname(dbPath), `backup_before_restore_${Date.now()}.sqlite`);
+      fs.copyFileSync(dbPath, backupPath);
+
       if (db && typeof db.close === 'function') {
         await db.close();
       }
       
-      fs.copyFileSync(filePath, dbPath);
+      try {
+        fs.copyFileSync(filePath, dbPath);
+      } catch (copyErr) {
+        // Rollback
+        fs.copyFileSync(backupPath, dbPath);
+        return { success: false, message: 'RESTORE_CORRUPTED' };
+      }
 
       app.relaunch();
       app.exit(0);

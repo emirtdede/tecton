@@ -166,7 +166,9 @@
         "p4_title": "Konflikty urlopowe:",
         "p4_desc": "System ostrzeże Cię, jeśli wprowadzisz kartę pracy w dni urlopu."
       }
-    }
+    },
+    "hours_zero_error": "Godziny pracy nie mogą wynosić 0 lub mniej.",
+    "restore_corrupted_error": "Przywracanie nie powiodło się, plik jest uszkodzony lub nieprawidłowy. Przywrócono poprzednią bazę danych ze względów bezpieczeństwa."
   },
   "dashboard": {
     "title": "Zarządzanie personelem",

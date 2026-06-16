@@ -166,7 +166,9 @@
         "p4_title": "Permisjonskonflikter:",
         "p4_desc": "Systemet vil advare deg hvis du oppgir en timeliste for feriedager."
       }
-    }
+    },
+    "hours_zero_error": "Arbeidstimer kan ikke være 0 eller mindre.",
+    "restore_corrupted_error": "Gjenoppretting mislyktes, filen er skadet eller ugyldig. Tilbakestilt til forrige database av sikkerhetshensyn."
   },
   "dashboard": {
     "title": "Personaladministrasjon",

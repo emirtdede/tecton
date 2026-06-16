@@ -166,7 +166,9 @@
         "p4_title": "Leave Conflicts:",
         "p4_desc": "The system will warn you if you enter a timesheet for days on leave."
       }
-    }
+    },
+    "hours_zero_error": "Working hours cannot be 0 or less.",
+    "restore_corrupted_error": "Restore failed, file is corrupted or invalid. Reverted to the previous database for security."
   },
   "dashboard": {
     "title": "Personnel Management",

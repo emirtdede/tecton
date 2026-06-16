@@ -166,7 +166,9 @@
         "p4_title": "Conflits de congés :",
         "p4_desc": "Le système vous avertira si vous entrez une feuille de temps pour des jours de congé."
       }
-    }
+    },
+    "hours_zero_error": "Les heures de travail ne peuvent pas être égales ou inférieures à 0.",
+    "restore_corrupted_error": "La restauration a échoué, le fichier est corrompu ou invalide. Rétablissement de la base de données précédente pour des raisons de sécurité."
   },
   "dashboard": {
     "title": "Gestion du Personnel",

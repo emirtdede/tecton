@@ -166,7 +166,9 @@
         "p4_title": "Urlaubskonflikte:",
         "p4_desc": "Das System warnt Sie, wenn Sie eine Zeiterfassung für Urlaubstage eingeben."
       }
-    }
+    },
+    "hours_zero_error": "Die Arbeitszeit darf nicht 0 oder weniger betragen.",
+    "restore_corrupted_error": "Wiederherstellung fehlgeschlagen, Datei ist beschädigt oder ungültig. Aus Sicherheitsgründen wurde die vorherige Datenbank wiederhergestellt."
   },
   "dashboard": {
     "title": "Personalverwaltung",

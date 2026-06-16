@@ -166,7 +166,9 @@
         "p4_title": "Conflitti con le ferie:",
         "p4_desc": "Il sistema ti avviserà se inserisci un foglio presenze per i giorni di ferie."
       }
-    }
+    },
+    "hours_zero_error": "Le ore di lavoro non possono essere 0 o inferiori.",
+    "restore_corrupted_error": "Ripristino non riuscito, il file è danneggiato o non valido. Ripristinato al database precedente per motivi di sicurezza."
   },
   "dashboard": {
     "title": "Gestione del personale",

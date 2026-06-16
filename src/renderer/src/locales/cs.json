@@ -166,7 +166,9 @@
         "p4_title": "Konflikty s dovolenou:",
         "p4_desc": "Systém vás upozorní, pokud zadáte výkaz práce pro dny dovolené."
       }
-    }
+    },
+    "hours_zero_error": "Pracovní doba nemůže být 0 nebo méně.",
+    "restore_corrupted_error": "Obnovení se nezdařilo, soubor je poškozen nebo neplatný. Z bezpečnostních důvodů byla obnovena předchozí databáze."
   },
   "dashboard": {
     "title": "Správa personálu",

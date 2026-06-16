@@ -166,7 +166,9 @@
         "p4_title": "Conflictos de licencia:",
         "p4_desc": "El sistema le advertirá si ingresa una hoja de horas para días de licencia."
       }
-    }
+    },
+    "hours_zero_error": "Las horas de trabajo no pueden ser 0 o menos.",
+    "restore_corrupted_error": "La restauración falló, el archivo está dañado o no es válido. Se volvió a la base de datos anterior por seguridad."
   },
   "dashboard": {
     "title": "Gestión de Personal",

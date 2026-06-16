@@ -450,6 +450,26 @@ async function getDB() {
     await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Pazar Mesaisi', 2.0]);
     await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['İzinli (Ücretsiz)', 0.0]);
   }
+
+  // Auto-Cleanup 30 days old deleted records
+  try {
+    const oldRecords = await db.all("SELECT id, table_name, record_id FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days') AND is_restored = 0");
+    for (const r of oldRecords) {
+      try {
+        await db.run(`DELETE FROM ${r.table_name} WHERE id = ? AND is_deleted = 1`, [r.record_id]);
+      } catch (e) {
+        console.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
+      }
+    }
+    await db.run("DELETE FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days')");
+    
+    if (oldRecords.length > 0) {
+      await db.run('VACUUM');
+    }
+  } catch (err) {
+    console.error('Auto cleanup error:', err);
+  }
+
   return db;
 }
 

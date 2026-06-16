@@ -166,7 +166,9 @@
         "p4_title": "Ledighetskonflikter:",
         "p4_desc": "Systemet varnar dig om du anger en tidrapport för lediga dagar."
       }
-    }
+    },
+    "hours_zero_error": "Arbetstimmarna kan inte vara 0 eller mindre.",
+    "restore_corrupted_error": "Återställningen misslyckades, filen är skadad eller ogiltig. Återgick till den tidigare databasen av säkerhetsskäl."
   },
   "dashboard": {
     "title": "Personalhantering",

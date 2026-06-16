@@ -58,6 +58,7 @@
 - [x] Çoklu Dışa Aktarım (Multi-Format Export) tamamlandı.
 - [x] Tam Yedekleme (Full Backup) tamamlandı.
 - [x] Gruplama Mimarisi tamamlandı.
+- [x] Taşeron Profili (Subcontractor Profile) ve Hak Ediş İşlemleri tamamlandı.
 - [x] Raporlama V3 tamamlandı.
 - [x] V2 Arayüzü tamamlandı.
 - [x] V1 Arayüzü tamamlandı.

@@ -166,7 +166,9 @@
         "p4_title": "Orlovskonflikter:",
         "p4_desc": "Systemet vil advare dig, hvis du indtaster en timeseddel for feriedage."
       }
-    }
+    },
+    "hours_zero_error": "Arbejdstimerne kan ikke være 0 eller mindre.",
+    "restore_corrupted_error": "Gendannelse mislykkedes, filen er beskadiget eller ugyldig. Vendte tilbage til den tidligere database af sikkerhedsmæssige årsager."
   },
   "dashboard": {
     "title": "Personalestyring",

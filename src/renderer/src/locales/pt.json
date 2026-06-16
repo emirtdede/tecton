@@ -166,7 +166,9 @@
         "p4_title": "Conflitos de Licença:",
         "p4_desc": "O sistema o avisará se você inserir uma planilha de horas para dias de licença."
       }
-    }
+    },
+    "hours_zero_error": "As horas de trabalho não podem ser 0 ou menos.",
+    "restore_corrupted_error": "A restauração falhou, o arquivo está corrompido ou inválido. Revertido para o banco de dados anterior por segurança."
   },
   "dashboard": {
     "title": "Gestão de Pessoal",

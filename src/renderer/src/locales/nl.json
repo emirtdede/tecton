@@ -166,7 +166,9 @@
         "p4_title": "Verlofconflicten:",
         "p4_desc": "Het systeem waarschuwt u als u een urenstaat invoert voor verlofdagen."
       }
-    }
+    },
+    "hours_zero_error": "De werkuren mogen niet 0 of minder zijn.",
+    "restore_corrupted_error": "Herstel mislukt, bestand is beschadigd of ongeldig. Teruggezet naar de vorige database voor de veiligheid."
   },
   "dashboard": {
     "title": "Personeelsbeheer",

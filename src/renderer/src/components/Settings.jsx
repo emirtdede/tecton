@@ -163,6 +163,11 @@ const Settings = ({ activeTab = 'genel' }) => {
 
   // Update App Settings
   const handleSettingChange = async (id, key, value) => {
+    if (key === 'standard_daily_hours' && Number(value) <= 0) {
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.hours_zero_error', 'Çalışma saati 0 veya daha küçük olamaz.'), type: 'error' } }));
+      return;
+    }
+
     if (window.api) {
       setAppSettings(prev => prev.map(s => s.id === id ? { ...s, setting_value: value } : s));
       await window.api.db.update('app_settings', id, { setting_value: value });
@@ -988,7 +993,11 @@ const Settings = ({ activeTab = 'genel' }) => {
                           onConfirm: async () => {
                             const res = await window.api.system.restoreDBFile({ filePath: file.path });
                             if (res && !res.success) {
-                              window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_error', 'Geri yükleme hatası:') + ' ' + res.message, type: 'error' } }));
+                              if (res.message === 'RESTORE_CORRUPTED') {
+                                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_corrupted_error', 'Geri yükleme başarısız, dosya bozuk veya hatalı. Güvenlik için eski veritabanına dönüldü.'), type: 'error' } }));
+                              } else {
+                                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_error', 'Geri yükleme hatası:') + ' ' + res.message, type: 'error' } }));
+                              }
                             }
                           }
                         });

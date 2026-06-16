@@ -162,7 +162,9 @@
         "p4_title": "İzin Çakışmaları:",
         "p4_desc": "İzinli günlere puantaj girerseniz sistem sizi uyarır."
       }
-    }
+    },
+    "hours_zero_error": "Çalışma saati 0 veya daha küçük olamaz.",
+    "restore_corrupted_error": "Geri yükleme başarısız, dosya bozuk veya hatalı. Güvenlik için eski veritabanına dönüldü."
   },
   "projects": {
     "title": "Şantiye (Lokasyon) Yönetimi",
