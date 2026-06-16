@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Płatność dla podwykonawcy",
+    "delete_title": "Usuń wpis",
+    "delete_msg": "Czy na pewno chcesz usunąć ten wpis? Jeśli jest to płatność, zostanie ona również usunięta z kasy.",
+    "total_earned": "Całkowita płatność częściowa",
+    "total_paid": "Suma zapłacona",
+    "remaining_balance": "Pozostałe saldo (Netto)",
+    "tab_earned": "Płatności częściowe",
+    "tab_payments": "Płatności / Zaliczki",
+    "desc_earned_ph": "Np.: 3 dni pracy koparki",
+    "add_earned": "Dodaj płatność częściową",
+    "desc_payment_ph": "Np.: Zaliczka gotówkowa / Przelew bankowy",
+    "add_payment": "Dodaj płatność",
+    "no_records": "Brak wpisów w tym zakresie dat.",
+    "earned_badge": "Zarobione",
+    "payment_badge": "Płatność",
+    "tab_report": "Raport (Wyciąg z konta)",
+    "prev_balance": "Poprzednie saldo",
+    "period_earned": "Zarobki w okresie",
+    "period_paid": "Wypłacone w okresie",
+    "new_balance": "Nowe saldo",
+    "filter_all": "Wszystko",
+    "filter_earned": "Zarobione",
+    "filter_paid": "Płatność",
+    "search_placeholder": "Szukaj słowa kluczowego...",
+    "export_pdf": "Eksportuj (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Nie znaleziono zarejestrowanego numeru telefonu podwykonawcy.",
+    "whatsapp_message_template": "Szanowny/a {{name}}, twój wyciąg z konta za okres {{startDate}} - {{endDate}}:\n\n- Całkowity zarobek: {{earned}}\n- Całkowicie wypłacono: {{paid}}\n- Pozostałe saldo: {{balance}}\n\nDo twojej informacji.",
+    "statementTitle": "Wyciąg z Konta Podwykonawcy",
+    "service_type": "Rodzaj usługi"
+  },
   "nav": {
     "personnel": "Zarządzanie personelem",
     "cash": "Kasa",
@@ -95,7 +127,46 @@
     "optimize_error": "Błąd optymalizacji:",
     "cloud_folder_success": "Pomyślnie ustawiono folder kopii zapasowej cichej chmury:",
     "restore_confirm_title": "Potwierdzenie przywrócenia",
-    "restore_error": "Błąd przywracania:"
+    "restore_error": "Błąd przywracania:",
+    "finance_guide": {
+      "title": "Przewodnik finansowy i obliczeniowy",
+      "intro": "Poniżej szczegółowo wyjaśniam, do czego służą te kluczowe koncepcje w systemie Dziennika Elektronicznego, który zarządza pamięcią finansową Twojego placu budowy, oraz jak są one obliczane w tle:",
+      "section1": {
+        "title": "1. Czym są parametry i do czego służą?",
+        "p1_title": "Standardowe dzienne godziny pracy:",
+        "p1_desc": "Normalny czas pracy pracownika w ciągu dnia. System dzieli stawkę dzienną personelu przez tę wartość podczas obliczania stawki godzinowej.",
+        "p2_title": "Mnożnik godzinowej stawki za nadgodziny:",
+        "p2_desc": "Określa współczynnik, przez który zostanie pomnożona standardowa stawka godzinowa w przypadku nadgodzin. Standardowy współczynnik w prawie pracy wynosi zazwyczaj 1,5."
+      },
+      "section2": {
+        "title": "2. Typy pracy i mnożniki",
+        "p1_title": "Typ pracy:",
+        "p1_desc": "Sposób obecności personelu na placu budowy w danym dniu.",
+        "p2_title": "Mnożnik (Współczynnik):",
+        "p2_desc": "Wskaźnik, w jakim wybrany typ pracy wpływa na stawkę dzienną (np. Cały dzień x1.0, Pół dnia x0.5, Nadgodziny niedzielne x1.5 lub x2.0)."
+      },
+      "section3": {
+        "title": "3. Karta ewidencji czasu pracy i formuła obliczeniowa",
+        "p1_title": "Karta pracy:",
+        "p1_desc": "Cyfrowy wykres rejestrujący dni i nadgodziny faktycznie przepracowane przez pracowników.",
+        "f_total": "Całkowite zarobki = Zarobki podstawowe + Wynagrodzenie za nadgodziny",
+        "f_base": "Zarobki podstawowe = Stawka dzienna * Mnożnik typu pracy",
+        "f_hourly": "Stawka godzinowa = Stawka dzienna / Standardowe godziny pracy",
+        "f_overtime": "Wynagrodzenie za nadgodziny = Stawka godzinowa * Mnożnik nadgodzin * Liczba nadgodzin",
+        "example": "Przykład: Płaca 2 000, Cały dzień (x1), 2h nadgodzin (x1.5), Std godzin (8). Wynik: 2 000 (Baza) + 750 (Nadgodziny) = 2 750."
+      },
+      "section4": {
+        "title": "4. Zasady poprawnego wprowadzania danych",
+        "p1_title": "Definicja płacy:",
+        "p1_desc": "Wprowadź dzienną stawkę netto i brutto.",
+        "p2_title": "Wybór typu pracy:",
+        "p2_desc": "Wybierz poprawny status dla danego dnia.",
+        "p3_title": "Wprowadzanie nadgodzin:",
+        "p3_desc": "NIE wprowadzaj normalnych godzin pracy w polu \"Nadgodziny\"; wprowadzaj tylko dodatkowe godziny pracy wykonane poza standardowym wymiarem.",
+        "p4_title": "Konflikty urlopowe:",
+        "p4_desc": "System ostrzeże Cię, jeśli wprowadzisz kartę pracy w dni urlopu."
+      }
+    }
   },
   "dashboard": {
     "title": "Zarządzanie personelem",
@@ -333,7 +404,11 @@
     "next_short": "Następny",
     "yes": "Tak",
     "no": "NIE",
-    "error": "Błąd"
+    "error": "Błąd",
+    "details": "Szczegóły",
+    "start_date": "Data początkowa",
+    "end_date": "Data końcowa",
+    "amount": "Kwota"
   },
   "worker_modal": {
     "title_new": "Dodaj",
@@ -886,6 +961,21 @@
         "desc": "Filtruj według zakresu dat lub jednostki."
       },
       "title": "Przewodnik po produkcji"
+    },
+    "subcontractor_profile": {
+      "title": "Przewodnik po wyciągu podwykonawcy",
+      "step1": {
+        "title": "1. Dodawanie płatności za postępy",
+        "desc": "Wprowadź tutaj prace wykonane przez podwykonawcę na placu budowy oraz ich kwoty. Zwiększa to należności podwykonawcy (dług firmy), ale nie powoduje wypływu gotówki z kasy."
+      },
+      "step2": {
+        "title": "2. Płatności zintegrowane z kasą",
+        "desc": "Zarejestruj tutaj płatności gotówkowe i zaliczki wypłacone podwykonawcy. Zmniejsza to saldo podwykonawcy i automatycznie tworzy wypływ gotówki w Kasie."
+      },
+      "step3": {
+        "title": "3. Saldo netto konta",
+        "desc": "Pokazuje aktualny dług netto wobec podwykonawcy, obliczony poprzez odjęcie dokonanych płatności od sumy uzyskanych płatności za postępy."
+      }
     }
   },
   "worker": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "Pracownik (Imię/Nazwisko - Podpis)",
-    "signatureCompany": "Przedstawiciel firmy (Pieczątka/Podpis)"
+    "signatureCompany": "Przedstawiciel firmy (Pieczątka/Podpis)",
+    "signatureSubcontractor": "Podwykonawca (Pieczęć/Podpis)"
   },
   "global.searchPlaceholder": "Szukaj...",
   "recycle.filterAllRecords": "Wszystkie rekordy",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "Zaliczka",
   "recycle.tableProject": "Projekt / Witryna",
   "worker.group": "Grupa",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Projekt / Witryna",
   "recycle_th_type": "Typ Rekordu",
   "recycle_th_project": "Projekt / Witryna",

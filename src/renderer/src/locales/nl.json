@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Betaling onderaannemer",
+    "delete_title": "Record verwijderen",
+    "delete_msg": "Weet u zeker dat u dit record wilt verwijderen? Als het een betaling is, wordt deze ook uit de kassa verwijderd.",
+    "total_earned": "Totale voortgangsbetaling",
+    "total_paid": "Totaal betaald",
+    "remaining_balance": "Resterend saldo (Netto)",
+    "tab_earned": "Voortgangsbetalingen",
+    "tab_payments": "Betalingen / Voorschotten",
+    "desc_earned_ph": "Bijv: 3 dagen graafwerkzaamheden",
+    "add_earned": "Voortgangsbetaling toevoegen",
+    "desc_payment_ph": "Bijv: Contant voorschot / Bankoverschrijving",
+    "add_payment": "Betaling toevoegen",
+    "no_records": "Geen records gevonden in dit datumbereik.",
+    "earned_badge": "Verdiend",
+    "payment_badge": "Betaling",
+    "tab_report": "Rapport (Rekeningoverzicht)",
+    "prev_balance": "Vorig saldo",
+    "period_earned": "Inkomsten over periode",
+    "period_paid": "Betaald in periode",
+    "new_balance": "Nieuw saldo",
+    "filter_all": "Alles",
+    "filter_earned": "Verdiend",
+    "filter_paid": "Betaling",
+    "search_placeholder": "Zoek trefwoord...",
+    "export_pdf": "Exporteren (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Geregistreerd telefoonnummer van onderaannemer niet gevonden.",
+    "whatsapp_message_template": "Beste {{name}}, uw rekeningoverzicht tussen {{startDate}} - {{endDate}}:\n\n- Totaal verdiend: {{earned}}\n- Totaal betaald: {{paid}}\n- Resterend saldo: {{balance}}\n\nTer informatie.",
+    "statementTitle": "Rekeningoverzicht Onderaannemer",
+    "service_type": "Type dienstverlening"
+  },
   "nav": {
     "personnel": "Personeelsbeheer",
     "cash": "Kassa",
@@ -95,7 +127,46 @@
     "optimize_error": "Optimalisatiefout:",
     "cloud_folder_success": "Stille cloudback-upmap succesvol ingesteld:",
     "restore_confirm_title": "Bevestiging herstellen",
-    "restore_error": "Fout herstellen:"
+    "restore_error": "Fout herstellen:",
+    "finance_guide": {
+      "title": "Financiële en Berekeningsgids",
+      "intro": "Hieronder leg ik in detail uit wat deze kritische concepten in het Elektronisch Journaalsysteem, dat het financiële geheugen van uw bouwplaats beheert, doen en hoe ze op de achtergrond worden berekend:",
+      "section1": {
+        "title": "1. Wat zijn Parameters en wat doen ze?",
+        "p1_title": "Standaard Dagelijkse Werkuren:",
+        "p1_desc": "De normale duur die een werknemer verondersteld wordt per dag te werken. Het systeem deelt het dagloon van het personeel door deze waarde bij het berekenen van het uurloon.",
+        "p2_title": "Vermenigvuldiger voor Overwerk Uurloon:",
+        "p2_desc": "Bepaalt de coëfficiënt waarmee het standaard uurloon wordt vermenigvuldigd in geval van overwerk. De standaardcoëfficiënt in het arbeidsrecht is meestal 1,5."
+      },
+      "section2": {
+        "title": "2. Werksoorten en Vermenigvuldigers",
+        "p1_title": "Werksoort:",
+        "p1_desc": "De manier waarop het personeel die dag op de bouwplaats aanwezig is.",
+        "p2_title": "Vermenigvuldiger (Coëfficiënt):",
+        "p2_desc": "De mate waarin de geselecteerde werksoort het dagloon beïnvloedt (bijv. Hele dag x1.0, Halve dag x0.5, Zondag overwerk x1.5 of x2.0)."
+      },
+      "section3": {
+        "title": "3. Urenstaat en Berekeningsformule",
+        "p1_title": "Urenstaat:",
+        "p1_desc": "De digitale grafiek die de dagen en overuren registreert die daadwerkelijk door de werknemers zijn gewerkt.",
+        "f_total": "Totale Verdiensten = Basisverdiensten + Overwerkvergoeding",
+        "f_base": "Basisverdiensten = Dagloon * Werksoort Vermenigvuldiger",
+        "f_hourly": "Uurloon = Dagloon / Standaard Werkuren",
+        "f_overtime": "Overwerkvergoeding = Uurloon * Overwerk Vermenigvuldiger * Overuren",
+        "example": "Voorbeeld: Loon 2.000, Hele dag (x1), 2u Overwerk (x1.5), Std uren (8). Resultaat: 2.000 (Basis) + 750 (Overwerk) = 2.750."
+      },
+      "section4": {
+        "title": "4. Regels voor Nauwkeurige Gegevensinvoer",
+        "p1_title": "Loondefinitie:",
+        "p1_desc": "Voer het dagelijkse netto en volledige loon in.",
+        "p2_title": "Selectie Werksoort:",
+        "p2_desc": "Selecteer de juiste status voor die dag.",
+        "p3_title": "Invoer Overuren:",
+        "p3_desc": "Voer GEEN normale werkuren in het veld \"Overuren\" in; voer alleen extra werkuren in die buiten de standaarduren vallen.",
+        "p4_title": "Verlofconflicten:",
+        "p4_desc": "Het systeem waarschuwt u als u een urenstaat invoert voor verlofdagen."
+      }
+    }
   },
   "dashboard": {
     "title": "Personeelsbeheer",
@@ -333,7 +404,11 @@
     "next_short": "Volgende",
     "yes": "Ja",
     "no": "Nee",
-    "error": "Fout"
+    "error": "Fout",
+    "details": "Details",
+    "start_date": "Startdatum",
+    "end_date": "Einddatum",
+    "amount": "Bedrag"
   },
   "worker_modal": {
     "title_new": "Toevoegen",
@@ -886,6 +961,21 @@
         "desc": "Filter op datumbereik of eenheid."
       },
       "title": "Productiegids"
+    },
+    "subcontractor_profile": {
+      "title": "Handleiding rekeningoverzicht onderaannemer",
+      "step1": {
+        "title": "1. Termijnbetalingen toevoegen",
+        "desc": "Voer hier het werk in dat door de onderaannemer op de bouwplaats is uitgevoerd en de bijbehorende bedragen. Dit verhoogt de vorderingen van de onderaannemer (schuld van het bedrijf), maar veroorzaakt geen uitgaande kasstroom uit de kassa."
+      },
+      "step2": {
+        "title": "2. Kassa-geïntegreerde betalingen",
+        "desc": "Registreer hier de contante betalingen en voorschotten die aan de onderaannemer zijn gedaan. Dit verlaagt het saldo van de onderaannemer en creëert automatisch een uitgaande kasstroom in de Kassa."
+      },
+      "step3": {
+        "title": "3. Netto rekeningsaldo",
+        "desc": "Toont uw huidige nettoschuld aan de onderaannemer, berekend door de uitgevoerde betalingen af te trekken van de in totaal verdiende termijnbetalingen."
+      }
     }
   },
   "worker": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "Personeel (Naam/Handtekening)",
-    "signatureCompany": "Bedrijfsvertegenwoordiger (Stempel/Handtekening)"
+    "signatureCompany": "Bedrijfsvertegenwoordiger (Stempel/Handtekening)",
+    "signatureSubcontractor": "Onderaannemer (Stempel/Handtekening)"
   },
   "global.searchPlaceholder": "Zoeken...",
   "recycle.filterAllRecords": "Alle records",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "Voorschot",
   "recycle.tableProject": "Project / Site",
   "worker.group": "Groep",
-  "worker.phone": "Telefoon",
   "pdf_project_site": "Project / Locatie",
   "recycle_th_type": "Recordtype",
   "recycle_th_project": "Project / Locatie",

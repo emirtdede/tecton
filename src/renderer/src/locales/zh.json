@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - 分包商付款",
+    "delete_title": "删除记录",
+    "delete_msg": "您确定要删除此记录吗？如果是付款，它也将从收银机中删除。",
+    "total_earned": "总进度款",
+    "total_paid": "已付总额",
+    "remaining_balance": "剩余余额 (净额)",
+    "tab_earned": "进度款",
+    "tab_payments": "付款 / 预付款",
+    "desc_earned_ph": "例如：3天挖掘机工作",
+    "add_earned": "添加进度款",
+    "desc_payment_ph": "例如：现金预付 / 银行转账",
+    "add_payment": "添加付款",
+    "no_records": "在此日期范围内未找到记录。",
+    "earned_badge": "应得",
+    "payment_badge": "付款",
+    "tab_report": "报告 (对账单)",
+    "prev_balance": "上期余额",
+    "period_earned": "本期应得",
+    "period_paid": "本期已付",
+    "new_balance": "新余额",
+    "filter_all": "全部",
+    "filter_earned": "应得",
+    "filter_paid": "付款",
+    "search_placeholder": "搜索关键字...",
+    "export_pdf": "导出 (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "未找到分包商的注册电话号码。",
+    "whatsapp_message_template": "尊敬的 {{name}}，您在 {{startDate}} - {{endDate}} 期间的对账单：\n\n- 总应得：{{earned}}\n- 总已付：{{paid}}\n- 剩余余额：{{balance}}\n\n仅供参考。",
+    "statementTitle": "分包商对账单",
+    "service_type": "服务类型"
+  },
   "nav": {
     "personnel": "人员管理",
     "cash": "现金管理",
@@ -95,7 +127,46 @@
     "optimize_error": "优化错误：",
     "cloud_folder_success": "静默云备份文件夹设置成功：",
     "restore_confirm_title": "恢复确认",
-    "restore_error": "恢复错误："
+    "restore_error": "恢复错误：",
+    "finance_guide": {
+      "title": "财务与计算指南",
+      "intro": "以下我将详细解释管理您建筑工地财务记忆的电子日记账系统中的这些关键概念是做什么的，以及它们在后台是如何计算的：",
+      "section1": {
+        "title": "1. 什么是参数以及它们有什么作用？",
+        "p1_title": "标准每日工作时间：",
+        "p1_desc": "工人每天应该工作的正常时间。系统在计算小时工资时，会将员工的日工资除以该值。",
+        "p2_title": "加班小时工资乘数：",
+        "p2_desc": "决定加班时标准小时工资应乘以的系数。劳动法中的标准系数通常为1.5。"
+      },
+      "section2": {
+        "title": "2. 工作类型和乘数",
+        "p1_title": "工作类型：",
+        "p1_desc": "人员当天在现场的出勤形式。",
+        "p2_title": "乘数（系数）：",
+        "p2_desc": "所选工作类型影响日工资的比率（例如：全天 x1.0，半天 x0.5，周日加班 x1.5 或 x2.0）。"
+      },
+      "section3": {
+        "title": "3. 工时表和计算公式",
+        "p1_title": "工时表：",
+        "p1_desc": "记录工人实际工作天数和加班时间的数字图表。",
+        "f_total": "总收入 = 基本收入 + 加班费",
+        "f_base": "基本收入 = 日工资 * 工作类型乘数",
+        "f_hourly": "小时工资 = 日工资 / 标准工作时间",
+        "f_overtime": "加班费 = 小时工资 * 加班乘数 * 加班时间",
+        "example": "示例：工资 2,000，全天(x1)，加班2小时(x1.5)，标准时间(8)。结果：2,000(基本) + 750(加班) = 2,750。"
+      },
+      "section4": {
+        "title": "4. 准确输入数据的规则",
+        "p1_title": "工资定义：",
+        "p1_desc": "输入每日净工资和全额工资。",
+        "p2_title": "工作类型选择：",
+        "p2_desc": "为当天选择正确的状态。",
+        "p3_title": "加班时间输入：",
+        "p3_desc": "不要在\"加班\"字段输入正常工作时间；仅输入标准时间以外执行的额外工作时间。",
+        "p4_title": "休假冲突：",
+        "p4_desc": "如果您为休假日输入工时表，系统将警告您。"
+      }
+    }
   },
   "dashboard": {
     "title": "人员管理",
@@ -333,7 +404,11 @@
     "next_short": "下一页",
     "yes": "是的",
     "no": "不",
-    "error": "错误"
+    "error": "错误",
+    "details": "详情",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "amount": "金额"
   },
   "worker_modal": {
     "title_new": "添加新人员",
@@ -886,6 +961,21 @@
         "desc": "按日期范围或单位过滤。"
       },
       "title": "生产指南"
+    },
+    "subcontractor_profile": {
+      "title": "分包商对账单指南",
+      "step1": {
+        "title": "1. 添加进度款",
+        "desc": "在此处输入分包商在现场完成的工作及其金额。这会增加分包商的应收款（公司的债务），但不会导致收银机发生现金流出。"
+      },
+      "step2": {
+        "title": "2. 收银机联动付款",
+        "desc": "在此处记录支付给分包商的现金和预付款。这会减少分包商的余额，并自动在收银机中创建现金流出记录。"
+      },
+      "step3": {
+        "title": "3. 净账户余额",
+        "desc": "显示您当前对分包商的净债务，其计算方法是从赚取的进度款总额中减去已支付的金额。"
+      }
     }
   },
   "worker": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "员工 (姓名 - 签字)",
-    "signatureCompany": "公司代表 (盖章/签字)"
+    "signatureCompany": "公司代表 (盖章/签字)",
+    "signatureSubcontractor": "分包商 (印章/签名)"
   },
   "global.searchPlaceholder": "搜索...",
   "recycle.filterAllRecords": "所有记录",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "预支",
   "recycle.tableProject": "项目 / 站点",
   "worker.group": "组",
-  "worker.phone": "电话",
   "pdf_project_site": "项目 / 站点",
   "recycle_th_type": "记录类型",
   "recycle_th_project": "项目 / 站点",

@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Subunternehmerzahlung",
+    "delete_title": "Eintrag löschen",
+    "delete_msg": "Sind Sie sicher, dass Sie diesen Eintrag löschen möchten? Wenn es sich um eine Zahlung handelt, wird sie auch aus der Kasse gelöscht.",
+    "total_earned": "Gesamte Abschlagszahlung",
+    "total_paid": "Gesamt Bezahlt",
+    "remaining_balance": "Restsaldo (Netto)",
+    "tab_earned": "Abschlagszahlungen",
+    "tab_payments": "Zahlungen / Vorschüsse",
+    "desc_earned_ph": "Z.B. 3 Tage Baggerarbeiten",
+    "add_earned": "Abschlagszahlung hinzufügen",
+    "desc_payment_ph": "Z.B. Barvorschuss / Banküberweisung",
+    "add_payment": "Zahlung hinzufügen",
+    "no_records": "In diesem Zeitraum wurden keine Aufzeichnungen gefunden.",
+    "earned_badge": "Verdienst",
+    "payment_badge": "Zahlung",
+    "tab_report": "Bericht (Auszug)",
+    "prev_balance": "Vorheriger Saldo",
+    "period_earned": "Verdienter Zeitraum",
+    "period_paid": "Bezahlter Zeitraum",
+    "new_balance": "Neuer Saldo",
+    "filter_all": "Alle",
+    "filter_earned": "Verdient",
+    "filter_paid": "Zahlung",
+    "search_placeholder": "Schlüsselwort suchen...",
+    "export_pdf": "Exportieren (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Registrierte Telefonnummer des Subunternehmers nicht gefunden.",
+    "whatsapp_message_template": "Sehr geehrte(r) {{name}}, Ihr Kontoauszug zwischen {{startDate}} - {{endDate}}:\n\n- Gesamt verdient: {{earned}}\n- Gesamt bezahlt: {{paid}}\n- Restsaldo: {{balance}}\n\nZu Ihrer Information.",
+    "statementTitle": "Subunternehmer-Kontoauszug",
+    "service_type": "Dienstleistungsart"
+  },
   "nav": {
     "personnel": "Personalverwaltung",
     "cash": "Kassenverwaltung",
@@ -95,7 +127,46 @@
     "optimize_error": "Optimierungsfehler:",
     "cloud_folder_success": "Stiller Cloud-Sicherungsordner erfolgreich festgelegt:",
     "restore_confirm_title": "Wiederherstellung bestätigen",
-    "restore_error": "Wiederherstellungsfehler:"
+    "restore_error": "Wiederherstellungsfehler:",
+    "finance_guide": {
+      "title": "Finanz- und Berechnungsleitfaden",
+      "intro": "Nachfolgend erkläre ich detailliert, was diese kritischen Konzepte im System des Elektronischen Journals, das das finanzielle Gedächtnis Ihrer Baustelle verwaltet, bewirken und wie sie im Hintergrund berechnet werden:",
+      "section1": {
+        "title": "1. Was sind Parameter und wofür sind sie gut?",
+        "p1_title": "Standard-Tagesarbeitszeit:",
+        "p1_desc": "Die normale Dauer, die ein Arbeiter an einem Tag arbeiten soll. Das System teilt den Tageslohn des Personals durch diesen Wert, wenn der Stundenlohn berechnet wird.",
+        "p2_title": "Überstunden-Stundenlohn-Multiplikator:",
+        "p2_desc": "Bestimmt den Koeffizienten, mit dem der Standard-Stundenlohn im Falle von Überstunden multipliziert wird. Der Standardkoeffizient im Arbeitsrecht beträgt in der Regel 1,5."
+      },
+      "section2": {
+        "title": "2. Arbeitstypen und Multiplikatoren",
+        "p1_title": "Arbeitstyp:",
+        "p1_desc": "Die Art und Weise, wie das Personal an diesem Tag auf der Baustelle anwesend ist.",
+        "p2_title": "Multiplikator (Koeffizient):",
+        "p2_desc": "Der Satz, mit dem der ausgewählte Arbeitstyp den Tageslohn beeinflusst (z.B. Ganzer Tag x1,0, Halber Tag x0,5, Sonntagsarbeit x1,5 oder x2,0)."
+      },
+      "section3": {
+        "title": "3. Zeiterfassung und Berechnungsformel",
+        "p1_title": "Zeiterfassung:",
+        "p1_desc": "Das digitale Diagramm, das die tatsächlich geleisteten Tage und Überstunden der Arbeiter aufzeichnet.",
+        "f_total": "Gesamtverdienst = Grundverdienst + Überstundenvergütung",
+        "f_base": "Grundverdienst = Tageslohn * Arbeitstyp-Multiplikator",
+        "f_hourly": "Stundenlohn = Tageslohn / Standard-Arbeitszeit",
+        "f_overtime": "Überstundenvergütung = Stundenlohn * Überstunden-Multiplikator * Überstunden",
+        "example": "Beispiel: Lohn 2.000, Ganzer Tag (x1), 2 Std. Überstunden (x1,5), Std.-Zeit (8). Ergebnis: 2.000 (Grund) + 750 (Überstunden) = 2.750."
+      },
+      "section4": {
+        "title": "4. Regeln für korrekte Dateneingabe",
+        "p1_title": "Lohndefinition:",
+        "p1_desc": "Geben Sie den täglichen Netto- und Vollen Lohn ein.",
+        "p2_title": "Auswahl des Arbeitstyps:",
+        "p2_desc": "Wählen Sie den richtigen Status für diesen Tag.",
+        "p3_title": "Eingabe von Überstunden:",
+        "p3_desc": "Geben Sie im Feld \"Überstunden\" NICHT die normale Arbeitszeit ein; geben Sie nur zusätzliche Arbeitsstunden ein, die außerhalb der Standardzeiten geleistet wurden.",
+        "p4_title": "Urlaubskonflikte:",
+        "p4_desc": "Das System warnt Sie, wenn Sie eine Zeiterfassung für Urlaubstage eingeben."
+      }
+    }
   },
   "dashboard": {
     "title": "Personalverwaltung",
@@ -333,7 +404,11 @@
     "next_short": "Weiter",
     "yes": "Ja",
     "no": "NEIN",
-    "error": "Fehler"
+    "error": "Fehler",
+    "details": "Details",
+    "start_date": "Startdatum",
+    "end_date": "Enddatum",
+    "amount": "Betrag"
   },
   "worker_modal": {
     "title_new": "Neues Personal hinzufügen",
@@ -886,6 +961,21 @@
         "desc": "Filtern Sie nach Datumsbereich oder Einheit."
       },
       "title": "Produktionsleitfaden"
+    },
+    "subcontractor_profile": {
+      "title": "Subunternehmer-Kontoauszug Leitfaden",
+      "step1": {
+        "title": "1. Fortschrittszahlungen hinzufügen",
+        "desc": "Geben Sie hier die vom Subunternehmer auf der Baustelle geleisteten Arbeiten und deren Beträge ein. Dies erhöht die Forderungen des Subunternehmers (Schulden des Unternehmens), führt jedoch nicht zu einem Mittelabfluss aus der Kasse."
+      },
+      "step2": {
+        "title": "2. Kassenintegrierte Zahlungen",
+        "desc": "Erfassen Sie hier die an den Subunternehmer geleisteten Barzahlungen und Vorschüsse. Dies reduziert den Saldo des Subunternehmers und erzeugt automatisch einen Mittelabfluss in der Kasse."
+      },
+      "step3": {
+        "title": "3. Netto-Kontostand",
+        "desc": "Zeigt Ihre aktuellen Nettoschulden gegenüber dem Subunternehmer an, die durch Abzug der geleisteten Zahlungen von den gesamten verdienten Fortschrittszahlungen berechnet werden."
+      }
     }
   },
   "worker": {
@@ -995,7 +1085,8 @@
   },
   "pdf": {
     "signatureWorker": "Mitarbeiter (Name/Unterschrift)",
-    "signatureCompany": "Firmenvertreter (Stempel/Unterschrift)"
+    "signatureCompany": "Firmenvertreter (Stempel/Unterschrift)",
+    "signatureSubcontractor": "Subunternehmer (Stempel/Unterschrift)"
   },
   "global.searchPlaceholder": "Suchen...",
   "recycle.filterAllRecords": "Alle Einträge",
@@ -1009,7 +1100,6 @@
   "worker.advanceBadge": "Vorschuss",
   "recycle.tableProject": "Projekt / Baustelle",
   "worker.group": "Gruppe",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Projekt / Baustelle",
   "recycle_th_type": "Datensatztyp",
   "recycle_th_project": "Projekt / Baustelle",

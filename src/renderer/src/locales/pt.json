@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Pagamento a subcontratante",
+    "delete_title": "Eliminar registo",
+    "delete_msg": "Tem a certeza que pretende eliminar este registo? Se for um pagamento, também será eliminado da caixa registadora.",
+    "total_earned": "Pagamento de progresso total",
+    "total_paid": "Total pago",
+    "remaining_balance": "Saldo remanescente (Líquido)",
+    "tab_earned": "Pagamentos de progresso",
+    "tab_payments": "Pagamentos / Adiantamentos",
+    "desc_earned_ph": "Ex: 3 dias de trabalho com escavadora",
+    "add_earned": "Adicionar pagamento de progresso",
+    "desc_payment_ph": "Ex: Adiantamento em dinheiro / Transferência bancária",
+    "add_payment": "Adicionar pagamento",
+    "no_records": "Nenhum registo encontrado neste intervalo de datas.",
+    "earned_badge": "Ganho",
+    "payment_badge": "Pagamento",
+    "tab_report": "Relatório (Extrato de Conta)",
+    "prev_balance": "Saldo anterior",
+    "period_earned": "Ganhos do período",
+    "period_paid": "Pago no período",
+    "new_balance": "Novo saldo",
+    "filter_all": "Todos",
+    "filter_earned": "Ganho",
+    "filter_paid": "Pagamento",
+    "search_placeholder": "Pesquisar palavra-chave...",
+    "export_pdf": "Exportar (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Número de telefone registrado do subcontratante não encontrado.",
+    "whatsapp_message_template": "Prezado(a) {{name}}, seu extrato de conta entre {{startDate}} - {{endDate}}:\n\n- Total ganho: {{earned}}\n- Total pago: {{paid}}\n- Saldo restante: {{balance}}\n\nPara sua informação.",
+    "statementTitle": "Extrato de Conta do Subcontratante",
+    "service_type": "Tipo de serviço"
+  },
   "nav": {
     "personnel": "Gestão de Pessoal",
     "cash": "Gestão de Caixa",
@@ -95,7 +127,46 @@
     "optimize_error": "Erro de otimização:",
     "cloud_folder_success": "Pasta de backup silencioso na nuvem definida com sucesso:",
     "restore_confirm_title": "Confirmação de restauração",
-    "restore_error": "Erro de restauração:"
+    "restore_error": "Erro de restauração:",
+    "finance_guide": {
+      "title": "Guia de Finanças e Cálculos",
+      "intro": "Detalho abaixo a função desses conceitos críticos no sistema de Diário Eletrônico, que gerencia a memória financeira de sua obra, e como eles são calculados em segundo plano:",
+      "section1": {
+        "title": "1. O que são Parâmetros e para que servem?",
+        "p1_title": "Horas de Trabalho Diárias Padrão:",
+        "p1_desc": "A duração normal que um trabalhador deve trabalhar por dia. O sistema divide o salário diário do pessoal por esse valor ao calcular o salário por hora.",
+        "p2_title": "Multiplicador de Hora Extra:",
+        "p2_desc": "Determina o coeficiente pelo qual o salário por hora padrão será multiplicado em caso de horas extras. O coeficiente padrão nas leis trabalhistas é geralmente 1,5."
+      },
+      "section2": {
+        "title": "2. Tipos de Trabalho e Multiplicadores",
+        "p1_title": "Tipo de Trabalho:",
+        "p1_desc": "A forma como o pessoal esteve presente no local naquele dia.",
+        "p2_title": "Multiplicador (Coeficiente):",
+        "p2_desc": "A taxa pela qual o tipo de trabalho selecionado afeta o salário diário (ex: Dia Inteiro x1.0, Meio Dia x0.5, Hora Extra de Domingo x1.5 ou x2.0)."
+      },
+      "section3": {
+        "title": "3. Planilha de Horas e Fórmula de Cálculo",
+        "p1_title": "Planilha de Horas:",
+        "p1_desc": "O quadro digital que registra os dias e as horas extras efetivamente trabalhadas pelos trabalhadores.",
+        "f_total": "Ganhos Totais = Ganhos Base + Pagamento de Horas Extras",
+        "f_base": "Ganhos Base = Salário Diário * Multiplicador do Tipo de Trabalho",
+        "f_hourly": "Salário por Hora = Salário Diário / Horas de Trabalho Padrão",
+        "f_overtime": "Pagamento de Horas Extras = Salário por Hora * Multiplicador de Horas Extras * Horas Extras",
+        "example": "Exemplo: Salário 2.000, Dia Inteiro (x1), 2h Extra (x1.5), Horas Padrão (8). Resultado: 2.000 (Base) + 750 (Extra) = 2.750."
+      },
+      "section4": {
+        "title": "4. Regras para Entrada de Dados Precisa",
+        "p1_title": "Definição de Salário:",
+        "p1_desc": "Insira o salário líquido e integral diário.",
+        "p2_title": "Seleção do Tipo de Trabalho:",
+        "p2_desc": "Selecione o status correto para aquele dia.",
+        "p3_title": "Entrada de Horas Extras:",
+        "p3_desc": "NÃO insira horas normais de trabalho no campo \"Horas Extras\"; insira apenas horas de trabalho adicionais realizadas fora do horário padrão.",
+        "p4_title": "Conflitos de Licença:",
+        "p4_desc": "O sistema o avisará se você inserir uma planilha de horas para dias de licença."
+      }
+    }
   },
   "dashboard": {
     "title": "Gestão de Pessoal",
@@ -333,7 +404,11 @@
     "next_short": "Próximo",
     "yes": "Sim",
     "no": "Não",
-    "error": "Erro"
+    "error": "Erro",
+    "details": "Detalhes",
+    "start_date": "Data de início",
+    "end_date": "Data de término",
+    "amount": "Valor"
   },
   "worker_modal": {
     "title_new": "Adicionar Novo Pessoal",
@@ -886,6 +961,21 @@
         "desc": "Filtre por período ou unidade."
       },
       "title": "Guia de produção"
+    },
+    "subcontractor_profile": {
+      "title": "Guia de extrato de subcontratante",
+      "step1": {
+        "title": "1. Adicionar pagamentos por progresso",
+        "desc": "Insira aqui o trabalho realizado pelo subcontratante na obra e os respetivos montantes. Isto aumenta as contas a receber do subcontratante (dívida da empresa), mas não causa uma saída de dinheiro da caixa."
+      },
+      "step2": {
+        "title": "2. Pagamentos integrados na caixa",
+        "desc": "Registe aqui os pagamentos em numerário e adiantamentos efetuados ao subcontratante. Isto reduz o saldo do subcontratante e cria automaticamente uma saída de dinheiro na Caixa."
+      },
+      "step3": {
+        "title": "3. Saldo líquido da conta",
+        "desc": "Mostra a sua dívida líquida atual para com o subcontratante, calculada subtraindo os pagamentos efetuados do total de pagamentos por progresso ganhos."
+      }
     }
   },
   "worker": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "Pessoal (Nome/Assinatura)",
-    "signatureCompany": "Representante da Empresa (Carimbo/Assinatura)"
+    "signatureCompany": "Representante da Empresa (Carimbo/Assinatura)",
+    "signatureSubcontractor": "Subcontratante (Carimbo/Assinatura)"
   },
   "global.searchPlaceholder": "Buscar...",
   "recycle.filterAllRecords": "Todos os registros",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "Adiantamento",
   "recycle.tableProject": "Projeto / Site",
   "worker.group": "Grupo",
-  "worker.phone": "Telefone",
   "pdf_project_site": "Projeto / Site",
   "recycle_th_type": "Tipo de Registro",
   "recycle_th_project": "Projeto / Site",

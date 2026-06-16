@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Betalning till underleverantör",
+    "delete_title": "Ta bort post",
+    "delete_msg": "Är du säker på att du vill ta bort den här posten? Om det är en betalning raderas den också från kassan.",
+    "total_earned": "Total avbetalning",
+    "total_paid": "Totalt betalat",
+    "remaining_balance": "Återstående saldo (Netto)",
+    "tab_earned": "Avbetalningar",
+    "tab_payments": "Betalningar / Förskott",
+    "desc_earned_ph": "T.ex: 3 dagars grävmaskinsarbete",
+    "add_earned": "Lägg till avbetalning",
+    "desc_payment_ph": "T.ex: Kontantförskott / Banköverföring",
+    "add_payment": "Lägg till betalning",
+    "no_records": "Inga poster hittades inom detta datumintervall.",
+    "earned_badge": "Intjänat",
+    "payment_badge": "Betalning",
+    "tab_report": "Rapport (Kontoutdrag)",
+    "prev_balance": "Tidigare saldo",
+    "period_earned": "Intjänat under perioden",
+    "period_paid": "Betalat under perioden",
+    "new_balance": "Nytt saldo",
+    "filter_all": "Alla",
+    "filter_earned": "Intjänat",
+    "filter_paid": "Betalning",
+    "search_placeholder": "Sök nyckelord...",
+    "export_pdf": "Exportera (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Underentreprenörens registrerade telefonnummer hittades inte.",
+    "whatsapp_message_template": "Kära {{name}}, ditt kontoutdrag mellan {{startDate}} - {{endDate}}:\n\n- Totalt intjänat: {{earned}}\n- Totalt betalat: {{paid}}\n- Återstående saldo: {{balance}}\n\nFör din kännedom.",
+    "statementTitle": "Kontoutdrag för underentreprenör",
+    "service_type": "Tjänstetyp"
+  },
   "nav": {
     "personnel": "Personalhantering",
     "cash": "Kassaregister",
@@ -95,7 +127,46 @@
     "optimize_error": "Optimeringsfel:",
     "cloud_folder_success": "Säkerhetskopieringsmappen för tyst moln har ställts in:",
     "restore_confirm_title": "Återställ bekräftelse",
-    "restore_error": "Återställ fel:"
+    "restore_error": "Återställ fel:",
+    "finance_guide": {
+      "title": "Finans- och beräkningsguide",
+      "intro": "Nedan beskriver jag i detalj vad dessa kritiska koncept i Elektronisk Journal-systemet, som hanterar byggarbetsplatsens finansiella minne, gör och hur de beräknas i bakgrunden:",
+      "section1": {
+        "title": "1. Vad är parametrar och vad gör de?",
+        "p1_title": "Standard dagliga arbetstimmar:",
+        "p1_desc": "Den normala varaktigheten en arbetare förväntas arbeta per dag. Systemet dividerar personalens dagslön med detta värde vid beräkning av timlönen.",
+        "p2_title": "Övertidstimlönemultiplikator:",
+        "p2_desc": "Bestämmer den koefficient med vilken standardtimlönen ska multipliceras vid övertid. Standardkoefficienten i arbetslagstiftningen är vanligtvis 1,5."
+      },
+      "section2": {
+        "title": "2. Arbetstyper och multiplikatorer",
+        "p1_title": "Arbetstyp:",
+        "p1_desc": "Sättet som personalen är närvarande på platsen den dagen.",
+        "p2_title": "Multiplikator (Koefficient):",
+        "p2_desc": "Den hastighet med vilken den valda arbetstypen påverkar dagslönen (t.ex. Heldag x1.0, Halvdag x0.5, Söndagsövertid x1.5 eller x2.0)."
+      },
+      "section3": {
+        "title": "3. Tidrapport och beräkningsformel",
+        "p1_title": "Tidrapport:",
+        "p1_desc": "Det digitala diagrammet som registrerar de dagar och övertidstimmar som arbetarna faktiskt arbetat.",
+        "f_total": "Total intjäning = Basintjäning + Övertidsersättning",
+        "f_base": "Basintjäning = Dagslön * Arbetstypmultiplikator",
+        "f_hourly": "Timlön = Dagslön / Standardarbetstimmar",
+        "f_overtime": "Övertidsersättning = Timlön * Övertidsmultiplikator * Övertidstimmar",
+        "example": "Exempel: Lön 2 000, Heldag (x1), 2 tim övertid (x1.5), Std timmar (8). Resultat: 2 000 (Bas) + 750 (Övertid) = 2 750."
+      },
+      "section4": {
+        "title": "4. Regler för korrekt datainmatning",
+        "p1_title": "Lönedefinition:",
+        "p1_desc": "Ange den dagliga netto- och bruttolönen.",
+        "p2_title": "Val av arbetstyp:",
+        "p2_desc": "Välj rätt status för den dagen.",
+        "p3_title": "Inmatning av övertidstimmar:",
+        "p3_desc": "Ange INTE normala arbetstimmar i fältet \"Övertid\"; ange endast ytterligare arbetstimmar som utförts utanför standardtimmarna.",
+        "p4_title": "Ledighetskonflikter:",
+        "p4_desc": "Systemet varnar dig om du anger en tidrapport för lediga dagar."
+      }
+    }
   },
   "dashboard": {
     "title": "Personalhantering",
@@ -333,7 +404,11 @@
     "next_short": "Nästa",
     "yes": "Ja",
     "no": "Inga",
-    "error": "Fel"
+    "error": "Fel",
+    "details": "Detaljer",
+    "start_date": "Startdatum",
+    "end_date": "Slutdatum",
+    "amount": "Belopp"
   },
   "worker_modal": {
     "title_new": "Lägg till ny personal",
@@ -886,6 +961,21 @@
         "desc": "Filtrera efter datumintervall eller enhet."
       },
       "title": "Produktionsguide"
+    },
+    "subcontractor_profile": {
+      "title": "Guide för underentreprenörsutdrag",
+      "step1": {
+        "title": "1. Lägga till framstegsbetalningar",
+        "desc": "Fyll i det arbete som utförts av underentreprenören på arbetsplatsen och dess belopp här. Detta ökar underentreprenörens fordringar (företagets skuld) men orsakar inte något kassaflöde ut ur kassan."
+      },
+      "step2": {
+        "title": "2. Kassaintegrerade betalningar",
+        "desc": "Registrera kontantbetalningar och förskott som gjorts till underentreprenören här. Detta minskar underentreprenörens saldo och skapar automatiskt ett utflöde av kontanter i kassan."
+      },
+      "step3": {
+        "title": "3. Netto kontosaldo",
+        "desc": "Visar din nuvarande nettoskuld till underentreprenören, beräknad genom att subtrahera de gjorda betalningarna från de totala intjänade framstegsbetalningarna."
+      }
     }
   },
   "worker": {
@@ -995,7 +1085,8 @@
   },
   "pdf": {
     "signatureWorker": "Personal (Namn/Signatur)",
-    "signatureCompany": "Företagsrepresentant (Stämpel/Signatur)"
+    "signatureCompany": "Företagsrepresentant (Stämpel/Signatur)",
+    "signatureSubcontractor": "Underentreprenör (Stämpel/Signatur)"
   },
   "global.searchPlaceholder": "Sök...",
   "recycle.filterAllRecords": "Alla poster",
@@ -1009,7 +1100,6 @@
   "worker.advanceBadge": "Förskott",
   "recycle.tableProject": "Projekt / Arbetsplats",
   "worker.group": "Grupp",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Projekt / Arbetsplats",
   "recycle_th_type": "Posttyp",
   "recycle_th_project": "Projekt / Arbetsplats",

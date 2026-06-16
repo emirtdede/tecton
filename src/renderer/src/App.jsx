@@ -17,6 +17,7 @@ import MaterialManagement from './components/MaterialManagement';
 import DailyJournal from './components/DailyJournal';
 import QualityReports from './components/QualityReports';
 import SubcontractorLedger from './components/SubcontractorLedger';
+import SubcontractorProfile from './components/SubcontractorProfile';
 import MediaGallery from './components/MediaGallery';
 import AboutHelp from './components/AboutHelp';
 
@@ -55,8 +56,9 @@ function App() {
     document.documentElement.lang = langToLocaleMap[i18n.language] || i18n.language;
   }, [i18n.language]);
 
-  const [view, setView] = useState('list'); // 'list' | 'profile' | 'settings' | 'kasa' | 'projects' | 'production' | 'materials' | 'journal' | 'quality' | 'subcontractor' | 'media'
+  const [view, setView] = useState('list'); // 'list' | 'profile' | 'settings' | 'kasa' | 'projects' | 'production' | 'materials' | 'journal' | 'quality' | 'subcontractor' | 'subcontractor_profile' | 'media'
   const [selectedWorkerProfile, setSelectedWorkerProfile] = useState(null);
+  const [selectedSubcontractorProfile, setSelectedSubcontractorProfile] = useState(null);
 
   const [workers, setWorkers] = useState([]);
   const [balances, setBalances] = useState({});
@@ -546,7 +548,7 @@ function App() {
               <span className="sidebar-icon">🛡️</span>
               <span className="sidebar-text">{t('nav.quality', 'Kalite Kontrol')}</span>
             </div>
-            <div className={`sidebar-link ${view === 'subcontractor' ? 'active' : ''}`} onClick={() => setView('subcontractor')}>
+            <div className={`sidebar-link ${view === 'subcontractor' || view === 'subcontractor_profile' ? 'active' : ''}`} onClick={() => setView('subcontractor')}>
               <span className="sidebar-icon">🚜</span>
               <span className="sidebar-text">{t('nav.subcontractors', 'Taşeron Carileri')}</span>
             </div>
@@ -644,6 +646,8 @@ function App() {
         <main className="main-content">
           {view === 'profile' && selectedWorkerProfile ? (
             <WorkerProfile worker={selectedWorkerProfile} onBack={closeProfile} />
+          ) : view === 'subcontractor_profile' && selectedSubcontractorProfile ? (
+            <SubcontractorProfile subcontractor={selectedSubcontractorProfile} onBack={() => { setSelectedSubcontractorProfile(null); setView('subcontractor'); }} />
           ) : view.startsWith('settings_') ? (
             <Settings activeTab={view.split('_')[1]} />
           ) : view === 'settings' ? (
@@ -663,7 +667,14 @@ function App() {
           ) : view === 'quality' ? (
             <QualityReports activeProjectId={activeProjectId} projects={projects} />
           ) : view === 'subcontractor' ? (
-            <SubcontractorLedger activeProjectId={activeProjectId} projects={projects} />
+            <SubcontractorLedger 
+              activeProjectId={activeProjectId} 
+              projects={projects} 
+              onViewProfile={(subcontractor) => { 
+                setSelectedSubcontractorProfile(subcontractor); 
+                setView('subcontractor_profile'); 
+              }} 
+            />
           ) : view === 'media' ? (
             <MediaGallery activeProjectId={activeProjectId} projects={projects} />
           ) : (

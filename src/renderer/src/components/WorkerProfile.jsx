@@ -757,9 +757,9 @@ const WorkerProfile = ({ worker, onBack }) => {
 
   return (
     <div className="worker-profile" style={{ fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
-      <div style={{ padding: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <button className="btn" style={{ marginBottom: 0 }} onClick={onBack}>← {t('worker_profile.back')}</button>
+      <div style={{ padding: '0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <button className="btn" style={{ marginBottom: 0, padding: '0.5rem 1rem' }} onClick={onBack}>← {t('worker_profile.back')}</button>
           <span 
             onClick={() => setHelpOpen(true)}
             style={{ 
@@ -778,8 +778,8 @@ const WorkerProfile = ({ worker, onBack }) => {
           </span>
         </div>
         
-        <div className="profile-grid">
-          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+        <div className="profile-grid" style={{ marginTop: '0.5rem' }}>
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '1rem', gap: '0.75rem' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem', color: '#fff' }}>
               {worker.full_name.charAt(0)}
             </div>

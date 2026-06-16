@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Betaling til underleverandør",
+    "delete_title": "Slett post",
+    "delete_msg": "Er du sikker på at du vil slette denne posten? Hvis det er en betaling, vil den også bli slettet fra kassaapparatet.",
+    "total_earned": "Total fremdriftsbetaling",
+    "total_paid": "Totalt betalt",
+    "remaining_balance": "Gjenstående saldo (Netto)",
+    "tab_earned": "Fremdriftsbetalinger",
+    "tab_payments": "Betalinger / Forskudd",
+    "desc_earned_ph": "F.eks: 3 dager gravemaskinarbeid",
+    "add_earned": "Legg til fremdriftsbetaling",
+    "desc_payment_ph": "F.eks: Kontantforskudd / Bankoverføring",
+    "add_payment": "Legg til betaling",
+    "no_records": "Ingen poster funnet i denne datoperioden.",
+    "earned_badge": "Inntjening",
+    "payment_badge": "Betaling",
+    "tab_report": "Rapport (Kontoutskrift)",
+    "prev_balance": "Tidligere saldo",
+    "period_earned": "Inntjening i perioden",
+    "period_paid": "Utbetalt i perioden",
+    "new_balance": "Ny saldo",
+    "filter_all": "Alle",
+    "filter_earned": "Inntjening",
+    "filter_paid": "Betaling",
+    "search_placeholder": "Søk etter nøkkelord...",
+    "export_pdf": "Eksport (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Underleverandørens registrerte telefonnummer ble ikke funnet.",
+    "whatsapp_message_template": "Kjære {{name}}, din kontoutskrift mellom {{startDate}} - {{endDate}}:\n\n- Totalt opptjent: {{earned}}\n- Totalt utbetalt: {{paid}}\n- Gjenværende saldo: {{balance}}\n\nTil din informasjon.",
+    "statementTitle": "Kontoutskrift for underleverandør",
+    "service_type": "Tjenestetype"
+  },
   "nav": {
     "personnel": "Personaladministrasjon",
     "cash": "Kasse",
@@ -95,7 +127,46 @@
     "optimize_error": "Optimaliseringsfeil:",
     "cloud_folder_success": "Sikkerhetskopieringsmappen for stille sky er satt:",
     "restore_confirm_title": "Gjenopprett bekreftelse",
-    "restore_error": "Gjenopprett feil:"
+    "restore_error": "Gjenopprett feil:",
+    "finance_guide": {
+      "title": "Finans- og beregningsguide",
+      "intro": "Nedenfor beskriver jeg i detalj hva disse kritiske konseptene i Elektronisk Journal-systemet, som håndterer byggeplassens finansielle minne, gjør og hvordan de beregnes i bakgrunnen:",
+      "section1": {
+        "title": "1. Hva er parametere og hva gjør de?",
+        "p1_title": "Standard daglige arbeidstimer:",
+        "p1_desc": "Den normale varigheten en arbeider forventes å jobbe per dag. Systemet deler personalets dagslønn med denne verdien ved beregning av timelønnen.",
+        "p2_title": "Overtidstimelønnmultiplikator:",
+        "p2_desc": "Bestemmer koeffisienten som standard timelønn skal multipliseres med ved overtid. Standardkoeffisienten i arbeidsmiljøloven er vanligvis 1,5."
+      },
+      "section2": {
+        "title": "2. Arbeidstyper og multiplikatorer",
+        "p1_title": "Arbeidstype:",
+        "p1_desc": "Måten personalet er til stede på plassen den dagen.",
+        "p2_title": "Multiplikator (Koeffisient):",
+        "p2_desc": "Hastigheten som den valgte arbeidstypen påvirker dagslønnen med (f.eks. Heldag x1.0, Halvdag x0.5, Søndagsovertid x1.5 eller x2.0)."
+      },
+      "section3": {
+        "title": "3. Timeliste og beregningsformel",
+        "p1_title": "Timeliste:",
+        "p1_desc": "Det digitale diagrammet som registrerer de dager og overtidstimer arbeiderne faktisk har jobbet.",
+        "f_total": "Total inntjening = Basisinntjening + Overtidsbetaling",
+        "f_base": "Basisinntjening = Dagslønn * Arbeidstypemultiplikator",
+        "f_hourly": "Timelønn = Dagslønn / Standardarbeidstimer",
+        "f_overtime": "Overtidsbetaling = Timelønn * Overtidsmultiplikator * Overtidstimer",
+        "example": "Eksempel: Lønn 2 000, Heldag (x1), 2 timer overtid (x1.5), Std timer (8). Resultat: 2 000 (Basis) + 750 (Overtid) = 2 750."
+      },
+      "section4": {
+        "title": "4. Regler for nøyaktig dataregistrering",
+        "p1_title": "Lønnsdefinisjon:",
+        "p1_desc": "Oppgi den daglige netto- og bruttolønnen.",
+        "p2_title": "Valg av arbeidstype:",
+        "p2_desc": "Velg riktig status for den dagen.",
+        "p3_title": "Registrering av overtidstimer:",
+        "p3_desc": "IKKE registrer normale arbeidstimer i \"Overtid\"-feltet; registrer kun ekstra arbeidstimer utført utenfor standardtimene.",
+        "p4_title": "Permisjonskonflikter:",
+        "p4_desc": "Systemet vil advare deg hvis du oppgir en timeliste for feriedager."
+      }
+    }
   },
   "dashboard": {
     "title": "Personaladministrasjon",
@@ -333,7 +404,11 @@
     "next_short": "Neste",
     "yes": "Ja",
     "no": "Ingen",
-    "error": "Feil"
+    "error": "Feil",
+    "details": "Detaljer",
+    "start_date": "Startdato",
+    "end_date": "Sluttdato",
+    "amount": "Beløp"
   },
   "worker_modal": {
     "title_new": "Legg til ansatt",
@@ -886,6 +961,21 @@
         "desc": "Filtrer etter datoperiode eller enhet."
       },
       "title": "Produksjonsguide"
+    },
+    "subcontractor_profile": {
+      "title": "Veiledning for underentreprenørutskrift",
+      "step1": {
+        "title": "1. Legge til fremdriftsbetalinger",
+        "desc": "Legg inn arbeidet som er utført av underentreprenøren på byggeplassen og beløpene her. Dette øker underentreprenørens tilgodehavender (bedriftens gjeld), men forårsaker ikke en kontantstrøm ut av kassen."
+      },
+      "step2": {
+        "title": "2. Kasseintegrerte betalinger",
+        "desc": "Registrer kontantbetalinger og forskudd gitt til underentreprenøren her. Dette reduserer underentreprenørens saldo og oppretter automatisk en kontantstrøm ut i Kassen."
+      },
+      "step3": {
+        "title": "3. Netto kontosaldo",
+        "desc": "Viser din nåværende nettogjeld til underentreprenøren, beregnet ved å trekke de utførte betalingene fra de totale inntjente fremdriftsbetalingene."
+      }
     }
   },
   "worker": {
@@ -1004,7 +1094,8 @@
   },
   "pdf": {
     "signatureWorker": "Personal (Navn/Signatur)",
-    "signatureCompany": "Firmarepresentant (Stempel/Signatur)"
+    "signatureCompany": "Firmarepresentant (Stempel/Signatur)",
+    "signatureSubcontractor": "Underentreprenør (Stempel/Signatur)"
   },
   "global.searchPlaceholder": "Søk...",
   "recycle.filterAllRecords": "Alle poster",
@@ -1018,7 +1109,6 @@
   "worker.advanceBadge": "Forskudd",
   "recycle.tableProject": "Prosjekt / Nettsted",
   "worker.group": "Gruppe",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Prosjekt / Nettsted",
   "recycle_th_type": "Oppføringstype",
   "recycle_th_project": "Prosjekt / Nettsted",

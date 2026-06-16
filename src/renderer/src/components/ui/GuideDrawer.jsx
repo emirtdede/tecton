@@ -83,9 +83,11 @@ const GuideDrawer = ({
           </button>
         </div>
         <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem', paddingRight: '4px' }}>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
-            {desc}
-          </p>
+          {desc && (
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
+              {desc}
+            </p>
+          )}
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {h1 && (

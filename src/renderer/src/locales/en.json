@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Subcontractor Payment",
+    "delete_title": "Delete Record",
+    "delete_msg": "Are you sure you want to delete this record? If this is a payment, it will also be deleted from the Cash Register.",
+    "total_earned": "Total Progress Payment",
+    "total_paid": "Total Paid",
+    "remaining_balance": "Remaining Balance (Net)",
+    "tab_earned": "Progress Payments",
+    "tab_payments": "Payments / Advances",
+    "desc_earned_ph": "E.g., 3 Days Excavator Work",
+    "add_earned": "Add Progress Payment",
+    "desc_payment_ph": "E.g., Cash Advance / Bank Transfer",
+    "add_payment": "Add Payment",
+    "no_records": "No records found in this date range.",
+    "earned_badge": "Earned",
+    "payment_badge": "Payment",
+    "tab_report": "Report (Statement)",
+    "prev_balance": "Previous Balance",
+    "period_earned": "Period Earned",
+    "period_paid": "Period Paid",
+    "new_balance": "New Balance",
+    "filter_all": "All",
+    "filter_earned": "Earned",
+    "filter_paid": "Payment",
+    "search_placeholder": "Search keyword...",
+    "export_pdf": "Export (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Subcontractor's registered phone number not found.",
+    "whatsapp_message_template": "Dear {{name}}, your account statement between {{startDate}} - {{endDate}}:\n\n- Total Earned: {{earned}}\n- Total Paid: {{paid}}\n- Remaining Balance: {{balance}}\n\nFor your information.",
+    "statementTitle": "Subcontractor Account Statement",
+    "service_type": "Service Type"
+  },
   "nav": {
     "personnel": "Personnel Management",
     "cash": "Cash Register",
@@ -95,7 +127,46 @@
     "optimize_error": "Optimization Error:",
     "cloud_folder_success": "Silent cloud backup folder set successfully:",
     "restore_confirm_title": "Restore Confirmation",
-    "restore_error": "Restore error:"
+    "restore_error": "Restore error:",
+    "finance_guide": {
+      "title": "Finance & Calculation Guide",
+      "intro": "I am detailing below what these critical concepts in the Electronic Journal system, which manages the financial memory of your construction site, do and how they are calculated in the background:",
+      "section1": {
+        "title": "1. What Are Parameters and What Do They Do?",
+        "p1_title": "Standard Daily Working Hours:",
+        "p1_desc": "The normal duration a worker is supposed to work in a day. The system divides the personnel's daily wage by this value when calculating the hourly wage.",
+        "p2_title": "Overtime Hourly Wage Multiplier:",
+        "p2_desc": "Determines the coefficient by which the standard hourly wage will be multiplied in case of overtime. The standard coefficient in labor law is usually 1.5."
+      },
+      "section2": {
+        "title": "2. Work Types and Multipliers",
+        "p1_title": "Work Type:",
+        "p1_desc": "The manner in which the personnel is present on site that day.",
+        "p2_title": "Multiplier (Coefficient):",
+        "p2_desc": "The rate at which the selected work type affects the daily wage (e.g., Full Day x1.0, Half Day x0.5, Sunday Overtime x1.5 or x2.0)."
+      },
+      "section3": {
+        "title": "3. Timesheet and Calculation Formula",
+        "p1_title": "Timesheet:",
+        "p1_desc": "The digital chart recording the days and overtime hours actually worked by the workers.",
+        "f_total": "Total Earnings = Base Earnings + Overtime Pay",
+        "f_base": "Base Earnings = Daily Wage * Work Type Multiplier",
+        "f_hourly": "Hourly Wage = Daily Wage / Standard Working Hours",
+        "f_overtime": "Overtime Pay = Hourly Wage * Overtime Multiplier * Overtime Hours",
+        "example": "Example: Wage 2,000, Full Day (x1), 2 Hrs Overtime (x1.5), Std Hours (8). Result: 2,000 (Base) + 750 (Overtime) = 2,750."
+      },
+      "section4": {
+        "title": "4. Rules for Accurate Data Entry",
+        "p1_title": "Wage Definition:",
+        "p1_desc": "Enter the daily net and full wage.",
+        "p2_title": "Work Type Selection:",
+        "p2_desc": "Select the correct status for that day.",
+        "p3_title": "Overtime Hours Entry:",
+        "p3_desc": "Do NOT enter normal working hours in the \"Overtime\" field; only enter additional working hours performed outside standard hours.",
+        "p4_title": "Leave Conflicts:",
+        "p4_desc": "The system will warn you if you enter a timesheet for days on leave."
+      }
+    }
   },
   "dashboard": {
     "title": "Personnel Management",
@@ -332,7 +403,11 @@
     "page": "Page",
     "next_short": "Next",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "details": "Details",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "amount": "Amount"
   },
   "worker_modal": {
     "title_new": "Add New Personnel",
@@ -891,6 +966,21 @@
         "desc": "Filter by date range or unit."
       },
       "title": "Production Guide"
+    },
+    "subcontractor_profile": {
+      "title": "Subcontractor Statement Guide",
+      "step1": {
+        "title": "1. Adding Progress Payments",
+        "desc": "Enter the work done by the subcontractor on site and its amounts here. This increases the subcontractor's receivables (company's debt) but does not cause a cash outflow from the register."
+      },
+      "step2": {
+        "title": "2. Cash Register Integrated Payments",
+        "desc": "Record the cash payments and advances made to the subcontractor here. This reduces the subcontractor's balance and automatically creates a cash outflow in the Cash Register."
+      },
+      "step3": {
+        "title": "3. Net Account Balance",
+        "desc": "Shows your current net debt to the subcontractor, calculated by subtracting the payments made from the total progress payments earned."
+      }
     }
   },
   "worker": {
@@ -974,7 +1064,8 @@
   },
   "pdf": {
     "signatureWorker": "Personnel (Name/Surname - Signature)",
-    "signatureCompany": "Company Representative (Stamp/Signature)"
+    "signatureCompany": "Company Representative (Stamp/Signature)",
+    "signatureSubcontractor": "Subcontractor (Stamp/Signature)"
   },
   "global.searchPlaceholder": "Search...",
   "recycle.filterAllRecords": "All Records",
@@ -988,7 +1079,6 @@
   "worker.advanceBadge": "Advance",
   "recycle.tableProject": "Project / Site",
   "worker.group": "Group",
-  "worker.phone": "Phone",
   "pdf_project_site": "Project / Site",
   "recycle_th_type": "Record Type",
   "recycle_th_project": "Project / Site",

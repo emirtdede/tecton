@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - 하도급 결제",
+    "delete_title": "기록 삭제",
+    "delete_msg": "이 기록을 삭제하시겠습니까? 결제인 경우 금전 등록기에서도 삭제됩니다.",
+    "total_earned": "총 기성금",
+    "total_paid": "총 지급액",
+    "remaining_balance": "잔액 (순액)",
+    "tab_earned": "기성금",
+    "tab_payments": "지급 / 선급금",
+    "desc_earned_ph": "예: 3일 굴삭기 작업",
+    "add_earned": "기성금 추가",
+    "desc_payment_ph": "예: 현금 선급 / 은행 송금",
+    "add_payment": "지급 추가",
+    "no_records": "이 날짜 범위에 기록이 없습니다.",
+    "earned_badge": "수입",
+    "payment_badge": "지불",
+    "tab_report": "보고서 (계산서)",
+    "prev_balance": "이전 잔액",
+    "period_earned": "기간 내 수입",
+    "period_paid": "기간 내 지불액",
+    "new_balance": "새 잔액",
+    "filter_all": "전체",
+    "filter_earned": "수입",
+    "filter_paid": "지불",
+    "search_placeholder": "키워드 검색...",
+    "export_pdf": "내보내기 (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "하청업체의 등록된 전화번호를 찾을 수 없습니다.",
+    "whatsapp_message_template": "친애하는 {{name}}님, {{startDate}} - {{endDate}} 기간의 계산서입니다:\n\n- 총 수입: {{earned}}\n- 총 지불액: {{paid}}\n- 남은 잔액: {{balance}}\n\n참고 바랍니다.",
+    "statementTitle": "하청업체 계산서",
+    "service_type": "서비스 유형"
+  },
   "nav": {
     "personnel": "인사 관리",
     "cash": "금전 등록기",
@@ -95,7 +127,46 @@
     "optimize_error": "최적화 오류:",
     "cloud_folder_success": "자동 클라우드 백업 폴더가 성공적으로 설정되었습니다.",
     "restore_confirm_title": "복원 확인",
-    "restore_error": "복원 오류:"
+    "restore_error": "복원 오류:",
+    "finance_guide": {
+      "title": "재무 및 계산 가이드",
+      "intro": "건설 현장의 재무 메모리를 관리하는 전자 전표 시스템의 이러한 주요 개념들이 어떤 역할을 하며 백그라운드에서 어떻게 계산되는지 아래에 자세히 설명합니다.",
+      "section1": {
+        "title": "1. 매개변수란 무엇이며 어떤 역할을 합니까?",
+        "p1_title": "표준 일일 근무 시간:",
+        "p1_desc": "근로자가 하루에 일해야 하는 정상적인 시간입니다. 시스템은 시간당 임금을 계산할 때 직원의 일일 임금을 이 값으로 나눕니다.",
+        "p2_title": "연장 근무 시간당 임금 승수:",
+        "p2_desc": "연장 근무 시 표준 시간당 임금에 곱할 계수를 결정합니다. 노동법의 표준 계수는 일반적으로 1.5입니다."
+      },
+      "section2": {
+        "title": "2. 근무 유형 및 승수",
+        "p1_title": "근무 유형:",
+        "p1_desc": "해당 직원이 그날 현장에 출근한 형태입니다.",
+        "p2_title": "승수 (계수):",
+        "p2_desc": "선택한 근무 유형이 일일 임금에 미치는 비율입니다 (예: 종일 x1.0, 반일 x0.5, 일요일 연장 근무 x1.5 또는 x2.0)."
+      },
+      "section3": {
+        "title": "3. 타임시트 및 계산 공식",
+        "p1_title": "타임시트:",
+        "p1_desc": "근로자가 실제로 근무한 날짜와 연장 근무 시간을 기록하는 디지털 차트입니다.",
+        "f_total": "총 수입 = 기본 수입 + 연장 근무 수당",
+        "f_base": "기본 수입 = 일일 임금 * 근무 유형 승수",
+        "f_hourly": "시간당 임금 = 일일 임금 / 표준 근무 시간",
+        "f_overtime": "연장 근무 수당 = 시간당 임금 * 연장 근무 승수 * 연장 근무 시간",
+        "example": "예: 임금 2,000, 종일(x1), 연장 2시간(x1.5), 표준 시간(8). 결과: 2,000(기본) + 750(연장) = 2,750."
+      },
+      "section4": {
+        "title": "4. 정확한 데이터 입력을 위한 규칙",
+        "p1_title": "임금 정의:",
+        "p1_desc": "일일 순수 및 전체 임금을 입력하십시오.",
+        "p2_title": "근무 유형 선택:",
+        "p2_desc": "해당 날짜의 올바른 상태를 선택하십시오.",
+        "p3_title": "연장 근무 시간 입력:",
+        "p3_desc": "\"연장 근무\" 필드에 일반 근무 시간을 입력하지 마십시오. 표준 시간 외에 수행된 추가 근무 시간만 입력하십시오.",
+        "p4_title": "휴가 충돌:",
+        "p4_desc": "휴가인 날에 타임시트를 입력하면 시스템에서 경고합니다."
+      }
+    }
   },
   "dashboard": {
     "title": "인사 관리",
@@ -333,7 +404,11 @@
     "next_short": "다음",
     "yes": "예",
     "no": "아니요",
-    "error": "오류"
+    "error": "오류",
+    "details": "세부 사항",
+    "start_date": "시작일",
+    "end_date": "종료일",
+    "amount": "금액"
   },
   "worker_modal": {
     "title_new": "추가",
@@ -886,6 +961,21 @@
         "desc": "날짜 범위 또는 단위로 필터링합니다."
       },
       "title": "생산 가이드"
+    },
+    "subcontractor_profile": {
+      "title": "하도급업체 명세서 가이드",
+      "step1": {
+        "title": "1. 기성금 추가",
+        "desc": "하도급업체가 현장에서 수행한 작업과 그 금액을 여기에 입력합니다. 이는 하도급업체의 미수금(회사의 부채)을 증가시키지만 금전 등록기에서 현금 유출을 일으키지는 않습니다."
+      },
+      "step2": {
+        "title": "2. 금전 등록기 연동 지불",
+        "desc": "하도급업체에 지급된 현금 및 선급금을 여기에 기록합니다. 이는 하도급업체의 잔고를 줄이고 금전 등록기에서 자동으로 현금 유출을 생성합니다."
+      },
+      "step3": {
+        "title": "3. 순 계정 잔고",
+        "desc": "획득한 총 기성금에서 지급된 금액을 차감하여 계산된 하도급업체에 대한 현재의 순 부채를 보여줍니다."
+      }
     }
   },
   "worker": {
@@ -897,7 +987,7 @@
     "periodAdvance": "기간 가불금",
     "netBalance": "순 잔액",
     "group": "그룹",
-    "phone": "전화번호",
+    "phone": "전화",
     "id_tc": "ID/주민번호"
   },
   "recycle": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "직원 (성명 - 서명)",
-    "signatureCompany": "회사 대표 (직인/서명)"
+    "signatureCompany": "회사 대표 (직인/서명)",
+    "signatureSubcontractor": "하도급업체 (직인/서명)"
   },
   "global.searchPlaceholder": "검색...",
   "recycle.filterAllRecords": "모든 기록",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "가불금",
   "recycle.tableProject": "프로젝트 / 현장",
   "worker.group": "그룹",
-  "worker.phone": "전화번호",
   "pdf_project_site": "프로젝트 / 현장",
   "recycle_th_type": "기록 유형",
   "recycle_th_project": "프로젝트 / 현장",

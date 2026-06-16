@@ -396,14 +396,32 @@ const Settings = ({ activeTab = 'genel' }) => {
 
   return (
     <div style={{ maxWidth: (activeTab === 'recycle' || activeTab === 'logs') ? '100%' : '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', minHeight: 'calc(100vh - 100px)' }}>
-      <header className="header" style={{ marginBottom: '0.5rem' }}>
-        <h2>
+      <header className="header" style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>
           {activeTab === 'genel' ? `⚙️ ${t('nav.settings_genel', 'Genel Ayarlar')}` : 
            activeTab === 'finance' ? `💼 ${t('nav.settings_finance', 'Finans & Operasyon')}` : 
            activeTab === 'security' ? `🛡️ ${t('nav.settings_security', 'Güvenlik ve Yedekleme')}` : 
            activeTab === 'recycle' ? `🗑️ ${t('recycle.title', 'Geri Dönüşüm & Çöp Kutusu')}` :
            `📋 ${t('nav.settings_logs', 'Sistem Kayıtları')}`}
         </h2>
+        {activeTab === 'finance' && (
+          <span 
+            onClick={() => setIsGuideOpen(true)}
+            style={{ 
+              cursor: 'pointer', 
+              opacity: 0.4, 
+              transition: 'opacity 0.25s ease-in-out', 
+              fontSize: '1.6rem',
+              userSelect: 'none',
+              padding: '0.25rem'
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = 1}
+            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            title={t('common.page_guide', 'Sayfa Kılavuzu')}
+          >
+            💡
+          </span>
+        )}
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', paddingRight: '0.5rem' }}>
@@ -1408,21 +1426,77 @@ const Settings = ({ activeTab = 'genel' }) => {
       </div>
 
       <GuideDrawer 
-        isOpen={isGuideOpen} 
+        isOpen={isGuideOpen && activeTab === 'recycle'} 
         onClose={() => setIsGuideOpen(false)} 
-        title={t('recycle_guide_title', 'Recycle Bin Guide')} 
+        title={t('recycle_guide_title', 'Geri Dönüşüm Kutusu Rehberi')} 
         desc="" 
-        h1={t('recycle_guide_h1', 'How it Works?')} 
-        p1={t('recycle_guide_p1', 'Deleted records are soft-deleted and listed here.')} 
-        h2={t('recycle_guide_h2', 'Restoring Data')} 
-        p2={t('recycle_guide_p2', 'Use the restore button to recover records.')} 
-        h3={t('recycle_guide_h3', 'Project Separation')} 
-        p3={t('recycle_guide_p3', 'Filter your recycle bin by project.')} 
+        h1={t('recycle_guide_h1', 'Nasıl Çalışır?')} 
+        p1={t('recycle_guide_p1', 'Silinen kayıtlar burada listelenir.')} 
+        h2={t('recycle_guide_h2', 'Veri Kurtarma')} 
+        p2={t('recycle_guide_p2', 'Kayıtları kurtarmak için geri yükle butonunu kullanın.')} 
+        h3={t('recycle_guide_h3', 'Proje Filtreleme')} 
+        p3={t('recycle_guide_p3', 'Geri dönüşüm kutunuzu projeye göre filtreleyebilirsiniz.')} 
+      />
+
+      <GuideDrawer 
+        isOpen={isGuideOpen && activeTab === 'finance'} 
+        onClose={() => setIsGuideOpen(false)} 
+        title={t('settings.finance_guide.title')} 
+        desc=""
+        h1={t('settings.finance_guide.section1.title')} 
+        p1={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section1.p1_title')}</strong> {t('settings.finance_guide.section1.p1_desc')}</div>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section1.p2_title')}</strong> {t('settings.finance_guide.section1.p2_desc')}</div>
+          </div>
+        }
+        h2={t('settings.finance_guide.section2.title')} 
+        p2={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section2.p1_title')}</strong> {t('settings.finance_guide.section2.p1_desc')}</div>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section2.p2_title')}</strong> {t('settings.finance_guide.section2.p2_desc')}</div>
+          </div>
+        }
+        h3={t('settings.finance_guide.section3.title')} 
+        p3={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section3.p1_title')}</strong> {t('settings.finance_guide.section3.p1_desc')}</div>
+            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--primary)' }}>
+              <p style={{ margin: '0 0 0.5rem 0', fontWeight: 'bold', color: 'var(--primary)' }}>{t('settings.finance_guide.section3.f_total')}</p>
+              <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <li>{t('settings.finance_guide.section3.f_base')}</li>
+                <li>{t('settings.finance_guide.section3.f_hourly')}</li>
+                <li>{t('settings.finance_guide.section3.f_overtime')}</li>
+              </ul>
+              <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.8rem', fontStyle: 'italic', opacity: 0.8 }}>
+                {t('settings.finance_guide.section3.example')}
+              </p>
+            </div>
+          </div>
+        }
+        h4={t('settings.finance_guide.section4.title')} 
+        p4={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p1_title')}</strong> {t('settings.finance_guide.section4.p1_desc')}</div>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p2_title')}</strong> {t('settings.finance_guide.section4.p2_desc')}</div>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p3_title')}</strong> {t('settings.finance_guide.section4.p3_desc')}</div>
+            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p4_title')}</strong> {t('settings.finance_guide.section4.p4_desc')}</div>
+          </div>
+        }
       />
 
       <ConfirmationModal 
-        {...modalConfig} 
-        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })} 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        onConfirm={() => {
+          modalConfig.onConfirm();
+          setModalConfig({ ...modalConfig, isOpen: false });
+        }}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type={modalConfig.type}
+        confirmText={modalConfig.confirmText}
+        cancelText={modalConfig.cancelText}
       />
     </div>
   );

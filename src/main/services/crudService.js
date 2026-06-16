@@ -17,6 +17,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     'daily_journals': 'Günlük Jurnal',
     'quality_reports': 'Kalite Tutanak',
     'subcontractor_ledgers': 'Taşeron Cari',
+    'subcontractor_transactions': 'Taşeron İşlemi',
     'worker_leaves': 'Personel İzni'
   } : {
     'workers': 'Personnel',
@@ -32,6 +33,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     'daily_journals': 'Daily Journal',
     'quality_reports': 'Quality Report',
     'subcontractor_ledgers': 'Subcontractor Ledger',
+    'subcontractor_transactions': 'Subcontractor Transaction',
     'worker_leaves': 'Personnel Leave'
   };
 
@@ -48,6 +50,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     if (table_name === 'daily_journals') return isTr ? `Günlük jurnal oluşturuldu. Tarih: ${new_values.journal_date}, Sıcaklık: ${new_values.weather_temp || 0}°C (${new_values.weather_desc || ''})` : `Daily journal created. Date: ${new_values.journal_date}, Temperature: ${new_values.weather_temp || 0}°C (${new_values.weather_desc || ''})`;
     if (table_name === 'quality_reports') return isTr ? `Yeni kalite tutanağı eklendi: ${new_values.title} (Durum: ${new_values.status})` : `New quality report added: ${new_values.title} (Status: ${new_values.status})`;
     if (table_name === 'subcontractor_ledgers') return isTr ? `Yeni taşeron eklendi: ${new_values.name} (${new_values.service_type})` : `New subcontractor added: ${new_values.name} (${new_values.service_type})`;
+    if (table_name === 'subcontractor_transactions') return isTr ? `Yeni taşeron işlemi eklendi (${new_values.type}). Tutar: ${new_values.amount} TL` : `New subcontractor transaction added (${new_values.type}). Amount: ${new_values.amount} TL`;
     if (table_name === 'worker_groups') return isTr ? `Yeni personel grubu eklendi: ${new_values.name}` : `New personnel group added: ${new_values.name}`;
     if (table_name === 'worker_leaves') return isTr ? `Yeni personel izni eklendi: ${new_values.start_date} / ${new_values.end_date} (${new_values.type})` : `New personnel leave added: ${new_values.start_date} / ${new_values.end_date} (${new_values.type})`;
     return isTr ? `Sisteme yeni bir ${tName} kaydı eklendi.` : `New ${tName} record added to system.`;
@@ -103,6 +106,13 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
         ? `Taşeron bilgileri güncellendi: ${name} (${type})`
         : `Subcontractor details updated: ${name} (${type})`;
     }
+    if (table_name === 'subcontractor_transactions') {
+      const type = new_values.type || (old_values && old_values.type) || '';
+      const amount = new_values.amount !== undefined ? new_values.amount : (old_values ? old_values.amount : 0);
+      return isTr
+        ? `Taşeron işlemi güncellendi (${type}). Tutar: ${amount} TL`
+        : `Subcontractor transaction updated (${type}). Amount: ${amount} TL`;
+    }
     if (table_name === 'worker_groups') {
       const oldName = old_values ? old_values.name : '';
       const newName = new_values.name || oldName;
@@ -135,6 +145,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     if (table_name === 'daily_journals') return isTr ? `Günlük jurnal silindi. Tarih: ${old_values.journal_date}` : `Daily journal deleted. Date: ${old_values.journal_date}`;
     if (table_name === 'quality_reports') return isTr ? `Kalite tutanağı silindi: ${old_values.title}` : `Quality report deleted: ${old_values.title}`;
     if (table_name === 'subcontractor_ledgers') return isTr ? `Taşeron silindi: ${old_values.name}` : `Subcontractor deleted: ${old_values.name}`;
+    if (table_name === 'subcontractor_transactions') return isTr ? `Taşeron işlemi silindi (${old_values.type}). Tutar: ${old_values.amount} TL` : `Subcontractor transaction deleted (${old_values.type}). Amount: ${old_values.amount} TL`;
     if (table_name === 'worker_groups') return isTr ? `Personel grubu silindi: ${old_values.name}` : `Personnel group deleted: ${old_values.name}`;
     if (table_name === 'worker_leaves') return isTr ? `Personel izni silindi: ${old_values.start_date} - ${old_values.end_date} (${old_values.type})` : `Personnel leave deleted: ${old_values.start_date} - ${old_values.end_date} (${old_values.type})`;
     return isTr ? `Bir ${tName} kaydı silindi.` : `A ${tName} record was deleted.`;

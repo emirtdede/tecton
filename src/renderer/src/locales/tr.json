@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Taşeron Ödemesi",
+    "delete_title": "İşlemi Sil",
+    "delete_msg": "Bu işlemi silmek istediğinize emin misiniz? Eğer bu bir ödeme ise Kasa tablosundan da silinecektir.",
+    "total_earned": "Toplam Hakediş",
+    "total_paid": "Yapılan Ödemeler",
+    "remaining_balance": "Kalan Bakiye (Net Cari)",
+    "tab_earned": "Hakedişler",
+    "tab_payments": "Ödemeler / Avanslar",
+    "desc_earned_ph": "Örn: 3 Gün Kepçe Çalışması",
+    "add_earned": "Hakediş Ekle",
+    "desc_payment_ph": "Örn: Nakit Avans / Banka Transferi",
+    "add_payment": "Ödeme Ekle",
+    "no_records": "Bu tarih aralığında kayıt bulunamadı.",
+    "earned_badge": "Hakediş",
+    "payment_badge": "Ödeme",
+    "tab_report": "Rapor (Cari Ekstre)",
+    "prev_balance": "Devreden Bakiye",
+    "period_earned": "Dönem Hakedişi",
+    "period_paid": "Dönem Ödemesi",
+    "new_balance": "Yeni Bakiye",
+    "filter_all": "Tümü",
+    "filter_earned": "Hakediş",
+    "filter_paid": "Ödeme",
+    "search_placeholder": "Kelime ara...",
+    "export_pdf": "Dışa Aktar (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Taşeronun kayıtlı telefon numarası bulunamadı.",
+    "whatsapp_message_template": "Sayın {{name}}, {{startDate}} - {{endDate}} tarihleri arasındaki hesap ekstreniz:\n\n- Toplam Hak Ediş: {{earned}}\n- Toplam Ödeme: {{paid}}\n- Kalan Bakiye: {{balance}}\n\nBilgilerinize sunarız.",
+    "statementTitle": "Taşeron Cari Ekstresi",
+    "service_type": "Hizmet Türü"
+  },
   "nav": {
     "personnel": "Personel Yönetimi",
     "cash": "Kasa Yönetimi",
@@ -91,7 +123,46 @@
     "optimize_error": "Optimizasyon Hatası:",
     "cloud_folder_success": "Sessiz bulut yedekleme klasörü başarıyla ayarlandı:",
     "restore_confirm_title": "Geri Yükleme Onayı",
-    "restore_error": "Geri yükleme hatası:"
+    "restore_error": "Geri yükleme hatası:",
+    "finance_guide": {
+      "title": "Finans ve Hesaplama Rehberi",
+      "intro": "Şantiyenizin finansal hafızasını yöneten Elektronik Yevmiye Defteri sistemindeki bu kritik kavramların ne işe yaradığını ve arka planda nasıl hesaplandığını aşağıda detaylıca açıklıyorum:",
+      "section1": {
+        "title": "1. Parametreler Nedir ve Ne İşe Yarar?",
+        "p1_title": "Standart Günlük Çalışma Saati:",
+        "p1_desc": "Bir işçinin bir günde çalışması gereken normal süredir. Sistem, personelin saatlik ücretini hesaplarken personelin günlük yevmiyesini bu değere böler.",
+        "p2_title": "Mesai Saat Ücreti Çarpanı:",
+        "p2_desc": "Standart mesai saatlik ücretinin fazla çalışma durumunda ne kadarlık bir katsayı ile çarpılacağını belirler. İş kanunundaki standart katsayı genellikle 1.5'tir."
+      },
+      "section2": {
+        "title": "2. Çalışma Tipleri ve Çarpanlar",
+        "p1_title": "Çalışma Tipi:",
+        "p1_desc": "Personelin o gün sahada bulunma şeklidir.",
+        "p2_title": "Çarpan (Katsayı):",
+        "p2_desc": "Seçilen çalışma tipinin yevmiyeyi ne oranda etkileyeceğidir (Örn: Tam Gün x1.0, Yarım Gün x0.5, Pazar Mesaisi x1.5 veya x2.0)."
+      },
+      "section3": {
+        "title": "3. Puantaj ve Hesaplama Formülü",
+        "p1_title": "Puantaj:",
+        "p1_desc": "İşçilerin fiilen çalıştığı günleri ve mesaileri kaydeden dijital çizelgedir.",
+        "f_total": "Toplam Hak Ediş = Temel Hak Ediş + Fazla Mesai Ücreti",
+        "f_base": "Temel Hak Ediş = Günlük Yevmiye * Çalışma Tipi Çarpanı",
+        "f_hourly": "Saatlik Ücret = Günlük Yevmiye / Standart Çalışma Saati",
+        "f_overtime": "Fazla Mesai Ücreti = Saatlik Ücret * Mesai Çarpanı * Fazla Mesai Saati",
+        "example": "Örnek: Yevmiye 2.000 TL, Tam Gün (x1), 2 Saat Mesai (x1.5), Standart Saat (8). Sonuç: 2.000 TL (Temel) + 750 TL (Mesai) = 2.750 TL."
+      },
+      "section4": {
+        "title": "4. Doğru Veri Girişi İçin Kurallar",
+        "p1_title": "Yevmiye Tanımı:",
+        "p1_desc": "Günlük net ve tam ücreti girin.",
+        "p2_title": "Çalışma Tipi Seçimi:",
+        "p2_desc": "O günkü durumu doğru seçin.",
+        "p3_title": "Mesai Saati Girişi:",
+        "p3_desc": "\"Mesai\" alanına normal çalışma saatini DEĞİL, sadece standart saat dışında yapılan ek çalışma saatini yazın.",
+        "p4_title": "İzin Çakışmaları:",
+        "p4_desc": "İzinli günlere puantaj girerseniz sistem sizi uyarır."
+      }
+    }
   },
   "projects": {
     "title": "Şantiye (Lokasyon) Yönetimi",
@@ -351,7 +422,11 @@
     "page": "Sayfa",
     "next_short": "Sonraki",
     "yes": "Evet",
-    "no": "Hayır"
+    "no": "Hayır",
+    "details": "Detay",
+    "start_date": "Başlangıç Tarihi",
+    "end_date": "Bitiş Tarihi",
+    "amount": "Tutar"
   },
   "worker_modal": {
     "title_new": "Yeni Personel Ekle",
@@ -877,6 +952,21 @@
         "desc": "Tarih aralığına veya birime göre filtreleyin."
       },
       "title": "Üretim Rehberi"
+    },
+    "subcontractor_profile": {
+      "title": "Taşeron Ekstresi Rehberi",
+      "step1": {
+        "title": "1. Hakediş Ekleme",
+        "desc": "Taşeronun şantiyede yaptığı işleri ve tutarlarını buradan girin. Bu işlem taşeronun alacağını (şirketin borcunu) artırır ancak kasadan nakit çıkışı yapmaz."
+      },
+      "step2": {
+        "title": "2. Kasa Entegrasyonlu Ödemeler",
+        "desc": "Taşerona yaptığınız nakit ödemeleri ve avansları buradan kaydedin. Bu işlem taşeronun bakiyesini düşürür ve otomatik olarak Kasa'dan nakit çıkışı yapar."
+      },
+      "step3": {
+        "title": "3. Net Cari Bakiye",
+        "desc": "Toplam hakedişten yapılan ödemelerin çıkarılmasıyla elde edilen, taşerona olan güncel net borcunuzu gösterir."
+      }
     }
   },
   "worker": {
@@ -960,7 +1050,8 @@
   },
   "pdf": {
     "signatureWorker": "Personel (Ad/Soyad - İmza)",
-    "signatureCompany": "Firma Yetkilisi (Kaşe/İmza)"
+    "signatureCompany": "Firma Yetkilisi (Kaşe/İmza)",
+    "signatureSubcontractor": "Taşeron (Kaşe/İmza)"
   },
   "global.searchPlaceholder": "Ara...",
   "recycle.filterAllRecords": "Tüm Kayıtlar",
@@ -974,7 +1065,6 @@
   "worker.advanceBadge": "Avans",
   "recycle.tableProject": "Proje / Şantiye",
   "worker.group": "Grup",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Proje / Şantiye",
   "recycle_th_type": "Kayıt Türü",
   "recycle_th_project": "Proje / Şantiye",

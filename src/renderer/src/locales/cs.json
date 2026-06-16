@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Platba subdodavateli",
+    "delete_title": "Smazat záznam",
+    "delete_msg": "Jste si jisti, že chcete tento záznam smazat? Pokud jde o platbu, bude smazána také z pokladny.",
+    "total_earned": "Celková průběžná platba",
+    "total_paid": "Celkem zaplaceno",
+    "remaining_balance": "Zbývající zůstatek (Netto)",
+    "tab_earned": "Průběžné platby",
+    "tab_payments": "Platby / Zálohy",
+    "desc_earned_ph": "Např: 3 dny práce s rypadlem",
+    "add_earned": "Přidat průběžnou platbu",
+    "desc_payment_ph": "Např: Hotovostní záloha / Bankovní převod",
+    "add_payment": "Přidat platbu",
+    "no_records": "V tomto časovém rozmezí nebyly nalezeny žádné záznamy.",
+    "earned_badge": "Výdělek",
+    "payment_badge": "Platba",
+    "tab_report": "Zpráva (Výpis z účtu)",
+    "prev_balance": "Předchozí zůstatek",
+    "period_earned": "Výdělek za období",
+    "period_paid": "Vyplaceno za období",
+    "new_balance": "Nový zůstatek",
+    "filter_all": "Vše",
+    "filter_earned": "Výdělek",
+    "filter_paid": "Platba",
+    "search_placeholder": "Hledat klíčové slovo...",
+    "export_pdf": "Export (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Registrovaé telefonní číslo subdodavatele nebylo nalezeno.",
+    "whatsapp_message_template": "Vážený/á {{name}}, váš výpis z účtu za období {{startDate}} - {{endDate}}:\n\n- Celkový výdělek: {{earned}}\n- Celkem vyplaceno: {{paid}}\n- Zbývající zůstatek: {{balance}}\n\nPro vaši informaci.",
+    "statementTitle": "Výpis z účtu subdodavatele",
+    "service_type": "Typ služby"
+  },
   "nav": {
     "personnel": "Správa personálu",
     "cash": "Pokladna",
@@ -95,7 +127,46 @@
     "optimize_error": "Chyba optimalizace:",
     "cloud_folder_success": "Složka pro zálohování tichého cloudu byla úspěšně nastavena:",
     "restore_confirm_title": "Potvrzení obnovení",
-    "restore_error": "Chyba obnovení:"
+    "restore_error": "Chyba obnovení:",
+    "finance_guide": {
+      "title": "Finanční a výpočetní průvodce",
+      "intro": "Níže podrobně vysvětluji, co tyto kritické koncepty v systému Elektronického deníku, který spravuje finanční paměť vašeho staveniště, dělají a jak se počítají na pozadí:",
+      "section1": {
+        "title": "1. Co jsou parametry a co dělají?",
+        "p1_title": "Standardní denní pracovní doba:",
+        "p1_desc": "Normální doba, kterou má pracovník odpracovat za den. Systém při výpočtu hodinové mzdy vydělí denní mzdu personálu touto hodnotou.",
+        "p2_title": "Násobitel hodinové mzdy za přesčas:",
+        "p2_desc": "Určuje koeficient, kterým se v případě přesčasu vynásobí standardní hodinová sazba. Standardní koeficient v pracovním právu je obvykle 1,5."
+      },
+      "section2": {
+        "title": "2. Typy práce a násobitelé",
+        "p1_title": "Typ práce:",
+        "p1_desc": "Způsob, jakým je personál v daný den přítomen na stavbě.",
+        "p2_title": "Násobitel (koeficient):",
+        "p2_desc": "Míra, jakou vybraný typ práce ovlivňuje denní mzdu (např. Celý den x1.0, Půl dne x0.5, Nedělní přesčas x1.5 nebo x2.0)."
+      },
+      "section3": {
+        "title": "3. Výkaz práce a výpočetní vzorec",
+        "p1_title": "Výkaz práce:",
+        "p1_desc": "Digitální graf zaznamenávající dny a přesčasové hodiny skutečně odpracované dělníky.",
+        "f_total": "Celkové výdělky = Základní výdělky + Mzda za přesčas",
+        "f_base": "Základní výdělky = Denní mzda * Násobitel typu práce",
+        "f_hourly": "Hodinová mzda = Denní mzda / Standardní pracovní doba",
+        "f_overtime": "Mzda za přesčas = Hodinová mzda * Násobitel přesčasu * Přesčasové hodiny",
+        "example": "Příklad: Mzda 2 000, Celý den (x1), 2h přesčas (x1.5), Std doba (8). Výsledek: 2 000 (Základ) + 750 (Přesčas) = 2 750."
+      },
+      "section4": {
+        "title": "4. Pravidla pro přesné zadávání dat",
+        "p1_title": "Definice mzdy:",
+        "p1_desc": "Zadejte denní čistou a plnou mzdu.",
+        "p2_title": "Výběr typu práce:",
+        "p2_desc": "Vyberte správný stav pro daný den.",
+        "p3_title": "Zadávání přesčasových hodin:",
+        "p3_desc": "NEZADÁVEJTE do pole \"Přesčas\" normální pracovní dobu; zadávejte pouze dodatečné pracovní hodiny vykonané mimo standardní dobu.",
+        "p4_title": "Konflikty s dovolenou:",
+        "p4_desc": "Systém vás upozorní, pokud zadáte výkaz práce pro dny dovolené."
+      }
+    }
   },
   "dashboard": {
     "title": "Správa personálu",
@@ -333,7 +404,11 @@
     "next_short": "Další",
     "yes": "Ano",
     "no": "Žádný",
-    "error": "Chyba"
+    "error": "Chyba",
+    "details": "Detaily",
+    "start_date": "Počáteční datum",
+    "end_date": "Koncové datum",
+    "amount": "Částka"
   },
   "worker_modal": {
     "title_new": "Přidat",
@@ -886,6 +961,21 @@
         "desc": "Filtrujte podle období nebo jednotky."
       },
       "title": "Průvodce výrobou"
+    },
+    "subcontractor_profile": {
+      "title": "Průvodce výpisem subdodavatele",
+      "step1": {
+        "title": "1. Přidání plateb za postup",
+        "desc": "Zde zadejte práci odvedenou subdodavatelem na staveništi a její částky. Tím se zvýší pohledávky subdodavatele (dluh společnosti), ale nedojde k odtoku hotovosti z pokladny."
+      },
+      "step2": {
+        "title": "2. Platby integrované s pokladnou",
+        "desc": "Zde zaznamenejte hotovostní platby a zálohy poskytnuté subdodavateli. Tím se sníží zůstatek subdodavatele a automaticky se vytvoří odtok hotovosti v pokladně."
+      },
+      "step3": {
+        "title": "3. Čistý zůstatek účtu",
+        "desc": "Zobrazuje váš aktuální čistý dluh vůči subdodavateli, vypočtený odečtením provedených plateb od celkových získaných plateb za postup."
+      }
     }
   },
   "worker": {
@@ -995,7 +1085,8 @@
   },
   "pdf": {
     "signatureWorker": "Pracovník (Jméno/Podpis)",
-    "signatureCompany": "Zástupce firmy (Razítko/Podpis)"
+    "signatureCompany": "Zástupce firmy (Razítko/Podpis)",
+    "signatureSubcontractor": "Subdodavatel (Razítko/Podpis)"
   },
   "global.searchPlaceholder": "Hledat...",
   "recycle.filterAllRecords": "Všechny záznamy",
@@ -1009,7 +1100,6 @@
   "worker.advanceBadge": "Záloha",
   "recycle.tableProject": "Projekt / Místo",
   "worker.group": "Skupina",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Projekt / Místo",
   "recycle_th_type": "Typ Záznamu",
   "recycle_th_project": "Projekt / Místo",

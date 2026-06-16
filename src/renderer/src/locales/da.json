@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Betaling til underleverandør",
+    "delete_title": "Slet post",
+    "delete_msg": "Er du sikker på, at du vil slette denne post? Hvis det er en betaling, vil den også blive slettet fra kasseapparatet.",
+    "total_earned": "Samlet acontobetaling",
+    "total_paid": "I alt betalt",
+    "remaining_balance": "Resterende saldo (Netto)",
+    "tab_earned": "Acontobetalinger",
+    "tab_payments": "Betalinger / Forskud",
+    "desc_earned_ph": "F.eks: 3 dages gravemaskinearbejde",
+    "add_earned": "Tilføj acontobetaling",
+    "desc_payment_ph": "F.eks: Kontant forskud / Bankoverførsel",
+    "add_payment": "Tilføj betaling",
+    "no_records": "Ingen poster fundet i denne periode.",
+    "earned_badge": "Indtjening",
+    "payment_badge": "Betaling",
+    "tab_report": "Rapport (Kontoudtog)",
+    "prev_balance": "Tidligere saldo",
+    "period_earned": "Indtjening i perioden",
+    "period_paid": "Udbetalt i perioden",
+    "new_balance": "Ny saldo",
+    "filter_all": "Alle",
+    "filter_earned": "Indtjening",
+    "filter_paid": "Betaling",
+    "search_placeholder": "Søg efter nøgleord...",
+    "export_pdf": "Eksport (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Underleverandørens registrerede telefonnummer blev ikke fundet.",
+    "whatsapp_message_template": "Kære {{name}}, dit kontoudtog mellem {{startDate}} - {{endDate}}:\n\n- Samlet indtjening: {{earned}}\n- Samlet udbetalt: {{paid}}\n- Resterende saldo: {{balance}}\n\nTil din orientering.",
+    "statementTitle": "Kontoudtog for underleverandør",
+    "service_type": "Tjenestetype"
+  },
   "nav": {
     "personnel": "Personalestyring",
     "cash": "Kasse",
@@ -95,7 +127,46 @@
     "optimize_error": "Optimization Error:",
     "cloud_folder_success": "Silent cloud backup folder set successfully:",
     "restore_confirm_title": "Restore Confirmation",
-    "restore_error": "Restore error:"
+    "restore_error": "Restore error:",
+    "finance_guide": {
+      "title": "Finans- og beregningsvejledning",
+      "intro": "Nedenfor beskriver jeg detaljeret, hvad disse kritiske koncepter i det elektroniske journalsystem, som administrerer byggepladsens økonomiske hukommelse, gør, og hvordan de beregnes i baggrunden:",
+      "section1": {
+        "title": "1. Hvad er parametre, og hvad gør de?",
+        "p1_title": "Standard daglige arbejdstimer:",
+        "p1_desc": "Den normale varighed en arbejder forventes at arbejde pr. dag. Systemet dividerer personalets dagsløn med denne værdi, når timelønnen beregnes.",
+        "p2_title": "Overtidstimelønsmultiplikator:",
+        "p2_desc": "Bestemmer koefficienten, som standardtimelønnen skal multipliceres med i tilfælde af overarbejde. Standardkoefficienten i arbejdslovgivningen er normalt 1,5."
+      },
+      "section2": {
+        "title": "2. Arbejdstyper og multiplikatorer",
+        "p1_title": "Arbejdstype:",
+        "p1_desc": "Den måde personalet er til stede på pladsen den dag.",
+        "p2_title": "Multiplikator (Koefficient):",
+        "p2_desc": "Satsen, hvormed den valgte arbejdstype påvirker dagslønnen (f.eks. Heldag x1.0, Halvdag x0.5, Søndagsovertid x1.5 eller x2.0)."
+      },
+      "section3": {
+        "title": "3. Timeseddel og beregningsformel",
+        "p1_title": "Timeseddel:",
+        "p1_desc": "Det digitale diagram, der registrerer de dage og overarbejdstimer, der faktisk arbejdes af arbejderne.",
+        "f_total": "Total indtjening = Basisindtjening + Overtidsbetaling",
+        "f_base": "Basisindtjening = Dagsløn * Arbejdstypemultiplikator",
+        "f_hourly": "Timeløn = Dagsløn / Standardarbejdstimer",
+        "f_overtime": "Overtidsbetaling = Timeløn * Overtidsmultiplikator * Overtimer",
+        "example": "Eksempel: Løn 2.000, Heldag (x1), 2 timers overtid (x1.5), Std timer (8). Resultat: 2.000 (Basis) + 750 (Overtid) = 2.750."
+      },
+      "section4": {
+        "title": "4. Regler for nøjagtig dataindtastning",
+        "p1_title": "Løndefinition:",
+        "p1_desc": "Indtast den daglige netto- og fulde løn.",
+        "p2_title": "Valg af arbejdstype:",
+        "p2_desc": "Vælg den rigtige status for den dag.",
+        "p3_title": "Indtastning af overarbejdstimer:",
+        "p3_desc": "Indtast IKKE normale arbejdstimer i feltet \"Overtid\"; indtast kun ekstra arbejdstimer udført uden for standardtimerne.",
+        "p4_title": "Orlovskonflikter:",
+        "p4_desc": "Systemet vil advare dig, hvis du indtaster en timeseddel for feriedage."
+      }
+    }
   },
   "dashboard": {
     "title": "Personalestyring",
@@ -332,7 +403,11 @@
     "page": "Side",
     "next_short": "Næste",
     "yes": "Ja",
-    "no": "Ingen"
+    "no": "Ingen",
+    "details": "Detaljer",
+    "start_date": "Startdato",
+    "end_date": "Slutdato",
+    "amount": "Beløb"
   },
   "worker_modal": {
     "title_new": "Tilføj",
@@ -885,6 +960,21 @@
         "desc": "Filtrer efter datointerval eller enhed."
       },
       "title": "Produktionsvejledning"
+    },
+    "subcontractor_profile": {
+      "title": "Vejledning til underentreprenørudtog",
+      "step1": {
+        "title": "1. Tilføjelse af acontobetalinger",
+        "desc": "Indtast det arbejde, der er udført af underentreprenøren på byggepladsen, og dets beløb her. Dette øger underentreprenørens tilgodehavender (virksomhedens gæld), men medfører ikke en pengestrøm ud af kassen."
+      },
+      "step2": {
+        "title": "2. Kasseintegrerede betalinger",
+        "desc": "Registrer de kontantbetalinger og forskud, der er foretaget til underentreprenøren, her. Dette reducerer underentreprenørens saldo og opretter automatisk en pengestrøm ud i kassen."
+      },
+      "step3": {
+        "title": "3. Netto kontosaldo",
+        "desc": "Viser din nuværende nettogæld til underentreprenøren, beregnet ved at trække de foretagne betalinger fra de samlede optjente acontobetalinger."
+      }
     }
   },
   "worker": {
@@ -968,7 +1058,8 @@
   },
   "pdf": {
     "signatureWorker": "Medarbejder (Navn/Underskrift)",
-    "signatureCompany": "Virksomhedsrepræsentant (Stempel/Underskrift)"
+    "signatureCompany": "Virksomhedsrepræsentant (Stempel/Underskrift)",
+    "signatureSubcontractor": "Underentreprenør (Stempel/Underskrift)"
   },
   "global.searchPlaceholder": "Søg...",
   "recycle.filterAllRecords": "Alle poster",
@@ -982,7 +1073,6 @@
   "worker.advanceBadge": "Forskud",
   "recycle.tableProject": "Projekt / Websted",
   "worker.group": "Gruppe",
-  "worker.phone": "Telefon",
   "pdf_project_site": "Projekt / Websted",
   "recycle_th_type": "Post Type",
   "recycle_th_project": "Projekt / Websted",

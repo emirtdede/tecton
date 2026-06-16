@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Pago al subcontratista",
+    "delete_title": "Eliminar registro",
+    "delete_msg": "¿Está seguro de que desea eliminar este registro? Si es un pago, también se eliminará de la caja registradora.",
+    "total_earned": "Pago por avance total",
+    "total_paid": "Total pagado",
+    "remaining_balance": "Saldo restante (Neto)",
+    "tab_earned": "Pagos por avance",
+    "tab_payments": "Pagos / Anticipos",
+    "desc_earned_ph": "Ej: 3 días de trabajo con excavadora",
+    "add_earned": "Añadir pago por avance",
+    "desc_payment_ph": "Ej: Anticipo en efectivo / Transferencia bancaria",
+    "add_payment": "Añadir pago",
+    "no_records": "No se encontraron registros en este rango de fechas.",
+    "earned_badge": "Ganado",
+    "payment_badge": "Pago",
+    "tab_report": "Informe (Estado de Cuenta)",
+    "prev_balance": "Saldo anterior",
+    "period_earned": "Ganancias del período",
+    "period_paid": "Pagado en el período",
+    "new_balance": "Nuevo saldo",
+    "filter_all": "Todo",
+    "filter_earned": "Ganado",
+    "filter_paid": "Pago",
+    "search_placeholder": "Buscar palabra clave...",
+    "export_pdf": "Exportar (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "No se encontró el número de teléfono registrado del subcontratista.",
+    "whatsapp_message_template": "Estimado(a) {{name}}, su estado de cuenta entre {{startDate}} - {{endDate}}:\n\n- Total ganado: {{earned}}\n- Total pagado: {{paid}}\n- Saldo restante: {{balance}}\n\nPara su información.",
+    "statementTitle": "Estado de Cuenta del Subcontratista",
+    "service_type": "Tipo de servicio"
+  },
   "nav": {
     "personnel": "Gestión de Personal",
     "cash": "Gestión de Caja",
@@ -95,7 +127,46 @@
     "optimize_error": "Error de optimización:",
     "cloud_folder_success": "Carpeta de copia de seguridad en la nube silenciosa configurada:",
     "restore_confirm_title": "Confirmación de restauración",
-    "restore_error": "Error de restauración:"
+    "restore_error": "Error de restauración:",
+    "finance_guide": {
+      "title": "Guía de finanzas y cálculos",
+      "intro": "A continuación, detallo qué hacen estos conceptos críticos en el sistema de Diario Electrónico, que gestiona la memoria financiera de su obra, y cómo se calculan en segundo plano:",
+      "section1": {
+        "title": "1. ¿Qué son los parámetros y qué hacen?",
+        "p1_title": "Horas de trabajo diarias estándar:",
+        "p1_desc": "La duración normal que un trabajador debe trabajar en un día. El sistema divide el salario diario del personal por este valor al calcular el salario por hora.",
+        "p2_title": "Multiplicador del salario por hora de horas extras:",
+        "p2_desc": "Determina el coeficiente por el cual se multiplicará el salario por hora estándar en caso de horas extras. El coeficiente estándar en la legislación laboral suele ser de 1,5."
+      },
+      "section2": {
+        "title": "2. Tipos de trabajo y multiplicadores",
+        "p1_title": "Tipo de trabajo:",
+        "p1_desc": "La forma en que el personal está presente en la obra ese día.",
+        "p2_title": "Multiplicador (Coeficiente):",
+        "p2_desc": "La tasa a la que el tipo de trabajo seleccionado afecta el salario diario (por ejemplo, Día completo x1.0, Medio día x0.5, Horas extras en domingo x1.5 o x2.0)."
+      },
+      "section3": {
+        "title": "3. Hoja de horas y fórmula de cálculo",
+        "p1_title": "Hoja de horas:",
+        "p1_desc": "El gráfico digital que registra los días y las horas extras realmente trabajadas por los trabajadores.",
+        "f_total": "Ganancias totales = Ganancias base + Pago de horas extras",
+        "f_base": "Ganancias base = Salario diario * Multiplicador del tipo de trabajo",
+        "f_hourly": "Salario por hora = Salario diario / Horas de trabajo estándar",
+        "f_overtime": "Pago de horas extras = Salario por hora * Multiplicador de horas extras * Horas extras",
+        "example": "Ejemplo: Salario 2.000, Día completo (x1), 2 Hrs extras (x1.5), Horas estándar (8). Resultado: 2.000 (Base) + 750 (Extras) = 2.750."
+      },
+      "section4": {
+        "title": "4. Reglas para el ingreso preciso de datos",
+        "p1_title": "Definición de salario:",
+        "p1_desc": "Ingrese el salario neto y completo diario.",
+        "p2_title": "Selección del tipo de trabajo:",
+        "p2_desc": "Seleccione el estado correcto para ese día.",
+        "p3_title": "Ingreso de horas extras:",
+        "p3_desc": "NO ingrese horas de trabajo normales en el campo \"Horas extras\"; ingrese solo las horas de trabajo adicionales realizadas fuera del horario estándar.",
+        "p4_title": "Conflictos de licencia:",
+        "p4_desc": "El sistema le advertirá si ingresa una hoja de horas para días de licencia."
+      }
+    }
   },
   "dashboard": {
     "title": "Gestión de Personal",
@@ -332,7 +403,11 @@
     "page": "Página",
     "next_short": "Siguiente",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "details": "Detalles",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de fin",
+    "amount": "Monto"
   },
   "worker_modal": {
     "title_new": "Añadir Nuevo Personal",
@@ -885,6 +960,21 @@
         "desc": "Filtrar por rango de fechas o unidad."
       },
       "title": "Guía de producción"
+    },
+    "subcontractor_profile": {
+      "title": "Guía del estado de cuenta del subcontratista",
+      "step1": {
+        "title": "1. Agregar pagos por avance",
+        "desc": "Ingrese aquí el trabajo realizado por el subcontratista en la obra y sus importes. Esto aumenta las cuentas por cobrar del subcontratista (deuda de la empresa), pero no provoca una salida de efectivo de la caja."
+      },
+      "step2": {
+        "title": "2. Pagos integrados en caja",
+        "desc": "Registre aquí los pagos en efectivo y los anticipos realizados al subcontratista. Esto reduce el saldo del subcontratista y crea automáticamente una salida de efectivo en la Caja."
+      },
+      "step3": {
+        "title": "3. Saldo neto de la cuenta",
+        "desc": "Muestra su deuda neta actual con el subcontratista, calculada restando los pagos realizados del total de los pagos por avance ganados."
+      }
     }
   },
   "worker": {
@@ -995,7 +1085,8 @@
   },
   "pdf": {
     "signatureWorker": "Personal (Nombre/Firma)",
-    "signatureCompany": "Representante de la Empresa (Sello/Firma)"
+    "signatureCompany": "Representante de la Empresa (Sello/Firma)",
+    "signatureSubcontractor": "Subcontratista (Sello/Firma)"
   },
   "global.searchPlaceholder": "Buscar...",
   "recycle.filterAllRecords": "Todos los registros",
@@ -1009,7 +1100,6 @@
   "worker.advanceBadge": "Anticipo",
   "recycle.tableProject": "Proyecto / Sitio",
   "worker.group": "Grupo",
-  "worker.phone": "Teléfono",
   "pdf_project_site": "Proyecto / Sitio",
   "recycle_th_type": "Tipo de Registro",
   "recycle_th_project": "Proyecto / Sitio",

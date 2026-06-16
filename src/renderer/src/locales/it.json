@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Pagamento Subappaltatore",
+    "delete_title": "Elimina record",
+    "delete_msg": "Sei sicuro di voler eliminare questo record? Se si tratta di un pagamento, verrà eliminato anche dal registratore di cassa.",
+    "total_earned": "Stato di avanzamento totale",
+    "total_paid": "Totale pagato",
+    "remaining_balance": "Saldo residuo (Netto)",
+    "tab_earned": "Stati di avanzamento",
+    "tab_payments": "Pagamenti / Anticipi",
+    "desc_earned_ph": "Es: 3 giorni di lavoro escavatore",
+    "add_earned": "Aggiungi stato avanzamento",
+    "desc_payment_ph": "Es: Anticipo in contanti / Bonifico bancario",
+    "add_payment": "Aggiungi pagamento",
+    "no_records": "Nessun record trovato in questo intervallo di date.",
+    "earned_badge": "Guadagnato",
+    "payment_badge": "Pagamento",
+    "tab_report": "Rapporto (Estratto conto)",
+    "prev_balance": "Saldo precedente",
+    "period_earned": "Guadagni del periodo",
+    "period_paid": "Pagato nel periodo",
+    "new_balance": "Nuovo saldo",
+    "filter_all": "Tutti",
+    "filter_earned": "Guadagnato",
+    "filter_paid": "Pagamento",
+    "search_placeholder": "Cerca parola chiave...",
+    "export_pdf": "Esporta (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Numero di telefono registrato del subappaltatore non trovato.",
+    "whatsapp_message_template": "Gentile {{name}}, il tuo estratto conto tra {{startDate}} - {{endDate}}:\n\n- Totale guadagnato: {{earned}}\n- Totale pagato: {{paid}}\n- Saldo residuo: {{balance}}\n\nPer tua informazione.",
+    "statementTitle": "Estratto Conto Subappaltatore",
+    "service_type": "Tipo di servizio"
+  },
   "nav": {
     "personnel": "Gestione del personale",
     "cash": "Registratore di cassa",
@@ -95,7 +127,46 @@
     "optimize_error": "Errore di ottimizzazione:",
     "cloud_folder_success": "Cartella di backup cloud silenziosa impostata correttamente:",
     "restore_confirm_title": "Ripristina conferma",
-    "restore_error": "Errore di ripristino:"
+    "restore_error": "Errore di ripristino:",
+    "finance_guide": {
+      "title": "Guida alla finanza e al calcolo",
+      "intro": "Di seguito spiego in dettaglio cosa fanno e come vengono calcolati in background questi concetti critici nel sistema del Giornale Elettronico, che gestisce la memoria finanziaria del tuo cantiere:",
+      "section1": {
+        "title": "1. Cosa sono i parametri e a cosa servono?",
+        "p1_title": "Ore di lavoro giornaliere standard:",
+        "p1_desc": "La durata normale che un lavoratore dovrebbe svolgere in un giorno. Il sistema divide la retribuzione giornaliera del personale per questo valore durante il calcolo della retribuzione oraria.",
+        "p2_title": "Moltiplicatore retribuzione oraria straordinaria:",
+        "p2_desc": "Determina il coefficiente per il quale verrà moltiplicata la retribuzione oraria standard in caso di straordinario. Il coefficiente standard nel diritto del lavoro è solitamente 1,5."
+      },
+      "section2": {
+        "title": "2. Tipi di lavoro e Moltiplicatori",
+        "p1_title": "Tipo di lavoro:",
+        "p1_desc": "Il modo in cui il personale è presente in cantiere quel giorno.",
+        "p2_title": "Moltiplicatore (Coefficiente):",
+        "p2_desc": "Il tasso con cui il tipo di lavoro selezionato influisce sulla retribuzione giornaliera (es. Giornata intera x1.0, Mezza giornata x0.5, Straordinario domenicale x1.5 o x2.0)."
+      },
+      "section3": {
+        "title": "3. Foglio presenze e Formula di calcolo",
+        "p1_title": "Foglio presenze:",
+        "p1_desc": "Il grafico digitale che registra i giorni e gli straordinari effettivamente lavorati dagli operai.",
+        "f_total": "Guadagni Totali = Guadagni Base + Retribuzione Straordinario",
+        "f_base": "Guadagni Base = Retribuzione Giornaliera * Moltiplicatore Tipo di Lavoro",
+        "f_hourly": "Retribuzione Oraria = Retribuzione Giornaliera / Ore di Lavoro Standard",
+        "f_overtime": "Retribuzione Straordinario = Retribuzione Oraria * Moltiplicatore Straordinario * Ore di Straordinario",
+        "example": "Esempio: Salario 2.000, Giornata intera (x1), 2h Straordinario (x1.5), Ore Std (8). Risultato: 2.000 (Base) + 750 (Straordinario) = 2.750."
+      },
+      "section4": {
+        "title": "4. Regole per un inserimento accurato dei dati",
+        "p1_title": "Definizione del salario:",
+        "p1_desc": "Inserisci la retribuzione giornaliera netta e totale.",
+        "p2_title": "Selezione del Tipo di Lavoro:",
+        "p2_desc": "Seleziona lo stato corretto per quel giorno.",
+        "p3_title": "Inserimento Ore Straordinarie:",
+        "p3_desc": "NON inserire le normali ore di lavoro nel campo \"Straordinario\"; inserisci solo le ore di lavoro aggiuntive svolte al di fuori dell'orario standard.",
+        "p4_title": "Conflitti con le ferie:",
+        "p4_desc": "Il sistema ti avviserà se inserisci un foglio presenze per i giorni di ferie."
+      }
+    }
   },
   "dashboard": {
     "title": "Gestione del personale",
@@ -333,7 +404,11 @@
     "next_short": "Successivo",
     "yes": "SÌ",
     "no": "NO",
-    "error": "Errore"
+    "error": "Errore",
+    "details": "Dettagli",
+    "start_date": "Data di inizio",
+    "end_date": "Data di fine",
+    "amount": "Importo"
   },
   "worker_modal": {
     "title_new": "Aggiungi",
@@ -886,6 +961,21 @@
         "desc": "Filtra per intervallo di date o unità."
       },
       "title": "Guida alla produzione"
+    },
+    "subcontractor_profile": {
+      "title": "Guida all'estratto conto del subappaltatore",
+      "step1": {
+        "title": "1. Aggiunta dei pagamenti per avanzamento lavori",
+        "desc": "Inserisci qui il lavoro svolto dal subappaltatore in cantiere e i relativi importi. Questo aumenta i crediti del subappaltatore (debito dell'azienda) ma non causa un deflusso di cassa dal registro di cassa."
+      },
+      "step2": {
+        "title": "2. Pagamenti integrati nel registro di cassa",
+        "desc": "Registra qui i pagamenti in contanti e gli anticipi effettuati al subappaltatore. Questo riduce il saldo del subappaltatore e crea automaticamente un deflusso di cassa nel Registro di Cassa."
+      },
+      "step3": {
+        "title": "3. Saldo netto del conto",
+        "desc": "Mostra il tuo attuale debito netto verso il subappaltatore, calcolato sottraendo i pagamenti effettuati dal totale dei pagamenti per avanzamento lavori maturati."
+      }
     }
   },
   "worker": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "Personale (Nome/Firma)",
-    "signatureCompany": "Rappresentante Aziendale (Timbro/Firma)"
+    "signatureCompany": "Rappresentante Aziendale (Timbro/Firma)",
+    "signatureSubcontractor": "Subappaltatore (Timbro/Firma)"
   },
   "global.searchPlaceholder": "Cerca...",
   "recycle.filterAllRecords": "Tutti i record",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "Anticipo",
   "recycle.tableProject": "Progetto / Sito",
   "worker.group": "Gruppo",
-  "worker.phone": "Telefono",
   "pdf_project_site": "Progetto / Sito",
   "recycle_th_type": "Tipo di Record",
   "recycle_th_project": "Progetto / Sito",

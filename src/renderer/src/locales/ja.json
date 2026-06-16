@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - 下請け業者への支払い",
+    "delete_title": "レコードの削除",
+    "delete_msg": "このレコードを削除してもよろしいですか？支払いの場合、レジからも削除されます。",
+    "total_earned": "出来高支払い合計",
+    "total_paid": "支払総額",
+    "remaining_balance": "残高 (ネット)",
+    "tab_earned": "出来高支払い",
+    "tab_payments": "支払い / 前払い",
+    "desc_earned_ph": "例：3日間のショベルカー作業",
+    "add_earned": "出来高支払いの追加",
+    "desc_payment_ph": "例：現金前払い / 銀行振込",
+    "add_payment": "支払いの追加",
+    "no_records": "この日付範囲にレコードは見つかりませんでした。",
+    "earned_badge": "獲得",
+    "payment_badge": "支払い",
+    "tab_report": "レポート (計算書)",
+    "prev_balance": "前回の残高",
+    "period_earned": "期間中の獲得額",
+    "period_paid": "期間中の支払額",
+    "new_balance": "新しい残高",
+    "filter_all": "すべて",
+    "filter_earned": "獲得",
+    "filter_paid": "支払い",
+    "search_placeholder": "キーワードを検索...",
+    "export_pdf": "エクスポート (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "下請け業者の登録電話番号が見つかりません。",
+    "whatsapp_message_template": "親愛なる {{name}} 様、{{startDate}} から {{endDate}} までの計算書：\n\n- 総獲得額：{{earned}}\n- 総支払額：{{paid}}\n- 残高：{{balance}}\n\nご参考までに。",
+    "statementTitle": "下請け業者計算書",
+    "service_type": "サービスタイプ"
+  },
   "nav": {
     "personnel": "人事管理",
     "cash": "レジ",
@@ -95,7 +127,46 @@
     "optimize_error": "最適化エラー:",
     "cloud_folder_success": "サイレント クラウド バックアップ フォルダーが正常に設定されました:",
     "restore_confirm_title": "復元の確認",
-    "restore_error": "復元エラー:"
+    "restore_error": "復元エラー:",
+    "finance_guide": {
+      "title": "財務と計算ガイド",
+      "intro": "建設現場の財務メモリを管理する電子仕訳システムにおけるこれらの重要な概念が、どのような役割を果たし、バックグラウンドでどのように計算されるかについて以下に詳しく説明します。",
+      "section1": {
+        "title": "1. パラメータとは何か、そして何をするのか？",
+        "p1_title": "標準の1日あたりの労働時間:",
+        "p1_desc": "労働者が1日に働くべき通常の時間です。システムは時給を計算する際に、従業員の日給をこの値で割ります。",
+        "p2_title": "残業時給の乗数:",
+        "p2_desc": "残業の場合に標準時給に乗算される係数を決定します。労働法における標準的な係数は通常1.5です。"
+      },
+      "section2": {
+        "title": "2. 勤務タイプと乗数",
+        "p1_title": "勤務タイプ:",
+        "p1_desc": "その日に従業員が現場に出勤した形態です。",
+        "p2_title": "乗数（係数）:",
+        "p2_desc": "選択した勤務タイプが日給に影響を与える割合です（例：全日 x1.0、半日 x0.5、日曜残業 x1.5 または x2.0）。"
+      },
+      "section3": {
+        "title": "3. タイムシートと計算式",
+        "p1_title": "タイムシート:",
+        "p1_desc": "労働者が実際に働いた日数と残業時間を記録するデジタルチャートです。",
+        "f_total": "総収入 = 基本収入 + 残業手当",
+        "f_base": "基本収入 = 日給 * 勤務タイプの乗数",
+        "f_hourly": "時給 = 日給 / 標準労働時間",
+        "f_overtime": "残業手当 = 時給 * 残業の乗数 * 残業時間",
+        "example": "例：賃金 2,000、全日(x1)、残業2時間(x1.5)、標準時間(8)。結果：2,000(基本) + 750(残業) = 2,750。"
+      },
+      "section4": {
+        "title": "4. 正確なデータ入力のためのルール",
+        "p1_title": "賃金の定義:",
+        "p1_desc": "1日の純額と全額の賃金を入力してください。",
+        "p2_title": "勤務タイプの選択:",
+        "p2_desc": "その日の正しいステータスを選択してください。",
+        "p3_title": "残業時間の入力:",
+        "p3_desc": "「残業」フィールドに通常の労働時間を入力しないでください。標準時間外に行われた追加の労働時間のみを入力してください。",
+        "p4_title": "休暇の競合:",
+        "p4_desc": "休暇の日にタイムシートを入力すると、システムが警告します。"
+      }
+    }
   },
   "dashboard": {
     "title": "人事管理",
@@ -333,7 +404,11 @@
     "next_short": "次へ",
     "yes": "はい",
     "no": "いいえ",
-    "error": "エラー"
+    "error": "エラー",
+    "details": "詳細",
+    "start_date": "開始日",
+    "end_date": "終了日",
+    "amount": "金額"
   },
   "worker_modal": {
     "title_new": "追加",
@@ -886,6 +961,21 @@
         "desc": "日付範囲または単位でフィルターします。"
       },
       "title": "制作ガイド"
+    },
+    "subcontractor_profile": {
+      "title": "下請業者取引明細書ガイド",
+      "step1": {
+        "title": "1. 出来高の追加",
+        "desc": "下請業者が現場で行った作業とその金額をここに入力します。これにより、下請業者の未収金（会社の債務）は増加しますが、レジからの現金流出は発生しません。"
+      },
+      "step2": {
+        "title": "2. レジ連動型の支払い",
+        "desc": "下請業者への現金支払いや前払いをここに記録します。これにより、下請業者の残高が減少し、レジで自動的に現金流出が作成されます。"
+      },
+      "step3": {
+        "title": "3. 正味口座残高",
+        "desc": "獲得した出来高の合計から支払い額を差し引いて計算された、下請業者に対する現在の正味債務を表示します。"
+      }
     }
   },
   "worker": {
@@ -897,7 +987,7 @@
     "periodAdvance": "期間前払金",
     "netBalance": "純残高",
     "group": "グループ",
-    "phone": "電話番号",
+    "phone": "電話",
     "id_tc": "ID/マイナンバー"
   },
   "recycle": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "担当者 (氏名 - 署名)",
-    "signatureCompany": "会社代表者 (角印/署名)"
+    "signatureCompany": "会社代表者 (角印/署名)",
+    "signatureSubcontractor": "下請業者 (印/署名)"
   },
   "global.searchPlaceholder": "検索...",
   "recycle.filterAllRecords": "すべての記録",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "前払い",
   "recycle.tableProject": "プロジェクト / サイト",
   "worker.group": "グループ",
-  "worker.phone": "電話番号",
   "pdf_project_site": "プロジェクト / サイト",
   "recycle_th_type": "レコードタイプ",
   "recycle_th_project": "プロジェクト / サイト",

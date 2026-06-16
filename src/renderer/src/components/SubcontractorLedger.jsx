@@ -4,7 +4,7 @@ import ConfirmationModal from './ui/ConfirmationModal';
 import GuideDrawer from './ui/GuideDrawer';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatUtils';
 
-const SubcontractorLedger = ({ activeProjectId, projects = [] }) => {
+const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) => {
   const { t, i18n } = useTranslation();
   const [contractors, setContractors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -362,6 +362,15 @@ const SubcontractorLedger = ({ activeProjectId, projects = [] }) => {
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
+                        {onViewProfile && (
+                          <button 
+                            className="btn btn-primary" 
+                            onClick={() => onViewProfile(c)}
+                            style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                          >
+                            {t('common.details', 'Detay')}
+                          </button>
+                        )}
                         <button 
                           className="btn" 
                           onClick={() => handleStartEdit(c)}

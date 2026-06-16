@@ -207,6 +207,22 @@ async function getDB() {
       FOREIGN KEY (project_id) REFERENCES projects(id)
     );
 
+    CREATE TABLE IF NOT EXISTS subcontractor_transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subcontractor_id INTEGER NOT NULL,
+      trans_date DATE NOT NULL,
+      type TEXT NOT NULL,
+      amount REAL NOT NULL,
+      description TEXT,
+      project_id INTEGER,
+      linked_cash_id INTEGER,
+      is_deleted BOOLEAN DEFAULT 0,
+      deleted_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (subcontractor_id) REFERENCES subcontractor_ledgers(id),
+      FOREIGN KEY (project_id) REFERENCES projects(id)
+    );
+
     CREATE TABLE IF NOT EXISTS worker_leaves (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       worker_id INTEGER NOT NULL,
@@ -243,7 +259,7 @@ async function getDB() {
   }
 
   // Project ID & ISG Date Migrations for existing tables
-  const tablesWithProjectId = ['workers', 'timesheets', 'transactions', 'cash_register'];
+  const tablesWithProjectId = ['workers', 'timesheets', 'transactions', 'cash_register', 'subcontractor_transactions'];
   for (const t of tablesWithProjectId) {
     try {
       await db.run(`ALTER TABLE ${t} ADD COLUMN project_id INTEGER REFERENCES projects(id)`);
@@ -259,7 +275,7 @@ async function getDB() {
   }
 
   // Tags Migrations
-  const tablesWithTags = ['workers', 'timesheets', 'transactions', 'cash_register', 'materials', 'quality_reports', 'subcontractor_ledgers'];
+  const tablesWithTags = ['workers', 'timesheets', 'transactions', 'cash_register', 'materials', 'quality_reports', 'subcontractor_ledgers', 'subcontractor_transactions'];
   for (const t of tablesWithTags) {
     try {
       await db.run(`ALTER TABLE ${t} ADD COLUMN tags TEXT`);
@@ -279,7 +295,7 @@ async function getDB() {
   const tablesForSoftDelete = [
     'workers', 'timesheets', 'transactions', 'cash_register',
     'projects', 'production_records', 'materials', 'daily_journals',
-    'quality_reports', 'subcontractor_ledgers', 'work_types', 'worker_groups',
+    'quality_reports', 'subcontractor_ledgers', 'subcontractor_transactions', 'work_types', 'worker_groups',
     'worker_leaves'
   ];
   for (const t of tablesForSoftDelete) {
@@ -334,6 +350,12 @@ async function getDB() {
       name: 'trg_subcontractor_ledgers_deleted',
       table: 'subcontractor_ledgers',
       titleExpr: "NEW.name || ' (' || NEW.service_type || ')'",
+      projIdExpr: 'NEW.project_id'
+    },
+    {
+      name: 'trg_subcontractor_transactions_deleted',
+      table: 'subcontractor_transactions',
+      titleExpr: "NEW.type || ' - ' || NEW.description || ' (' || NEW.amount || ' ₺)'",
       projIdExpr: 'NEW.project_id'
     },
     {

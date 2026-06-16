@@ -1,4 +1,36 @@
 {
+  "subcontractor_profile": {
+    "cash_desc": "[{{name}}] - Paiement du sous-traitant",
+    "delete_title": "Supprimer l'enregistrement",
+    "delete_msg": "Êtes-vous sûr de vouloir supprimer cet enregistrement ? S'il s'agit d'un paiement, il sera également supprimé de la caisse.",
+    "total_earned": "Paiement d'avancement total",
+    "total_paid": "Total payé",
+    "remaining_balance": "Solde restant (Net)",
+    "tab_earned": "Paiements d'avancement",
+    "tab_payments": "Paiements / Avances",
+    "desc_earned_ph": "Ex: 3 jours de travaux d'excavation",
+    "add_earned": "Ajouter un paiement d'avancement",
+    "desc_payment_ph": "Ex: Avance en espèces / Virement bancaire",
+    "add_payment": "Ajouter un paiement",
+    "no_records": "Aucun enregistrement trouvé pour cette période.",
+    "earned_badge": "Gagné",
+    "payment_badge": "Paiement",
+    "tab_report": "Rapport (Extrait)",
+    "prev_balance": "Solde précédent",
+    "period_earned": "Période gagnée",
+    "period_paid": "Période payée",
+    "new_balance": "Nouveau solde",
+    "filter_all": "Tout",
+    "filter_earned": "Gagné",
+    "filter_paid": "Paiement",
+    "search_placeholder": "Chercher un mot-clé...",
+    "export_pdf": "Exporter (PDF)",
+    "whatsapp_share": "WhatsApp",
+    "whatsapp_no_phone": "Numéro de téléphone enregistré du sous-traitant introuvable.",
+    "whatsapp_message_template": "Cher(e) {{name}}, votre extrait de compte entre {{startDate}} - {{endDate}}:\n\n- Total gagné: {{earned}}\n- Total payé: {{paid}}\n- Solde restant: {{balance}}\n\nPour votre information.",
+    "statementTitle": "Extrait de Compte Sous-traitant",
+    "service_type": "Type de service"
+  },
   "nav": {
     "personnel": "Gestion du Personnel",
     "cash": "Gestion de Caisse",
@@ -95,7 +127,46 @@
     "optimize_error": "Erreur d'optimisation :",
     "cloud_folder_success": "Dossier de sauvegarde cloud silencieuse défini avec succès :",
     "restore_confirm_title": "Confirmation de restauration",
-    "restore_error": "Erreur de restauration :"
+    "restore_error": "Erreur de restauration :",
+    "finance_guide": {
+      "title": "Guide financier et de calcul",
+      "intro": "Je détaille ci-dessous à quoi servent ces concepts critiques dans le système de Journal Électronique, qui gère la mémoire financière de votre chantier, et comment ils sont calculés en arrière-plan:",
+      "section1": {
+        "title": "1. Que sont les paramètres et à quoi servent-ils ?",
+        "p1_title": "Heures de travail journalières standard :",
+        "p1_desc": "La durée normale qu'un travailleur est censé travailler par jour. Le système divise le salaire journalier du personnel par cette valeur lors du calcul du salaire horaire.",
+        "p2_title": "Multiplicateur de salaire horaire supplémentaire :",
+        "p2_desc": "Détermine le coefficient par lequel le salaire horaire standard sera multiplié en cas d'heures supplémentaires. Le coefficient standard en droit du travail est généralement de 1,5."
+      },
+      "section2": {
+        "title": "2. Types de travail et multiplicateurs",
+        "p1_title": "Type de travail :",
+        "p1_desc": "La manière dont le personnel est présent sur le chantier ce jour-là.",
+        "p2_title": "Multiplicateur (Coefficient) :",
+        "p2_desc": "Le taux auquel le type de travail sélectionné affecte le salaire journalier (ex. Journée complète x1.0, Demi-journée x0.5, Heures supplémentaires le dimanche x1.5 ou x2.0)."
+      },
+      "section3": {
+        "title": "3. Feuille de temps et formule de calcul",
+        "p1_title": "Feuille de temps :",
+        "p1_desc": "Le tableau numérique enregistrant les jours et les heures supplémentaires réellement travaillés par les travailleurs.",
+        "f_total": "Gains Totaux = Gains de Base + Rémunération des Heures Supplémentaires",
+        "f_base": "Gains de Base = Salaire Journalier * Multiplicateur du Type de Travail",
+        "f_hourly": "Salaire Horaire = Salaire Journalier / Heures de Travail Standard",
+        "f_overtime": "Rémunération des Heures Supplémentaires = Salaire Horaire * Multiplicateur d'Heures Supplémentaires * Heures Supplémentaires",
+        "example": "Exemple : Salaire 2 000, Journée complète (x1), 2 h supp. (x1,5), Heures Std (8). Résultat : 2 000 (Base) + 750 (Heures supp.) = 2 750."
+      },
+      "section4": {
+        "title": "4. Règles pour une saisie de données précise",
+        "p1_title": "Définition du salaire :",
+        "p1_desc": "Saisissez le salaire net et complet journalier.",
+        "p2_title": "Sélection du type de travail :",
+        "p2_desc": "Sélectionnez le statut correct pour ce jour-là.",
+        "p3_title": "Saisie des heures supplémentaires :",
+        "p3_desc": "Ne saisissez PAS d'heures de travail normales dans le champ \"Heures supp.\" ; ne saisissez que les heures de travail supplémentaires effectuées en dehors des heures standard.",
+        "p4_title": "Conflits de congés :",
+        "p4_desc": "Le système vous avertira si vous entrez une feuille de temps pour des jours de congé."
+      }
+    }
   },
   "dashboard": {
     "title": "Gestion du Personnel",
@@ -333,7 +404,11 @@
     "next_short": "Suivant",
     "yes": "Oui",
     "no": "Non",
-    "error": "Erreur"
+    "error": "Erreur",
+    "details": "Détails",
+    "start_date": "Date de début",
+    "end_date": "Date de fin",
+    "amount": "Montant"
   },
   "worker_modal": {
     "title_new": "Ajouter du Personnel",
@@ -886,6 +961,21 @@
         "desc": "Filtrer par plage de dates ou par unité."
       },
       "title": "Guide de production"
+    },
+    "subcontractor_profile": {
+      "title": "Guide du relevé de compte sous-traitant",
+      "step1": {
+        "title": "1. Ajout de situations de travaux",
+        "desc": "Saisissez ici les travaux réalisés par le sous-traitant sur le chantier ainsi que leurs montants. Cela augmente les créances du sous-traitant (la dette de l'entreprise) mais n'entraîne pas de sortie de fonds de la caisse."
+      },
+      "step2": {
+        "title": "2. Paiements intégrés à la caisse",
+        "desc": "Enregistrez ici les paiements en espèces et les acomptes versés au sous-traitant. Cela réduit le solde du sous-traitant et crée automatiquement une sortie de trésorerie dans la Caisse."
+      },
+      "step3": {
+        "title": "3. Solde net du compte",
+        "desc": "Affiche votre dette nette actuelle envers le sous-traitant, calculée en soustrayant les paiements effectués du total des situations de travaux acquises."
+      }
     }
   },
   "worker": {
@@ -996,7 +1086,8 @@
   },
   "pdf": {
     "signatureWorker": "Personnel (Nom/Signature)",
-    "signatureCompany": "Représentant de l'Entreprise (Cachet/Signature)"
+    "signatureCompany": "Représentant de l'Entreprise (Cachet/Signature)",
+    "signatureSubcontractor": "Sous-traitant (Cachet/Signature)"
   },
   "global.searchPlaceholder": "Rechercher...",
   "recycle.filterAllRecords": "Tous les enregistrements",
@@ -1010,7 +1101,6 @@
   "worker.advanceBadge": "Avance",
   "recycle.tableProject": "Projet / Site",
   "worker.group": "Groupe",
-  "worker.phone": "Téléphone",
   "pdf_project_site": "Projet / Site",
   "recycle_th_type": "Type d'Enregistrement",
   "recycle_th_project": "Projet / Site",
