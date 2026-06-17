@@ -40,6 +40,88 @@ app.whenReady().then(() => {
   });
 });
 
+function processBackupArchiving(backupFolder) {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const AdmZip = require('adm-zip');
+
+    if (!fs.existsSync(backupFolder)) return;
+
+    const files = fs.readdirSync(backupFolder);
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const currentYearMonth = `${currentYear}-${currentMonth}`;
+
+    // 1. Group daily backup files by month for files of PREVIOUS months
+    const dailyBackupRegex = /^elektronik-yevmiye-backup-(\d{4}-\d{2})-\d{2}\.sqlite$/;
+    const monthlyGroups = {};
+
+    files.forEach(file => {
+      const match = file.match(dailyBackupRegex);
+      if (match) {
+        const fileYearMonth = match[1];
+        if (fileYearMonth < currentYearMonth) {
+          if (!monthlyGroups[fileYearMonth]) {
+            monthlyGroups[fileYearMonth] = [];
+          }
+          monthlyGroups[fileYearMonth].push(file);
+        }
+      }
+    });
+
+    // Archive each previous month's daily backups
+    for (const [yearMonth, fileList] of Object.entries(monthlyGroups)) {
+      if (fileList.length === 0) continue;
+      
+      const zipPath = path.join(backupFolder, `elektronik-yevmiye-backup-${yearMonth}.zip`);
+      const zip = new AdmZip();
+
+      fileList.forEach(file => {
+        const filePath = path.join(backupFolder, file);
+        zip.addLocalFile(filePath);
+      });
+
+      zip.writeZip(zipPath);
+      console.log(`Archived ${fileList.length} daily backups for ${yearMonth} to ${zipPath}`);
+
+      // Delete original SQLite files
+      fileList.forEach(file => {
+        try {
+          fs.unlinkSync(path.join(backupFolder, file));
+        } catch (err) {
+          console.error(`Failed to delete daily backup file ${file}:`, err);
+        }
+      });
+    }
+
+    // 2. Organize previous years' ZIP archives into yearly folders
+    const zipArchiveRegex = /^elektronik-yevmiye-backup-(\d{4})-\d{2}\.zip$/;
+    const updatedFiles = fs.readdirSync(backupFolder);
+
+    updatedFiles.forEach(file => {
+      const match = file.match(zipArchiveRegex);
+      if (match) {
+        const fileYear = parseInt(match[1], 10);
+        if (fileYear < currentYear) {
+          const yearFolder = path.join(backupFolder, String(fileYear));
+          if (!fs.existsSync(yearFolder)) {
+            fs.mkdirSync(yearFolder, { recursive: true });
+          }
+          const srcPath = path.join(backupFolder, file);
+          const destPath = path.join(yearFolder, file);
+          fs.renameSync(srcPath, destPath);
+          console.log(`Moved yearly archive ${file} to ${yearFolder}`);
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error('Backup archiving error:', err);
+  }
+}
+
 app.on('window-all-closed', async () => {
   if (process.platform !== 'darwin') {
     try {
@@ -54,13 +136,17 @@ app.on('window-all-closed', async () => {
           ? path.join(__dirname, '../../database.sqlite')
           : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
           
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const destPath = path.join(setting.setting_value, `elektronik-yevmiye-backup-${timestamp}.sqlite`);
+        const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        const destPath = path.join(setting.setting_value, `elektronik-yevmiye-backup-${todayStr}.sqlite`);
+        
         fs.copyFileSync(dbPath, destPath);
-        console.log('Cloud sync backup completed:', destPath);
+        console.log('Daily backup completed:', destPath);
+
+        // Process archiving and sorting
+        processBackupArchiving(setting.setting_value);
       }
     } catch (err) {
-      console.error('Cloud sync error:', err);
+      console.error('Backup system error:', err);
     }
     app.quit();
   }

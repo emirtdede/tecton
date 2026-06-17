@@ -163,8 +163,16 @@ const Settings = ({ activeTab = 'genel' }) => {
 
   // Update App Settings
   const handleSettingChange = async (id, key, value) => {
-    if (key === 'standard_daily_hours' && Number(value) <= 0) {
-      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.hours_zero_error', 'Çalışma saati 0 veya daha küçük olamaz.'), type: 'error' } }));
+    if (key === 'standard_daily_hours') {
+      // Local state update allows intermediate states (e.g. empty, "-", "0")
+      setAppSettings(prev => prev.map(s => s.id === id ? { ...s, setting_value: value } : s));
+      
+      const numVal = Number(value);
+      if (!isNaN(numVal) && numVal > 0) {
+        if (window.api) {
+          await window.api.db.update('app_settings', id, { setting_value: value });
+        }
+      }
       return;
     }
 
@@ -187,6 +195,22 @@ const Settings = ({ activeTab = 'genel' }) => {
       }
       if (key === 'custom_time_format') {
         if (window.regionalSettings) window.regionalSettings.timeFormat = value;
+      }
+    }
+  };
+
+  const handleSettingBlur = async (id, key, value) => {
+    if (key === 'standard_daily_hours') {
+      const numVal = Number(value);
+      if (isNaN(numVal) || numVal <= 0) {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.hours_zero_error', 'Çalışma saati 0 veya daha küçük olamaz.'), type: 'error' } }));
+        
+        if (window.api) {
+          const settingsData = await window.api.db.read('app_settings');
+          const dbSetting = settingsData.find(s => s.id === id);
+          const fallbackValue = dbSetting && Number(dbSetting.setting_value) > 0 ? dbSetting.setting_value : "8";
+          setAppSettings(prev => prev.map(s => s.id === id ? { ...s, setting_value: fallbackValue } : s));
+        }
       }
     }
   };
@@ -544,13 +568,13 @@ const Settings = ({ activeTab = 'genel' }) => {
                             onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
                           >
                             <option value="auto">{t('settings.autoByLanguage', 'Otomatik (Dile Göre)')}</option>
-                            <option value="DD.MM.YYYY">DD.MM.YYYY (13.06.2026)</option>
-                            <option value="YYYY-MM-DD">YYYY-MM-DD (2026-06-13)</option>
-                            <option value="MM/DD/YYYY">MM/DD/YYYY (06/13/2026)</option>
-                            <option value="DD/MM/YYYY">DD/MM/YYYY (13/06/2026)</option>
-                            <option value="DD-MM-YYYY">DD-MM-YYYY (13-06-2026)</option>
-                            <option value="YYYY/MM/DD">YYYY/MM/DD (2026/06/13)</option>
-                            <option value="YYYY.MM.DD">YYYY.MM.DD (2026.06.13)</option>
+                            <option value="DD.MM.YYYY">DD.MM.YYYY (01.01.2000)</option>
+                            <option value="YYYY-MM-DD">YYYY-MM-DD (2000-01-01)</option>
+                            <option value="MM/DD/YYYY">MM/DD/YYYY (01/01/2000)</option>
+                            <option value="DD/MM/YYYY">DD/MM/YYYY (01/01/2000)</option>
+                            <option value="DD-MM-YYYY">DD-MM-YYYY (01-01-2000)</option>
+                            <option value="YYYY/MM/DD">YYYY/MM/DD (2000/01/01)</option>
+                            <option value="YYYY.MM.DD">YYYY.MM.DD (2000.01.01)</option>
                           </select>
                         </div>
                       );
@@ -570,8 +594,8 @@ const Settings = ({ activeTab = 'genel' }) => {
                             onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
                           >
                             <option value="auto">{t('settings.autoByLanguage', 'Otomatik (Dile Göre)')}</option>
-                            <option value="24h">{t('settings.time24h', '24 Saat (14:30)')}</option>
-                            <option value="12h">{t('settings.time12h', '12 Saat AM/PM (02:30 PM)')}</option>
+                            <option value="24h">{t('settings.time24h', '24 Saat (18:30)')}</option>
+                            <option value="12h">{t('settings.time12h', '12 Saat AM/PM (06:30 PM)')}</option>
                           </select>
                         </div>
                       );
@@ -668,6 +692,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                       className="form-input" 
                       value={setting.setting_value}
                       onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
+                      onBlur={(e) => handleSettingBlur(setting.id, setting.setting_key, e.target.value)}
                     />
                   </div>
                 );

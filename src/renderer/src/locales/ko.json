@@ -120,8 +120,8 @@
     "currencySelection": "통화 선택",
     "dateFormatSelection": "날짜 형식 선택",
     "timeFormatSelection": "시간 형식 선택",
-    "time24h": "24시간 (14:30)",
-    "time12h": "12시간 AM/PM (02:30 PM)",
+    "time24h": "24시간 (18:30)",
+    "time12h": "12시간 AM/PM (06:30 PM)",
     "backup_error": "백업 오류:",
     "optimize_success": "데이터베이스가 성공적으로 최적화되었습니다.",
     "optimize_error": "최적화 오류:",
@@ -167,8 +167,8 @@
         "p4_desc": "휴가인 날에 타임시트를 입력하면 시스템에서 경고합니다."
       }
     },
-    "hours_zero_error": "근무 시간은 0 이하일 수 없습니다.",
-    "restore_corrupted_error": "복원 실패, 파일이 손상되었거나 유효하지 않습니다. 보안을 위해 이전 데이터베이스로 되돌렸습니다."
+    "hours_zero_error": "작업 시간은 0 또는 그 이하일 수 없습니다.",
+    "restore_corrupted_error": "복원 실패: 백업 파일이 손상되었거나 유효하지 않습니다. 시스템 보호를 위해 이전 데이터베이스로 복구되었습니다."
   },
   "dashboard": {
     "title": "인사 관리",

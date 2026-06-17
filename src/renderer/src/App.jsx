@@ -439,9 +439,11 @@ function App() {
     return '';
   };
 
+  const currentSidebarWidth = sidebarState === 'full' ? sidebarWidth : (sidebarState === 'collapsed' ? 76 : 0);
+
   return (
     <>
-      <ToastManager />
+      <ToastManager sidebarWidth={currentSidebarWidth} />
       {sidebarState === 'hidden' && (
         <button
           type="button"

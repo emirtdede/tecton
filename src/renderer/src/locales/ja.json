@@ -120,8 +120,8 @@
     "currencySelection": "通貨の選択",
     "dateFormatSelection": "日付フォーマットの選択",
     "timeFormatSelection": "時間フォーマットの選択",
-    "time24h": "24時間（14:30）",
-    "time12h": "12時間 AM/PM（02:30 PM）",
+    "time24h": "24時間（18:30）",
+    "time12h": "12時間 AM/PM（06:30 PM）",
     "backup_error": "バックアップエラー:",
     "optimize_success": "データベースは正常に最適化されました。",
     "optimize_error": "最適化エラー:",
@@ -167,8 +167,8 @@
         "p4_desc": "休暇の日にタイムシートを入力すると、システムが警告します。"
       }
     },
-    "hours_zero_error": "労働時間を0以下にすることはできません。",
-    "restore_corrupted_error": "復元に失敗しました。ファイルが破損しているか無効です。セキュリティのため、以前のデータベースに戻しました。"
+    "hours_zero_error": "勤務時間は0またはそれ以下に設定することはできません。",
+    "restore_corrupted_error": "復元に失敗しました。バックアップファイルが破損しているか無効です。安全のため、以前のデータベースに戻しました。"
   },
   "dashboard": {
     "title": "人事管理",

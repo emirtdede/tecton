@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ToastManager = () => {
+const ToastManager = ({ sidebarWidth = 0 }) => {
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
@@ -25,13 +25,14 @@ const ToastManager = () => {
     <div style={{
       position: 'fixed',
       top: '20px',
-      left: '50%',
+      left: `calc(50% + ${sidebarWidth / 2}px)`,
       transform: 'translateX(-50%)',
       zIndex: 10000,
       display: 'flex',
       flexDirection: 'column',
       gap: '0.5rem',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
     }}>
       {toasts.map(toast => {
         let bg = 'rgba(15, 23, 42, 0.95)';
