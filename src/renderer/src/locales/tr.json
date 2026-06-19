@@ -213,7 +213,8 @@
     "undo_success": "İşlem başarıyla geri alındı!",
     "undo_error": "Geri alma başarısız oldu:",
     "delete_worker_title": "Personeli Sil",
-    "delete_worker_msg": "Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır."
+    "delete_worker_msg": "Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır.",
+    "bulk_timesheet": "📋 Çoklu Puantaj"
   },
   "worker_profile": {
     "back": "Geri Dön",
@@ -1378,7 +1379,12 @@
     "guide_step2_title": "2. Puantaj Bilgileri",
     "guide_step2_desc": "Sağ panelden tarih, çalışma tipi ve mesai saati gibi puantaj bilgilerini girin. Bu bilgiler seçili tüm personele uygulanacaktır.",
     "guide_step3_title": "3. Toplu Kaydet",
-    "guide_step3_desc": "Toplu Kaydet butonuna tıklayarak seçili tüm personel için puantaj kaydı oluşturun. Her personelin kendi yevmiyesi üzerinden hesaplama yapılır."
+    "guide_step3_desc": "Toplu Kaydet butonuna tıklayarak seçili tüm personel için puantaj kaydı oluşturun. Her personelin kendi yevmiyesi üzerinden hesaplama yapılır.",
+    "already_entered": "✓ Girildi",
+    "group_filter_all": "Tüm Gruplar",
+    "day": "gün",
+    "end_date": "Bitiş Tarihi",
+    "end_date_placeholder": "Varsayılan: Tek Gün"
   },
   "subcontractor_import": {
     "import_btn": "İçe Aktar (Excel/CSV)",

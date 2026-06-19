@@ -194,7 +194,8 @@
     "undo_success": "Åtgärden har ångrats!",
     "undo_error": "Det gick inte att ångra:",
     "delete_worker_title": "Ta Bort Personal",
-    "delete_worker_msg": "Är du säker på att du vill ta bort denna personal (flytta till papperskorgen)? Systemdata kommer inte att raderas permanent, men tas bort från listor."
+    "delete_worker_msg": "Är du säker på att du vill ta bort denna personal (flytta till papperskorgen)? Systemdata kommer inte att raderas permanent, men tas bort från listor.",
+    "bulk_timesheet": "📋 Mass-tidrapport"
   },
   "worker_profile": {
     "back": "Tillbaka",
@@ -1413,7 +1414,12 @@
     "guide_step2_title": "2. Tidrapportdetaljer",
     "guide_step2_desc": "Ange detaljer som datum, arbetstyp och övertidstimmar. Dessa tillämpas på alla valda arbetare.",
     "guide_step3_title": "3. Massspara",
-    "guide_step3_desc": "Klicka på 'Spara Alla' för att skapa tidrapporter för alla valda arbetare."
+    "guide_step3_desc": "Klicka på 'Spara Alla' för att skapa tidrapporter för alla valda arbetare.",
+    "already_entered": "✓ Inlagd",
+    "group_filter_all": "Alla grupper",
+    "day": "dag",
+    "end_date": "Slutdatum",
+    "end_date_placeholder": "Standard: Enstaka dag"
   },
   "subcontractor_import": {
     "import_btn": "Importera (Excel/CSV)",

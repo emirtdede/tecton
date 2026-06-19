@@ -194,7 +194,8 @@
     "undo_success": "작업이 취소되었습니다.",
     "undo_error": "실행취소 실패:",
     "delete_worker_title": "인원 삭제",
-    "delete_worker_msg": "이 인원을 삭제(휴지통으로 이동)하시겠습니까? 시스템 데이터는 영구적으로 삭제되지 않지만 목록에서 제거됩니다."
+    "delete_worker_msg": "이 인원을 삭제(휴지통으로 이동)하시겠습니까? 시스템 데이터는 영구적으로 삭제되지 않지만 목록에서 제거됩니다.",
+    "bulk_timesheet": "📋 일괄 타임시트"
   },
   "worker_profile": {
     "back": "뒤로",
@@ -1418,7 +1419,12 @@
     "guide_step2_title": "2. 근무표 세부정보",
     "guide_step2_desc": "오른쪽 패널에서 날짜, 근무 유형, 초과 근무 시간 등의 정보를 입력합니다. 선택된 모든 작업자에게 적용됩니다.",
     "guide_step3_title": "3. 일괄 저장",
-    "guide_step3_desc": "'일괄 저장'을 클릭하여 선택된 모든 작업자의 근무표 레코드를 생성합니다."
+    "guide_step3_desc": "'일괄 저장'을 클릭하여 선택된 모든 작업자의 근무표 레코드를 생성합니다.",
+    "already_entered": "✓ 입력됨",
+    "group_filter_all": "모든 그룹",
+    "day": "일",
+    "end_date": "종료일",
+    "end_date_placeholder": "기본값: 단일 영업일"
   },
   "subcontractor_import": {
     "import_btn": "가져오기 (Excel/CSV)",

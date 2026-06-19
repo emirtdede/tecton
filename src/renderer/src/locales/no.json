@@ -194,7 +194,8 @@
     "undo_success": "Handlingen er angret!",
     "undo_error": "Angre mislyktes:",
     "delete_worker_title": "Slett Personell",
-    "delete_worker_msg": "Er du sikker på at du vil slette dette personellet (flytte til papirkurven)? Systemdata vil ikke bli permanent slettet, men fjernet fra lister."
+    "delete_worker_msg": "Er du sikker på at du vil slette dette personellet (flytte til papirkurven)? Systemdata vil ikke bli permanent slettet, men fjernet fra lister.",
+    "bulk_timesheet": "📋 Masse-timeliste"
   },
   "worker_profile": {
     "back": "Tilbake",
@@ -1422,7 +1423,12 @@
     "guide_step2_title": "2. Timelistedetaljer",
     "guide_step2_desc": "Angi detaljer som dato, arbeidstype og overtidstimer. Disse gjelder for alle valgte arbeidere.",
     "guide_step3_title": "3. Masselagring",
-    "guide_step3_desc": "Klikk på 'Lagre Alle' for å opprette timelister for alle valgte arbeidere."
+    "guide_step3_desc": "Klikk på 'Lagre Alle' for å opprette timelister for alle valgte arbeidere.",
+    "already_entered": "✓ Skrevet inn",
+    "group_filter_all": "Alle grupper",
+    "day": "dag",
+    "end_date": "Sluttdato",
+    "end_date_placeholder": "Standard: Enkelt dag"
   },
   "subcontractor_import": {
     "import_btn": "Importer (Excel/CSV)",

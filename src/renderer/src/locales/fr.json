@@ -194,7 +194,8 @@
     "undo_success": "Action annulée avec succès !",
     "undo_error": "L'annulation a échoué :",
     "delete_worker_title": "Supprimer le Personnel",
-    "delete_worker_msg": "Êtes-vous sûr de vouloir supprimer ce personnel (déplacer vers la corbeille) ? Les données du système ne seront pas supprimées définitivement, mais retirées des listes."
+    "delete_worker_msg": "Êtes-vous sûr de vouloir supprimer ce personnel (déplacer vers la corbeille) ? Les données du système ne seront pas supprimées définitivement, mais retirées des listes.",
+    "bulk_timesheet": "📋 Feuille de temps collective"
   },
   "worker_profile": {
     "back": "Retour",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. Détails de la Feuille de Temps",
     "guide_step2_desc": "Entrez les détails tels que la date, le type de travail et les heures supplémentaires. Ces détails seront appliqués à tous les travailleurs sélectionnés.",
     "guide_step3_title": "3. Sauvegarde Groupée",
-    "guide_step3_desc": "Cliquez sur 'Tout Enregistrer' pour créer des entrées de feuille de temps pour tous les travailleurs sélectionnés."
+    "guide_step3_desc": "Cliquez sur 'Tout Enregistrer' pour créer des entrées de feuille de temps pour tous les travailleurs sélectionnés.",
+    "already_entered": "✓ Saisi",
+    "group_filter_all": "Tous les groupes",
+    "day": "jour",
+    "end_date": "Date de fin",
+    "end_date_placeholder": "Par défaut : Jour unique"
   },
   "subcontractor_import": {
     "import_btn": "Importer (Excel/CSV)",

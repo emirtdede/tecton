@@ -194,7 +194,8 @@
     "undo_success": "¡Acción deshecha con éxito!",
     "undo_error": "Error al deshacer:",
     "delete_worker_title": "Eliminar Personal",
-    "delete_worker_msg": "¿Estás seguro de que quieres eliminar este personal (mover a la papelera)? Los datos del sistema no se eliminarán permanentemente, pero se quitarán de las listas."
+    "delete_worker_msg": "¿Estás seguro de que quieres eliminar este personal (mover a la papelera)? Los datos del sistema no se eliminarán permanentemente, pero se quitarán de las listas.",
+    "bulk_timesheet": "📋 Parte de horas masivo"
   },
   "worker_profile": {
     "back": "Volver",
@@ -1413,7 +1414,12 @@
     "guide_step2_title": "2. Detalles del Horario",
     "guide_step2_desc": "Ingrese los detalles como fecha, tipo de trabajo y horas extra. Estos se aplicarán a todos los seleccionados.",
     "guide_step3_title": "3. Guardado Masivo",
-    "guide_step3_desc": "Haga clic en 'Guardar Todo' para crear registros de horario para todos los trabajadores seleccionados."
+    "guide_step3_desc": "Haga clic en 'Guardar Todo' para crear registros de horario para todos los trabajadores seleccionados.",
+    "already_entered": "✓ Registrado",
+    "group_filter_all": "Todos los grupos",
+    "day": "día",
+    "end_date": "Fecha de finalización",
+    "end_date_placeholder": "Predeterminado: Día único"
   },
   "subcontractor_import": {
     "import_btn": "Importar (Excel/CSV)",

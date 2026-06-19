@@ -194,7 +194,8 @@
     "undo_success": "Aktion erfolgreich rückgängig gemacht!",
     "undo_error": "Rückgängig machen fehlgeschlagen:",
     "delete_worker_title": "Personal Löschen",
-    "delete_worker_msg": "Sind Sie sicher, dass Sie dieses Personal löschen möchten (in den Papierkorb verschieben)? Systemdaten werden nicht dauerhaft gelöscht, sondern aus den Listen entfernt."
+    "delete_worker_msg": "Sind Sie sicher, dass Sie dieses Personal löschen möchten (in den Papierkorb verschieben)? Systemdaten werden nicht dauerhaft gelöscht, sondern aus den Listen entfernt.",
+    "bulk_timesheet": "📋 Sammel-Stundenzettel"
   },
   "worker_profile": {
     "back": "Zurück",
@@ -1413,7 +1414,12 @@
     "guide_step2_title": "2. Zeiterfassungsdetails",
     "guide_step2_desc": "Geben Sie im rechten Bereich Zeiterfassungsdetails wie Datum, Arbeitstyp und Überstunden ein. Diese Details gelten für alle ausgewählten Mitarbeiter.",
     "guide_step3_title": "3. Massenspeicherung",
-    "guide_step3_desc": "Klicken Sie auf 'Alle speichern', um Zeiterfassungseinträge für alle ausgewählten Mitarbeiter zu erstellen. Der jeweilige Tageslohn wird für die Berechnung verwendet."
+    "guide_step3_desc": "Klicken Sie auf 'Alle speichern', um Zeiterfassungseinträge für alle ausgewählten Mitarbeiter zu erstellen. Der jeweilige Tageslohn wird für die Berechnung verwendet.",
+    "already_entered": "✓ Eingetragen",
+    "group_filter_all": "Alle Gruppen",
+    "day": "Tag",
+    "end_date": "Enddatum",
+    "end_date_placeholder": "Standard: Einzelner Tag"
   },
   "subcontractor_import": {
     "import_btn": "Importieren (Excel/CSV)",

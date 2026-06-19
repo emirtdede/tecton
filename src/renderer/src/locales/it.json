@@ -194,7 +194,8 @@
     "undo_success": "Azione annullata con successo!",
     "undo_error": "Annullamento non riuscito:",
     "delete_worker_title": "Elimina Personale",
-    "delete_worker_msg": "Sei sicuro di voler eliminare questo personale (spostarlo nel cestino)? I dati di sistema non verranno eliminati in modo permanente, ma rimossi dagli elenchi."
+    "delete_worker_msg": "Sei sicuro di voler eliminare questo personale (spostarlo nel cestino)? I dati di sistema non verranno eliminati in modo permanente, ma rimossi dagli elenchi.",
+    "bulk_timesheet": "📋 Foglio presenza multiplo"
   },
   "worker_profile": {
     "back": "Indietro",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. Dettagli Foglio Ore",
     "guide_step2_desc": "Inserisci i dettagli come data, tipo di lavoro e straordinari. Questi saranno applicati a tutti i selezionati.",
     "guide_step3_title": "3. Salvataggio Multiplo",
-    "guide_step3_desc": "Clicca 'Salva Tutti' per creare record foglio ore per tutti i lavoratori selezionati."
+    "guide_step3_desc": "Clicca 'Salva Tutti' per creare record foglio ore per tutti i lavoratori selezionati.",
+    "already_entered": "✓ Inserito",
+    "group_filter_all": "Tutti i gruppi",
+    "day": "giorno",
+    "end_date": "Data di fine",
+    "end_date_placeholder": "Predefinito: Giorno singolo"
   },
   "subcontractor_import": {
     "import_btn": "Importa (Excel/CSV)",

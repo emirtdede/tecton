@@ -194,7 +194,8 @@
     "undo_success": "Action successfully undone!",
     "undo_error": "Undo failed:",
     "delete_worker_title": "Delete Personnel",
-    "delete_worker_msg": "Are you sure you want to delete this personnel (move to recycle bin)? System data will not be permanently deleted, but removed from lists."
+    "delete_worker_msg": "Are you sure you want to delete this personnel (move to recycle bin)? System data will not be permanently deleted, but removed from lists.",
+    "bulk_timesheet": "📋 Bulk Timesheet"
   },
   "worker_profile": {
     "back": "Back",
@@ -1392,7 +1393,12 @@
     "guide_step2_title": "2. Timesheet Details",
     "guide_step2_desc": "Enter timesheet details such as date, work type and overtime hours from the right panel. These details will be applied to all selected workers.",
     "guide_step3_title": "3. Bulk Save",
-    "guide_step3_desc": "Click Save All to create timesheet records for all selected workers. Each worker's own daily wage will be used for calculation."
+    "guide_step3_desc": "Click Save All to create timesheet records for all selected workers. Each worker's own daily wage will be used for calculation.",
+    "already_entered": "✓ Entered",
+    "group_filter_all": "All Groups",
+    "day": "day",
+    "end_date": "End Date",
+    "end_date_placeholder": "Default: Single Day"
   },
   "subcontractor_import": {
     "import_btn": "Import (Excel/CSV)",

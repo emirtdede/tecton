@@ -194,7 +194,8 @@
     "undo_success": "Akce byla úspěšně zrušena!",
     "undo_error": "Vrátit zpět se nezdařilo:",
     "delete_worker_title": "Odstranit personál",
-    "delete_worker_msg": "Opravdu chcete tento personál odstranit (přesunout do koše)? Systémová data nebudou trvale smazána, ale budou odstraněna ze seznamů."
+    "delete_worker_msg": "Opravdu chcete tento personál odstranit (přesunout do koše)? Systémová data nebudou trvale smazána, ale budou odstraněna ze seznamů.",
+    "bulk_timesheet": "📋 Hromadný výkaz"
   },
   "worker_profile": {
     "back": "Zpět",
@@ -1413,7 +1414,12 @@
     "guide_step2_title": "2. Detaily Docházky",
     "guide_step2_desc": "Zadejte detaily jako datum, typ práce a přesčasové hodiny. Ty budou aplikovány na všechny vybrané pracovníky.",
     "guide_step3_title": "3. Hromadné Uložení",
-    "guide_step3_desc": "Klikněte na 'Uložit Vše' pro vytvoření záznamů docházky pro všechny vybrané pracovníky."
+    "guide_step3_desc": "Klikněte na 'Uložit Vše' pro vytvoření záznamů docházky pro všechny vybrané pracovníky.",
+    "already_entered": "✓ Zadáno",
+    "group_filter_all": "Všechny skupiny",
+    "day": "den",
+    "end_date": "Datum ukončení",
+    "end_date_placeholder": "Výchozí: Jeden den"
   },
   "subcontractor_import": {
     "import_btn": "Importovat (Excel/CSV)",

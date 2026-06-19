@@ -194,7 +194,8 @@
     "undo_success": "Ação desfeita com sucesso!",
     "undo_error": "Falha ao desfazer:",
     "delete_worker_title": "Excluir Pessoal",
-    "delete_worker_msg": "Tem certeza de que deseja excluir este pessoal (mover para a lixeira)? Os dados do sistema não serão excluídos permanentemente, mas removidos das listas."
+    "delete_worker_msg": "Tem certeza de que deseja excluir este pessoal (mover para a lixeira)? Os dados do sistema não serão excluídos permanentemente, mas removidos das listas.",
+    "bulk_timesheet": "📋 Folha de horas em massa"
   },
   "worker_profile": {
     "back": "Voltar",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. Detalhes da Folha de Ponto",
     "guide_step2_desc": "Insira detalhes como data, tipo de trabalho e horas extras. Estes serão aplicados a todos os selecionados.",
     "guide_step3_title": "3. Salvamento em Massa",
-    "guide_step3_desc": "Clique em 'Salvar Todos' para criar registros de folha de ponto para todos os trabalhadores selecionados."
+    "guide_step3_desc": "Clique em 'Salvar Todos' para criar registros de folha de ponto para todos os trabalhadores selecionados.",
+    "already_entered": "✓ Registrado",
+    "group_filter_all": "Todos os grupos",
+    "day": "dia",
+    "end_date": "Data de término",
+    "end_date_placeholder": "Padrão: Dia único"
   },
   "subcontractor_import": {
     "import_btn": "Importar (Excel/CSV)",

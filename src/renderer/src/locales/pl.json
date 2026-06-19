@@ -194,7 +194,8 @@
     "undo_success": "Akcja została pomyślnie cofnięta!",
     "undo_error": "Cofnięcie nie powiodło się:",
     "delete_worker_title": "Usuń Personel",
-    "delete_worker_msg": "Czy na pewno chcesz usunąć ten personel (przenieść do kosza)? Dane systemowe nie zostaną trwale usunięte, ale usunięte z list."
+    "delete_worker_msg": "Czy na pewno chcesz usunąć ten personel (przenieść do kosza)? Dane systemowe nie zostaną trwale usunięte, ale usunięte z list.",
+    "bulk_timesheet": "📋 Zbiorcza karta pracy"
   },
   "worker_profile": {
     "back": "Wstecz",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. Szczegóły Karty Czasu",
     "guide_step2_desc": "Wprowadź szczegóły takie jak data, typ pracy i godziny nadliczbowe. Będą one zastosowane do wszystkich wybranych pracowników.",
     "guide_step3_title": "3. Masowy Zapis",
-    "guide_step3_desc": "Kliknij 'Zapisz Wszystko' aby utworzyć rekordy karty czasu dla wszystkich wybranych pracowników."
+    "guide_step3_desc": "Kliknij 'Zapisz Wszystko' aby utworzyć rekordy karty czasu dla wszystkich wybranych pracowników.",
+    "already_entered": "✓ Wpisano",
+    "group_filter_all": "Wszystkie grupy",
+    "day": "dzień",
+    "end_date": "Data zakończenia",
+    "end_date_placeholder": "Domyślnie: Jeden dzień"
   },
   "subcontractor_import": {
     "import_btn": "Importuj (Excel/CSV)",

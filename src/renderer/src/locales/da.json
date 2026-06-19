@@ -194,7 +194,8 @@
     "undo_success": "Action successfully undone!",
     "undo_error": "Undo failed:",
     "delete_worker_title": "Slet Personale",
-    "delete_worker_msg": "Er du sikker på, at du vil slette dette personale (flytte til papirkurven)? Systemdata vil ikke blive permanent slettet, men fjernet fra lister."
+    "delete_worker_msg": "Er du sikker på, at du vil slette dette personale (flytte til papirkurven)? Systemdata vil ikke blive permanent slettet, men fjernet fra lister.",
+    "bulk_timesheet": "📋 Masse-timeseddel"
   },
   "worker_profile": {
     "back": "Tilbage",
@@ -1386,7 +1387,12 @@
     "guide_step2_title": "2. Timeseddeldetaljer",
     "guide_step2_desc": "Indtast detaljer som dato, arbejdstype og overtidstimer. Disse gælder for alle valgte arbejdere.",
     "guide_step3_title": "3. Massegem",
-    "guide_step3_desc": "Klik på 'Gem Alle' for at oprette timesedler for alle valgte arbejdere."
+    "guide_step3_desc": "Klik på 'Gem Alle' for at oprette timesedler for alle valgte arbejdere.",
+    "already_entered": "✓ Indtastet",
+    "group_filter_all": "Alle grupper",
+    "day": "dag",
+    "end_date": "Slutdato",
+    "end_date_placeholder": "Standard: Enkelt dag"
   },
   "subcontractor_import": {
     "import_btn": "Importer (Excel/CSV)",

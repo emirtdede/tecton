@@ -194,7 +194,8 @@
     "undo_success": "アクションは正常に元に戻されました。",
     "undo_error": "元に戻すことができませんでした:",
     "delete_worker_title": "人員の削除",
-    "delete_worker_msg": "この人員を削除して（ごみ箱に移動）もよろしいですか？システムデータは完全に削除されませんが、リストから削除されます。"
+    "delete_worker_msg": "この人員を削除して（ごみ箱に移動）もよろしいですか？システムデータは完全に削除されませんが、リストから削除されます。",
+    "bulk_timesheet": "📋 一括タイムシート"
   },
   "worker_profile": {
     "back": "戻る",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. タイムシート詳細",
     "guide_step2_desc": "右パネルから日付、作業タイプ、残業時間などの情報を入力します。選択したすべての作業員に適用されます。",
     "guide_step3_title": "3. 一括保存",
-    "guide_step3_desc": "「一括保存」をクリックして、選択したすべての作業員のタイムシートレコードを作成します。"
+    "guide_step3_desc": "「一括保存」をクリックして、選択したすべての作業員のタイムシートレコードを作成します。",
+    "already_entered": "✓ 入力済み",
+    "group_filter_all": "すべてのグループ",
+    "day": "日",
+    "end_date": "終了日",
+    "end_date_placeholder": "デフォルト：単一日"
   },
   "subcontractor_import": {
     "import_btn": "インポート (Excel/CSV)",

@@ -194,7 +194,8 @@
     "undo_success": "Actie succesvol ongedaan gemaakt!",
     "undo_error": "Ongedaan maken mislukt:",
     "delete_worker_title": "Personeel Verwijderen",
-    "delete_worker_msg": "Weet u zeker dat u dit personeel wilt verwijderen (naar de prullenbak verplaatsen)? Systeemgegevens worden niet permanent verwijderd, maar uit lijsten verwijderd."
+    "delete_worker_msg": "Weet u zeker dat u dit personeel wilt verwijderen (naar de prullenbak verplaatsen)? Systeemgegevens worden niet permanent verwijderd, maar uit lijsten verwijderd.",
+    "bulk_timesheet": "📋 Collectieve urenstaat"
   },
   "worker_profile": {
     "back": "Terug",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. Urenstaat Details",
     "guide_step2_desc": "Voer details in zoals datum, werktype en overuren. Deze worden toegepast op alle geselecteerde werknemers.",
     "guide_step3_title": "3. Bulk Opslaan",
-    "guide_step3_desc": "Klik op 'Alles Opslaan' om urenregistraties aan te maken voor alle geselecteerde werknemers."
+    "guide_step3_desc": "Klik op 'Alles Opslaan' om urenregistraties aan te maken voor alle geselecteerde werknemers.",
+    "already_entered": "✓ Ingevoerd",
+    "group_filter_all": "Alle groepen",
+    "day": "dag",
+    "end_date": "Einddatum",
+    "end_date_placeholder": "Standaard: Eén dag"
   },
   "subcontractor_import": {
     "import_btn": "Importeren (Excel/CSV)",

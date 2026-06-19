@@ -194,7 +194,8 @@
     "undo_success": "操作已成功撤消！",
     "undo_error": "撤消失败：",
     "delete_worker_title": "删除人员",
-    "delete_worker_msg": "您确定要删除此人员（移至回收站）吗？系统数据不会被永久删除，但会从列表中移除。"
+    "delete_worker_msg": "您确定要删除此人员（移至回收站）吗？系统数据不会被永久删除，但会从列表中移除。",
+    "bulk_timesheet": "📋 批量工时表"
   },
   "worker_profile": {
     "back": "返回",
@@ -1414,7 +1415,12 @@
     "guide_step2_title": "2. 工时详情",
     "guide_step2_desc": "在右侧面板输入日期、工作类型和加班时间等工时信息。这些信息将应用于所有选中的工人。",
     "guide_step3_title": "3. 批量保存",
-    "guide_step3_desc": "点击'全部保存'为所有选中的工人创建工时记录。每位工人将按其日薪进行计算。"
+    "guide_step3_desc": "点击'全部保存'为所有选中的工人创建工时记录。每位工人将按其日薪进行计算。",
+    "already_entered": "✓ 已输入",
+    "group_filter_all": "所有组",
+    "day": "天",
+    "end_date": "结束日期",
+    "end_date_placeholder": "默认：单日"
   },
   "subcontractor_import": {
     "import_btn": "导入 (Excel/CSV)",

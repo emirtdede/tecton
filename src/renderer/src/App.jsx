@@ -727,6 +727,9 @@ function App() {
                   />
                   {activeProjectId && (
                     <>
+                      <button className="btn" style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--primary)', borderColor: 'rgba(139, 92, 246, 0.2)' }} onClick={() => setView('bulk_timesheet')}>
+                        {t('dashboard.bulk_timesheet', '📋 Çoklu Puantaj')}
+                      </button>
                       <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
                         {t('dashboard.import_excel')}
                       </button>
