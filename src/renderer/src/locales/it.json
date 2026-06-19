@@ -1420,7 +1420,8 @@
     "group_filter_all": "Tutti i gruppi",
     "day": "giorno",
     "end_date": "Data di fine",
-    "end_date_placeholder": "Predefinito: Giorno singolo"
+    "end_date_placeholder": "Predefinito: Giorno singolo",
+    "start_date": "Data di inizio"
   },
   "subcontractor_import": {
     "import_btn": "Importa (Excel/CSV)",

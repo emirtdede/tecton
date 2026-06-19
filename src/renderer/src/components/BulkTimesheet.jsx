@@ -86,6 +86,22 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
     }
   }, [existingTimesheets]);
 
+  const handleStartDateChange = (val) => {
+    if (val && formData.end_date && new Date(val) > new Date(formData.end_date)) {
+      setFormData(prev => ({ ...prev, work_date: val, end_date: val }));
+    } else {
+      setFormData(prev => ({ ...prev, work_date: val }));
+    }
+  };
+
+  const handleEndDateChange = (val) => {
+    if (val && formData.work_date && new Date(formData.work_date) > new Date(val)) {
+      setFormData(prev => ({ ...prev, end_date: val, work_date: val }));
+    } else {
+      setFormData(prev => ({ ...prev, end_date: val }));
+    }
+  };
+
   const filteredWorkers = workers.filter(w => {
     const matchesSearch = w.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (w.tc_no && w.tc_no.includes(searchQuery)) ||
@@ -137,17 +153,13 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
     return dates;
   };
 
-  const handleBulkSave = async () => {
+  const handleBulkSave = async (e) => {
+    if (e) e.preventDefault();
     if (selectedIds.size === 0) {
       window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('bulk_timesheet.no_workers_selected', 'Lütfen en az bir personel seçin.'), type: 'warning' } }));
       return;
     }
     if (!selectedType) return;
-
-    if (formData.end_date && formData.end_date < formData.work_date) {
-      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('bulk_timesheet.invalid_date_range', 'Bitiş tarihi başlangıç tarihinden önce olamaz.'), type: 'warning' } }));
-      return;
-    }
 
     setSaving(true);
     let successCount = 0;
@@ -221,29 +233,119 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
-      {/* Left Panel — Personnel Selection */}
-      <div className="glass-card" style={{ maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.3rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            👥 {t('bulk_timesheet.select_workers', 'Personel Seçin')}
-          </h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: 'calc(100vh - 140px)', position: 'relative' }}>
+      
+      {/* Top Card: Title, Form, Filters (Fixed/Non-scrolling) */}
+      <div className="glass-card" style={{ flexShrink: 0, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              📋 {t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}
+            </h2>
+            <p className="card-subtitle" style={{ margin: 0 }}>
+              {t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span>
+            </p>
+          </div>
           <span 
             onClick={() => setHelpOpen(true)}
-            style={{ cursor: 'pointer', opacity: 0.4, transition: 'opacity 0.25s ease-in-out', fontSize: '1.4rem', userSelect: 'none', padding: '0.25rem' }}
+            style={{ cursor: 'pointer', opacity: 0.4, transition: 'opacity 0.25s ease-in-out', fontSize: '1.5rem', userSelect: 'none', padding: '0.25rem' }}
             onMouseEnter={e => e.currentTarget.style.opacity = 1}
             onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >💡</span>
         </div>
 
-        <p className="card-subtitle" style={{ marginBottom: '1rem' }}>
-          {t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span>
-        </p>
+        {/* Add Record Form */}
+        <form onSubmit={handleBulkSave} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', alignItems: 'flex-end', marginBottom: '0.25rem' }}>
+          
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">{t('bulk_timesheet.start_date', 'Başlangıç Tarihi')}</label>
+            <CustomDatePicker
+              name="work_date"
+              className="form-input"
+              value={formData.work_date}
+              onChange={e => handleStartDateChange(e.target.value)}
+              required
+            />
+          </div>
 
-        {/* Search, Group Filter & Select All */}
-        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: 2, display: 'flex', alignItems: 'center' }}>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">{t('bulk_timesheet.end_date', 'Bitiş Tarihi')}</label>
+            <CustomDatePicker
+              name="end_date"
+              className="form-input"
+              value={formData.end_date || ''}
+              onChange={e => handleEndDateChange(e.target.value)}
+              placeholder={t('bulk_timesheet.end_date_placeholder', 'Varsayılan: Tek Gün')}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">{t('worker_profile.timesheet_form.type', 'Çalışma Tipi')}</label>
+            <select
+              className="form-input"
+              value={formData.work_type_id}
+              onChange={e => setFormData(prev => ({ ...prev, work_type_id: e.target.value }))}
+              required
+            >
+              {workTypes.map(wt => (
+                <option key={wt.id} value={wt.id}>{wt.name} (x{wt.multiplier})</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">{t('worker_profile.timesheet_form.overtime', 'Mesai Saati')}</label>
+            <input
+              type="number"
+              className="form-input"
+              min="0"
+              step="0.5"
+              value={formData.overtime_hours}
+              onChange={e => setFormData(prev => ({ ...prev, overtime_hours: Number(e.target.value) }))}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">{t('worker_profile.timesheet_form.notes', 'Açıklama / Not')}</label>
+            <input
+              type="text"
+              className="form-input"
+              value={formData.notes}
+              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder={t('worker_profile.timesheet_form.notes_ph', 'Örn: Kalıp söküm')}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={saving || selectedIds.size === 0}
+            style={{
+              height: '42px',
+              fontSize: '0.95rem',
+              fontWeight: 'bold',
+              opacity: saving || selectedIds.size === 0 ? 0.5 : 1,
+              cursor: saving || selectedIds.size === 0 ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {saving ? t('common.saving', 'Kaydediliyor...') : `${t('bulk_timesheet.save_btn', 'Toplu Kaydet')} (${selectedIds.size})`}
+          </button>
+        </form>
+
+        {/* Filters & Search Bar */}
+        <div style={{ 
+          background: 'rgba(255, 255, 255, 0.02)', 
+          border: '1px solid var(--glass-border)', 
+          borderRadius: '12px', 
+          padding: '0.75rem 1rem', 
+          display: 'flex', 
+          gap: '1rem', 
+          alignItems: 'center', 
+          flexWrap: 'wrap' 
+        }}>
+          <div style={{ position: 'relative', flex: 2, minWidth: '200px', display: 'flex', alignItems: 'center' }}>
             <input
               type="text"
               className="form-input"
@@ -265,7 +367,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
             className="form-input"
             value={selectedGroup}
             onChange={e => setSelectedGroup(e.target.value)}
-            style={{ flex: 1, marginBottom: 0, padding: '0.45rem 0.5rem', fontSize: '0.85rem' }}
+            style={{ flex: 1, minWidth: '120px', marginBottom: 0 }}
           >
             <option value="">{t('bulk_timesheet.group_filter_all', 'Tüm Gruplar')}</option>
             {workerGroups.map(g => (
@@ -276,7 +378,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
           <button
             className="btn"
             onClick={handleSelectAll}
-            style={{ whiteSpace: 'nowrap', fontSize: '0.85rem', padding: '0.5rem 1rem' }}
+            style={{ whiteSpace: 'nowrap', padding: '0.5rem 1rem', minWidth: '120px' }}
           >
             {allEligibleSelected
               ? t('bulk_timesheet.deselect_all', 'Seçimi Kaldır')
@@ -284,28 +386,19 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
           </button>
         </div>
 
-        {/* Selected Count */}
-        <div style={{
-          background: selectedIds.size > 0 ? 'rgba(139, 92, 246, 0.1)' : 'rgba(255,255,255,0.02)',
-          border: `1px solid ${selectedIds.size > 0 ? 'var(--primary)' : 'var(--glass-border)'}`,
-          borderRadius: '8px',
-          padding: '0.5rem 1rem',
-          marginBottom: '1rem',
-          fontSize: '0.9rem',
-          fontWeight: '600',
-          color: selectedIds.size > 0 ? 'var(--primary)' : 'var(--text-muted)',
-          textAlign: 'center',
-          transition: 'all 0.2s ease'
-        }}>
-          {t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)}
-        </div>
+      </div>
 
-        {/* Worker List */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      {/* Bottom Card: Worker List (Independent Scrolling) */}
+      <div className="glass-card" style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          👥 {t('bulk_timesheet.select_workers', 'Personel Seçin')} ({t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)})
+        </h3>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem', marginTop: '0.25rem' }}>
           {loading ? (
-            <div className="skeleton" style={{ height: '200px', width: '100%' }}></div>
+            <div className="skeleton" style={{ height: '150px', width: '100%', gridColumn: '1 / -1' }}></div>
           ) : filteredWorkers.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', gridColumn: '1 / -1' }}>
               {searchQuery ? t('common.no_results', 'Sonuç bulunamadı.') : t('bulk_timesheet.no_workers', 'Aktif personel bulunamadı.')}
             </div>
           ) : (
@@ -368,115 +461,6 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
               );
             })
           )}
-        </div>
-      </div>
-
-      {/* Right Panel — Unified Timesheet Form */}
-      <div className="glass-card" style={{ position: 'sticky', top: '1rem' }}>
-        <h2 className="card-title" style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          📋 {t('bulk_timesheet.form_title', 'Puantaj Bilgileri')}
-        </h2>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('worker_profile.timesheet_form.date', 'Tarih')}</label>
-            <CustomDatePicker
-              name="work_date"
-              className="form-input"
-              value={formData.work_date}
-              onChange={e => setFormData(prev => ({ ...prev, work_date: e.target.value }))}
-              required
-            />
-          </div>
-
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('bulk_timesheet.end_date', 'Bitiş Tarihi')}</label>
-            <CustomDatePicker
-              name="end_date"
-              className="form-input"
-              value={formData.end_date || ''}
-              onChange={e => setFormData(prev => ({ ...prev, end_date: e.target.value }))}
-              placeholder={t('bulk_timesheet.end_date_placeholder', 'Varsayılan: Boş (Tek Gün)')}
-            />
-          </div>
-
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('worker_profile.timesheet_form.type', 'Çalışma Tipi')}</label>
-            <select
-              className="form-input"
-              value={formData.work_type_id}
-              onChange={e => setFormData(prev => ({ ...prev, work_type_id: e.target.value }))}
-              required
-            >
-              {workTypes.map(wt => (
-                <option key={wt.id} value={wt.id}>{wt.name} (x{wt.multiplier})</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('worker_profile.timesheet_form.overtime', 'Mesai Saati')}</label>
-            <input
-              type="number"
-              className="form-input"
-              min="0"
-              step="0.5"
-              value={formData.overtime_hours}
-              onChange={e => setFormData(prev => ({ ...prev, overtime_hours: Number(e.target.value) }))}
-            />
-          </div>
-
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('worker_profile.timesheet_form.notes', 'Açıklama / Not')}</label>
-            <input
-              type="text"
-              className="form-input"
-              value={formData.notes}
-              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder={t('worker_profile.timesheet_form.notes_ph', 'Örn: Kalıp söküm')}
-            />
-          </div>
-
-          {/* Preview */}
-          {selectedType && selectedIds.size > 0 && (
-            <div style={{
-              background: 'rgba(139, 92, 246, 0.08)',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              borderRadius: '8px',
-              padding: '1rem',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                {t('bulk_timesheet.preview_wage', 'Tahmini Ücret')} ({selectedType.name} x{selectedType.multiplier})
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)}
-              </div>
-            </div>
-          )}
-
-          <button
-            className="btn btn-primary"
-            onClick={handleBulkSave}
-            disabled={saving || selectedIds.size === 0}
-            style={{
-              padding: '0.75rem 1.5rem',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              opacity: saving || selectedIds.size === 0 ? 0.5 : 1,
-              cursor: saving || selectedIds.size === 0 ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem'
-            }}
-          >
-            {saving ? (
-              <>{t('common.saving', 'Kaydediliyor...')}</>
-            ) : (
-              <>{t('bulk_timesheet.save_btn', 'Toplu Kaydet')} ({selectedIds.size})</>
-            )}
-          </button>
         </div>
       </div>
 

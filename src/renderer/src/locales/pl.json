@@ -1420,7 +1420,8 @@
     "group_filter_all": "Wszystkie grupy",
     "day": "dzień",
     "end_date": "Data zakończenia",
-    "end_date_placeholder": "Domyślnie: Jeden dzień"
+    "end_date_placeholder": "Domyślnie: Jeden dzień",
+    "start_date": "Data rozpoczęcia"
   },
   "subcontractor_import": {
     "import_btn": "Importuj (Excel/CSV)",

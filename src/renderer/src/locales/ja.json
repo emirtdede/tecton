@@ -1420,7 +1420,8 @@
     "group_filter_all": "すべてのグループ",
     "day": "日",
     "end_date": "終了日",
-    "end_date_placeholder": "デフォルト：単一日"
+    "end_date_placeholder": "デフォルト：単一日",
+    "start_date": "開始日"
   },
   "subcontractor_import": {
     "import_btn": "インポート (Excel/CSV)",

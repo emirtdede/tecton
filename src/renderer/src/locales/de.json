@@ -1419,7 +1419,8 @@
     "group_filter_all": "Alle Gruppen",
     "day": "Tag",
     "end_date": "Enddatum",
-    "end_date_placeholder": "Standard: Einzelner Tag"
+    "end_date_placeholder": "Standard: Einzelner Tag",
+    "start_date": "Startdatum"
   },
   "subcontractor_import": {
     "import_btn": "Importieren (Excel/CSV)",

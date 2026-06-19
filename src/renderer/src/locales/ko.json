@@ -1424,7 +1424,8 @@
     "group_filter_all": "모든 그룹",
     "day": "일",
     "end_date": "종료일",
-    "end_date_placeholder": "기본값: 단일 영업일"
+    "end_date_placeholder": "기본값: 단일 영업일",
+    "start_date": "시작일"
   },
   "subcontractor_import": {
     "import_btn": "가져오기 (Excel/CSV)",

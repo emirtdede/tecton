@@ -1419,7 +1419,8 @@
     "group_filter_all": "Všechny skupiny",
     "day": "den",
     "end_date": "Datum ukončení",
-    "end_date_placeholder": "Výchozí: Jeden den"
+    "end_date_placeholder": "Výchozí: Jeden den",
+    "start_date": "Datum zahájení"
   },
   "subcontractor_import": {
     "import_btn": "Importovat (Excel/CSV)",

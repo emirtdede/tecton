@@ -1420,7 +1420,8 @@
     "group_filter_all": "सभी समूह",
     "day": "दिन",
     "end_date": "अंतिम तिथि",
-    "end_date_placeholder": "डिफ़ॉल्ट: एकल दिन"
+    "end_date_placeholder": "डिफ़ॉल्ट: एकल दिन",
+    "start_date": "प्रारंभ तिथि"
   },
   "subcontractor_import": {
     "import_btn": "आयात (Excel/CSV)",

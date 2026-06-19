@@ -1420,7 +1420,8 @@
     "group_filter_all": "Alle groepen",
     "day": "dag",
     "end_date": "Einddatum",
-    "end_date_placeholder": "Standaard: Eén dag"
+    "end_date_placeholder": "Standaard: Eén dag",
+    "start_date": "Startdatum"
   },
   "subcontractor_import": {
     "import_btn": "Importeren (Excel/CSV)",

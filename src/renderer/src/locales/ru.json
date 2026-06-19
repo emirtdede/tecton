@@ -1420,7 +1420,8 @@
     "group_filter_all": "Все группы",
     "day": "день",
     "end_date": "Дата окончания",
-    "end_date_placeholder": "По умолчанию: Один день"
+    "end_date_placeholder": "По умолчанию: Один день",
+    "start_date": "Дата начала"
   },
   "subcontractor_import": {
     "import_btn": "Импорт (Excel/CSV)",

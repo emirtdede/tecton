@@ -1419,7 +1419,8 @@
     "group_filter_all": "Todos los grupos",
     "day": "día",
     "end_date": "Fecha de finalización",
-    "end_date_placeholder": "Predeterminado: Día único"
+    "end_date_placeholder": "Predeterminado: Día único",
+    "start_date": "Fecha de inicio"
   },
   "subcontractor_import": {
     "import_btn": "Importar (Excel/CSV)",

@@ -1392,7 +1392,8 @@
     "group_filter_all": "Alle grupper",
     "day": "dag",
     "end_date": "Slutdato",
-    "end_date_placeholder": "Standard: Enkelt dag"
+    "end_date_placeholder": "Standard: Enkelt dag",
+    "start_date": "Startdato"
   },
   "subcontractor_import": {
     "import_btn": "Importer (Excel/CSV)",

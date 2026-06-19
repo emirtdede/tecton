@@ -1384,7 +1384,8 @@
     "group_filter_all": "Tüm Gruplar",
     "day": "gün",
     "end_date": "Bitiş Tarihi",
-    "end_date_placeholder": "Varsayılan: Tek Gün"
+    "end_date_placeholder": "Varsayılan: Tek Gün",
+    "start_date": "Başlangıç Tarihi"
   },
   "subcontractor_import": {
     "import_btn": "İçe Aktar (Excel/CSV)",

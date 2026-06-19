@@ -1420,7 +1420,8 @@
     "group_filter_all": "جميع المجموعات",
     "day": "يوم",
     "end_date": "تاريخ الانتهاء",
-    "end_date_placeholder": "افتراضي: يوم واحد"
+    "end_date_placeholder": "افتراضي: يوم واحد",
+    "start_date": "تاريخ البدء"
   },
   "subcontractor_import": {
     "import_btn": "استيراد (Excel/CSV)",

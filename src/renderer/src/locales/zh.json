@@ -1420,7 +1420,8 @@
     "group_filter_all": "所有组",
     "day": "天",
     "end_date": "结束日期",
-    "end_date_placeholder": "默认：单日"
+    "end_date_placeholder": "默认：单日",
+    "start_date": "开始日期"
   },
   "subcontractor_import": {
     "import_btn": "导入 (Excel/CSV)",

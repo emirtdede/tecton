@@ -1419,7 +1419,8 @@
     "group_filter_all": "Alla grupper",
     "day": "dag",
     "end_date": "Slutdatum",
-    "end_date_placeholder": "Standard: Enstaka dag"
+    "end_date_placeholder": "Standard: Enstaka dag",
+    "start_date": "Startdatum"
   },
   "subcontractor_import": {
     "import_btn": "Importera (Excel/CSV)",
