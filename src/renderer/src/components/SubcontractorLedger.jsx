@@ -267,7 +267,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
   }
 
   return (
-    <div ref={containerRef} style={{ animation: 'fadeIn 0.3s ease' }}>
+    <div ref={containerRef} className="subcontractor-page" style={{ animation: 'fadeIn 0.3s ease' }}>
       {/* Header section identical to Personnel page */}
       <header className="header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -540,7 +540,6 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   gap: '1rem',
-                  backdropFilter: 'blur(10px)',
                   borderRadius: '0 0 12px 12px'
                 }}>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>

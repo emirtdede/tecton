@@ -203,6 +203,7 @@ body {
   font-size: 1.2rem;
   font-weight: 700;
   background: var(--title-gradient);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: flex;
@@ -610,11 +611,13 @@ select option,
 /* Hide Number Input Spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
+  appearance: none;
   -webkit-appearance: none;
   margin: 0;
 }
 
 input[type="number"] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
@@ -1075,6 +1078,168 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   color: #fff !important;
 }
 
+/* Sidebar Restore Floating Button */
+.sidebar-restore-btn {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 999;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  width: 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 4px 0 15px rgba(139, 92, 246, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  padding: 0;
+  opacity: 0.65;
+}
+
+.sidebar-restore-btn:hover {
+  transform: translateY(-50%) translateX(6px);
+  width: 32px;
+  box-shadow: 6px 0 20px rgba(139, 92, 246, 0.4);
+  opacity: 1;
+}
+
+/* Modal and Drawer Overlay & Content Styles */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.drawer-content {
+  background: var(--spotlight-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2.2rem;
+  width: 500px;
+  max-width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), var(--shadow-glow);
+  animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.text-center {
+  text-align: center;
+}
+
+@keyframes recycleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recycle-animate-page {
+  animation: recycleFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* --- LOGO THEMING --- */
+:root[data-theme='light'] .logo-light { display: none !important; }
+:root[data-theme='light'] .logo-dark { display: inline-block !important; }
+
+:root[data-theme='dark'] .logo-dark { display: none !important; }
+:root[data-theme='dark'] .logo-light { display: inline-block !important; }
+
+:root:not([data-theme='light']) .logo-dark { display: none !important; }
+:root:not([data-theme='light']) .logo-light { display: inline-block !important; }
+
+/* --- TITLEBAR STYLING --- */
+.custom-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px;
+  background: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  pointer-events: none; /* Let clicks pass through drag region where appropriate */
+}
+.titlebar-drag-region {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 150px;
+  height: 100%;
+  -webkit-app-region: drag;
+  pointer-events: auto;
+}
+.titlebar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-left: 16px;
+  pointer-events: none;
+}
+.titlebar-brand {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  visibility: hidden; /* Hide the text, use sidebar logo */
+}
+.titlebar-controls {
+  display: flex;
+  height: 32px;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+.titlebar-btn {
+  width: 46px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.titlebar-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+.titlebar-btn.close-btn:hover {
+  background: #e81123 !important;
+  color: #fff !important;
+}
+
 /* --- RESPONSIVE DESIGN UTILITIES --- */
 @media (max-width: 1024px) {
   .bento-grid {
@@ -1107,4 +1272,10 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   .workers-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Disable all background blur effects globally across all pages and components */
+* {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }

@@ -700,7 +700,7 @@ function App() {
             <BulkTimesheet activeProjectId={activeProjectId} projects={projects} />
           ) : (
             // Bento Grid Dashboard Layout
-            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+            <div className="personnel-page" style={{ animation: 'fadeIn 0.3s ease' }}>
               <header className="header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <h1 style={{ margin: 0 }}>{t('dashboard.title')}</h1>
