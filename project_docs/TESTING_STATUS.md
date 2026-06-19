@@ -112,4 +112,8 @@ Projede backend ve finansal iş kuralları kodlanırken **TDD** benimsenmiştir.
 ## Test Ortamı
 - **Framework:** `Vitest`
 - **DB İzolasyonu:** Bütün birim testler `:memory:` bellek-içi (RAM) izole bir SQLite veritabanında çalışmaktadır. Gerçek dosyalar hiçbir zaman etkilenmez.
+
+## Bilinen Sorunlar ve Derleme (Build) Çözümleri
+- **Node.js v24 ve SQLite3 Uyuşmazlığı:** `sqlite3` paketinin yayınlanan ön-derlemeli (prebuilt) native modülleri Node v24 (N-API v36) ile uyumsuz olabilmektedir. Geliştirici ortamında C++ Build Tools (Visual Studio) veya Python kurulu değilse, `npm run build` komutunda `node-gyp` hataları alınabilir. 
+- **Çözüm:** Production derlemesi alınırken, Node v20 veya v22 (LTS) kullanılması veya hedef sisteme Visual Studio C++ Build Tools'un kurulması tavsiye edilir. Kod seviyesinde bu durumun uygulamaya bir zararı yoktur.
 ```

@@ -13,9 +13,9 @@ project-root/
 │
 ├── src/
 ├── public/
-├── locales/                     ← Çoklu dil metinleri (Hardcoded metin YASAK)
-│   ├── tr.js                    ← Ana Dil
-│   └── en.js                    ← İkinci Dil
+├── locales/                     ← Çoklu dil metinleri (19 Dilde tam destek, Hardcoded metin YASAK)
+│   ├── tr.js                    ← Ana Dil (Türkçe)
+│   └── (18 diğer dil).js        ← Diğer Diller
 │
 ├── .env                         ← GİZLİ: Tüm API/Secret Keyler (Asla commit edilmez)
 ├── .gitignore
@@ -60,6 +60,7 @@ Ajan, geliştirme yaparken aşağıdaki prensipleri **İHLAL EDEMEZ:**
 
 * **Sırların Korunması:** Tüm API key, secret, veritabanı stringleri SADECE `.env` dosyasında durur. Kodun içine asla yazılmaz.
 * **Graceful Degradation:** Çalışma zamanında (runtime) bir API yanıt vermezse veya DB koparsa sistem beyaz ekran veremez. i18n üzerinden uygun hata mesajı gösterilmeli veya önbellekten (cache) veri dönülmelidir.
+* **Otonom Snapshot (Zaman Makinesi):** Toplu veri yükleme (Excel Import) veya kritik veritabanı işlemlerinden önce KESİNLİKLE `.sqlite.restore-point` yedeği alınmalı ve "Geri Al" (Undo) özelliği arayüzden sunulmalıdır.
 * **Audit & Logging:** İnsan tarafından okunabilir loglama adımları; veri mutasyonları, giriş/çıkış işlemleri ve sistem hataları için plana zorunlu olarak dahil edilecektir.
 
 ### 3.2. Ajan (Anti-Loop) Fallback Sistemi

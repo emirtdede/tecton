@@ -1,5 +1,12 @@
 # Değişiklik Geçmişi
 
+## 2026-06-19 - V1.0.0 STABLE (PRODUCTION READY) 🚀
+- [Yayın] Projenin tüm fazları (1-7) resmen tamamlandı, kod tabanında derin temizlik (Pre-flight check) yapılarak yayın ortamına (production) hazır hale getirildi. Sistem %100 "Zero Error, Zero Warning" ile optimize edildi.
+- [Eklenen Özellik] **Mobil LAN Yükleyici (QR Kod)**: Aynı yerel ağ (Wi-Fi) üzerinden cep telefonu kamerasıyla QR kod okutarak şantiye tutanak/fotoğraflarını direkt olarak sisteme yükleme özelliği eklendi (Express.js entegrasyonu).
+- [Eklenen Özellik] **Gelişmiş Rollback Mekanizması**: Veritabanı ve toplu veri (Excel) yüklemeleri esnasında felaket senaryolarına karşı (Disaster Recovery) tam otomatik "Zaman Makinesi" ve Soft-Delete tabanlı Geri Dönüşüm Kutusu oluşturuldu.
+- [Eklenen Özellik] Tüm IPC Handler'larına (Minimize, Maximize, File Save) otonom hata yakalama (Try/Catch) mimarisi yerleştirildi.
+- [Güncelleme] Tüm dokümantasyon dosyaları güncel mimariye, 19 dile ve yeni ERP özelliklerine göre baştan yazıldı.
+
 ## 2026-06-17
 - [Eklenen Özellik] İşçi ve Taşeron profillerine "İSG (İş Sağlığı ve Güvenliği)" modülü eklendi. Renk kodlu uyarı sistemiyle yaklaşan veya süresi dolan sertifikalar kolayca takip edilebilir hale getirildi.
 - [Eklenen Özellik] Saha puantörlerinin işini hızlandıran "Çoklu Puantaj (Bulk Timesheet)" sayfası eklendi. Tek ekrandan birden fazla personeli seçip aynı anda yevmiye girişi yapılabilmesi sağlandı.

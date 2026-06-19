@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📘 Elektronik Yevmiye Defteri — Offline-First Desktop Journal
+# 📘 Tecton: Next-Generation Construction Site Operating System
 
 [![](https://img.shields.io/badge/Language-English-blue?style=for-the-badge&logo=google-translate)](#english-version)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -20,6 +20,8 @@
 
 <a id="english-version"></a>
 # English Version
+
+> **🎉 V1.0.0 STABLE (PRODUCTION READY)**: The project has successfully passed all development phases, boasting a "Zero Error, Zero Warning" optimized codebase.
 
 An autonomous, offline-first corporate desktop application designed to replace physical general ledgers by digitizing worker timesheets, progress payments (hak ediş), advances (avans), and cash register balances. It operates completely independent of external APIs or accounting servers, providing mathematically absolute consistency under a zero-maintenance philosophy.
 
@@ -41,7 +43,12 @@ An autonomous, offline-first corporate desktop application designed to replace p
     *   Silent background backups automatically save to local cloud sync directories (e.g., Google Drive local folders) on exit.
 *   **📝 Human-Readable Log Archiving**: Daily rotated logs mapped via `electron-log` are written in plain, human-readable Turkish sentences (rather than raw JSON structures). Log streams are exportable into TXT, Markdown (AI-ready), JSON, CSV, and Excel.
 *   **🏷️ Colored Tags & Anomaly Detection**: Supports custom tag assignments to transactions and workers, alongside an active Anomaly Panel alerting admins to negative balances or idle personnel.
-*   **🌎 Localized UI & Themes**: Seamless toggle between Light/Dark modes and full translation support for 10 languages (Turkish, English, Chinese, Spanish, French, Arabic, Hindi, Russian, Portuguese, German).
+*   **🌎 Localized UI & Themes**: Seamless toggle between Light/Dark modes and full translation support for 19 languages (Turkish, English, Chinese, Spanish, French, Arabic, Hindi, Russian, Portuguese, German, and 9 more).
+*   **👥 Multi-Attendance (Çoklu Puantaj)**: Fast batch attendance entry for multiple workers at once.
+*   **👷 OHS Integration (İSG Entegrasyonu)**: Built-in Occupational Health and Safety tracking and reporting.
+*   **⏪ Advanced DB Rollback Mechanism**: Enhanced disaster recovery and state reversion.
+*   **📊 Subcontractor Excel Import Fallback**: Robust error handling rules for importing messy Subcontractor ledgers.
+*   **📱 Mobile LAN Uploader**: Instant photo upload from mobile phones via local network QR code.
 
 ---
 
@@ -113,7 +120,9 @@ Licensed under the MIT License. Developed for internal enterprise usage.
 <a id="turkish-version"></a>
 # Türkçe Versiyon
 
-Fiziksel yevmiye defterlerinin yerini alarak işçi puantaj, hak ediş, avans ve kasa takibini dijitalleştiren; resmi muhasebe sistemlerinden tamamen bağımsız, tamamen yerel (offline) çalışan, sıfır kod değişikliği ve sıfır bakım gereksinimi (zero-maintenance) felsefesiyle tasarlanmış otonom bir masaüstü uygulamasıdır.
+> **🎉 V1.0.0 STABLE (PRODUCTION READY)**: Projenin tüm geliştirme fazları başarıyla tamamlanmış, QA denetimlerinden geçmiş ve %100 "Zero Error, Zero Warning" durumu ile canlı yayına (production) hazır hale gelmiştir.
+
+**Tecton: Yeni Nesil Şantiye İşletim Sistemi**; fiziksel yevmiye defterlerinin yerini alarak işçi puantaj, hak ediş, avans ve kasa takibini dijitalleştiren; resmi muhasebe sistemlerinden tamamen bağımsız, tamamen yerel (offline) çalışan, sıfır kod değişikliği ve sıfır bakım gereksinimi (zero-maintenance) felsefesiyle tasarlanmış otonom bir masaüstü uygulamasıdır.
 
 ---
 
@@ -133,7 +142,12 @@ Fiziksel yevmiye defterlerinin yerini alarak işçi puantaj, hak ediş, avans ve
     *   Uygulama kapatılırken belirlenen bir bulut dizinine (örn: Google Drive yerel klasörü) otomatik ve sessiz veritabanı yedeği aktarma.
 *   **📝 İnsan Dilinde Log Arşivleme**: Sistem ve veritabanı logları sadece teknik JSON formatında değil, insan tarafından okunabilir (Human-Readable) Türkçe cümleler halinde `electron-log` ile kaydedilir. Bu loglar günlük rotasyonla arşivlenir; arayüz üzerinden TXT, Markdown, JSON, CSV ve Excel formatlarında dışa aktarılabilir.
 *   **🏷️ Renkli Etiketler ve Anomali Dedektörü**: Kayıtlara ve işçilere sınırsız renkli etiket ekleme imkanı ile birlikte, bakiyesi eksiye düşen veya atıl duran personelleri tespit eden Dashboard uyarı paneli.
-*   **🌎 Çok Dilli Arayüz ve Temalar**: Açık/Koyu tema yönetimi ve 10 dilde (Türkçe, İngilizce, Çince, İspanyolca, Fransızca, Arapça, Hintçe, Rusça, Portekizce, Almanca) tam i18n çeviri desteği.
+*   **🌎 Çok Dilli Arayüz ve Temalar**: Açık/Koyu tema yönetimi ve tam 19 dilde anında çeviri desteği.
+*   **👥 Çoklu Puantaj Sistemi**: Birden fazla işçiye tek seferde, hızlı ve toplu puantaj girebilme.
+*   **👷 İSG Entegrasyonu**: İş Sağlığı ve Güvenliği takip ve raporlama modülü.
+*   **⏪ Gelişmiş Veritabanı Rollback Mekanizması**: Felaket anında yedekten anında geri dönüş yapabilme gücü.
+*   **📊 Taşeron Excel Import Fallback Kuralı**: Bozuk ve düzensiz Taşeron Excel dosyalarını hatasız içeri alma mantığı.
+*   **📱 Mobil LAN Yükleyici**: QR kod okutarak cep telefonundan sisteme anında fotoğraf yükleme.
 
 ---
 

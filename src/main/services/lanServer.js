@@ -293,7 +293,7 @@ function startLANServer(mainWindow, lang) {
   });
 
   serverInstance = expressApp.listen(currentPort, '0.0.0.0', () => {
-    console.log(`LAN upload server running at http://0.0.0.0:${currentPort}`);
+    // LAN server started
   });
 
   return { success: true, port: currentPort, ip: getLocalIP() };

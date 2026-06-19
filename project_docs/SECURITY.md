@@ -21,6 +21,10 @@ Bu alanlara dokunurken ekstra dikkatli ol:
 - Veritabanında (ekleme, silme, güncelleme) yapılan tüm işlemler mutlaka `electron-log` kullanılarak "Human-Readable" Türkçe cümleler formatında (Örn: "Ahmet kişisi eklendi") kayıt altına alınmalıdır.
 - Loglar `userData/logs/YYYY/MM/YYYY-MM-DD.log` şeklinde rotasyona tabi tutularak şişme engellenmelidir.
 
+### Yerel Ağ (LAN) Sunucu Güvenliği
+- **Zero Internet Exposure:** Express.js ile başlatılan LAN Fotoğraf Yükleyici, sadece şantiyenin kendi lokal ağında (Örn: `192.168.x.x:5001`) yayın yapmalıdır. Dış dünyaya (İnternete) port açılmasına izin verilmez.
+- Yüklenen dosyalar, sunucu tarafında işlenirken boyut sınırlamasına ve format doğrulama (`.webp` sıkıştırma) süreçlerine tabi tutularak zararlı dosya (RCE vb.) enjeksiyonları önlenmelidir.
+
 ## Güvenlik Kontrol Listesi (Canlıya Geçmeden / Build Almadan)
 - [ ] `nodeIntegration` kapalı mı?
 - [ ] Tüm DB sorguları parametrik mi?

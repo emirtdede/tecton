@@ -641,24 +641,36 @@ async function setupHandlers() {
 
   // --- WINDOW CONTROLS ---
   ipcMain.handle('window:minimize', (event) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (window) window.minimize();
+    try {
+      const window = BrowserWindow.fromWebContents(event.sender);
+      if (window) window.minimize();
+    } catch (err) {
+      console.error('window:minimize error:', err);
+    }
   });
 
   ipcMain.handle('window:maximize', (event) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (window) {
-      if (window.isMaximized()) {
-        window.unmaximize();
-      } else {
-        window.maximize();
+    try {
+      const window = BrowserWindow.fromWebContents(event.sender);
+      if (window) {
+        if (window.isMaximized()) {
+          window.unmaximize();
+        } else {
+          window.maximize();
+        }
       }
+    } catch (err) {
+      console.error('window:maximize error:', err);
     }
   });
 
   ipcMain.handle('window:close', (event) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (window) window.close();
+    try {
+      const window = BrowserWindow.fromWebContents(event.sender);
+      if (window) window.close();
+    } catch (err) {
+      console.error('window:close error:', err);
+    }
   });
 
   // --- SYSTEM UTILS ---

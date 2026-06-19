@@ -6,8 +6,8 @@
 |---------------|--------------------|----------|----------------------------|
 | Masaüstü Çatı | Electron.js        | 28.x+    | Web teknolojileriyle internetsiz, bağımsız ve kurulabilir bir masaüstü (.exe/.dmg) uygulaması yaratmak. |
 | Frontend      | React.js           | 18.x+    | Hızlı, bileşen tabanlı kullanıcı arayüzü ve modern, akıcı bir deneyim sunmak. |
-| Backend       | Node.js (IPC)      | 20.x+    | Yerel dosya sistemine erişim (Excel/CSV okuma) ve SQLite veritabanı sorguları için Electron'un yerleşik Node.js gücünü kullanmak. |
-| Veritabanı    | SQLite             | 3.x+     | Sunucu kurulumu gerektirmeyen, hafif, tek dosya halinde yerel veri depolama. Projenin kalbine en uygun çözüm. |
+| Backend       | Node.js (IPC, Express.js)| 20.x+    | Yerel dosya sistemine erişim (Excel/CSV okuma), SQLite veritabanı sorguları ve LAN Mobil entegrasyonu (Express.js) için Node.js gücünü kullanmak. |
+| Veritabanı    | SQLite             | 3.x+     | Sunucu kurulumu gerektirmeyen, hafif, tek dosya halinde yerel veri depolama. Gelişmiş Soft Delete (Recycle Bin) ve Zaman Makinesi ile donatılmıştır. |
 | Veri Aktarımı | SheetJS (xlsx)     | —        | Dışarıdan yüklenen Excel ve CSV dosyalarını hatasız ayrıştırıp sisteme aktarmak. |
 | PDF Üretimi   | pdfmake / jsPDF    | —        | İşçiler için oluşturulacak mutabakat ve bilgi fişlerinin hızlıca PDF'e dönüştürülmesi. |
 
@@ -37,3 +37,6 @@ Modüler Yapı (Electron + React): Projenin kullanıcı arayüzü (frontend) ile
 ### Sütun 4: Kendi Kendini Anlatan UI/UX Kuralları
 - **İşlem Öncesi Rehberlik (Inline Help Text):** Kritik işlemlerin kalıcı, açık ve okunaklı, gri alt bilgi metni (text-sm text-gray-500).
 - **İşlem Sırası Onay Modalı (Confirmation):** Silme, vakumlama gibi kalıcı operasyonlarda kırmızı uyarılar barındıran, işlemi ve sonuçlarını anlatan katı onay penceresi.
+
+### Sütun 5: Yerel Ağ (LAN) Otonomisi ve Cihazlar Arası İletişim
+- **Mobil Fotoğraf Yükleyici:** Şantiye ortamında bilgisayara kabloyla fotoğraf aktarma derdini çözen entegre Express.js sunucusu. Sadece yerel ağda (offline) yayın yapar, QR kod ile mobil cihazı bağlar ve fotoğrafları sıkıştırıp (WebP) doğrudan IPC üzerinden Electron'a gönderir.

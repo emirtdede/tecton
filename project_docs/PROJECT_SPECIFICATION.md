@@ -33,11 +33,11 @@ Fiziksel yevmiye defterlerinin yerini alarak işçi puantaj, hak ediş ve avans 
 - **Sınırları Kaldıran Etiket (Tags) ve Anomali Sistemi:** Tüm kayıtlara (işçiler, işlemler, puantaj) sınırısız renkli etiket eklenebilir (#Şantiye-A). Bakiyesi eksiye düşen veya atıl duran personelleri tespit eden "Anomali Dedektörü (Sistem Uyarıları)" paneli Dashboard'da bulunur.
 - **Kendi Kendini Anlatan UX (Self-Explanatory):** Tüm kritik işlemlerde, kullanıcının eğitim almadan anlayabileceği "Satır İçi Rehberlik" (Inline Help Text) ve eylemin tam sonucunu anlatan kırmızı tonlu Onay Modalları bulunur.
 ## İş Kuralları
-- **Yerel ve İzole Çalışma (Offline-First):** Sistem hiçbir resmi kuruma (GİB vb.) veya dış API'ye bağlanmayacaktır. Tüm veriler kullanıcının makinesinde kalır.
+- **Yerel ve İzole Çalışma (Offline-First):** Sistem hiçbir resmi kuruma (GİB vb.) veya dış API'ye bağlanmaz. Tüm veriler kullanıcının makinesinde kalır.
 - **Sıfır Kod Değişikliği (Zero-Code Change):** Uygulama derlendikten sonra şirket kurallarının (katsayılar, mesai hesaplamaları) değişmesi durumunda yazılımcıya ihtiyaç duyulmaz. Sistem yöneticisi, ayarlar ekranından parametreleri güncelleyerek sistemi tamamen yönetebilir.
 - **Tarihsel Bütünlük (Değer Mühürleme):** Puantaj girildiğinde, o anki yevmiye ve çarpan oranı kopyalanarak veritabanına mühürlenir (Snapshot). Kullanıcı aylar sonra çarpan oranını değiştirse dahi, eski geçmiş hesaplamalar ve hak edişler ASLA bozulmaz.
 - **Sıfır Bakım Gerektiren Bakiye Hesaplaması:** Hiçbir tabloda işçinin toplam bakiyesi sabit bir değer (hardcode bakiye) olarak tutulmaz. Bakiyeler daima ve anlık olarak girilmiş puantaj ve işlemlerin `SUM()` komutuyla dinamik hesaplanmasıyla elde edilir. Bu, geçmiş bir kaydın düzeltilmesi durumunda sistemin her zaman %100 tutarlı olmasını garantiler.
-- **Veri Kaynağı Güvenilirliği:** PDF parse etme işleminin risklerinden kaçınılacak, yapılandırılmış veriler (Excel/CSV) kullanılacaktır.
+- **Veri Kaynağı Güvenilirliği:** PDF parse etme işleminin risklerinden kaçınılmış, yapılandırılmış veriler (Excel/CSV) kullanılmıştır.
 
 ## Yetki Sistemi
 - **Standart Kullanıcı:** İşçi ekleyebilir, puantaj girebilir, avans/ödeme kaydedebilir ve PDF çıktısı alabilir.
