@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import LightboxModal from './ui/LightboxModal';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate } from '../utils/formatUtils';
+import { formatDate, trLower } from '../utils/formatUtils';
+import CustomDatePicker from './ui/CustomDatePicker';
+
 
 const MediaGallery = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -18,6 +20,8 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
   const [sortBy, setSortBy] = useState('date_desc');
   const [filterType, setFilterType] = useState(''); // '' | 'material' | 'report'
   const [filterPhoto, setFilterPhoto] = useState(''); // '' | 'yes' | 'no'
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
@@ -87,15 +91,32 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
     fetchMedia();
   }, [activeProjectId]);
 
+  const handleStartDateChange = (val) => {
+    setFilterStartDate(val);
+    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
+      setFilterEndDate(val);
+    }
+  };
+
+  const handleEndDateChange = (val) => {
+    setFilterEndDate(val);
+    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
+      setFilterStartDate(val);
+    }
+  };
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sortBy, filterType, filterPhoto, activeProjectId]);
+  }, [searchQuery, sortBy, filterType, filterPhoto, filterStartDate, filterEndDate, activeProjectId]);
 
   // Filter and Sort logic
   const filteredItems = mediaItems.filter(item => {
+    const formattedDate = formatDate(item.date, i18n.language);
+    const query = trLower(searchQuery);
     const matchesSearch = !searchQuery || 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.typeLabel.toLowerCase().includes(searchQuery.toLowerCase());
+      trLower(item.title).includes(query) || 
+      trLower(item.typeLabel).includes(query) ||
+      trLower(formattedDate).includes(query);
     
     const matchesType = !filterType || 
       (filterType === 'material' && item.id.startsWith('material_')) ||
@@ -105,7 +126,11 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
       (filterPhoto === 'yes' && !!item.base64) ||
       (filterPhoto === 'no' && !item.base64);
 
-    return matchesSearch && matchesType && matchesPhoto;
+    let matchesDate = true;
+    if (filterStartDate) matchesDate = matchesDate && item.date >= filterStartDate;
+    if (filterEndDate) matchesDate = matchesDate && item.date <= filterEndDate;
+
+    return matchesSearch && matchesType && matchesPhoto && matchesDate;
   });
 
   const sortedItems = [...filteredItems].sort((a, b) => {
@@ -165,61 +190,82 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
           background: 'rgba(255, 255, 255, 0.02)', 
           border: '1px solid var(--glass-border)', 
           borderRadius: '12px', 
-          padding: '0.5rem 1rem', 
-          marginBottom: '0.75rem',
+          padding: '0.75rem 1rem', 
+          marginBottom: '0.25rem',
           display: 'flex', 
           gap: '1rem', 
-          alignItems: 'center', 
+          alignItems: 'flex-end', 
           flexWrap: 'wrap' 
         }}>
-          <div style={{ position: 'relative', flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center' }}>
-            <input 
-              type="text"
-              className="form-input"
-              placeholder={t('dashboard.search', 'Arama...')}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  cursor: 'pointer',
-                  fontSize: '1.1rem',
-                  padding: '4px'
-                }}
-              >
-                ✕
-              </button>
-            )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input 
+                type="text"
+                className="form-input"
+                placeholder={t('media.search_placeholder', 'Başlık, içerik türü veya tarihe göre ara...')}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    fontSize: '1.1rem',
+                    padding: '4px'
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t('filters.sort', 'Sıralama:')}</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
+            <CustomDatePicker
+              value={filterStartDate}
+              onChange={e => handleStartDateChange(e.target.value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
+            <CustomDatePicker
+              value={filterEndDate}
+              onChange={e => handleEndDateChange(e.target.value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 130px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.sort', 'Sıralama')}</label>
             <select 
               className="form-input"
               value={sortBy}
               onChange={e => setSortBy(e.target.value)}
-              style={{ width: '160px', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
             >
               <option value="date_desc">{t('filters.newest', 'Yeniden Eskiye')}</option>
               <option value="date_asc">{t('filters.oldest', 'Eskiden Yeniye')}</option>
             </select>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t('filters.type', 'Türü:')}</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.type', 'Türü')}</label>
             <select 
               className="form-input"
               value={filterType}
               onChange={e => setFilterType(e.target.value)}
-              style={{ width: '140px', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
             >
               <option value="">{t('filters.all_types', 'Tüm Türler')}</option>
               <option value="material">{t('filters.delivery_note', 'İrsaliye / Fiş')}</option>
@@ -227,13 +273,13 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
             </select>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t('filters.photo_status', 'Görsel Durumu:')}</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.photo_status', 'Görsel Durumu')}</label>
             <select 
               className="form-input"
               value={filterPhoto}
               onChange={e => setFilterPhoto(e.target.value)}
-              style={{ width: '140px', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
             >
               <option value="">{t('common.all', 'Tümü')}</option>
               <option value="yes">{t('filters.with_photo', 'Fotoğraflı')}</option>
@@ -315,7 +361,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
           </div>
         ) : viewMode === 'list' ? (
           /* List View (Table layout) */
-          <div className="fin-table-container">
+          <div className="fin-table-container" style={{ marginTop: '0.1rem' }}>
             <table className="fin-table">
               <thead>
                 <tr>
@@ -463,7 +509,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center', 
-            marginTop: '1rem',
+            marginTop: '0.5rem',
             paddingTop: '0.75rem',
             borderTop: '1px solid var(--glass-border)'
           }}>

@@ -616,7 +616,17 @@
     "delete_title": "删除分包商",
     "delete_confirm": "您确定要删除此分包商分类帐吗？此操作无法撤消。",
     "no_results": "未找到符合搜索条件的分包商。",
-    "empty_state": "该建筑工地尚未注册分包商。"
+    "empty_state": "该建筑工地尚未注册分包商。",
+    "all_services": "所有服务领域",
+    "add_new": "+ 添加新分包商",
+    "anomalies": "分包商警报",
+    "financial_summary": "分包商财务摘要",
+    "total_receivable": "分包商应收账款总额",
+    "total_debt": "分包商负债总额",
+    "days_remaining": "剩余 {{count}} 天",
+    "update_success": "分包商更新成功。",
+    "add_success": "分包商添加成功。",
+    "delete_success": "分包商删除成功。"
   },
   "quality": {
     "title": "🛡️ 质量控制 & 工地报告",
@@ -1404,7 +1414,7 @@
     "selected_count": "已选择 {{count}} 名工人",
     "form_title": "工时详情",
     "save_btn": "全部保存",
-    "save_success": "已为 {{count}} 名工人成功保存工时。",
+    "save_success": "成功保存了 {{count}} 名{{group}}在 {{days}} 天内的考勤记录（共计 {{total}} 条记录）。",
     "save_error": "部分记录失败。成功：{{success}}，错误：{{error}}",
     "no_workers_selected": "请至少选择一名工人。",
     "no_workers": "未找到活跃工人。",
@@ -1421,7 +1431,8 @@
     "day": "天",
     "end_date": "结束日期",
     "end_date_placeholder": "默认：单日",
-    "start_date": "开始日期"
+    "start_date": "开始日期",
+    "personnel_fallback": "员工"
   },
   "subcontractor_import": {
     "import_btn": "导入 (Excel/CSV)",

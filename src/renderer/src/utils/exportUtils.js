@@ -133,6 +133,7 @@ export const generateSubcontractorTemplate = (t, lang) => {
     isTr ? 'Telefon' : 'Phone',
     isTr ? 'Günlük Bedel' : 'Daily Rate',
     isTr ? 'Durum' : 'Status',
+    isTr ? 'Etiketler' : 'Tags',
     isTr ? 'İSG Başlangıç' : 'ISG Start Date',
     isTr ? 'İSG Bitiş' : 'ISG End Date'
   ];
@@ -143,6 +144,7 @@ export const generateSubcontractorTemplate = (t, lang) => {
     isTr ? '(Opsiyonel) Telefon numarası' : '(Optional) Enter phone number',
     isTr ? '(Zorunlu) Sayısal değer giriniz' : '(Required) Enter numerical value',
     isTr ? '(Opsiyonel) Aktif veya Pasif' : '(Optional) Enter Active or Passive',
+    isTr ? '(Opsiyonel) Virgülle ayırarak etiketleri girin' : '(Optional) Enter tags separated by commas',
     isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format',
     isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format'
   ];

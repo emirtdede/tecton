@@ -5,7 +5,7 @@ import CustomDatePicker from './ui/CustomDatePicker';
 import LightboxModal from './ui/LightboxModal';
 import { compressImage } from '../utils/imageCompressor';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate } from '../utils/formatUtils';
+import { formatDate, trLower } from '../utils/formatUtils';
 
 const QualityReports = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -76,12 +76,28 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const [sortBy, setSortBy] = useState('date_desc');
   const [filterPhoto, setFilterPhoto] = useState(''); // '' | 'yes' | 'no'
   const [filterStatus, setFilterStatus] = useState(''); // '' | 'open' | 'resolved'
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
+  const handleStartDateChange = (val) => {
+    setFilterStartDate(val);
+    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
+      setFilterEndDate(val);
+    }
+  };
+
+  const handleEndDateChange = (val) => {
+    setFilterEndDate(val);
+    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
+      setFilterStartDate(val);
+    }
+  };
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sortBy, filterPhoto, filterStatus]);
+  }, [searchQuery, sortBy, filterPhoto, filterStatus, filterStartDate, filterEndDate]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -243,14 +259,21 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
 
   // Filter and paginated reports
   const filteredReports = reports.filter(r => {
-    const matchesSearch = r.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (r.description && r.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                          r.report_date.includes(searchQuery);
+    const q = trLower(searchQuery);
+    const matchesSearch = !searchQuery || 
+                          trLower(r.title).includes(q) || 
+                          (r.description && trLower(r.description).includes(q)) ||
+                          trLower(formatDate(r.report_date, i18n.language)).includes(q);
     const matchesPhoto = !filterPhoto || 
                          (filterPhoto === 'yes' && !!r.photo_path) || 
                          (filterPhoto === 'no' && !r.photo_path);
     const matchesStatus = !filterStatus || r.status === filterStatus;
-    return matchesSearch && matchesPhoto && matchesStatus;
+
+    let matchesDate = true;
+    if (filterStartDate) matchesDate = matchesDate && r.report_date >= filterStartDate;
+    if (filterEndDate) matchesDate = matchesDate && r.report_date <= filterEndDate;
+
+    return matchesSearch && matchesPhoto && matchesStatus && matchesDate;
   });
 
   // Apply sorting
@@ -442,78 +465,108 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
             background: 'rgba(255, 255, 255, 0.02)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
-            padding: '0.5rem 1rem', 
-            marginBottom: '0.75rem',
+            padding: '0.75rem 1rem', 
+            marginBottom: '0.25rem',
             display: 'flex', 
             gap: '1rem', 
-            alignItems: 'center', 
+            alignItems: 'flex-end', 
             flexWrap: 'wrap' 
           }}>
-            <div style={{ position: 'relative', flex: 2, minWidth: '200px', display: 'flex', alignItems: 'center' }}>
-              <input 
-                type="text"
-                className="form-input"
-                placeholder={t('filters.search_reports', 'Tutanak başlıklarında, açıklamalarda veya tarihte ara...')}
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-muted)',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    padding: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10
-                  }}
-                  title={t('common.clear', 'Temizle')}
-                >
-                  ✕
-                </button>
-              )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+                <input 
+                  type="text"
+                  className="form-input"
+                  placeholder={t('filters.search_reports', 'Tutanak başlıklarında, açıklamalarda veya tarihte ara...')}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10
+                    }}
+                    title={t('common.clear', 'Temizle')}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
 
-            <select 
-              className="form-input" 
-              value={sortBy} 
-              onChange={e => setSortBy(e.target.value)}
-              style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}
-            >
-              <option value="date_desc">{t('filters.newest', 'Tarih: Yeniden Eskiye')}</option>
-              <option value="date_asc">{t('filters.oldest', 'Tarih: Eskiden Yeniye')}</option>
-            </select>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
+              <CustomDatePicker
+                value={filterStartDate}
+                onChange={e => handleStartDateChange(e.target.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
 
-            <select 
-              className="form-input" 
-              value={filterPhoto} 
-              onChange={e => setFilterPhoto(e.target.value)}
-              style={{ flex: 1, minWidth: '130px', marginBottom: 0 }}
-            >
-              <option value="">{t('filters.photo_all', 'Tümü (Fotoğraf)')}</option>
-              <option value="yes">{t('filters.with_photo', 'Fotoğraflı')}</option>
-              <option value="no">{t('filters.without_photo', 'Fotoğrafsız')}</option>
-            </select>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
+              <CustomDatePicker
+                value={filterEndDate}
+                onChange={e => handleEndDateChange(e.target.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
 
-            <select 
-              className="form-input" 
-              value={filterStatus} 
-              onChange={e => setFilterStatus(e.target.value)}
-              style={{ flex: 1, minWidth: '130px', marginBottom: 0 }}
-            >
-              <option value="">{t('filters.status_all', 'Tümü (Durum)')}</option>
-              <option value="open">{t('quality.status_open', 'Açık (Çözülmedi)')}</option>
-              <option value="resolved">{t('filters.status_resolved', 'Çözüldü')}</option>
-            </select>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 130px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.sort', 'Sıralama')}</label>
+              <select 
+                className="form-input" 
+                value={sortBy} 
+                onChange={e => setSortBy(e.target.value)}
+                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              >
+                <option value="date_desc">{t('filters.newest', 'Yeniden Eskiye')}</option>
+                <option value="date_asc">{t('filters.oldest', 'Eskiden Yeniye')}</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.photo_status', 'Görsel Durumu')}</label>
+              <select 
+                className="form-input" 
+                value={filterPhoto} 
+                onChange={e => setFilterPhoto(e.target.value)}
+                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              >
+                <option value="">{t('filters.photo_all', 'Tümü')}</option>
+                <option value="yes">{t('filters.with_photo', 'Fotoğraflı')}</option>
+                <option value="no">{t('filters.without_photo', 'Fotoğrafsız')}</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.status', 'Durum')}</label>
+              <select 
+                className="form-input" 
+                value={filterStatus} 
+                onChange={e => setFilterStatus(e.target.value)}
+                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              >
+                <option value="">{t('filters.status_all', 'Tümü')}</option>
+                <option value="open">{t('quality.status_open', 'Açık')}</option>
+                <option value="resolved">{t('filters.status_resolved', 'Çözüldü')}</option>
+              </select>
+            </div>
           </div>
         )}
 
@@ -525,7 +578,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
             {searchQuery ? t('quality.no_results', 'Arama kriterlerine uygun tutanak kaydı bulunamadı.') : t('empty.quality', 'Bu şantiye için henüz kalite kontrol raporu bulunmuyor.')}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.1rem' }}>
             {paginatedReports.map(rep => (
               <div 
                 key={rep.id} 

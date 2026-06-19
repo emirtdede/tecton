@@ -56,6 +56,10 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     return isTr ? `Sisteme yeni bir ${tName} kaydı eklendi.` : `New ${tName} record added to system.`;
   }
   
+  if (action === 'CREATE_BULK') {
+    return new_values.logMessage || (isTr ? `Sisteme toplu ${tName} kaydı eklendi.` : `Bulk ${tName} records added to system.`);
+  }
+  
   if (action === 'UPDATE') {
     if (table_name === 'workers') {
       const name = new_values.full_name || (old_values && old_values.full_name) || (isTr ? 'Personel' : 'Personnel');
@@ -324,9 +328,50 @@ async function deleteRecord(db, table, id) {
   return { success: true, message: 'Kayıt başarıyla silindi.' };
 }
 
+async function createBulkRecord(db, table, dataList, logMessage) {
+  if (!Array.isArray(dataList) || dataList.length === 0) {
+    return { success: false, message: 'Veri listesi boş.' };
+  }
+
+  try {
+    await db.run('BEGIN TRANSACTION');
+
+    const firstItem = dataList[0];
+    const keys = Object.keys(firstItem);
+    const placeholders = keys.map(() => '?').join(', ');
+    const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`;
+
+    for (const item of dataList) {
+      const values = keys.map(k => item[k]);
+      await db.run(query, values);
+    }
+
+    await db.run('COMMIT');
+
+    // Single audit log for the bulk operation
+    const projectId = firstItem.project_id || null;
+    await logAudit(db, table, null, 'CREATE_BULK', null, { 
+      logMessage, 
+      project_id: projectId,
+      record_count: dataList.length 
+    });
+
+    return { success: true, message: 'Toplu kayıtlar başarıyla eklendi.' };
+  } catch (error) {
+    try {
+      await db.run('ROLLBACK');
+    } catch (rbErr) {
+      // ignore
+    }
+    console.error(`Bulk create error in ${table}:`, error);
+    throw error;
+  }
+}
+
 module.exports = {
   readRecord,
   createRecord,
   updateRecord,
-  deleteRecord
+  deleteRecord,
+  createBulkRecord
 };

@@ -616,7 +616,17 @@
     "delete_title": "Subunternehmer löschen",
     "delete_confirm": "Sind Sie sicher, dass Sie dieses Subunternehmerbuch löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "no_results": "Es wurden keine Subunternehmer gefunden, die den Suchkriterien entsprechen.",
-    "empty_state": "Für diese Baustelle sind noch keine Subunternehmer registriert."
+    "empty_state": "Für diese Baustelle sind noch keine Subunternehmer registriert.",
+    "all_services": "Alle Servicebereiche",
+    "add_new": "+ Neuen Subunternehmer hinzufügen",
+    "anomalies": "Subunternehmer-Warnungen",
+    "financial_summary": "Finanzübersicht des Subunternehmers",
+    "total_receivable": "Forderungen gesamt",
+    "total_debt": "Verbindlichkeiten gesamt",
+    "days_remaining": "noch {{count}} Tage",
+    "update_success": "Subunternehmer erfolgreich aktualisiert.",
+    "add_success": "Subunternehmer erfolgreich hinzugefügt.",
+    "delete_success": "Subunternehmer erfolgreich gelöscht."
   },
   "quality": {
     "title": "🛡️ Qualitätskontrolle & Baustellenberichte",
@@ -1403,7 +1413,7 @@
     "selected_count": "{{count}} Mitarbeiter ausgewählt",
     "form_title": "Zeiterfassungsdetails",
     "save_btn": "Alle speichern",
-    "save_success": "Zeiterfassung für {{count}} Mitarbeiter erfolgreich gespeichert.",
+    "save_success": "Zeiterfassungen für {{count}} {{group}} für {{days}} Tage (insgesamt {{total}} Einträge) erfolgreich gespeichert.",
     "save_error": "Einige Einträge fehlgeschlagen. Erfolg: {{success}}, Fehler: {{error}}",
     "no_workers_selected": "Bitte wählen Sie mindestens einen Mitarbeiter.",
     "no_workers": "Keine aktiven Mitarbeiter gefunden.",
@@ -1420,7 +1430,8 @@
     "day": "Tag",
     "end_date": "Enddatum",
     "end_date_placeholder": "Standard: Einzelner Tag",
-    "start_date": "Startdatum"
+    "start_date": "Startdatum",
+    "personnel_fallback": "Mitarbeiter"
   },
   "subcontractor_import": {
     "import_btn": "Importieren (Excel/CSV)",

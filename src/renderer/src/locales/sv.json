@@ -616,7 +616,17 @@
     "delete_title": "Ta bort underleverantör",
     "delete_confirm": "Är du säker på att du vill ta bort denna underleverantörsreskontra? Denna åtgärd kan inte ångras.",
     "no_results": "Inga underleverantörer hittades som matchade sökkriterierna.",
-    "empty_state": "Inga underleverantörer registrerade för denna byggarbetsplats ännu."
+    "empty_state": "Inga underleverantörer registrerade för denna byggarbetsplats ännu.",
+    "all_services": "Alla tjänsteområden",
+    "add_new": "+ Lägg till ny underleverantör",
+    "anomalies": "Underleverantörsvarningar",
+    "financial_summary": "Finansiell sammanställning underleverantör",
+    "total_receivable": "Totala fordringar",
+    "total_debt": "Totala skulder",
+    "days_remaining": "{{count}} dagar kvar",
+    "update_success": "Underleverantör har uppdaterats.",
+    "add_success": "Underleverantör har lagts till.",
+    "delete_success": "Underleverantör har raderats."
   },
   "quality": {
     "title": "🛡️ Kvalitetskontroll & Platsrapporter",
@@ -1403,7 +1413,7 @@
     "selected_count": "{{count}} arbetare valda",
     "form_title": "Tidrapportdetaljer",
     "save_btn": "Spara Alla",
-    "save_success": "Tidrapport sparad för {{count}} arbetare.",
+    "save_success": "Tidrapporter har sparats för {{count}} {{group}} under {{days}} dagar (totalt {{total}} poster).",
     "save_error": "Vissa poster misslyckades. Lyckades: {{success}}, Fel: {{error}}",
     "no_workers_selected": "Välj minst en arbetare.",
     "no_workers": "Inga aktiva arbetare hittades.",
@@ -1420,7 +1430,8 @@
     "day": "dag",
     "end_date": "Slutdatum",
     "end_date_placeholder": "Standard: Enstaka dag",
-    "start_date": "Startdatum"
+    "start_date": "Startdatum",
+    "personnel_fallback": "anställda"
   },
   "subcontractor_import": {
     "import_btn": "Importera (Excel/CSV)",

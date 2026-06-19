@@ -616,7 +616,17 @@
     "delete_title": "Usuń podwykonawcę",
     "delete_confirm": "Czy na pewno chcesz usunąć tę księgę podwykonawców? Tej akcji nie można cofnąć.",
     "no_results": "Nie znaleziono podwykonawców spełniających kryteria wyszukiwania.",
-    "empty_state": "Na tę budowę nie zarejestrowano jeszcze żadnego podwykonawcy."
+    "empty_state": "Na tę budowę nie zarejestrowano jeszcze żadnego podwykonawcy.",
+    "all_services": "Wszystkie obszary usług",
+    "add_new": "+ Dodaj nowego podwykonawcę",
+    "anomalies": "Alerty podwykonawcy",
+    "financial_summary": "Podsumowanie finansowe podwykonawcy",
+    "total_receivable": "Należności ogółem",
+    "total_debt": "Zobowiązania ogółem",
+    "days_remaining": "pozostało {{count}} dni",
+    "update_success": "Pomyślnie zaktualizowano podwykonawcę.",
+    "add_success": "Pomyślnie dodano podwykonawcę.",
+    "delete_success": "Pomyślnie usunięto podwykonawcę."
   },
   "quality": {
     "title": "🛡️ Kontrola jakości i raporty z placu budowy",
@@ -1404,7 +1414,7 @@
     "selected_count": "{{count}} pracowników wybranych",
     "form_title": "Szczegóły Karty Czasu",
     "save_btn": "Zapisz Wszystko",
-    "save_success": "Karta czasu pracy zapisana pomyślnie dla {{count}} pracowników.",
+    "save_success": "Karty pracy zostały pomyślnie zapisane dla {{count}} {{group}} w ciągu {{days}} dni (łącznie {{total}} wpisów).",
     "save_error": "Niektóre rekordy nie powiodły się. Sukces: {{success}}, Błąd: {{error}}",
     "no_workers_selected": "Wybierz co najmniej jednego pracownika.",
     "no_workers": "Nie znaleziono aktywnych pracowników.",
@@ -1421,7 +1431,8 @@
     "day": "dzień",
     "end_date": "Data zakończenia",
     "end_date_placeholder": "Domyślnie: Jeden dzień",
-    "start_date": "Data rozpoczęcia"
+    "start_date": "Data rozpoczęcia",
+    "personnel_fallback": "pracowników"
   },
   "subcontractor_import": {
     "import_btn": "Importuj (Excel/CSV)",

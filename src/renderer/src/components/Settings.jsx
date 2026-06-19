@@ -1211,7 +1211,6 @@ const Settings = ({ activeTab = 'genel' }) => {
                   value={recycleStartDate} 
                   onChange={handleStartDateChange} 
                   style={{ marginBottom: 0 }}
-                  placeholder={t('global.startDate', 'Başlangıç Tarihi')}
                 />
               </div>
 
@@ -1225,7 +1224,6 @@ const Settings = ({ activeTab = 'genel' }) => {
                   value={recycleEndDate} 
                   onChange={handleEndDateChange} 
                   style={{ marginBottom: 0 }}
-                  placeholder={t('global.endDate', 'Bitiş Tarihi')}
                 />
               </div>
             </div>

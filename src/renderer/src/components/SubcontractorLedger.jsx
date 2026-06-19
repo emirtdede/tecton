@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
 import GuideDrawer from './ui/GuideDrawer';
 import CustomDatePicker from './ui/CustomDatePicker';
-import { formatCurrency, getCurrencySymbol } from '../utils/formatUtils';
+import { formatCurrency, getCurrencySymbol, trLower } from '../utils/formatUtils';
 import { exportToExcel, exportToCSV, exportToJSON, generateSubcontractorTemplate } from '../utils/exportUtils';
 import { readSubcontractorsFromExcel } from '../utils/importUtils';
+import TagInput from './ui/TagInput';
 
 const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) => {
   const { t, i18n } = useTranslation();
@@ -26,6 +27,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
     isg_start_date: '',
     isg_expiry_date: ''
   });
+  const [tags, setTags] = useState([]);
 
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
   const fileInputRef = useRef(null);
@@ -91,6 +93,16 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
         isg_start_date: c.isg_start_date || '',
         isg_expiry_date: c.isg_expiry_date || ''
       });
+      try {
+        if (c.tags) {
+          const parsed = typeof c.tags === 'string' ? JSON.parse(c.tags) : c.tags;
+          setTags(Array.isArray(parsed) ? parsed : []);
+        } else {
+          setTags([]);
+        }
+      } catch (e) {
+        setTags([]);
+      }
     } else {
       setEditingId(null);
       setFormData({
@@ -102,6 +114,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
         isg_start_date: '',
         isg_expiry_date: ''
       });
+      setTags([]);
     }
     setIsDrawerOpen(true);
   };
@@ -109,6 +122,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setEditingId(null);
+    setTags([]);
   };
 
   const handleSubmit = async (e) => {
@@ -124,7 +138,8 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
         daily_wage: Number(formData.daily_wage),
         status: formData.status,
         isg_start_date: formData.isg_start_date || null,
-        isg_expiry_date: formData.isg_expiry_date || null
+        isg_expiry_date: formData.isg_expiry_date || null,
+        tags: JSON.stringify(tags)
       };
 
       if (editingId) {
@@ -164,9 +179,35 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
   // Filter subcontractor list
   const filteredContractors = contractors.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          c.service_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (c.phone && c.phone.includes(searchQuery));
+    const q = trLower(searchQuery);
+    const tagsStr = c.tags ? trLower(c.tags) : '';
+    
+    const statusText = c.status === 'passive' 
+      ? trLower(t('filters.passive', 'Pasif')) 
+      : trLower(t('filters.active', 'Aktif'));
+    const statusTextEn = c.status === 'passive' ? 'passive' : 'active';
+    
+    const wageStr = String(c.daily_wage);
+    const wageCommaStr = wageStr.replace('.', ',');
+    const formattedWage = formatCurrency(c.daily_wage, i18n.language);
+
+    const balanceStr = String(c.balance || 0);
+    const balanceCommaStr = balanceStr.replace('.', ',');
+    const formattedBalance = formatCurrency(c.balance || 0, i18n.language);
+
+    const matchesSearch = !searchQuery ||
+                          trLower(c.name).includes(q) || 
+                          trLower(c.service_type).includes(q) ||
+                          tagsStr.includes(q) ||
+                          (c.phone && c.phone.includes(searchQuery)) ||
+                          statusText.includes(q) ||
+                          statusTextEn.includes(q) ||
+                          wageStr.includes(q) ||
+                          wageCommaStr.includes(q) ||
+                          trLower(formattedWage).includes(q) ||
+                          balanceStr.includes(q) ||
+                          balanceCommaStr.includes(q) ||
+                          trLower(formattedBalance).includes(q);
     const matchesService = !filterServiceType || c.service_type === filterServiceType;
     const matchesStatus = !filterStatus || c.status === filterStatus;
     return matchesSearch && matchesService && matchesStatus;
@@ -210,7 +251,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
     .filter(c => c.remainingDays > 0 && c.remainingDays <= 15)
     .sort((a, b) => a.remainingDays - b.remainingDays);
 
-  const filterAnomalyByName = (c) => c.name.toLowerCase().includes(anomalySearch.toLowerCase());
+  const filterAnomalyByName = (c) => trLower(c.name).includes(trLower(anomalySearch));
 
   const filteredNegativeBalance = negativeBalanceContractors.filter(filterAnomalyByName);
   const filteredIsgExpired = isgExpiredContractors.filter(filterAnomalyByName);
@@ -262,7 +303,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                 const result = await readSubcontractorsFromExcel(file, t, i18n.language);
                 if (result.success) {
                   for (const sub of result.data) {
-                    const existing = contractors.find(c => c.name.trim().toLowerCase() === sub.name.trim().toLowerCase());
+                    const existing = contractors.find(c => trLower(c.name.trim()) === trLower(sub.name.trim()));
                     if (existing) {
                       await window.api.db.update('subcontractor_ledgers', existing.id, {
                         ...sub, project_id: activeProjectId
@@ -330,7 +371,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
               <input 
                 type="text" 
                 className="form-input" 
-                placeholder={t('filters.search_subcontractors', 'Taşeron adı veya hizmet alanı ara...')} 
+                placeholder={t('filters.search_subcontractors', 'Taşeron adı, hizmet, yevmiye, bakiye veya durum ara...')} 
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{ width: '100%', paddingRight: '2.5rem', marginBottom: 0 }}
@@ -649,7 +690,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                         {filteredIsgApproaching.map(c => (
                           <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-main)' }}>
                             <span style={{ fontWeight: '500' }}>{c.name}</span>
-                            <span style={{ color: '#fbbf24' }}>{c.remainingDays} gün kaldı</span>
+                            <span style={{ color: '#fbbf24' }}>{t('subcontractor.days_remaining', '{{count}} gün kaldı', { count: c.remainingDays })}</span>
                           </div>
                         ))}
                       </div>
@@ -799,6 +840,11 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                   <option value="active">{t('filters.active', 'Aktif')}</option>
                   <option value="passive">{t('filters.passive', 'Pasif')}</option>
                 </select>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label">{t('worker_modal.tags', 'Etiketler')}</label>
+                <TagInput tags={tags} setTags={setTags} placeholder={t('worker_modal.tags_ph', 'Etiket ekleyin...')} />
               </div>
 
               <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', marginTop: '0.25rem' }}>

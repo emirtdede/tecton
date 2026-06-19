@@ -616,7 +616,17 @@
     "delete_title": "하청업체 삭제",
     "delete_confirm": "이 하청업체 원장을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
     "no_results": "검색기준과 일치하는 협력업체를 찾을 수 없습니다.",
-    "empty_state": "해당 건설현장에는 아직 등록된 하청업체가 없습니다."
+    "empty_state": "해당 건설현장에는 아직 등록된 하청업체가 없습니다.",
+    "all_services": "모든 서비스 분야",
+    "add_new": "+ 새 하청업체 추가",
+    "anomalies": "하청업체 경고",
+    "financial_summary": "하청업체 재무 요약",
+    "total_receivable": "총 하청업체 미수금",
+    "total_debt": "총 하청업체 채무",
+    "days_remaining": "{{count}}일 남음",
+    "update_success": "하청업체가 성공적으로 수정되었습니다.",
+    "add_success": "하청업체가 성공적으로 추가되었습니다.",
+    "delete_success": "하청업체가 성공적으로 삭제되었습니다."
   },
   "quality": {
     "title": "🛡️ 품질 관리 및 현장 보고서",
@@ -1408,7 +1418,7 @@
     "selected_count": "{{count}}명 선택됨",
     "form_title": "근무표 세부정보",
     "save_btn": "일괄 저장",
-    "save_success": "{{count}}명의 근무표가 성공적으로 저장되었습니다.",
+    "save_success": "{{group}} {{count}}명에 대한 {{days}}일간의 타임시트(총 {{total}}개 기록)가 성공적으로 저장되었습니다.",
     "save_error": "일부 레코드에 오류가 발생했습니다. 성공: {{success}}, 오류: {{error}}",
     "no_workers_selected": "최소 한 명의 작업자를 선택해 주세요.",
     "no_workers": "활성 작업자를 찾을 수 없습니다.",
@@ -1425,7 +1435,8 @@
     "day": "일",
     "end_date": "종료일",
     "end_date_placeholder": "기본값: 단일 영업일",
-    "start_date": "시작일"
+    "start_date": "시작일",
+    "personnel_fallback": "직원"
   },
   "subcontractor_import": {
     "import_btn": "가져오기 (Excel/CSV)",

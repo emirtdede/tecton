@@ -5,7 +5,7 @@ import CustomDatePicker from './ui/CustomDatePicker';
 import LightboxModal from './ui/LightboxModal';
 import { compressImage } from '../utils/imageCompressor';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate } from '../utils/formatUtils';
+import { formatDate, trLower } from '../utils/formatUtils';
 
 const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -55,19 +55,15 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const handleStartDateChange = (val) => {
+    setFilterStartDate(val);
     if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterStartDate(filterEndDate);
       setFilterEndDate(val);
-    } else {
-      setFilterStartDate(val);
     }
   };
   const handleEndDateChange = (val) => {
+    setFilterEndDate(val);
     if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterEndDate(filterStartDate);
       setFilterStartDate(val);
-    } else {
-      setFilterEndDate(val);
     }
   };
   const [filterPhoto, setFilterPhoto] = useState(''); // '' | 'yes' | 'no'
@@ -256,10 +252,30 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
 
   // Filter and Paginated records
   const filteredRecords = records.filter(r => {
-    const matchesSearch = r.supplier.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          r.material_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (r.receipt_number && r.receipt_number.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                          (r.notes && r.notes.toLowerCase().includes(searchQuery.toLowerCase()));
+    const q = trLower(searchQuery);
+    const formattedDate = formatDate(r.receipt_date, i18n.language);
+    
+    const qtyStr = String(r.quantity);
+    const qtyCommaStr = qtyStr.replace('.', ',');
+    const unitStr = r.unit ? trLower(r.unit) : '';
+    const qtyWithUnit = `${qtyStr} ${unitStr}`;
+    const qtyWithUnitNoSpace = `${qtyStr}${unitStr}`;
+    const qtyCommaWithUnit = `${qtyCommaStr} ${unitStr}`;
+    const qtyCommaWithUnitNoSpace = `${qtyCommaStr}${unitStr}`;
+
+    const matchesSearch = !searchQuery ||
+                          trLower(r.supplier).includes(q) ||
+                          trLower(r.material_type).includes(q) ||
+                          (r.receipt_number && trLower(r.receipt_number).includes(q)) ||
+                          (r.notes && trLower(r.notes).includes(q)) ||
+                          trLower(formattedDate).includes(q) ||
+                          trLower(r.receipt_date).includes(q) ||
+                          qtyStr.includes(q) ||
+                          qtyCommaStr.includes(q) ||
+                          qtyWithUnit.includes(q) ||
+                          qtyWithUnitNoSpace.includes(q) ||
+                          qtyCommaWithUnit.includes(q) ||
+                          qtyCommaWithUnitNoSpace.includes(q);
     const matchesUnit = !filterUnit || r.unit === filterUnit;
     const matchesPhoto = !filterPhoto || 
                          (filterPhoto === 'yes' && !!r.photo_path) || 
@@ -490,90 +506,101 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             background: 'rgba(255, 255, 255, 0.02)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
-            padding: '1rem', 
-            marginBottom: '0',
+            padding: '0.75rem 1rem', 
+            marginBottom: '0.25rem',
             display: 'flex', 
             gap: '1rem', 
-            alignItems: 'center', 
+            alignItems: 'flex-end', 
             flexWrap: 'wrap' 
           }}>
-            <div style={{ position: 'relative', flex: 2, minWidth: '200px', display: 'flex', alignItems: 'center' }}>
-              <input 
-                type="text"
-                className="form-input"
-                placeholder={t('filters.search_materials', 'Tedarikçi, malzeme veya notlarda ara...')}
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-muted)',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    padding: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10
-                  }}
-                  title={t('common.clear', 'Temizle')}
-                >
-                  ✕
-                </button>
-              )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+                <input 
+                  type="text"
+                  className="form-input"
+                  placeholder={t('filters.search_materials', 'Tedarikçi, malzeme, tarih, miktar veya notlarda ara...')}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10
+                    }}
+                    title={t('common.clear', 'Temizle')}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
 
-            <select 
-              className="form-input" 
-              value={filterUnit} 
-              onChange={e => setFilterUnit(e.target.value)}
-              style={{ flex: 1, minWidth: '120px', marginBottom: 0 }}
-            >
-              <option value="">{t('filters.all_units', 'Tümü (Birim)')}</option>
-              <option value="m³">m³</option>
-              <option value="Adet">Adet</option>
-              <option value="Ton">Ton</option>
-              <option value="Kg">Kg</option>
-              <option value="m²">m²</option>
-              <option value="mt">mt</option>
-              <option value="Diğer">Diğer</option>
-            </select>
-
-            <select 
-              className="form-input" 
-              value={filterPhoto} 
-              onChange={e => setFilterPhoto(e.target.value)}
-              style={{ flex: 1, minWidth: '120px', marginBottom: 0 }}
-            >
-              <option value="">{t('filters.photo_all', 'Tümü (Fotoğraf)')}</option>
-              <option value="yes">{t('filters.with_photo', 'Fotoğraflı')}</option>
-              <option value="no">{t('filters.without_photo', 'Fotoğrafsız')}</option>
-            </select>
-
-            <div style={{ flex: 1.2, minWidth: '160px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
               <CustomDatePicker 
                 className="form-input" 
                 value={filterStartDate} 
                 onChange={e => handleStartDateChange(e.target.value)} 
-                style={{ marginBottom: 0 }}
+                style={{ width: '100%' }}
               />
             </div>
 
-            <div style={{ flex: 1.2, minWidth: '160px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
               <CustomDatePicker 
                 className="form-input" 
                 value={filterEndDate} 
                 onChange={e => handleEndDateChange(e.target.value)} 
-                style={{ marginBottom: 0 }}
+                style={{ width: '100%' }}
               />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.unit', 'Birim')}</label>
+              <select 
+                className="form-input" 
+                value={filterUnit} 
+                onChange={e => setFilterUnit(e.target.value)}
+                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              >
+                <option value="">{t('filters.all_units', 'Tümü')}</option>
+                <option value="m³">m³</option>
+                <option value="Adet">Adet</option>
+                <option value="Ton">Ton</option>
+                <option value="Kg">Kg</option>
+                <option value="m²">m²</option>
+                <option value="mt">mt</option>
+                <option value="Diğer">Diğer</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.photo_status', 'Görsel')}</label>
+              <select 
+                className="form-input" 
+                value={filterPhoto} 
+                onChange={e => setFilterPhoto(e.target.value)}
+                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              >
+                <option value="">{t('filters.photo_all', 'Tümü')}</option>
+                <option value="yes">{t('filters.with_photo', 'Fotoğraflı')}</option>
+                <option value="no">{t('filters.without_photo', 'Fotoğrafsız')}</option>
+              </select>
             </div>
           </div>
         )}
@@ -586,7 +613,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             {searchQuery ? t('materials.no_results', 'Arama kriterlerine uygun malzeme/irsaliye kaydı bulunamadı.') : t('empty.delivery', 'Henüz irsaliye kaydı bulunmuyor.')}
           </div>
         ) : (
-          <div className="fin-table-container" style={{ marginTop: '0.5rem' }}>
+          <div className="fin-table-container" style={{ marginTop: '0.1rem' }}>
             <table className="fin-table">
               <thead>
                 <tr>

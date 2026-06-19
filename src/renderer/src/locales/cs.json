@@ -616,7 +616,17 @@
     "delete_title": "Odstranit subdodavatele",
     "delete_confirm": "Opravdu chcete smazat tuto účetní knihu subdodavatelů? Tuto akci nelze vrátit zpět.",
     "no_results": "Nebyli nalezeni žádní subdodavatelé odpovídající vyhledávacím kritériím.",
-    "empty_state": "Pro tuto stavbu se zatím neregistrovali žádní subdodavatelé."
+    "empty_state": "Pro tuto stavbu se zatím neregistrovali žádní subdodavatelé.",
+    "all_services": "Všechny oblasti služeb",
+    "add_new": "+ Přidat nového subdodavatele",
+    "anomalies": "Upozornění subdodavatele",
+    "financial_summary": "Finanční přehled subdodavatele",
+    "total_receivable": "Pohledávky celkem",
+    "total_debt": "Závazky celkem",
+    "days_remaining": "zbývá {{count}} dní",
+    "update_success": "Subdodavatel byl úspěšně aktualizován.",
+    "add_success": "Subdodavatel byl úspěšně přidán.",
+    "delete_success": "Subdodavatel byl úspěšně smazán."
   },
   "quality": {
     "title": "🛡️ Kontrola kvality a zprávy ze staveniště",
@@ -1403,7 +1413,7 @@
     "selected_count": "{{count}} pracovníků vybráno",
     "form_title": "Detaily Docházky",
     "save_btn": "Uložit Vše",
-    "save_success": "Docházka úspěšně uložena pro {{count}} pracovníků.",
+    "save_success": "Pracovní výkazy byly úspěšně uloženy pro {{count}} {{group}} za {{days}} dní (celkem {{total}} záznamů).",
     "save_error": "Některé záznamy selhaly. Úspěch: {{success}}, Chyba: {{error}}",
     "no_workers_selected": "Vyberte alespoň jednoho pracovníka.",
     "no_workers": "Nebyli nalezeni žádní aktivní pracovníci.",
@@ -1420,7 +1430,8 @@
     "day": "den",
     "end_date": "Datum ukončení",
     "end_date_placeholder": "Výchozí: Jeden den",
-    "start_date": "Datum zahájení"
+    "start_date": "Datum zahájení",
+    "personnel_fallback": "zaměstnanců"
   },
   "subcontractor_import": {
     "import_btn": "Importovat (Excel/CSV)",

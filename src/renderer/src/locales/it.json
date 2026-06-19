@@ -616,7 +616,17 @@
     "delete_title": "Elimina subappaltatore",
     "delete_confirm": "Vuoi eliminare questo registro dei subappaltatori? Questa azione non può essere annullata.",
     "no_results": "Nessun subappaltatore trovato corrispondente ai criteri di ricerca.",
-    "empty_state": "Nessun subappaltatore registrato ancora per questo cantiere."
+    "empty_state": "Nessun subappaltatore registrato ancora per questo cantiere.",
+    "all_services": "Tutte le aree di servizio",
+    "add_new": "+ Aggiungi nuovo subappaltatore",
+    "anomalies": "Avvisi subappaltatore",
+    "financial_summary": "Riepilogo finanziario subappaltatore",
+    "total_receivable": "Totale crediti subappaltatore",
+    "total_debt": "Totale debiti subappaltatore",
+    "days_remaining": "{{count}} giorni rimasti",
+    "update_success": "Subappaltatore aggiornato con successo.",
+    "add_success": "Subappaltatore aggiunto con successo.",
+    "delete_success": "Subappaltatore eliminato con successo."
   },
   "quality": {
     "title": "🛡️ Controllo qualità e rapporti cantiere",
@@ -1404,7 +1414,7 @@
     "selected_count": "{{count}} lavoratori selezionati",
     "form_title": "Dettagli Foglio Ore",
     "save_btn": "Salva Tutti",
-    "save_success": "Foglio ore salvato con successo per {{count}} lavoratori.",
+    "save_success": "Fogli presenze salvati con successo per {{count}} {{group}} per {{days}} giorni (totale {{total}} registrazioni).",
     "save_error": "Alcuni record non sono riusciti. Successo: {{success}}, Errore: {{error}}",
     "no_workers_selected": "Selezionare almeno un lavoratore.",
     "no_workers": "Nessun lavoratore attivo trovato.",
@@ -1421,7 +1431,8 @@
     "day": "giorno",
     "end_date": "Data di fine",
     "end_date_placeholder": "Predefinito: Giorno singolo",
-    "start_date": "Data di inizio"
+    "start_date": "Data di inizio",
+    "personnel_fallback": "dipendenti"
   },
   "subcontractor_import": {
     "import_btn": "Importa (Excel/CSV)",

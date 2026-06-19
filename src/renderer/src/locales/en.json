@@ -566,10 +566,10 @@
     "wage_desc": "Wage Descending",
     "active": "Active",
     "passive": "Passive",
-    "search_materials": "Search supplier, material or notes...",
-    "search_production": "Search item or notes...",
+    "search_materials": "Search supplier, material, date, quantity or notes...",
+    "search_production": "Search item, date, quantity or notes...",
     "search_reports": "Search title, description or date...",
-    "search_subcontractors": "Search subcontractor/service...",
+    "search_subcontractors": "Search subcontractor name, service, rate, balance or status...",
     "search_anomalies": "Search anomalies (Name)...",
     "tab_all": "All",
     "tab_low_balance": "Low Balance",
@@ -597,7 +597,8 @@
     "no_image": "No Image",
     "view_list": "List View",
     "view_grid": "Gallery View",
-    "item_type": "Content Type"
+    "item_type": "Content Type",
+    "search_placeholder": "Search by title, content type or date..."
   },
   "subcontractor": {
     "title": "🚜 Subcontractor Ledgers",
@@ -621,7 +622,17 @@
     "delete_title": "Delete Subcontractor",
     "delete_confirm": "Are you sure you want to delete this subcontractor ledger? This action cannot be undone.",
     "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "empty_state": "No subcontractors registered for this construction site yet.",
+    "all_services": "All Service Areas",
+    "add_new": "+ Add New Subcontractor",
+    "anomalies": "Subcontractor Alerts",
+    "financial_summary": "Subcontractor Financial Summary",
+    "total_receivable": "Total Subcontractor Receivable",
+    "total_debt": "Total Subcontractor Debt",
+    "days_remaining": "{{count}} days left",
+    "update_success": "Subcontractor updated successfully.",
+    "add_success": "Subcontractor added successfully.",
+    "delete_success": "Subcontractor deleted successfully."
   },
   "quality": {
     "title": "🛡️ Quality Control & Site Reports",
@@ -1382,11 +1393,17 @@
     "selected_count": "{{count}} workers selected",
     "form_title": "Timesheet Details",
     "save_btn": "Save All",
-    "save_success": "Timesheet saved successfully for {{count}} workers.",
+    "save_success": "Timesheets successfully saved for {{count}} {{group}} over {{days}} days (total {{total}} records).",
     "save_error": "Some records failed. Success: {{success}}, Error: {{error}}",
     "no_workers_selected": "Please select at least one worker.",
     "no_workers": "No active workers found.",
     "search_workers": "Search workers...",
+    "search_placeholder_new": "Search name, TC, phone, group or wage...",
+    "group_label": "Group",
+    "status_label": "Timesheet Status",
+    "status_all": "All",
+    "status_entered": "Timesheets Entered",
+    "status_not_entered": "Timesheets Not Entered",
     "preview_wage": "Estimated Wage",
     "guide_step1_title": "1. Select Workers",
     "guide_step1_desc": "Select workers from the left panel for timesheet entry. Use the Select All button to select all workers at once.",
@@ -1399,7 +1416,8 @@
     "day": "day",
     "end_date": "End Date",
     "end_date_placeholder": "Default: Single Day",
-    "start_date": "Start Date"
+    "start_date": "Start Date",
+    "personnel_fallback": "personnel"
   },
   "subcontractor_import": {
     "import_btn": "Import (Excel/CSV)",

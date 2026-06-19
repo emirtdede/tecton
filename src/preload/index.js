@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('api', {
   db: {
     read: (table, conditions = {}) => ipcRenderer.invoke('db:read', { table, conditions }),
     create: (table, data) => ipcRenderer.invoke('db:create', { table, data }),
+    createBulk: (table, dataList, logMessage) => ipcRenderer.invoke('db:create-bulk', { table, dataList, logMessage }),
     update: (table, id, data) => ipcRenderer.invoke('db:update', { table, id, data }),
     delete: (table, id) => ipcRenderer.invoke('db:delete', { table, id }),
     transactionDelete: (id) => ipcRenderer.invoke('db:transaction:delete', { id }),

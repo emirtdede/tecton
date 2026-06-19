@@ -615,7 +615,17 @@
     "delete_title": "Eliminar subcontratista",
     "delete_confirm": "¿Está seguro de que desea eliminar este libro mayor de subcontratista? Esta acción no se puede deshacer.",
     "no_results": "No se encontraron subcontratistas que coincidan con los criterios de búsqueda.",
-    "empty_state": "Aún no hay subcontratistas registrados para esta obra."
+    "empty_state": "Aún no hay subcontratistas registrados para esta obra.",
+    "all_services": "Todas las áreas de servicio",
+    "add_new": "+ Añadir nuevo subcontratista",
+    "anomalies": "Alertas de subcontratistas",
+    "financial_summary": "Resumen financiero del subcontratista",
+    "total_receivable": "Total a cobrar del subcontratista",
+    "total_debt": "Deuda total del subcontratista",
+    "days_remaining": "quedan {{count}} días",
+    "update_success": "Subcontratista actualizado con éxito.",
+    "add_success": "Subcontratista añadido con éxito.",
+    "delete_success": "Subcontratista eliminado con éxito."
   },
   "quality": {
     "title": "🛡️ Control de calidad e informes de obra",
@@ -1403,7 +1413,7 @@
     "selected_count": "{{count}} trabajadores seleccionados",
     "form_title": "Detalles del Horario",
     "save_btn": "Guardar Todo",
-    "save_success": "Horarios guardados exitosamente para {{count}} trabajadores.",
+    "save_success": "Partes de horas guardados con éxito para {{count}} {{group}} durante {{days}} días (total {{total}} registros).",
     "save_error": "Algunos registros fallaron. Éxito: {{success}}, Error: {{error}}",
     "no_workers_selected": "Seleccione al menos un trabajador.",
     "no_workers": "No se encontraron trabajadores activos.",
@@ -1420,7 +1430,8 @@
     "day": "día",
     "end_date": "Fecha de finalización",
     "end_date_placeholder": "Predeterminado: Día único",
-    "start_date": "Fecha de inicio"
+    "start_date": "Fecha de inicio",
+    "personnel_fallback": "empleados"
   },
   "subcontractor_import": {
     "import_btn": "Importar (Excel/CSV)",

@@ -562,10 +562,10 @@
     "wage_desc": "Azalan Günlük Bedel",
     "active": "Aktif",
     "passive": "Pasif",
-    "search_materials": "Tedarikçi, malzeme veya notlarda ara...",
-    "search_production": "İmalat veya notlarda ara...",
+    "search_materials": "Tedarikçi, malzeme, tarih, miktar veya notlarda ara...",
+    "search_production": "İmalat, tarih, miktar veya notlarda ara...",
     "search_reports": "Tutanak başlıklarında, açıklamalarda veya tarihte ara...",
-    "search_subcontractors": "Taşeron/hizmet ara...",
+    "search_subcontractors": "Taşeron adı, hizmet, yevmiye, bakiye veya durum ara...",
     "search_anomalies": "Anomalilerde ara (İsim)...",
     "tab_all": "Hepsi",
     "tab_low_balance": "Düşük Bakiye",
@@ -593,7 +593,8 @@
     "no_image": "Görsel Yok",
     "view_list": "Liste Görünümü",
     "view_grid": "Galeri Görünümü",
-    "item_type": "İçerik Türü"
+    "item_type": "İçerik Türü",
+    "search_placeholder": "Başlık, içerik türü veya tarihe göre ara..."
   },
   "subcontractor": {
     "title": "🚜 Taşeron ve Alt Yüklenici Carileri",
@@ -617,7 +618,17 @@
     "delete_title": "Taşeronu Sil",
     "delete_confirm": "Bu taşeron kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
     "no_results": "Arama kriterlerine uygun taşeron kaydı bulunamadı.",
-    "empty_state": "Bu şantiyeye kayıtlı taşeron/alt yüklenici bulunamadı."
+    "empty_state": "Bu şantiyeye kayıtlı taşeron/alt yüklenici bulunamadı.",
+    "all_services": "Tüm Hizmet Alanları",
+    "add_new": "+ Yeni Taşeron Ekle",
+    "anomalies": "Taşeron Uyarıları",
+    "financial_summary": "Taşeron Finans Özeti",
+    "total_receivable": "Toplam Taşeron Alacağı",
+    "total_debt": "Toplam Taşeron Borcu",
+    "days_remaining": "{{count}} gün kaldı",
+    "update_success": "Taşeron başarıyla güncellendi.",
+    "add_success": "Taşeron başarıyla eklendi.",
+    "delete_success": "Taşeron kaydı başarıyla silindi."
   },
   "quality": {
     "title": "🛡️ Kalite Kontrol & Şantiye Tutanakları",
@@ -1368,11 +1379,17 @@
     "selected_count": "{{count}} personel seçildi",
     "form_title": "Puantaj Bilgileri",
     "save_btn": "Toplu Kaydet",
-    "save_success": "{{count}} personel için puantaj başarıyla kaydedildi.",
+    "save_success": "{{count}} {{group}} için {{days}} günlük (toplam {{total}} kayıt) puantaj başarıyla kaydedildi.",
     "save_error": "Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}",
     "no_workers_selected": "Lütfen en az bir personel seçin.",
     "no_workers": "Aktif personel bulunamadı.",
     "search_workers": "Personel ara...",
+    "search_placeholder_new": "İsim, TC, telefon, grup veya yevmiye ara...",
+    "group_label": "Grup",
+    "status_label": "Puantaj Durumu",
+    "status_all": "Tümü",
+    "status_entered": "Puantajı Girilenler",
+    "status_not_entered": "Puantajı Girilmeyenler",
     "preview_wage": "Tahmini Ücret",
     "guide_step1_title": "1. Personel Seçimi",
     "guide_step1_desc": "Sol panelden puantaj girişi yapılacak personelleri seçin. Tümünü Seç butonu ile tüm personeli tek seferde seçebilirsiniz.",
@@ -1385,7 +1402,8 @@
     "day": "gün",
     "end_date": "Bitiş Tarihi",
     "end_date_placeholder": "Varsayılan: Tek Gün",
-    "start_date": "Başlangıç Tarihi"
+    "start_date": "Başlangıç Tarihi",
+    "personnel_fallback": "personel"
   },
   "subcontractor_import": {
     "import_btn": "İçe Aktar (Excel/CSV)",

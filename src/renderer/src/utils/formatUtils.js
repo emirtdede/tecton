@@ -219,4 +219,15 @@ export const formatCurrencySafe = (amount, lang = 'tr') => {
   return `${safeNumber} ${selectedCurrency}`;
 };
 
+/**
+ * Converts a string to lowercase with Turkish characters support (İ/i, I/ı).
+ * @param {string} str - The string to convert.
+ * @returns {string} The lowercase string.
+ */
+export const trLower = (str) => {
+  if (!str) return '';
+  return String(str).replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
+};
+
+
 

@@ -26,7 +26,7 @@ async function setupHandlers() {
   }
 
   // --- GENERIC REST-LIKE API ---
-  const { readRecord, createRecord, updateRecord, deleteRecord } = require('./services/crudService');
+  const { readRecord, createRecord, updateRecord, deleteRecord, createBulkRecord } = require('./services/crudService');
 
   // 1. READ (SELECT with is_deleted = 0)
   ipcMain.handle('db:read', async (_, { table, conditions = {} }) => {
@@ -44,6 +44,16 @@ async function setupHandlers() {
       return await createRecord(db, table, data);
     } catch (error) {
       console.error(`Error creating record in ${table}:`, error);
+      return { success: false, message: error.message };
+    }
+  });
+
+  // 2b. CREATE BULK
+  ipcMain.handle('db:create-bulk', async (_, { table, dataList, logMessage }) => {
+    try {
+      return await createBulkRecord(db, table, dataList, logMessage);
+    } catch (error) {
+      console.error(`Error creating bulk records in ${table}:`, error);
       return { success: false, message: error.message };
     }
   });

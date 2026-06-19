@@ -616,7 +616,17 @@
     "delete_title": "Supprimer le sous-traitant",
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce grand livre de sous-traitant ? Cette action ne peut pas être annulée.",
     "no_results": "Aucun sous-traitant trouvé correspondant aux critères de recherche.",
-    "empty_state": "Aucun sous-traitant enregistré pour ce chantier pour l'instant."
+    "empty_state": "Aucun sous-traitant enregistré pour ce chantier pour l'instant.",
+    "all_services": "Toutes les zones de service",
+    "add_new": "+ Ajouter un sous-traitant",
+    "anomalies": "Alertas sous-traitants",
+    "financial_summary": "Résumé financier du sous-traitant",
+    "total_receivable": "Total à recevoir du sous-traitant",
+    "total_debt": "Dette totale du sous-traitant",
+    "days_remaining": "{{count}} jours restants",
+    "update_success": "Sous-traitant mis à jour avec succès.",
+    "add_success": "Sous-traitant ajouté avec succès.",
+    "delete_success": "Sous-traitant supprimé avec succès."
   },
   "quality": {
     "title": "🛡️ Contrôle qualité & rapports de chantier",
@@ -1404,7 +1414,7 @@
     "selected_count": "{{count}} travailleurs sélectionnés",
     "form_title": "Détails de la Feuille de Temps",
     "save_btn": "Tout Enregistrer",
-    "save_success": "Feuilles de temps enregistrées avec succès pour {{count}} travailleurs.",
+    "save_success": "Feuilles de temps enregistrées avec succès pour {{count}} {{group}} sur {{days}} jours (total {{total}} enregistrements).",
     "save_error": "Certaines entrées ont échoué. Succès : {{success}}, Erreur : {{error}}",
     "no_workers_selected": "Veuillez sélectionner au moins un travailleur.",
     "no_workers": "Aucun travailleur actif trouvé.",
@@ -1421,7 +1431,8 @@
     "day": "jour",
     "end_date": "Date de fin",
     "end_date_placeholder": "Par défaut : Jour unique",
-    "start_date": "Date de début"
+    "start_date": "Date de début",
+    "personnel_fallback": "membres du personnel"
   },
   "subcontractor_import": {
     "import_btn": "Importer (Excel/CSV)",

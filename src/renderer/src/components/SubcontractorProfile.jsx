@@ -18,8 +18,22 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const [activeTab, setActiveTab] = useState('hakedis'); // 'hakedis' | 'odeme'
   
   // Date filters
-  const [filterStartDate, setFilterStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
-  const [filterEndDate, setFilterEndDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0]);
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
+
+  const handleStartDateChange = (val) => {
+    setFilterStartDate(val);
+    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
+      setFilterEndDate(val);
+    }
+  };
+
+  const handleEndDateChange = (val) => {
+    setFilterEndDate(val);
+    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
+      setFilterStartDate(val);
+    }
+  };
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,6 +44,18 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState('');
+
+  let parsedTags = [];
+  try {
+    if (subcontractor && subcontractor.tags) {
+      const parsed = typeof subcontractor.tags === 'string' ? JSON.parse(subcontractor.tags) : subcontractor.tags;
+      if (Array.isArray(parsed)) {
+        parsedTags = parsed;
+      }
+    }
+  } catch (e) {
+    console.error("Failed to parse tags", e);
+  }
 
   // Forms
   const [hakedisData, setHakedisData] = useState({
@@ -422,14 +448,14 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
 
   const reportTransactions = transactions.filter(t => {
     // Devreden Bakiye
-    if (new Date(t.trans_date) < new Date(filterStartDate)) {
+    if (filterStartDate && new Date(t.trans_date) < new Date(filterStartDate)) {
       if (t.type === 'Hakediş') reportDevreden += t.amount;
       else if (t.type === 'Ödeme') reportDevreden -= t.amount;
       return false; 
     }
     
     // Bitiş tarihi sonrası
-    if (new Date(t.trans_date) > new Date(filterEndDate)) {
+    if (filterEndDate && new Date(t.trans_date) > new Date(filterEndDate)) {
       return false;
     }
 
@@ -451,7 +477,8 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
 
   const filteredTransactions = transactions.filter(t => {
     return t.type === (activeTab === 'hakedis' ? 'Hakediş' : 'Ödeme') &&
-           t.trans_date >= filterStartDate && t.trans_date <= filterEndDate;
+           (!filterStartDate || t.trans_date >= filterStartDate) && 
+           (!filterEndDate || t.trans_date <= filterEndDate);
   }).sort((a, b) => new Date(b.trans_date) - new Date(a.trans_date));
 
   const itemsToPaginate = activeTab === 'rapor' ? reportTransactions : filteredTransactions;
@@ -481,25 +508,21 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
           </span>
         </div>
         
-        <div className="profile-grid" style={{ marginTop: '0.5rem' }}>
+        <div className="profile-grid" style={{ marginTop: '0.5rem', gridTemplateColumns: '350px 1fr' }}>
           {/* Sol Kolon - Bilgi ve Formlar */}
-          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', textAlign: 'center', padding: '1rem' }}>
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '1rem', gap: '0.75rem', width: '350px', height: 'calc(100vh - 150px)', boxSizing: 'border-box' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2rem', fontWeight: 'bold', margin: '0 auto', color: '#fff' }}>
               {subcontractor.name.charAt(0)}
             </div>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', marginTop: '0.5rem' }}>{subcontractor.name}</h2>
-            <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>{subcontractor.service_type}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{subcontractor.service_type}</div>
             
-            {projectName && (
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', margin: '0.25rem 0 0.5rem 0' }}>
+              {projectName && (
                 <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
                   🏗️ {projectName}
                 </span>
-              </div>
-            )}
-
-            {/* ISG Badge */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}>
+              )}
               {(() => {
                 const expiryDate = subcontractor.isg_expiry_date;
                 if (!expiryDate) {
@@ -526,12 +549,15 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                   </span>
                 );
               })()}
+              {parsedTags.map((tag, idx) => (
+                <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                  🏷️ {tag}
+                </span>
+              ))}
             </div>
 
-            <hr style={{ borderTop: '1px solid var(--glass-border)', margin: '1rem 0' }} />
-            
             {/* Ozet Kartlari */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', marginTop: '2.5rem' }}>
               <div style={{ background: 'var(--success-bg-light)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--success-border)' }}>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.total_earned', 'Toplam Hakediş')}</div>
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--success-text)', marginTop: '0.25rem' }}>{formatCurrency(totalHakedis, i18n.language)}</div>
@@ -551,7 +577,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
           </div>
 
           {/* Sag Kolon - Tabs ve Tablolar */}
-          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)' }}>
             <div className="tabs" style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.25rem' }}>
               <button 
                 className={`tab-btn ${activeTab === 'hakedis' ? 'active' : ''}`} 
@@ -580,21 +606,11 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
               <div style={{ flex: 1 }}>
                 <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
-                <CustomDatePicker className="form-input" value={filterStartDate} onChange={e => { 
-                  if(e.target.value) {
-                    setFilterStartDate(e.target.value);
-                    if(e.target.value > filterEndDate) setFilterEndDate(e.target.value);
-                  }
-                }} />
+                <CustomDatePicker className="form-input" value={filterStartDate} onChange={e => handleStartDateChange(e.target.value)} />
               </div>
               <div style={{ flex: 1 }}>
                 <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
-                <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => { 
-                  if(e.target.value) {
-                    setFilterEndDate(e.target.value);
-                    if(e.target.value < filterStartDate) setFilterStartDate(e.target.value);
-                  }
-                }} />
+                <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => handleEndDateChange(e.target.value)} />
               </div>
             </div>
 

@@ -260,9 +260,16 @@ export const readSubcontractorsFromExcel = (file, t, lang) => {
             status = 'passive';
           }
 
-          // ISG Dates
+           // ISG Dates
           const isg_start_date = parseFlexDate(normalizedRow, ['isg başlangıç', 'isg start date', 'isg start', 'isg başlangıc'], null);
           const isg_expiry_date = parseFlexDate(normalizedRow, ['isg bitiş', 'isg end date', 'isg end', 'isg bitis'], null);
+
+          // Etiketler
+          const rawTags = String(normalizedRow['etiketler'] || normalizedRow['etiket'] || normalizedRow['tags'] || '').trim();
+          let tagsArray = [];
+          if (rawTags) {
+            tagsArray = rawTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+          }
 
           parsed.push({
             name: name.trim(),
@@ -270,6 +277,7 @@ export const readSubcontractorsFromExcel = (file, t, lang) => {
             phone,
             daily_wage,
             status,
+            tags: JSON.stringify(tagsArray),
             isg_start_date,
             isg_expiry_date
           });

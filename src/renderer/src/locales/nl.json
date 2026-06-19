@@ -616,7 +616,17 @@
     "delete_title": "Onderaannemer verwijderen",
     "delete_confirm": "Weet u zeker dat u dit grootboek van onderaannemers wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
     "no_results": "Er zijn geen onderaannemers gevonden die voldoen aan de zoekcriteria.",
-    "empty_state": "Er zijn nog geen onderaannemers geregistreerd voor deze bouwplaats."
+    "empty_state": "Er zijn nog geen onderaannemers geregistreerd voor deze bouwplaats.",
+    "all_services": "Alle servicegebieden",
+    "add_new": "+ Nieuwe onderaannemer toevoegen",
+    "anomalies": "Waarschuwingen onderaannemer",
+    "financial_summary": "Financieel overzicht onderaannemer",
+    "total_receivable": "Totaal te ontvangen onderaannemer",
+    "total_debt": "Totale schuld onderaannemer",
+    "days_remaining": "nog {{count}} dagen",
+    "update_success": "Onderaannemer succesvol bijgewerkt.",
+    "add_success": "Onderaannemer succesvol toegevoegd.",
+    "delete_success": "Onderaannemer succesvol verwijderd."
   },
   "quality": {
     "title": "🛡️ Kwaliteitscontrole & Platsrapportages",
@@ -1404,7 +1414,7 @@
     "selected_count": "{{count}} werknemers geselecteerd",
     "form_title": "Urenstaat Details",
     "save_btn": "Alles Opslaan",
-    "save_success": "Urenstaat succesvol opgeslagen voor {{count}} werknemers.",
+    "save_success": "Urenstaten succesvol opgeslagen voor {{count}} {{group}} over {{days}} dagen (totaal {{total}} records).",
     "save_error": "Sommige records zijn mislukt. Succes: {{success}}, Fout: {{error}}",
     "no_workers_selected": "Selecteer minimaal één werknemer.",
     "no_workers": "Geen actieve werknemers gevonden.",
@@ -1421,7 +1431,8 @@
     "day": "dag",
     "end_date": "Einddatum",
     "end_date_placeholder": "Standaard: Eén dag",
-    "start_date": "Startdatum"
+    "start_date": "Startdatum",
+    "personnel_fallback": "medewerkers"
   },
   "subcontractor_import": {
     "import_btn": "Importeren (Excel/CSV)",

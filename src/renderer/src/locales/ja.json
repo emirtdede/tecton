@@ -616,7 +616,17 @@
     "delete_title": "下請け業者の削除",
     "delete_confirm": "この下請け元帳を削除してもよろしいですか?この操作は元に戻すことができません。",
     "no_results": "検索条件に一致する下請け業者は見つかりませんでした。",
-    "empty_state": "この建設現場にはまだ下請け業者が登録されていません。"
+    "empty_state": "この建設現場にはまだ下請け業者が登録されていません。",
+    "all_services": "すべてのサービス分野",
+    "add_new": "+ 新規下請業者の追加",
+    "anomalies": "下請業者アラート",
+    "financial_summary": "下請業者財務サマリー",
+    "total_receivable": "下請業者売掛金合計",
+    "total_debt": "下請業者买掛金合計",
+    "days_remaining": "残り {{count}} 日",
+    "update_success": "下請業者情報が更新されました。",
+    "add_success": "下請業者が追加されました。",
+    "delete_success": "下請業者が削除されました。"
   },
   "quality": {
     "title": "🛡️ 品質管理＆現場報告",
@@ -1404,7 +1414,7 @@
     "selected_count": "{{count}}名選択済み",
     "form_title": "タイムシート詳細",
     "save_btn": "一括保存",
-    "save_success": "{{count}}名のタイムシートが正常に保存されました。",
+    "save_success": "{{count}} {{group}}の {{days}} 日間のタイムシート（合計 {{total}} 件の記録）が正常に保存されました。",
     "save_error": "一部のレコードでエラーが発生しました。成功：{{success}}、エラー：{{error}}",
     "no_workers_selected": "少なくとも1名の作業員を選択してください。",
     "no_workers": "アクティブな作業員が見つかりません。",
@@ -1421,7 +1431,8 @@
     "day": "日",
     "end_date": "終了日",
     "end_date_placeholder": "デフォルト：単一日",
-    "start_date": "開始日"
+    "start_date": "開始日",
+    "personnel_fallback": "名"
   },
   "subcontractor_import": {
     "import_btn": "インポート (Excel/CSV)",

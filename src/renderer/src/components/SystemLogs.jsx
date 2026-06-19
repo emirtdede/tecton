@@ -14,6 +14,7 @@ const SystemLogs = () => {
   const [endDate, setEndDate] = useState('');
   const [filterText, setFilterText] = useState('');
   const [selectedType, setSelectedType] = useState('');
+  const [selectedTable, setSelectedTable] = useState('');
   
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
@@ -60,7 +61,7 @@ const SystemLogs = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [filterText, startDate, endDate, selectedType, selectedProjectId]);
+  }, [filterText, startDate, endDate, selectedType, selectedProjectId, selectedTable]);
 
   const fetchLogs = async () => {
     if (window.api) {
@@ -93,9 +94,12 @@ const SystemLogs = () => {
     if (selectedType) {
       if (selectedType === 'error' && !log.includes('[error]')) return false;
       if (selectedType === 'info' && !log.includes('[info]')) return false;
-      if (selectedType === 'db_create' && !log.includes('[DB CREATE]')) return false;
+      if (selectedType === 'db_create' && !log.includes('[DB CREATE')) return false;
       if (selectedType === 'db_update' && !log.includes('[DB UPDATE]')) return false;
       if (selectedType === 'db_delete' && !log.includes('[DB DELETE]')) return false;
+    }
+    if (selectedTable) {
+      if (!log.includes(`[${selectedTable}]`)) return false;
     }
     if (selectedProjectId && selectedProjectName) {
       if (!log.includes(`[Şantiye: ${selectedProjectName}]`) && !log.includes(`[Project: ${selectedProjectName}]`)) {
@@ -229,6 +233,31 @@ const SystemLogs = () => {
             )}
           </div>
         </div>
+        <div style={{ flex: 1, minWidth: '160px' }}>
+          <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('logs.filter_table', 'Modül / Tablo')}</label>
+          <select
+            className="form-input"
+            value={selectedTable}
+            onChange={e => setSelectedTable(e.target.value)}
+            style={{ width: '100%' }}
+          >
+            <option value="">{t('logs.table_all', 'Tüm Modüller')}</option>
+            <option value="app_settings">app_settings</option>
+            <option value="workers">workers</option>
+            <option value="worker_groups">worker_groups</option>
+            <option value="timesheets">timesheets</option>
+            <option value="transactions">Avans/İşlem (transactions)</option>
+            <option value="cash_register">Kasa (cash_register)</option>
+            <option value="projects">Şantiye (projects)</option>
+            <option value="production_records">İmalat/Metraj (production_records)</option>
+            <option value="materials">Malzeme/İrsaliye (materials)</option>
+            <option value="daily_journals">Jurnal (daily_journals)</option>
+            <option value="quality_reports">Tutanaklar (quality_reports)</option>
+            <option value="subcontractor_ledgers">Taşeron Cari (subcontractor_ledgers)</option>
+            <option value="subcontractor_transactions">Taşeron İşlemleri (subcontractor_transactions)</option>
+            <option value="worker_leaves">Personel İzni (worker_leaves)</option>
+          </select>
+        </div>
         <div style={{ flex: 1, minWidth: '150px' }}>
           <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('logs.filter_type', 'Log Türü')}</label>
           <select
@@ -238,11 +267,11 @@ const SystemLogs = () => {
             style={{ width: '100%' }}
           >
             <option value="">{t('logs.type_all', 'Tüm Log Türleri')}</option>
-            <option value="info">🔵 Info</option>
-            <option value="error">❌ Error</option>
-            <option value="db_create">➕ DB Create</option>
-            <option value="db_update">🔄 DB Update</option>
-            <option value="db_delete">🗑️ DB Delete</option>
+            <option value="info">Info</option>
+            <option value="error">Error</option>
+            <option value="db_create">DB Create</option>
+            <option value="db_update">DB Update</option>
+            <option value="db_delete">DB Delete</option>
           </select>
         </div>
         <div style={{ flex: 1, minWidth: '180px' }}>
@@ -256,7 +285,7 @@ const SystemLogs = () => {
             <option value="">{t('logs.project_all', 'Tüm Şantiyeler')}</option>
             {projects.map(proj => (
               <option key={proj.id} value={proj.id}>
-                🏢 {proj.name}
+                {proj.name}
               </option>
             ))}
           </select>

@@ -616,7 +616,17 @@
     "delete_title": "Excluir subcontratado",
     "delete_confirm": "Tem certeza de que deseja excluir este razão de subcontratado? Esta ação não pode ser desfeita.",
     "no_results": "Não foram encontrados subcontratados que correspondam aos critérios de pesquisa.",
-    "empty_state": "Ainda não há subcontratados registrados para este canteiro de obras."
+    "empty_state": "Ainda não há subcontratados registrados para este canteiro de obras.",
+    "all_services": "Todas as áreas de serviço",
+    "add_new": "+ Adicionar novo subcontratado",
+    "anomalies": "Alertas do subcontratado",
+    "financial_summary": "Resumo financeiro do subcontratado",
+    "total_receivable": "Total a receber do subcontratado",
+    "total_debt": "Dívida total do subcontratado",
+    "days_remaining": "restam {{count}} dias",
+    "update_success": "Subcontratado atualizado com sucesso.",
+    "add_success": "Subcontratado adicionado com sucesso.",
+    "delete_success": "Subcontratado excluído com sucesso."
   },
   "quality": {
     "title": "🛡️ Controle de qualidade & relatórios de obra",
@@ -1404,7 +1414,7 @@
     "selected_count": "{{count}} trabalhadores selecionados",
     "form_title": "Detalhes da Folha de Ponto",
     "save_btn": "Salvar Todos",
-    "save_success": "Folha de ponto salva com sucesso para {{count}} trabalhadores.",
+    "save_success": "Folhas de ponto salvas com sucesso para {{count}} {{group}} durante {{days}} dias (total {{total}} registros).",
     "save_error": "Alguns registros falharam. Sucesso: {{success}}, Erro: {{error}}",
     "no_workers_selected": "Selecione pelo menos um trabalhador.",
     "no_workers": "Nenhum trabalhador ativo encontrado.",
@@ -1421,7 +1431,8 @@
     "day": "dia",
     "end_date": "Data de término",
     "end_date_placeholder": "Padrão: Dia único",
-    "start_date": "Data de início"
+    "start_date": "Data de início",
+    "personnel_fallback": "funcionários"
   },
   "subcontractor_import": {
     "import_btn": "Importar (Excel/CSV)",

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatCurrency } from '../utils/formatUtils';
+import { formatCurrency, trLower } from '../utils/formatUtils';
 
 const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -15,6 +15,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [helpOpen, setHelpOpen] = useState(false);
 
   // Unified form
@@ -87,27 +88,51 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   }, [existingTimesheets]);
 
   const handleStartDateChange = (val) => {
-    if (val && formData.end_date && new Date(val) > new Date(formData.end_date)) {
-      setFormData(prev => ({ ...prev, work_date: val, end_date: val }));
-    } else {
-      setFormData(prev => ({ ...prev, work_date: val }));
-    }
+    setFormData(prev => {
+      const next = { ...prev, work_date: val };
+      if (val && prev.end_date && new Date(val) > new Date(prev.end_date)) {
+        next.end_date = val;
+      }
+      return next;
+    });
   };
 
   const handleEndDateChange = (val) => {
-    if (val && formData.work_date && new Date(formData.work_date) > new Date(val)) {
-      setFormData(prev => ({ ...prev, end_date: val, work_date: val }));
-    } else {
-      setFormData(prev => ({ ...prev, end_date: val }));
-    }
+    setFormData(prev => {
+      const next = { ...prev, end_date: val };
+      if (val && prev.work_date && new Date(prev.work_date) > new Date(val)) {
+        next.work_date = val;
+      }
+      return next;
+    });
   };
 
   const filteredWorkers = workers.filter(w => {
-    const matchesSearch = w.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (w.tc_no && w.tc_no.includes(searchQuery)) ||
-      (w.phone && w.phone.includes(searchQuery));
+    const q = trLower(searchQuery);
+    const groupObj = workerGroups.find(g => g.id === w.group_id);
+    const groupName = groupObj ? trLower(groupObj.name) : '';
+
+    const wageStr = String(w.daily_wage);
+    const wageCommaStr = wageStr.replace('.', ',');
+    const formattedWage = formatCurrency(w.daily_wage, i18n.language);
+
+    const matchesSearch = !searchQuery ||
+      trLower(w.full_name).includes(q) ||
+      (w.tc_no && w.tc_no.includes(q)) ||
+      (w.phone && w.phone.includes(q)) ||
+      groupName.includes(q) ||
+      wageStr.includes(q) ||
+      wageCommaStr.includes(q) ||
+      trLower(formattedWage).includes(q);
+
     const matchesGroup = !selectedGroup || String(w.group_id) === String(selectedGroup);
-    return matchesSearch && matchesGroup;
+
+    const hasTimesheet = existingTimesheets.some(ts => ts.worker_id === w.id);
+    let matchesStatus = true;
+    if (filterStatus === 'entered') matchesStatus = hasTimesheet;
+    if (filterStatus === 'not_entered') matchesStatus = !hasTimesheet;
+
+    return matchesSearch && matchesGroup && matchesStatus;
   });
 
   const handleToggle = (id) => {
@@ -166,6 +191,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
     let errorCount = 0;
 
     const dates = formData.end_date ? getDatesInRange(formData.work_date, formData.end_date) : [formData.work_date];
+    const dataList = [];
 
     for (const date of dates) {
       for (const workerId of selectedIds) {
@@ -181,7 +207,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
 
           const earnedAmount = wageRes.success ? wageRes.wage : worker.daily_wage * selectedType.multiplier;
 
-          await window.api.db.create('timesheets', {
+          dataList.push({
             worker_id: workerId,
             work_date: date,
             work_type_id: formData.work_type_id,
@@ -193,30 +219,86 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
             tags: '[]',
             project_id: activeProjectId
           });
-          successCount++;
         } catch (err) {
-          console.error(`Bulk timesheet error for worker ${workerId} on ${date}:`, err);
-          errorCount++;
+          console.error(`Bulk timesheet calculation error for worker ${workerId} on ${date}:`, err);
         }
       }
     }
 
-    setSaving(false);
+    const selectedGroupObj = workerGroups.find(g => String(g.id) === String(selectedGroup));
+    const groupNameStr = selectedGroupObj ? selectedGroupObj.name : t('bulk_timesheet.personnel_fallback', 'personel');
 
-    if (errorCount === 0) {
-      window.dispatchEvent(new CustomEvent('show-toast', {
-        detail: {
-          message: t('bulk_timesheet.save_success', '{{count}} personel için puantaj başarıyla kaydedildi.').replace('{{count}}', successCount),
-          type: 'success'
+    const logMessage = t('bulk_timesheet.save_success', '{{count}} {{group}} için {{days}} günlük (toplam {{total}} kayıt) puantaj başarıyla kaydedildi.')
+      .replace('{{count}}', selectedIds.size)
+      .replace('{{group}}', groupNameStr)
+      .replace('{{days}}', dates.length)
+      .replace('{{total}}', dataList.length);
+
+    if (window.api.db.createBulk) {
+      try {
+        const res = await window.api.db.createBulk('timesheets', dataList, logMessage);
+        setSaving(false);
+
+        if (res.success) {
+          window.dispatchEvent(new CustomEvent('show-toast', {
+            detail: {
+              message: logMessage,
+              type: 'success'
+            }
+          }));
+        } else {
+          window.dispatchEvent(new CustomEvent('show-toast', {
+            detail: {
+              message: t('bulk_timesheet.save_error', 'Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}')
+                .replace('{{success}}', 0)
+                .replace('{{error}}', dataList.length),
+              type: 'warning'
+            }
+          }));
         }
-      }));
+      } catch (err) {
+        setSaving(false);
+        console.error('Bulk save error:', err);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            message: t('bulk_timesheet.save_error', 'Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}')
+              .replace('{{success}}', 0)
+              .replace('{{error}}', dataList.length),
+            type: 'warning'
+          }
+        }));
+      }
     } else {
-      window.dispatchEvent(new CustomEvent('show-toast', {
-        detail: {
-          message: t('bulk_timesheet.save_error', 'Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}').replace('{{success}}', successCount).replace('{{error}}', errorCount),
-          type: 'warning'
+      // Fallback: loop-based create (if Electron app hasn't been restarted yet)
+      let successCount = 0;
+      let errorCount = 0;
+      for (const item of dataList) {
+        try {
+          await window.api.db.create('timesheets', item);
+          successCount++;
+        } catch (err) {
+          console.error('Fallback timesheet error:', err);
+          errorCount++;
         }
-      }));
+      }
+      setSaving(false);
+      if (errorCount === 0) {
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            message: logMessage,
+            type: 'success'
+          }
+        }));
+      } else {
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            message: t('bulk_timesheet.save_error', 'Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}')
+              .replace('{{success}}', successCount)
+              .replace('{{error}}', errorCount),
+            type: 'warning'
+          }
+        }));
+      }
     }
 
     setSelectedIds(new Set());
@@ -233,7 +315,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: 'calc(100vh - 140px)', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: 'calc(100vh - 80px)', position: 'relative' }}>
       
       {/* Top Card: Title, Form, Filters (Fixed/Non-scrolling) */}
       <div className="glass-card" style={{ flexShrink: 0, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -342,43 +424,64 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
           padding: '0.75rem 1rem', 
           display: 'flex', 
           gap: '1rem', 
-          alignItems: 'center', 
+          alignItems: 'flex-end', 
           flexWrap: 'wrap' 
         }}>
-          <div style={{ position: 'relative', flex: 2, minWidth: '200px', display: 'flex', alignItems: 'center' }}>
-            <input
-              type="text"
-              className="form-input"
-              placeholder={t('bulk_timesheet.search_workers', 'Personel ara...')}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{ width: '100%', paddingRight: '2.5rem', marginBottom: 0 }}
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', padding: '4px' }}
-              >✕</button>
-            )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+              <input
+                type="text"
+                className="form-input"
+                placeholder={t('bulk_timesheet.search_placeholder_new', 'İsim, TC, telefon, grup veya yevmiye ara...')}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ width: '100%', paddingRight: '2.5rem', marginBottom: 0 }}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', padding: '4px' }}
+                >✕</button>
+              )}
+            </div>
           </div>
 
-          <select
-            className="form-input"
-            value={selectedGroup}
-            onChange={e => setSelectedGroup(e.target.value)}
-            style={{ flex: 1, minWidth: '120px', marginBottom: 0 }}
-          >
-            <option value="">{t('bulk_timesheet.group_filter_all', 'Tüm Gruplar')}</option>
-            {workerGroups.map(g => (
-              <option key={g.id} value={g.id}>{g.name}</option>
-            ))}
-          </select>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 150px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('bulk_timesheet.group_label', 'Grup')}</label>
+            <select
+              className="form-input"
+              value={selectedGroup}
+              onChange={e => setSelectedGroup(e.target.value)}
+              style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+            >
+              <option value="">{t('bulk_timesheet.group_filter_all', 'Tüm Gruplar')}</option>
+              {workerGroups.map(g => (
+                <option key={g.id} value={g.id}>{g.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 150px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('bulk_timesheet.status_label', 'Puantaj Durumu')}</label>
+            <select
+              className="form-input"
+              value={filterStatus}
+              onChange={e => setFilterStatus(e.target.value)}
+              style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+            >
+              <option value="">{t('bulk_timesheet.status_all', 'Tümü')}</option>
+              <option value="entered">{t('bulk_timesheet.status_entered', 'Puantajı Girilenler')}</option>
+              <option value="not_entered">{t('bulk_timesheet.status_not_entered', 'Puantajı Girilmeyenler')}</option>
+            </select>
+          </div>
 
           <button
+            type="button"
             className="btn"
             onClick={handleSelectAll}
-            style={{ whiteSpace: 'nowrap', padding: '0.5rem 1rem', minWidth: '120px' }}
+            style={{ whiteSpace: 'nowrap', padding: '0.5rem 1rem', minWidth: '120px', height: '38px' }}
           >
             {allEligibleSelected
               ? t('bulk_timesheet.deselect_all', 'Seçimi Kaldır')
@@ -394,7 +497,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
           👥 {t('bulk_timesheet.select_workers', 'Personel Seçin')} ({t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)})
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem', marginTop: '0.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem', marginTop: '0.25rem', paddingBottom: '2.5rem' }}>
           {loading ? (
             <div className="skeleton" style={{ height: '150px', width: '100%', gridColumn: '1 / -1' }}></div>
           ) : filteredWorkers.length === 0 ? (

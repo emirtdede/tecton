@@ -615,7 +615,17 @@
     "delete_title": "Slet underleverandør",
     "delete_confirm": "Er du sikker på, at du vil slette denne underleverandørbog? Denne handling kan ikke fortrydes.",
     "no_results": "No subcontractors found matching the search criteria.",
-    "empty_state": "No subcontractors registered for this construction site yet."
+    "empty_state": "No subcontractors registered for this construction site yet.",
+    "all_services": "Alle serviceområder",
+    "add_new": "+ Tilføj ny underleverandør",
+    "anomalies": "Underleverandøralarmer",
+    "financial_summary": "Finansielt resumé underleverandør",
+    "total_receivable": "Samlede tilgodehavender",
+    "total_debt": "Samlet gæld",
+    "days_remaining": "{{count}} dage tilbage",
+    "update_success": "Underleverandør opdateret.",
+    "add_success": "Underleverandør tilføjet.",
+    "delete_success": "Underleverandør slettet."
   },
   "quality": {
     "title": "🛡️ Kvalitetskontrol & Pladsrapporter",
@@ -1376,7 +1386,7 @@
     "selected_count": "{{count}} arbejdere valgt",
     "form_title": "Timeseddeldetaljer",
     "save_btn": "Gem Alle",
-    "save_success": "Timeseddel gemt for {{count}} arbejdere.",
+    "save_success": "Timesedler gemt med succes for {{count}} {{group}} over {{days}} dage (i alt {{total}} registreringer).",
     "save_error": "Nogle poster mislykkedes. Succes: {{success}}, Fejl: {{error}}",
     "no_workers_selected": "Vælg mindst én arbejder.",
     "no_workers": "Ingen aktive arbejdere fundet.",
@@ -1393,7 +1403,8 @@
     "day": "dag",
     "end_date": "Slutdato",
     "end_date_placeholder": "Standard: Enkelt dag",
-    "start_date": "Startdato"
+    "start_date": "Startdato",
+    "personnel_fallback": "medarbejdere"
   },
   "subcontractor_import": {
     "import_btn": "Importer (Excel/CSV)",

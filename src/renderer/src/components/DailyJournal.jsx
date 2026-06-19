@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate } from '../utils/formatUtils';
+import { formatDate, trLower } from '../utils/formatUtils';
 
 const DailyJournal = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -41,20 +41,16 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
   const [endDate, setEndDate] = useState('');
 
   const handleFilterStartDateChange = (val) => {
+    setStartDate(val);
     if (val && endDate && new Date(val) > new Date(endDate)) {
-      setStartDate(endDate);
       setEndDate(val);
-    } else {
-      setStartDate(val);
     }
   };
 
   const handleFilterEndDateChange = (val) => {
+    setEndDate(val);
     if (val && startDate && new Date(startDate) > new Date(val)) {
-      setEndDate(startDate);
       setStartDate(val);
-    } else {
-      setEndDate(val);
     }
   };
 
@@ -206,10 +202,11 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
 
   // Filter and paginated journals
   const filteredJournals = journals.filter(j => {
+    const q = trLower(searchQuery);
     if (searchQuery && 
-        !j.notes.toLowerCase().includes(searchQuery.toLowerCase()) && 
-        !(j.weather_desc && j.weather_desc.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        !j.journal_date.includes(searchQuery)) {
+        !trLower(j.notes).includes(q) && 
+        !(j.weather_desc && trLower(j.weather_desc).includes(q)) &&
+        !trLower(formatDate(j.journal_date, i18n.language)).includes(q)) {
       return false;
     }
     if (startDate && j.journal_date < startDate) return false;
@@ -387,82 +384,84 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             background: 'rgba(255, 255, 255, 0.02)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
-            padding: '0.75rem', 
-            marginBottom: '0.5rem',
+            padding: '0.75rem 1rem', 
+            marginBottom: '0.25rem',
             display: 'flex', 
-            gap: '0.75rem', 
-            alignItems: 'center', 
+            gap: '1rem', 
+            alignItems: 'flex-end', 
             flexWrap: 'wrap' 
           }}>
-            {/* Search */}
-            <div style={{ position: 'relative', flex: 2, minWidth: '200px', display: 'flex', alignItems: 'center' }}>
-              <input 
-                type="text"
-                className="form-input"
-                placeholder={t('filters.search_journal', 'Jurnal notlarında, hava durumunda veya tarihte ara...')}
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-muted)',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    padding: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10
-                  }}
-                  title={t('common.clear', 'Temizle')}
-                >
-                  ✕
-                </button>
-              )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+                <input 
+                  type="text"
+                  className="form-input"
+                  placeholder={t('filters.search_journal', 'Jurnal notlarında, hava durumunda veya tarihte ara...')}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10
+                    }}
+                    title={t('common.clear', 'Temizle')}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Start Date */}
-            <div style={{ flex: 1.2, minWidth: '160px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
               <CustomDatePicker 
                 className="form-input" 
                 value={startDate} 
                 onChange={e => handleFilterStartDateChange(e.target.value)} 
-                style={{ marginBottom: 0 }}
-                placeholder={t('worker_profile.filter.start_date', 'Başlangıç')}
+                style={{ width: '100%' }}
               />
             </div>
 
-            {/* End Date */}
-            <div style={{ flex: 1.2, minWidth: '160px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
               <CustomDatePicker 
                 className="form-input" 
                 value={endDate} 
                 onChange={e => handleFilterEndDateChange(e.target.value)} 
-                style={{ marginBottom: 0 }}
-                placeholder={t('worker_profile.filter.end_date', 'Bitiş')}
+                style={{ width: '100%' }}
               />
             </div>
 
-            {/* Sort */}
-            <select 
-              className="form-input" 
-              value={sortBy} 
-              onChange={e => setSortBy(e.target.value)}
-              style={{ flex: 1.5, minWidth: '180px', marginBottom: 0 }}
-            >
-              <option value="date_desc">{t('filters.newest', 'Tarih: Yeniden Eskiye')}</option>
-              <option value="date_asc">{t('filters.oldest', 'Tarih: Eskiden Yeniye')}</option>
-              <option value="workers_desc">{t('filters.workers_desc', 'İşçi Sayısı: En Çoktan En Aza')}</option>
-              <option value="workers_asc">{t('filters.workers_asc', 'İşçi Sayısı: En Azdan En Çoğa')}</option>
-            </select>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 150px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.sort', 'Sıralama')}</label>
+              <select 
+                className="form-input" 
+                value={sortBy} 
+                onChange={e => setSortBy(e.target.value)}
+                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
+              >
+                <option value="date_desc">{t('filters.newest', 'Tarih: Yeniden Eskiye')}</option>
+                <option value="date_asc">{t('filters.oldest', 'Tarih: Eskiden Yeniye')}</option>
+                <option value="workers_desc">{t('filters.workers_desc', 'İşçi Sayısı: Çoktan Aza')}</option>
+                <option value="workers_asc">{t('filters.workers_asc', 'İşçi Sayısı: Azdan Çoğa')}</option>
+              </select>
+            </div>
           </div>
         )}
 
@@ -474,7 +473,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             {searchQuery ? t('journal.no_results', 'Arama kriterlerine uygun jurnal kaydı bulunamadı.') : t('empty.journal', 'Henüz günlük jurnal kaydı bulunmuyor.')}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.1rem' }}>
             {paginatedJournals.map(j => (
               <div key={j.id} className="glass-card" style={{ padding: '1rem 1.25rem', gap: '0.25rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>

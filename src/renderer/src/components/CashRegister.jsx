@@ -48,8 +48,8 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
   }, [activeProjectId]);
 
   // Filters State
-  const [filterStartDate, setFilterStartDate] = useState(getFirstDayOfCurrentMonth());
-  const [filterEndDate, setFilterEndDate] = useState(getLastDayOfCurrentMonth());
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
   const handleStartDateChange = (val) => {
     if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
       setFilterStartDate(filterEndDate);
