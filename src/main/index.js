@@ -5,12 +5,37 @@ const path = require('path');
 require('./ipcHandlers');
 
 let mainWindow;
+let splashWindow;
 
-function createWindow() {
+function createSplashWindow(theme) {
+  splashWindow = new BrowserWindow({
+    width: 300,
+    height: 300,
+    frame: false,
+    transparent: true,
+    alwaysOnTop: true,
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+  });
+
+  splashWindow.loadFile(path.join(__dirname, 'splash.html'), { query: { theme } });
+
+  splashWindow.on('closed', () => {
+    splashWindow = null;
+  });
+}
+
+function createWindow(theme) {
+  createSplashWindow(theme);
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     frame: false,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
@@ -26,17 +51,39 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
   }
 
+  mainWindow.once('ready-to-show', () => {
+    if (splashWindow && !splashWindow.isDestroyed()) {
+      splashWindow.close();
+    }
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.show();
+      mainWindow.maximize();
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
 
-app.whenReady().then(() => {
-  createWindow();
+app.whenReady().then(async () => {
+  let theme = 'dark';
+  try {
+    const { getDB } = require('./database/db');
+    const db = await getDB();
+    const setting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'theme'");
+    if (setting && setting.setting_value) {
+      theme = setting.setting_value;
+    }
+  } catch (err) {
+    console.error('Failed to load theme from DB:', err);
+  }
+
+  createWindow(theme);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createWindow(theme);
     }
   });
 });
