@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Betalning till underleverantör",
     "delete_title": "Ta bort post",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Arbetstimmarna kan inte vara 0 eller mindre.",
     "restore_corrupted_error": "Återställningen misslyckades, filen är skadad eller ogiltig. Återgick till den tidigare databasen av säkerhetsskäl.",
-    "backup_success": "Säkerhetskopieringen slutfördes framgångsrikt!"
+    "backup_success": "Säkerhetskopieringen slutfördes framgångsrikt!",
+    "desktop_icon": "Skrivbordsgenvägsikon",
+    "desktop_icon_desc": "Gör applikationens genvägsikon på skrivbordet kompatibel med ljust eller mörkt tema.",
+    "icon_dark": "Mörk ikon",
+    "icon_light": "Ljus ikon"
   },
   "dashboard": {
     "title": "Personalhantering",
@@ -384,7 +389,7 @@
     "confirm": "Bekräfta",
     "delete": "Radera",
     "empty_data": "Inga data hittades att visa.",
-    "welcome_title": "Välkommen till ŞantiyemOS",
+    "welcome_title": "Välkommen till Tecton",
     "welcome_msg": "För att kunna lägga in register eller hantera personal, skapa en ny byggarbetsplats från vänstermenyn eller välj en aktiv arbetsyta.",
     "select_project_msg": "Välj en aktiv byggarbetsplats från vänstermenyn eller från sidan Byggplatshantering.",
     "prev": "Föregående",

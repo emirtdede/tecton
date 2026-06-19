@@ -133,7 +133,29 @@ body {
   color: var(--text-main);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow: hidden;
+}
+
+/* Custom Scrollbar for Dark/Light mode */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 16px; /* Prevents scrollbar from touching top/bottom edges */
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 /* App Layout Grid (Fixed Sidebar + Main Content) */
@@ -162,7 +184,8 @@ body {
   margin-left: var(--sidebar-width);
   flex: 1;
   padding: 2rem;
-  min-height: 100vh;
+  height: calc(100vh - 32px);
+  overflow-y: overlay; /* Modern minimal scrollbar */
   box-sizing: border-box;
 }
 
@@ -192,6 +215,9 @@ body {
   flex-direction: column;
   gap: 0.25rem;
   flex: 1;
+  overflow-y: overlay; /* Allows scrolling if window is short */
+  overflow-x: hidden;
+  padding-right: 0.25rem;
 }
 
 .sidebar-link {
@@ -469,42 +495,6 @@ select option,
   flex: 1;
   overflow-y: auto;
   padding: 0.75rem;
-}
-
-/* Custom Scrollbar for Premium Look */
-.spotlight-results::-webkit-scrollbar,
-body::-webkit-scrollbar,
-.form-input::-webkit-scrollbar,
-textarea::-webkit-scrollbar,
-div::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.spotlight-results::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track,
-.form-input::-webkit-scrollbar-track,
-textarea::-webkit-scrollbar-track,
-div::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.01);
-  border-radius: 4px;
-}
-
-.spotlight-results::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb,
-.form-input::-webkit-scrollbar-thumb,
-textarea::-webkit-scrollbar-thumb,
-div::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.spotlight-results::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover,
-.form-input::-webkit-scrollbar-thumb:hover,
-textarea::-webkit-scrollbar-thumb:hover,
-div::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.3);
 }
 
 .spotlight-result-group {
@@ -890,11 +880,9 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   margin: 0 auto;
 }
 
-.sidebar-collapsed-logo-btn .logo-icon {
-  font-size: 1.35rem;
+.sidebar-collapsed-logo-btn img {
   transition: transform 0.2s ease, opacity 0.2s ease;
   opacity: 1;
-  display: inline-block;
 }
 
 .sidebar-collapsed-logo-btn .hover-icon {
@@ -915,7 +903,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   color: #fff;
 }
 
-.sidebar-collapsed-logo-btn:hover .logo-icon {
+.sidebar-collapsed-logo-btn:hover img {
   opacity: 0;
   transform: scale(0.6);
 }
@@ -1011,4 +999,112 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   animation: recycleFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* --- LOGO THEMING --- */
+:root[data-theme='light'] .logo-light { display: none !important; }
+:root[data-theme='light'] .logo-dark { display: inline-block !important; }
 
+:root[data-theme='dark'] .logo-dark { display: none !important; }
+:root[data-theme='dark'] .logo-light { display: inline-block !important; }
+
+:root:not([data-theme='light']) .logo-dark { display: none !important; }
+:root:not([data-theme='light']) .logo-light { display: inline-block !important; }
+
+/* --- TITLEBAR STYLING --- */
+.custom-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px;
+  background: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  pointer-events: none; /* Let clicks pass through drag region where appropriate */
+}
+.titlebar-drag-region {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 150px;
+  height: 100%;
+  -webkit-app-region: drag;
+  pointer-events: auto;
+}
+.titlebar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-left: 16px;
+  pointer-events: none;
+}
+.titlebar-brand {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  visibility: hidden; /* Hide the text, use sidebar logo */
+}
+.titlebar-controls {
+  display: flex;
+  height: 32px;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+.titlebar-btn {
+  width: 46px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.titlebar-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+.titlebar-btn.close-btn:hover {
+  background: #e81123 !important;
+  color: #fff !important;
+}
+
+/* --- RESPONSIVE DESIGN UTILITIES --- */
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+  .bento-grid > div {
+    grid-column: span 1 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    height: 100vh;
+    transform: translateX(-100%);
+  }
+  .sidebar-mobile-open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0 !important;
+    padding: 1rem !important;
+  }
+  .fin-table-container,
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  .workers-grid {
+    grid-template-columns: 1fr;
+  }
+}

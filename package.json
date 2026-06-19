@@ -1,7 +1,7 @@
 {
-  "name": "elektronik-yevmiye-defteri",
+  "name": "tecton",
   "version": "1.0.0",
-  "description": "Offline-first Electron React SQLite Desktop App",
+  "description": "Tecton - Offline-first Electron React SQLite Desktop App",
   "main": "src/main/index.js",
   "scripts": {
     "dev:react": "vite",

@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Betaling til underleverandør",
     "delete_title": "Slett post",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Arbeidstimer kan ikke være 0 eller mindre.",
     "restore_corrupted_error": "Gjenoppretting mislyktes, filen er skadet eller ugyldig. Tilbakestilt til forrige database av sikkerhetshensyn.",
-    "backup_success": "Sikkerhetskopiering fullført!"
+    "backup_success": "Sikkerhetskopiering fullført!",
+    "desktop_icon": "Skrivebords snarvei ikon",
+    "desktop_icon_desc": "Gjør programmets snarveisikon på skrivebordet kompatibelt med lyst eller mørkt tema.",
+    "icon_dark": "Mørkt ikon",
+    "icon_light": "Lyst ikon"
   },
   "dashboard": {
     "title": "Personaladministrasjon",
@@ -384,7 +389,7 @@
     "confirm": "Bekreft",
     "delete": "Slett",
     "empty_data": "Fant ingen data å vise.",
-    "welcome_title": "Velkommen til ŞantiyemOS",
+    "welcome_title": "Velkommen til Tecton",
     "welcome_msg": "For å kunne legge inn poster eller administrere personell, må du opprette en ny byggeplass fra venstremenyen eller velge et aktivt arbeidsområde.",
     "select_project_msg": "Vennligst velg en aktiv byggeplass fra venstremenyen eller fra Byggeplassadministrasjon-siden.",
     "prev": "Forrige",

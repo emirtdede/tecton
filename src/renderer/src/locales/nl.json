@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Betaling onderaannemer",
     "delete_title": "Record verwijderen",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "De werkuren mogen niet 0 of minder zijn.",
     "restore_corrupted_error": "Herstel mislukt, bestand is beschadigd of ongeldig. Teruggezet naar de vorige database voor de veiligheid.",
-    "backup_success": "Back-up succesvol voltooid!"
+    "backup_success": "Back-up succesvol voltooid!",
+    "desktop_icon": "Bureaublad Snelkoppeling Icoon",
+    "desktop_icon_desc": "Maak het snelkoppelingspictogram van de applicatie op het bureaublad compatibel met een licht of donker thema.",
+    "icon_dark": "Donker icoon",
+    "icon_light": "Licht icoon"
   },
   "dashboard": {
     "title": "Personeelsbeheer",
@@ -384,7 +389,7 @@
     "confirm": "Bevestigen",
     "delete": "Verwijderen",
     "empty_data": "Er zijn geen gegevens gevonden om weer te geven.",
-    "welcome_title": "Welkom bij ŞantiyemOS",
+    "welcome_title": "Welkom bij Tecton",
     "welcome_msg": "Om gegevens in te voeren of personeel te beheren, maakt u een nieuwe Bouwplaats aan in het linkermenu of selecteert u een actieve werkruimte.",
     "select_project_msg": "Selecteer een actieve bouwplaats in het linkermenu of op de pagina Bouwplaatsbeheer.",
     "prev": "Vorige",

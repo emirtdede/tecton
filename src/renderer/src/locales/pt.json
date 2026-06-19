@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Pagamento a subcontratante",
     "delete_title": "Eliminar registo",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "As horas de trabalho não podem ser 0 ou menos.",
     "restore_corrupted_error": "A restauração falhou, o arquivo está corrompido ou inválido. Revertido para o banco de dados anterior por segurança.",
-    "backup_success": "Backup concluído com sucesso!"
+    "backup_success": "Backup concluído com sucesso!",
+    "desktop_icon": "Ícone de atalho",
+    "desktop_icon_desc": "Torne o ícone de atalho do aplicativo na área de trabalho compatível com o tema claro ou escuro.",
+    "icon_dark": "Ícone escuro",
+    "icon_light": "Ícone claro"
   },
   "dashboard": {
     "title": "Gestão de Pessoal",
@@ -384,7 +389,7 @@
     "confirm": "Confirmar",
     "delete": "Excluir",
     "empty_data": "Nenhum dado encontrado para exibição.",
-    "welcome_title": "Bem-vindo ao ŞantiyemOS",
+    "welcome_title": "Bem-vindo ao Tecton",
     "welcome_msg": "Para poder inserir registros ou gerenciar pessoal, crie um novo canteiro de obras no menu esquerdo ou selecione um espaço de trabalho ativo.",
     "select_project_msg": "Selecione um canteiro de obras ativo no menu esquerdo ou na página Gerenciamento do canteiro de obras.",
     "prev": "Anterior",

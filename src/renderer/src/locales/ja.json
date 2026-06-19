@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - 下請け業者への支払い",
     "delete_title": "レコードの削除",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "勤務時間は0またはそれ以下に設定することはできません。",
     "restore_corrupted_error": "復元に失敗しました。バックアップファイルが破損しているか無効です。安全のため、以前のデータベースに戻しました。",
-    "backup_success": "バックアップが正常に完了しました！"
+    "backup_success": "バックアップが正常に完了しました！",
+    "desktop_icon": "デスクトップショートカットアイコン",
+    "desktop_icon_desc": "デスクトップ上のアプリケーションのショートカットアイコンをライトまたはダークテーマと互換性を持たせます。",
+    "icon_dark": "ダークアイコン",
+    "icon_light": "ライトアイコン"
   },
   "dashboard": {
     "title": "人事管理",
@@ -384,7 +389,7 @@
     "confirm": "確認",
     "delete": "削除",
     "empty_data": "表示するデータが見つかりませんでした。",
-    "welcome_title": "ŞantiyemOS へようこそ",
+    "welcome_title": "Tecton へようこそ",
     "welcome_msg": "記録を入力したり人員を管理したりできるようにするには、左側のメニューから新しい建設現場を作成するか、アクティブなワークスペースを選択してください。",
     "select_project_msg": "左側のメニューまたは建設現場管理ページからアクティブな建設現場を選択してください。",
     "prev": "前へ",

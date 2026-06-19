@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Taşeron Ödemesi",
     "delete_title": "İşlemi Sil",
@@ -126,7 +127,7 @@
     "restore_error": "Geri yükleme hatası:",
     "finance_guide": {
       "title": "Finans ve Hesaplama Rehberi",
-      "intro": "Şantiyenizin finansal hafızasını yöneten Elektronik Yevmiye Defteri sistemindeki bu kritik kavramların ne işe yaradığını ve arka planda nasıl hesaplandığını aşağıda detaylıca açıklıyorum:",
+      "intro": "Şantiyenizin finansal hafızasını yöneten Tecton sistemindeki bu kritik kavramların ne işe yaradığını ve arka planda nasıl hesaplandığını aşağıda detaylıca açıklıyorum:",
       "section1": {
         "title": "1. Parametreler Nedir ve Ne İşe Yarar?",
         "p1_title": "Standart Günlük Çalışma Saati:",
@@ -165,7 +166,11 @@
     },
     "hours_zero_error": "Çalışma saati 0 veya daha küçük olamaz.",
     "restore_corrupted_error": "Geri yükleme başarısız, dosya bozuk veya hatalı. Güvenlik için eski veritabanına dönüldü.",
-    "backup_success": "Yedekleme başarıyla tamamlandı!"
+    "backup_success": "Yedekleme başarıyla tamamlandı!",
+    "desktop_icon": "Masaüstü Kısayol İkonu",
+    "desktop_icon_desc": "Masaüstündeki uygulamanın kısayol ikonunu açık veya koyu tema ile uyumlu hale getirin.",
+    "icon_dark": "Koyu İkon",
+    "icon_light": "Açık İkon"
   },
   "projects": {
     "title": "Şantiye (Lokasyon) Yönetimi",
@@ -403,7 +408,7 @@
     "confirm": "Onayla",
     "delete": "Sil",
     "empty_data": "Gösterilecek veri bulunamadı.",
-    "welcome_title": "ŞantiyemOS Hoş Geldiniz",
+    "welcome_title": "Tecton Hoş Geldiniz",
     "welcome_msg": "Kayıt girişi yapabilmek veya personel yönetebilmek için lütfen sol menüden yeni bir Şantiye oluşturun veya aktif bir çalışma alanı seçin.",
     "select_project_msg": "Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.",
     "prev": "Önceki",
@@ -515,12 +520,12 @@
     "tip_group": "(Opsiyonel) Grup adını girin",
     "tip_status": "(Opsiyonel) Aktif veya Pasif yazın",
     "tip_tags": "(Opsiyonel) Virgülle ayırarak etiketleri girin",
-    "hero_title": "Elektronik Yevmiye Defteri: Şantiyeniz İçin Dijital Güven ve Şeffaflık",
+    "hero_title": "Tecton: Şantiyeniz İçin Dijital Güven ve Şeffaflık",
     "hero_subtitle": "Geleceğin Şantiye Yönetimi, Bugünün Gerçekliği.",
-    "hero_desc": "Geleneksel yevmiye defterleri, sahadaki yoğun çalışma temposunda yıpranır, hesap hatalarına gebedir ve işçi-işveren arasındaki güveni zedeleyen kafa karışıklıklarına yol açar. Elektronik Yevmiye Defteri, bu kaotik süreci milimetrik bir hassasiyete ve kurumsal bir disipline taşıyan, yeni nesil bir finansal yönetim asistanıdır.",
+    "hero_desc": "Geleneksel yevmiye defterleri, sahadaki yoğun çalışma temposunda yıpranır, hesap hatalarına gebedir ve işçi-işveren arasındaki güveni zedeleyen kafa karışıklıklarına yol açar. Tecton, bu kaotik süreci milimetrik bir hassasiyete ve kurumsal bir disipline taşıyan, yeni nesil bir finansal yönetim asistanıdır.",
     "section_aim_title": "Bu Proje Neyi Amaçlıyor?",
     "section_aim_desc": "Projemizin temel amacı, şantiye ve saha çalışanlarının puantaj (günlük çalışma kaydı), avans ödemeleri ve kasa hareketlerini dijitalleştirmektir. Karmaşık muhasebe yazılımlarının getirdiği yükü ortadan kaldırırken, fiziksel defterlerin sunduğu pratikliği en üst düzeye çıkarmayı hedefliyoruz. İster 5 kişilik küçük bir ekip, ister 100 kişilik büyük bir şantiye ekibi olun; tüm verileriniz artık matematiksel olarak kusursuz, raporlanabilir ve ulaşılabilirdir.",
-    "section_why_title": "Neden \"Elektronik Yevmiye Defteri\"ni Seçmelisiniz?",
+    "section_why_title": "Neden \"Tecton\"ı Seçmelisiniz?",
     "why_1_title": "Sıfır Hata, Tam Denetim:",
     "why_1_desc": "Gelişmiş \"İşlem Geçmişi\" (Audit Log) sistemi sayesinde, geçmişte yapılan her değişikliği kimin, ne zaman ve ne şekilde yaptığını anlık görebilirsiniz. Sürprizlere yer yok; her kuruşun hesabı şeffaf.",
     "why_2_title": "Akıllı Muhasebe (Otomatik Hesap Ekstresi):",
@@ -542,7 +547,7 @@
     "how_4_title": "Güvenlik:",
     "how_4_desc": "Tüm işlemleriniz yerel veritabanınızda şifreli ve güvenli bir şekilde saklanır.",
     "conclusion_1": "Sadece bir kayıt defteri değil; şantiyenizin finansal hafızası.",
-    "conclusion_2": "Elektronik Yevmiye Defteri, karmaşıklığı sadeleştirmek ve işinize odaklanmanız için tasarlanmıştır. Teknolojinin güveniyle, işinizin bereketini artırın."
+    "conclusion_2": "Tecton, karmaşıklığı sadeleştirmek ve işinize odaklanmanız için tasarlanmıştır. Teknolojinin güveniyle, işinizin bereketini artırın."
   },
   "filters": {
     "sort": "Sıralama:",
@@ -786,7 +791,7 @@
   "recycle.deletedProjectShort": "Silindi",
   "recycle.guideTitle": "Bilgi",
   "recycle.guide.title": "Geri Dönüşüm & Çöp Kutusu Rehberi",
-  "recycle.guide.intro": "ŞantiyeOS Çöp Kutusu, şantiyelerinizde yanlışlıkla silinen kritik verilerin kaybolmasını engellemek için tasarlanmış gelişmiş bir koruma sistemidir.",
+  "recycle.guide.intro": "Tecton Çöp Kutusu, şantiyelerinizde yanlışlıkla silinen kritik verilerin kaybolmasını engellemek için tasarlanmış gelişmiş bir koruma sistemidir.",
   "recycle.guide.how_it_works_title": "Nasıl Çalışır?",
   "recycle.guide.how_it_works_desc": "Sistemdeki herhangi bir kaydı sildiğinizde, veriler kalıcı olarak yok edilmez. Bunun yerine soft-delete (geçici silme) uygulanır ve bu çöp kutusunda listelenir.",
   "recycle.guide.restore_title": "Geri Yükleme:",

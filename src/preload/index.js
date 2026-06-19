@@ -1,6 +1,11 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
+  window: {
+    minimize: () => ipcRenderer.invoke('window:minimize'),
+    maximize: () => ipcRenderer.invoke('window:maximize'),
+    close: () => ipcRenderer.invoke('window:close')
+  },
   // Generic DB Operations (Zero-Code Change Architecture)
   db: {
     read: (table, conditions = {}) => ipcRenderer.invoke('db:read', { table, conditions }),
@@ -32,6 +37,8 @@ contextBridge.exposeInMainWorld('api', {
     startLANServer: (params) => ipcRenderer.invoke('system:start-lan-server', params),
     stopLANServer: () => ipcRenderer.invoke('system:stop-lan-server'),
     restoreDBFile: (params) => ipcRenderer.invoke('system:restore-db-file', params),
+    openOldBackupsFolder: () => ipcRenderer.invoke('system:open-old-backups-folder'),
+    changeDesktopIcon: (params) => ipcRenderer.invoke('system:change-desktop-icon', params),
     onPhotoUploaded: (callback) => {
       const subscription = (event, data) => callback(data);
       ipcRenderer.on('lan:photo-uploaded', subscription);

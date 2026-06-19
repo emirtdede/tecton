@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Subunternehmerzahlung",
     "delete_title": "Eintrag löschen",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Die Arbeitszeit darf nicht 0 oder weniger betragen.",
     "restore_corrupted_error": "Wiederherstellung fehlgeschlagen, Datei ist beschädigt oder ungültig. Aus Sicherheitsgründen wurde die vorherige Datenbank wiederhergestellt.",
-    "backup_success": "Backup erfolgreich abgeschlossen!"
+    "backup_success": "Backup erfolgreich abgeschlossen!",
+    "desktop_icon": "Desktop-Verknüpfungssymbol",
+    "desktop_icon_desc": "Passen Sie das Verknüpfungssymbol der Anwendung auf dem Desktop an das helle oder dunkle Design an.",
+    "icon_dark": "Dunkles Symbol",
+    "icon_light": "Helles Symbol"
   },
   "dashboard": {
     "title": "Personalverwaltung",
@@ -384,7 +389,7 @@
     "confirm": "Bestätigen",
     "delete": "Löschen",
     "empty_data": "Es wurden keine Daten zur Anzeige gefunden.",
-    "welcome_title": "Willkommen bei ŞantiyemOS",
+    "welcome_title": "Willkommen bei Tecton",
     "welcome_msg": "Um Datensätze erfassen oder Personal verwalten zu können, erstellen Sie bitte im linken Menü eine neue Baustelle oder wählen Sie einen aktiven Arbeitsbereich aus.",
     "select_project_msg": "Bitte wählen Sie im linken Menü oder auf der Seite „Baustellenverwaltung“ eine aktive Baustelle aus.",
     "prev": "Zurück",

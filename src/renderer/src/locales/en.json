@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Subcontractor Payment",
     "delete_title": "Delete Record",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Working hours cannot be 0 or less.",
     "restore_corrupted_error": "Restore failed, file is corrupted or invalid. Reverted to the previous database for security.",
-    "backup_success": "Backup completed successfully!"
+    "backup_success": "Backup completed successfully!",
+    "desktop_icon": "Desktop Shortcut Icon",
+    "desktop_icon_desc": "Make the application shortcut icon on the desktop compatible with light or dark theme.",
+    "icon_dark": "Dark Icon",
+    "icon_light": "Light Icon"
   },
   "dashboard": {
     "title": "Personnel Management",
@@ -384,7 +389,7 @@
     "confirm": "Confirm",
     "delete": "Delete",
     "empty_data": "No data found to display.",
-    "welcome_title": "Welcome to ŞantiyemOS",
+    "welcome_title": "Welcome to Tecton",
     "welcome_msg": "To be able to enter records or manage personnel, please create a new Construction Site from the left menu or select an active workspace.",
     "select_project_msg": "Please select an active construction site from the left menu or from the Construction Site Management page.",
     "prev": "Previous",

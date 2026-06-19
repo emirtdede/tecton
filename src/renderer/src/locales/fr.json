@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Paiement du sous-traitant",
     "delete_title": "Supprimer l'enregistrement",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Les heures de travail ne peuvent pas être égales ou inférieures à 0.",
     "restore_corrupted_error": "La restauration a échoué, le fichier est corrompu ou invalide. Rétablissement de la base de données précédente pour des raisons de sécurité.",
-    "backup_success": "Sauvegarde terminée avec succès!"
+    "backup_success": "Sauvegarde terminée avec succès!",
+    "desktop_icon": "Icône de raccourci sur le bureau",
+    "desktop_icon_desc": "Rendez l'icône de raccourci de l'application sur le bureau compatible avec le thème clair ou sombre.",
+    "icon_dark": "Icône sombre",
+    "icon_light": "Icône claire"
   },
   "dashboard": {
     "title": "Gestion du Personnel",

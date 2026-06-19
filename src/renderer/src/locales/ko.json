@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - 하도급 결제",
     "delete_title": "기록 삭제",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "작업 시간은 0 또는 그 이하일 수 없습니다.",
     "restore_corrupted_error": "복원 실패: 백업 파일이 손상되었거나 유효하지 않습니다. 시스템 보호를 위해 이전 데이터베이스로 복구되었습니다.",
-    "backup_success": "백업이 성공적으로 완료되었습니다!"
+    "backup_success": "백업이 성공적으로 완료되었습니다!",
+    "desktop_icon": "바탕화면 바로가기 아이콘",
+    "desktop_icon_desc": "바탕화면의 애플리케이션 바로가기 아이콘을 밝거나 어두운 테마와 호환되도록 만듭니다.",
+    "icon_dark": "어두운 아이콘",
+    "icon_light": "밝은 아이콘"
   },
   "dashboard": {
     "title": "인사 관리",
@@ -384,7 +389,7 @@
     "confirm": "확인",
     "delete": "삭제",
     "empty_data": "표시할 데이터가 없습니다.",
-    "welcome_title": "ŞantiyemOS에 오신 것을 환영합니다",
+    "welcome_title": "Tecton에 오신 것을 환영합니다",
     "welcome_msg": "기록을 입력하거나 인력을 관리하려면 왼쪽 메뉴에서 새 건설 현장을 생성하거나 활성 작업 공간을 선택하세요.",
     "select_project_msg": "왼쪽 메뉴 또는 건설현장 관리 페이지에서 활성화된 건설현장을 선택하세요.",
     "prev": "이전",

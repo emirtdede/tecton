@@ -608,7 +608,13 @@ async function setupHandlers() {
       }
 
       // Snapshot the current database
-      const backupPath = path.join(path.dirname(dbPath), `backup_before_restore_${Date.now()}.sqlite`);
+      const oldBackupsDir = path.join(app.getPath('userData'), 'old_backups');
+      if (!fs.existsSync(oldBackupsDir)) {
+        fs.mkdirSync(oldBackupsDir, { recursive: true });
+      }
+      const now = new Date();
+      const dateStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + '_' + String(now.getHours()).padStart(2,'0') + '-' + String(now.getMinutes()).padStart(2,'0') + '-' + String(now.getSeconds()).padStart(2,'0');
+      const backupPath = path.join(oldBackupsDir, `backup_before_restore_${dateStr}.sqlite`);
       fs.copyFileSync(dbPath, backupPath);
 
       if (db && typeof db.close === 'function') {
@@ -630,6 +636,83 @@ async function setupHandlers() {
     } catch (error) {
       console.error('DB Restore error:', error);
       return { success: false, message: error.message };
+    }
+  });
+
+  // --- WINDOW CONTROLS ---
+  ipcMain.handle('window:minimize', (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (window) window.minimize();
+  });
+
+  ipcMain.handle('window:maximize', (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (window) {
+      if (window.isMaximized()) {
+        window.unmaximize();
+      } else {
+        window.maximize();
+      }
+    }
+  });
+
+  ipcMain.handle('window:close', (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (window) window.close();
+  });
+
+  // --- SYSTEM UTILS ---
+  ipcMain.handle('system:open-old-backups-folder', () => {
+    const { shell } = require('electron');
+    const oldBackupsDir = path.join(app.getPath('userData'), 'old_backups');
+    if (!fs.existsSync(oldBackupsDir)) {
+      fs.mkdirSync(oldBackupsDir, { recursive: true });
+    }
+    shell.showItemInFolder(oldBackupsDir);
+    return { success: true };
+  });
+
+  ipcMain.handle('system:change-desktop-icon', async (_, { theme }) => {
+    try {
+      const { exec } = require('child_process');
+      const iconName = theme === 'dark' ? 'tecton_dark.ico' : 'tecton_light.ico';
+      const isDev = process.env.NODE_ENV === 'development';
+      const iconPath = isDev 
+        ? path.join(__dirname, '../../tecton_assets', iconName)
+        : path.join(app.getAppPath(), 'tecton_assets', iconName);
+      
+      if (!fs.existsSync(iconPath)) {
+        return { success: false, message: 'İkon dosyası bulunamadı.' };
+      }
+
+      const script = `
+        $wshell = New-Object -ComObject WScript.Shell
+        $desktop = [Environment]::GetFolderPath('Desktop')
+        $shortcutPath = "$desktop\\Tecton.lnk"
+        if (Test-Path $shortcutPath) {
+          $shortcut = $wshell.CreateShortcut($shortcutPath)
+          $shortcut.IconLocation = "${iconPath}"
+          $shortcut.Save()
+          Write-Output "Success"
+        } else {
+          Write-Output "ShortcutNotFound"
+        }
+      `;
+
+      return new Promise((resolve) => {
+        exec(`powershell.exe -NoProfile -Command "${script}"`, (error, stdout, stderr) => {
+          if (error) {
+            console.error('Change icon error:', error);
+            resolve({ success: false, message: error.message });
+          } else if (stdout.includes('ShortcutNotFound')) {
+            resolve({ success: false, message: 'Masaüstü kısayolu bulunamadı (Tecton.lnk).' });
+          } else {
+            resolve({ success: true });
+          }
+        });
+      });
+    } catch (err) {
+      return { success: false, message: err.message };
     }
   });
 

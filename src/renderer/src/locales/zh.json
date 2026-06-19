@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - 分包商付款",
     "delete_title": "删除记录",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "工作时间不能为0或更少。",
     "restore_corrupted_error": "恢复失败，文件已损坏或无效。为了安全起见，已还原到以前的数据库。",
-    "backup_success": "备份成功完成！"
+    "backup_success": "备份成功完成！",
+    "desktop_icon": "桌面快捷方式图标",
+    "desktop_icon_desc": "使桌面上的应用程序快捷方式图标与浅色或深色主题兼容。",
+    "icon_dark": "深色图标",
+    "icon_light": "浅色图标"
   },
   "dashboard": {
     "title": "人员管理",
@@ -384,7 +389,7 @@
     "confirm": "确认",
     "delete": "删除",
     "empty_data": "没有找到可显示的数据。",
-    "welcome_title": "欢迎来到 ŞantiyemOS",
+    "welcome_title": "欢迎来到 Tecton",
     "welcome_msg": "为了能够输入记录或管理人员，请从左侧菜单创建一个新的施工现场或选择一个活动工作区。",
     "select_project_msg": "请从左侧菜单或“施工现场管理”页面中选择一个活跃的施工现场。",
     "prev": "上一页",

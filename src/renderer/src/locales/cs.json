@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Platba subdodavateli",
     "delete_title": "Smazat záznam",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Pracovní doba nemůže být 0 nebo méně.",
     "restore_corrupted_error": "Obnovení se nezdařilo, soubor je poškozen nebo neplatný. Z bezpečnostních důvodů byla obnovena předchozí databáze.",
-    "backup_success": "Zálohování bylo úspěšně dokončeno!"
+    "backup_success": "Zálohování bylo úspěšně dokončeno!",
+    "desktop_icon": "Ikona zástupce na ploše",
+    "desktop_icon_desc": "Zkontrolujte, zda je ikona zástupce aplikace na ploše kompatibilní se světlým nebo tmavým motivem.",
+    "icon_dark": "Tmavá ikona",
+    "icon_light": "Světlá ikona"
   },
   "dashboard": {
     "title": "Správa personálu",
@@ -384,7 +389,7 @@
     "confirm": "Potvrdit",
     "delete": "Odstranit",
     "empty_data": "Nebyla nalezena žádná data k zobrazení.",
-    "welcome_title": "Vítejte v ŞantiyemOS",
+    "welcome_title": "Vítejte v Tecton",
     "welcome_msg": "Abyste mohli zadávat záznamy nebo řídit personál, vytvořte si prosím nové staveniště z levé nabídky nebo vyberte aktivní pracovní plochu.",
     "select_project_msg": "Vyberte prosím aktivní staveniště z levého menu nebo ze stránky Správa staveniště.",
     "prev": "Předchozí",

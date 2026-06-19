@@ -9,7 +9,9 @@ import ConfirmationModal from './components/ui/ConfirmationModal';
 import Spotlight from './components/ui/Spotlight';
 import GuideDrawer from './components/ui/GuideDrawer';
 import ToastManager from './components/ui/ToastManager';
-
+import Titlebar from './components/ui/Titlebar';
+import TectonDark from './assets/tecton_dark.svg';
+import TectonLight from './assets/tecton_light.svg';
 // New ERP Modules
 import ProjectManagement from './components/ProjectManagement';
 import ProductionManagement from './components/ProductionManagement';
@@ -455,6 +457,7 @@ function App() {
 
   return (
     <>
+      <Titlebar />
       <ToastManager sidebarWidth={currentSidebarWidth} />
       {sidebarState === 'hidden' && (
         <button
@@ -469,7 +472,7 @@ function App() {
 
       <div 
         className={`app-layout ${getLayoutClass()} ${isResizing ? 'is-resizing' : ''}`}
-        style={{ '--sidebar-width': sidebarState === 'full' ? `${sidebarWidth}px` : undefined }}
+        style={{ '--sidebar-width': sidebarState === 'full' ? `${sidebarWidth}px` : undefined, marginTop: '32px' }}
       >
         {/* Left fixed Sidebar Navigation */}
         <aside className="sidebar">
@@ -487,16 +490,18 @@ function App() {
                 onClick={() => handleSidebarStateChange('full')}
                 title={t('nav.expand', 'Genişlet')}
               >
-                <span className="logo-icon">🏗️</span>
+                <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ width: '24px', height: '24px' }} />
+                <img src={TectonLight} alt="Tecton" className="logo-light" style={{ width: '24px', height: '24px' }} />
                 <span className="hover-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </span>
               </button>
             ) : (
               <>
-                <div className="sidebar-logo-brand">
-                  <span>🏗️</span>
-                  <span className="sidebar-text">ŞantiyemOS</span>
+                <div className="sidebar-logo-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ height: '24px' }} />
+                  <img src={TectonLight} alt="Tecton" className="logo-light" style={{ height: '24px' }} />
+                  <span className="sidebar-text" style={{ fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'Inter, sans-serif' }}>{t('app.name', 'Tecton')}</span>
                 </div>
                 <div className="sidebar-controls">
                   <button 
@@ -586,18 +591,14 @@ function App() {
               <div 
                 className={`sidebar-link ${view.startsWith('settings_') ? 'active' : ''}`} 
                 onClick={() => setIsSettingsOpen(prev => !prev)}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span className="sidebar-icon">⚙️</span>
-                  <span className="sidebar-text">{t('nav.settings')}</span>
-                </div>
+                <span className="sidebar-icon">⚙️</span>
+                <span className="sidebar-text" style={{ flex: 1 }}>{t('nav.settings')}</span>
                 <span className="sidebar-text" style={{ 
                   transform: isSettingsOpen ? 'rotate(180deg)' : 'rotate(0deg)', 
                   transition: 'transform 0.2s ease', 
                   fontSize: '0.7rem', 
-                  opacity: 0.7,
-                  display: 'inline-block' 
+                  opacity: 0.7 
                 }}>▼</span>
               </div>
               
@@ -614,7 +615,7 @@ function App() {
                 <div 
                   className={`sidebar-link ${view === 'settings_genel' ? 'active' : ''}`} 
                   onClick={() => setView('settings_genel')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
                 >
                   <span className="sidebar-icon">⚙️</span>
                   <span className="sidebar-text">{t('nav.settings_genel', 'Genel Ayarlar')}</span>
@@ -622,7 +623,7 @@ function App() {
                 <div 
                   className={`sidebar-link ${view === 'settings_finance' ? 'active' : ''}`} 
                   onClick={() => setView('settings_finance')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
                 >
                   <span className="sidebar-icon">💼</span>
                   <span className="sidebar-text">{t('nav.settings_finance', 'Finans & Operasyon')}</span>
@@ -630,7 +631,7 @@ function App() {
                 <div 
                   className={`sidebar-link ${view === 'settings_security' ? 'active' : ''}`} 
                   onClick={() => setView('settings_security')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
                 >
                   <span className="sidebar-icon">🛡️</span>
                   <span className="sidebar-text">{t('nav.settings_security', 'Güvenlik & Yedek')}</span>
@@ -638,7 +639,7 @@ function App() {
                 <div 
                   className={`sidebar-link ${view === 'settings_logs' ? 'active' : ''}`} 
                   onClick={() => setView('settings_logs')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
                 >
                   <span className="sidebar-icon">📋</span>
                   <span className="sidebar-text">{t('nav.settings_logs', 'Sistem Kayıtları')}</span>
@@ -646,7 +647,7 @@ function App() {
                 <div 
                   className={`sidebar-link ${view === 'settings_recycle' ? 'active' : ''}`} 
                   onClick={() => setView('settings_recycle')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
                 >
                   <span className="sidebar-icon">🗑️</span>
                   <span className="sidebar-text">{t('sidebar_recycle_btn', 'Çöp Kutusu')}</span>

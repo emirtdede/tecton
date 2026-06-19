@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- Arka Plan Parlaması İçin Blur Filtresi -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="80" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- *** GRİMSİ AÇIK ÇELİK ARKA PLAN GRADIENT'İ *** -->
+    <!-- Beyaz tonları tamamen çıkarıldı, mat ve açık gri metalik tonlar kullanıldı -->
+    <linearGradient id="lightSteel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94A3B8"/>   <!-- Mat Gümüş -->
+      <stop offset="25%" stop-color="#E2E8F0"/>  <!-- Açık Gri (Parlayan kısım, beyaz değil) -->
+      <stop offset="50%" stop-color="#CBD5E1"/>  <!-- Orta Çelik Gri -->
+      <stop offset="75%" stop-color="#94A3B8"/>  <!-- İkincil Gümüş Geçiş -->
+      <stop offset="100%" stop-color="#64748B"/> <!-- Koyu Gri Köşe -->
+    </linearGradient>
+
+    <!-- *** ÇELİĞE KAZINMIŞ (ENGRAVED) 3D IZGARA - AÇIK GRİ TEMA *** -->
+    <pattern id="gridLight" width="40" height="40" patternUnits="userSpaceOnUse">
+      <!-- Kazınmış derinlik gölgesi -->
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#64748B" stroke-width="1.5" stroke-opacity="0.4"/>
+      <!-- Işık yansıması -->
+      <path d="M 40 1 L 0 1 0 41" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.6"/>
+    </pattern>
+
+    <!-- Orijinal Sol Kanat -->
+    <linearGradient id="gradLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/> 
+      <stop offset="100%" stop-color="#94A3B8"/> 
+    </linearGradient>
+    
+    <!-- Orijinal Sağ Kanat -->
+    <linearGradient id="gradRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/> 
+      <stop offset="100%" stop-color="#0284C7"/> 
+    </linearGradient>
+    
+    <!-- Orijinal Dikey Temel -->
+    <linearGradient id="gradCenter" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/> 
+      <stop offset="100%" stop-color="#090A0F"/> 
+    </linearGradient>
+  </defs>
+
+  <!-- Grimsi Açık Çelik Arka Plan ve Kazınmış Izgara -->
+  <rect width="800" height="800" rx="160" fill="url(#lightSteel)" stroke="#94A3B8" stroke-width="4" stroke-opacity="0.6"/>
+  <rect width="800" height="800" rx="160" fill="url(#gridLight)"/>
+
+  <!-- Orijinal Tekli Ambiyans Işığı (Grimsi çelikte güzel bir kontrast yaratır) -->
+  <circle cx="400" cy="400" r="180" fill="#0284C7" opacity="0.25" filter="url(#glow)"/>
+
+  <!-- Orijinal TECTON Geometrisi (Hiçbir dış çizgi veya renk değişmedi) -->
+  <rect x="340" y="220" width="120" height="360" rx="30" fill="url(#gradCenter)" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.3"/>
+  <rect x="180" y="220" width="190" height="120" rx="30" fill="url(#gradLeft)" opacity="0.9" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.4"/>
+  <rect x="430" y="220" width="190" height="120" rx="30" fill="url(#gradRight)" opacity="0.9" stroke="#E0F2FE" stroke-width="1.5" stroke-opacity="0.2"/>
+
+</svg>

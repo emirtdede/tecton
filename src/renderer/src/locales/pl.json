@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Płatność dla podwykonawcy",
     "delete_title": "Usuń wpis",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Godziny pracy nie mogą wynosić 0 lub mniej.",
     "restore_corrupted_error": "Przywracanie nie powiodło się, plik jest uszkodzony lub nieprawidłowy. Przywrócono poprzednią bazę danych ze względów bezpieczeństwa.",
-    "backup_success": "Kopia zapasowa została pomyślnie utworzona!"
+    "backup_success": "Kopia zapasowa została pomyślnie utworzona!",
+    "desktop_icon": "Ikona skrótu",
+    "desktop_icon_desc": "Uczyń ikonę skrótu aplikacji na pulpicie kompatybilną z jasnym lub ciemnym motywem.",
+    "icon_dark": "Ciemna ikona",
+    "icon_light": "Jasna ikona"
   },
   "dashboard": {
     "title": "Zarządzanie personelem",
@@ -384,7 +389,7 @@
     "confirm": "Potwierdź",
     "delete": "Usuń",
     "empty_data": "Nie znaleziono danych do wyświetlenia.",
-    "welcome_title": "Witamy w ŞantiyemOS",
+    "welcome_title": "Witamy w Tecton",
     "welcome_msg": "Aby móc wprowadzać zapisy lub zarządzać personelem należy z lewego menu utworzyć nowy Plac Budowy lub wybrać aktywny obszar roboczy.",
     "select_project_msg": "Proszę wybrać aktywny plac budowy z lewego menu lub ze strony Zarządzanie placem budowy.",
     "prev": "Poprzedni",

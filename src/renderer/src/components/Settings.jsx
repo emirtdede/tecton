@@ -5,6 +5,8 @@ import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
 import { useTranslation } from 'react-i18next';
 import { GripVertical, Edit2, Check, X, Trash2, RotateCcw } from 'lucide-react';
+import TectonDark from '../assets/tecton_dark.svg';
+import TectonLight from '../assets/tecton_light.svg';
 
 const Settings = ({ activeTab = 'genel' }) => {
   const { t, i18n } = useTranslation();
@@ -419,6 +421,24 @@ const Settings = ({ activeTab = 'genel' }) => {
       }
     }
   };
+
+  const handleDesktopIconChange = async (theme) => {
+    if (window.api && window.api.system.changeDesktopIcon) {
+      const res = await window.api.system.changeDesktopIcon({ theme });
+      if (res.success) {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.icon_change_success', 'Masaüstü kısayol ikonu başarıyla değiştirildi. (Değişikliğin yansıması birkaç saniye sürebilir)'), type: 'success' } }));
+      } else {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.icon_change_error', 'İkon değiştirme hatası: ') + res.message, type: 'error' } }));
+      }
+    }
+  };
+
+  const handleOpenOldBackups = async () => {
+    if (window.api && window.api.system.openOldBackupsFolder) {
+      await window.api.system.openOldBackupsFolder();
+    }
+  };
+
   if (loading) {
     return <div className="text-center"><div className="loading-spinner"></div></div>;
   }
@@ -511,6 +531,32 @@ const Settings = ({ activeTab = 'genel' }) => {
                 }
                 return null;
               })}
+            </div>
+
+            {/* Masaüstü Kısayol İkonu (Desktop Icon) */}
+            <div className="glass-card">
+              <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>{t('settings.desktop_icon', 'Masaüstü Kısayol İkonu')}</h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                {t('settings.desktop_icon_desc', 'Masaüstündeki uygulamanın kısayol ikonunu açık veya koyu tema ile uyumlu hale getirin.')}
+              </p>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button 
+                  className="btn" 
+                  onClick={() => handleDesktopIconChange('dark')}
+                  style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}
+                >
+                  <img src={TectonDark} alt="Dark Icon" style={{ width: '48px', height: '48px', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }} />
+                  <span style={{ fontWeight: '500' }}>{t('settings.icon_dark', 'Koyu İkon')}</span>
+                </button>
+                <button 
+                  className="btn" 
+                  onClick={() => handleDesktopIconChange('light')}
+                  style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}
+                >
+                  <img src={TectonLight} alt="Light Icon" style={{ width: '48px', height: '48px', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }} />
+                  <span style={{ fontWeight: '500' }}>{t('settings.icon_light', 'Açık İkon')}</span>
+                </button>
+              </div>
             </div>
 
             {/* Bölgesel Format Ayarları */}
@@ -999,6 +1045,15 @@ const Settings = ({ activeTab = 'genel' }) => {
                   </button>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     {t('settings.backup_db_desc', 'Tüm sisteminizi (.sqlite veritabanı dosyası olarak) yerel diskinize aktarır. Bilgisayar değişimi veya yedekleme için kullanabilirsiniz.')}
+                  </p>
+                </div>
+
+                <div>
+                  <button className="btn" onClick={handleOpenOldBackups} style={{ width: '100%', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)' }}>
+                    📂 {t('settings.open_old_backups', 'Eski Yedekleme Klasörünü Aç')}
+                  </button>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                    {t('settings.old_backups_desc', 'Geri yükleme öncesinde otomatik alınan sistem yedeklerine (Time Machine) buradan ulaşabilirsiniz.')}
                   </p>
                 </div>
 

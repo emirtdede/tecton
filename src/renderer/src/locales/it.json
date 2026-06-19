@@ -1,4 +1,5 @@
 {
+  "app.name": "Tecton",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Pagamento Subappaltatore",
     "delete_title": "Elimina record",
@@ -169,7 +170,11 @@
     },
     "hours_zero_error": "Le ore di lavoro non possono essere 0 o inferiori.",
     "restore_corrupted_error": "Ripristino non riuscito, il file è danneggiato o non valido. Ripristinato al database precedente per motivi di sicurezza.",
-    "backup_success": "Backup completato con successo!"
+    "backup_success": "Backup completato con successo!",
+    "desktop_icon": "Icona di collegamento",
+    "desktop_icon_desc": "Rendi l'icona di collegamento dell'applicazione sul desktop compatibile con il tema chiaro o scuro.",
+    "icon_dark": "Icona scura",
+    "icon_light": "Icona chiara"
   },
   "dashboard": {
     "title": "Gestione del personale",
@@ -384,7 +389,7 @@
     "confirm": "Conferma",
     "delete": "Elimina",
     "empty_data": "Nessun dato trovato da visualizzare.",
-    "welcome_title": "Benvenuto su ŞantiyemOS",
+    "welcome_title": "Benvenuto su Tecton",
     "welcome_msg": "Per poter inserire record o gestire il personale, crea un nuovo Cantiere dal menu di sinistra o seleziona un'area di lavoro attiva.",
     "select_project_msg": "Seleziona un cantiere attivo dal menu a sinistra o dalla pagina Gestione Cantieri.",
     "prev": "Precedente",
