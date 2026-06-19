@@ -96,7 +96,7 @@ const GuideDrawer = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {h1 && (
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.4rem', marginTop: 0 }}>
                   {h1}
                 </h4>
                 {p1 && (
@@ -109,7 +109,7 @@ const GuideDrawer = ({
             
             {h2 && (
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.4rem', marginTop: 0 }}>
                   {h2}
                 </h4>
                 {p2 && (
@@ -122,7 +122,7 @@ const GuideDrawer = ({
             
             {h3 && (
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.4rem', marginTop: 0 }}>
                   {h3}
                 </h4>
                 {p3 && (
@@ -135,7 +135,7 @@ const GuideDrawer = ({
             
             {h4 && (
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.4rem', marginTop: 0 }}>
                   {h4}
                 </h4>
                 {p4 && (
@@ -148,7 +148,7 @@ const GuideDrawer = ({
 
             {h5 && (
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.4rem', marginTop: 0 }}>
                   {h5}
                 </h4>
                 {p5 && (
@@ -161,7 +161,7 @@ const GuideDrawer = ({
             
             {h6 && (
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#fff', marginBottom: '0.4rem', marginTop: 0 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.4rem', marginTop: 0 }}>
                   {h6}
                 </h4>
                 {p6 && (

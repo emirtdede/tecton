@@ -95,7 +95,7 @@ const TagInput = ({ tags, setTags, placeholder = "Etiket ekle (Enter veya virgü
                   alignItems: 'center',
                   opacity: 0.7
                 }}
-                onMouseOver={(e) => e.currentTarget.style.opacity = 1}
+                onMouseOver={(e) => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
                 onMouseOut={(e) => e.currentTarget.style.opacity = 0.7}
               >
                 &times;

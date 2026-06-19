@@ -325,15 +325,15 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
             <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               📋 {t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}
             </h2>
-            <p className="card-subtitle" style={{ margin: 0 }}>
+            <p className="card-subtitle active-project-subtitle" style={{ margin: 0 }}>
               {t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span>
             </p>
           </div>
           <span 
             onClick={() => setHelpOpen(true)}
-            style={{ cursor: 'pointer', opacity: 0.4, transition: 'opacity 0.25s ease-in-out', fontSize: '1.5rem', userSelect: 'none', padding: '0.25rem' }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            style={{ cursor: 'pointer', opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', transition: 'opacity 0.25s ease-in-out', fontSize: '1.5rem', userSelect: 'none', padding: '0.25rem' }}
+            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >💡</span>
         </div>

@@ -708,14 +708,14 @@ function App() {
                     onClick={() => setDashboardHelpOpen(true)}
                     style={{ 
                       cursor: 'pointer', 
-                      opacity: 0.4, 
+                      opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
                       transition: 'opacity 0.25s ease-in-out', 
                       fontSize: '1.4rem',
                       userSelect: 'none',
                       padding: '0.25rem'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                    onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+                    onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+                    onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
                     title={t('common.page_guide', 'Sayfa Kılavuzu')}
                   >
                     💡
@@ -732,7 +732,7 @@ function App() {
                   />
                   {activeProjectId && (
                     <>
-                      <button className="btn" style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--primary)', borderColor: 'rgba(139, 92, 246, 0.2)' }} onClick={() => setView('bulk_timesheet')}>
+                      <button className="btn btn-bulk-timesheet" onClick={() => setView('bulk_timesheet')}>
                         {t('dashboard.bulk_timesheet', '📋 Çoklu Puantaj')}
                       </button>
                       <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>

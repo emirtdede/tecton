@@ -458,14 +458,14 @@ const Settings = ({ activeTab = 'genel' }) => {
             onClick={() => setIsGuideOpen(true)}
             style={{ 
               cursor: 'pointer', 
-              opacity: 0.4, 
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
               transition: 'opacity 0.25s ease-in-out', 
               fontSize: '1.6rem',
               userSelect: 'none',
               padding: '0.25rem'
             }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >
             💡
@@ -1149,14 +1149,14 @@ const Settings = ({ activeTab = 'genel' }) => {
                 onClick={() => setIsGuideOpen(true)}
                 style={{ 
                   cursor: 'pointer', 
-                  opacity: 0.4, 
+                  opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
                   transition: 'opacity 0.25s ease-in-out', 
                   fontSize: '1.6rem',
                   userSelect: 'none',
                   padding: '0.25rem'
                 }}
-                onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+                onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+                onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
                 title={t('common.page_guide', 'Sayfa Kılavuzu')}
               >
                 💡
@@ -1385,7 +1385,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                           const isRestored = item.is_deleted === 0 || restoredKeys.includes(itemKey);
                           
                           return (
-                            <tr key={`${item.table}_${item.id}_${idx}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                            <tr key={`${item.table}_${item.id}_${idx}`} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                               <td style={{ padding: '1rem' }}>
                                 <span style={{ 
                                   fontSize: '0.75rem', 

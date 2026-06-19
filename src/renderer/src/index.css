@@ -19,6 +19,11 @@
   
   --title-gradient: linear-gradient(to right, #ffffff, #c4b5fd);
 
+  /* Guide Icon Styles */
+  --guide-icon-opacity: 0.4;
+  --guide-icon-opacity-hover: 1;
+  --guide-icon-filter: none;
+
   /* Layout & Spacing */
   --radius: 16px;
   --radius-sm: 8px;
@@ -62,48 +67,53 @@
 
 :root[data-theme='light'] {
   /* Color Palette - Premium Light Theme */
-  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  --glass-bg: #ffffff;
-  --glass-border: #e2e8f0;
-  --glass-highlight: rgba(255, 255, 255, 0.95);
+  --bg-gradient: linear-gradient(135deg, #edf2fb 0%, #e2eafc 100%);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: #abc4ff;
+  --glass-highlight: rgba(255, 255, 255, 0.9);
   
-  --primary: #6d28d9;
-  --primary-hover: #5b21b6;
-  --secondary: #2563eb;
+  --primary: #abc4ff;
+  --primary-hover: #b6ccfe;
+  --secondary: #c1d3fe;
   --success: #059669;
   --danger: #dc2626;
   --danger-hover: #b91c1c;
 
-  --text-main: #0f172a;
-  --text-muted: #475569;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
   
-  --title-gradient: linear-gradient(to right, #0f172a, #6d28d9);
+  --title-gradient: linear-gradient(to right, #1e293b, #2563eb);
+
+  /* Guide Icon Styles (Light Theme) */
+  --guide-icon-opacity: 1;
+  --guide-icon-opacity-hover: 1;
+  --guide-icon-filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.9));
 
   /* Layout & Spacing */
   --radius: 16px;
   --radius-sm: 8px;
-  --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-glow: 0 4px 20px rgba(171, 196, 255, 0.4);
   --sidebar-width: 290px;
 
   /* Form & Component Themes */
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --card-shadow: 0 4px 6px -1px rgba(171, 196, 255, 0.2), 0 2px 4px -1px rgba(171, 196, 255, 0.1);
   --input-bg: #ffffff;
-  --input-border: #cbd5e1;
-  --input-focus-border: #3b82f6;
-  --input-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  --input-border: #abc4ff;
+  --input-focus-border: #9ab4f0;
+  --input-focus-shadow: 0 0 0 3px rgba(171, 196, 255, 0.3);
   --option-bg: #ffffff;
-  --log-bg: #f1f5f9;
-  --log-border: #e2e8f0;
+  --log-bg: #edf2fb;
+  --log-border: #abc4ff;
   --log-text: #475569;
   --success-text: #059669;
   --danger-text: #dc2626;
 
   /* Dynamic Accents & Statuses */
-  --accent: #0284c7;
+  --accent: #2563eb;
   --accent-text: #ffffff;
-  --accent-bg: rgba(2, 132, 199, 0.08);
-  --accent-bg-hover: rgba(2, 132, 199, 0.15);
-  --accent-border: rgba(2, 132, 199, 0.2);
+  --accent-bg: rgba(37, 99, 235, 0.1);
+  --accent-bg-hover: rgba(37, 99, 235, 0.2);
+  --accent-border: rgba(37, 99, 235, 0.3);
   --success-bg: rgba(5, 150, 105, 0.08);
   --success-border: rgba(5, 150, 105, 0.2);
   --success-bg-light: rgba(5, 150, 105, 0.04);
@@ -111,13 +121,13 @@
   --danger-border: rgba(220, 38, 38, 0.2);
   --danger-bg-light: rgba(220, 38, 38, 0.04);
   --spotlight-bg: rgba(255, 255, 255, 0.95);
-  --spotlight-border: #cbd5e1;
+  --spotlight-border: #ccdbfd;
   --spotlight-input-color: #0f172a;
-  --spotlight-item-hover: rgba(0, 0, 0, 0.04);
-  --sidebar-bg: rgba(255, 255, 255, 0.85);
-  --glass-bg-hover: #ffffff;
-  --glass-border-hover: #cbd5e1;
-  --card-shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.06);
+  --spotlight-item-hover: #e2eafc;
+  --sidebar-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-border-hover: #9ab4f0;
+  --card-shadow-hover: 0 12px 30px rgba(171, 196, 255, 0.4);
 }
 
 * {
@@ -1279,3 +1289,131 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* Active project label adjustments for Light theme */
+:root[data-theme='light'] .active-project-subtitle {
+  color: var(--text-main) !important;
+  font-weight: 500 !important;
+}
+:root[data-theme='light'] .active-project-subtitle span {
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+:root[data-theme='light'] .sidebar-active-project {
+  background: rgba(37, 99, 235, 0.08) !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+:root[data-theme='light'] .sidebar-active-project div {
+  color: var(--text-muted) !important;
+}
+:root[data-theme='light'] .sidebar-active-project strong {
+  color: var(--text-main) !important;
+}
+
+/* Wage badge adjustments for Light theme */
+:root[data-theme='light'] .wage-badge {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: var(--accent) !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Table column styling overrides for Light theme (Miktar / Günlük Bedel) */
+:root[data-theme='light'] .fin-table td[style*="var(--secondary)"] {
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+:root[data-theme='light'] .fin-table td[style*="var(--primary)"] {
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+
+/* Bulk Timesheet Button Base Styles */
+.btn-bulk-timesheet {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--primary);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+/* Grabbing cursor reinforcement during drag and drop */
+body.dragging,
+body.dragging * {
+  cursor: move !important;
+}
+
+/* Light Theme overrides for Header/Sidebar borders and Bulk Timesheet button */
+:root[data-theme='light'] .sidebar-logo {
+  border-bottom: 2px solid #8daaf6 !important;
+}
+:root[data-theme='light'] .sidebar {
+  border-right: 2px solid #8daaf6 !important;
+}
+:root[data-theme='light'] .spotlight-search-container {
+  border-bottom: 2px solid #8daaf6 !important;
+}
+:root[data-theme='light'] .spotlight-modal {
+  border: 2px solid #8daaf6 !important;
+}
+:root[data-theme='light'] .btn-bulk-timesheet {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #2563eb !important;
+  border: 1px solid rgba(37, 99, 235, 0.4) !important;
+  font-weight: 600 !important;
+}
+:root[data-theme='light'] .btn-bulk-timesheet:hover {
+  background: rgba(37, 99, 235, 0.2) !important;
+  border-color: #2563eb !important;
+}
+
+/* Light Theme overrides for Spotlight Search Result Dividers and Padding */
+:root[data-theme='light'] .spotlight-results {
+  padding: 0 !important;
+}
+:root[data-theme='light'] .spotlight-item {
+  border-bottom: 1px solid #abc4ff !important;
+  border-radius: 0px !important;
+  padding: 0.85rem 1.5rem !important;
+}
+:root[data-theme='light'] .spotlight-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Light Theme overrides for Sidebar Control Buttons Hover state */
+:root[data-theme='light'] .sidebar-control-btn:hover {
+  background: rgba(37, 99, 235, 0.15) !important;
+  border-color: rgba(37, 99, 235, 0.35) !important;
+  color: var(--accent) !important;
+}
+:root[data-theme='light'] .sidebar-collapsed-logo-btn:hover {
+  background: rgba(37, 99, 235, 0.15) !important;
+  border-color: rgba(37, 99, 235, 0.35) !important;
+  color: var(--accent) !important;
+}
+:root[data-theme='light'] .sidebar-collapsed-logo-btn:hover .hover-icon {
+  color: var(--accent) !important;
+}
+
+/* Light Theme overrides for Sidebar Active & Hover Links (Blue Theme adjustment) */
+:root[data-theme='light'] .sidebar-link.active {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.08) !important;
+  color: var(--accent) !important;
+}
+:root[data-theme='light'] .sidebar-link:hover:not(.active) {
+  background: rgba(37, 99, 235, 0.05) !important;
+  color: var(--accent) !important;
+}
+
+/* Light Theme overrides for Project Drag Handle Dots */
+:root[data-theme='light'] .project-drag-handle {
+  color: var(--accent) !important;
+  opacity: 0.85 !important;
+}
+:root[data-theme='light'] .project-drag-handle:hover {
+  opacity: 1 !important;
+}
+
+
+
+
+

@@ -251,20 +251,20 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
             <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{t('journal.title', '📓 Şantiye Günlük Jurnali')}</h2>
-            <p className="card-subtitle" style={{ marginBottom: 0 }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
+            <p className="card-subtitle active-project-subtitle" style={{ marginBottom: 0 }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
           </div>
           <span 
             onClick={() => setHelpOpen(true)}
             style={{ 
               cursor: 'pointer', 
-              opacity: 0.4, 
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
               transition: 'opacity 0.25s ease-in-out', 
               fontSize: '1.6rem',
               userSelect: 'none',
               padding: '0.25rem'
             }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >
             💡
@@ -333,7 +333,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
               ) : formData.weather_desc ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   {formData.weather_icon && <img src={`http://openweathermap.org/img/wn/${formData.weather_icon}.png`} alt="Weather Icon" style={{ width: '30px', height: '30px' }} />}
-                  <strong style={{ fontSize: '0.95rem', color: '#fff' }}>{formData.weather_temp} °C, {formData.weather_desc.toUpperCase()}</strong>
+                  <strong style={{ fontSize: '0.95rem', color: 'var(--text-main)' }}>{formData.weather_temp} °C, {formData.weather_desc.toUpperCase()}</strong>
                 </div>
               ) : (
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('journal.weather_no_location', 'Şantiye konumu girilmediği için çekilemedi.')}</span>
@@ -487,7 +487,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.15)', color: '#93c5fd', padding: '2px 8px', borderRadius: '10px', marginRight: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8rem', background: 'var(--accent-bg)', color: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginRight: '0.5rem', fontWeight: '500' }}>
                       👷 {j.worker_count} {t('journal.worker_count_badge', 'Çalışan')}
                     </span>
                     {j.journal_date === todayStr && (

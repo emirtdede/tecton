@@ -90,9 +90,12 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
   // Drag and Drop Handlers
   const handleDragStart = (e, index) => {
     const globalIdx = (currentPage - 1) * itemsPerPage + index;
-    setDraggedIndex(globalIdx);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', globalIdx);
+    document.body.classList.add('dragging');
+    setTimeout(() => {
+      setDraggedIndex(globalIdx);
+    }, 0);
   };
 
   const handleDragOver = (e, index) => {
@@ -106,10 +109,12 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
   const handleDragEnd = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
+    document.body.classList.remove('dragging');
   };
 
   const handleDrop = async (e, index) => {
     e.preventDefault();
+    document.body.classList.remove('dragging');
     const targetGlobalIdx = (currentPage - 1) * itemsPerPage + index;
     if (draggedIndex === null || draggedIndex === targetGlobalIdx) {
       setDraggedIndex(null);
@@ -180,14 +185,14 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
           onClick={() => setHelpOpen(true)}
           style={{ 
             cursor: 'pointer', 
-            opacity: 0.4, 
+            opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
             transition: 'opacity 0.25s ease-in-out', 
             fontSize: '1.6rem',
             userSelect: 'none',
             padding: '0.25rem'
           }}
-          onMouseEnter={e => e.currentTarget.style.opacity = 1}
-          onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+          onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+          onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
           title={t('common.page_guide', 'Sayfa Kılavuzu')}
         >
           💡
@@ -303,15 +308,16 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
                   opacity: isDragging ? 0.5 : 1,
                   transform: isDragging ? 'scale(0.98)' : 'none',
                   transition: 'all 0.2s ease',
-                  cursor: !searchQuery && !isEditing ? 'grab' : 'default'
+                  cursor: !searchQuery && !isEditing ? 'move' : 'default'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
                   {!searchQuery && !isEditing && (
                     <div 
+                      className="project-drag-handle"
                       style={{ 
                         color: 'var(--text-muted)', 
-                        cursor: 'grab', 
+                        cursor: 'move', 
                         fontSize: '1.2rem',
                         userSelect: 'none',
                         display: 'flex',
@@ -321,7 +327,7 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
                         opacity: 0.5,
                         transition: 'opacity 0.2s'
                       }}
-                      onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                      onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
                       onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
                       title={t('projects.drag_to_reorder', 'Sürükleyerek yeniden sırala')}
                     >
@@ -350,8 +356,8 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
                     </div>
                   ) : (
                     <div>
-                      <h3 className="card-title" style={{ color: isActive ? '#c4b5fd' : '#fff', marginBottom: '0.25rem' }}>
-                        {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--primary)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: '#fff' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
+                      <h3 className="card-title" style={{ color: isActive ? 'var(--accent)' : 'var(--text-main)', marginBottom: '0.25rem' }}>
+                        {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: 'var(--accent-text)' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
                       </h3>
                       <p className="card-subtitle" style={{ margin: 0 }}>📍 {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
                     </div>

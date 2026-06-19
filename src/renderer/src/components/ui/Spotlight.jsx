@@ -128,7 +128,7 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
                 onMouseEnter={() => setActiveIndex(idx)}
               >
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontWeight: '600', color: '#fff' }}>{item.label}</span>
+                  <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{item.label}</span>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>{item.desc}</span>
                 </div>
                 <span className="spotlight-item-badge">

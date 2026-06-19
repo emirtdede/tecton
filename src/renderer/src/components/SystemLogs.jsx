@@ -166,7 +166,7 @@ const SystemLogs = () => {
             onClick={() => setIsGuideOpen(true)}
             style={{ 
               cursor: 'pointer', 
-              opacity: 0.4, 
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
               transition: 'opacity 0.25s ease-in-out', 
               fontSize: '1.4rem',
               userSelect: 'none',
@@ -174,8 +174,8 @@ const SystemLogs = () => {
               display: 'inline-flex',
               alignItems: 'center'
             }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >
             💡

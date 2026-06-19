@@ -170,20 +170,20 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
             onClick={() => setHelpOpen(true)}
             style={{ 
               cursor: 'pointer', 
-              opacity: 0.4, 
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
               transition: 'opacity 0.25s ease-in-out', 
               fontSize: '1.6rem',
               userSelect: 'none',
               padding: '0.25rem'
             }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >
             💡
           </span>
         </div>
-        <p className="card-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
+        <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
         {/* Unified Search & Filters Toolbar Container */}
         <div style={{ 

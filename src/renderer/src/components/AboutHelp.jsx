@@ -220,7 +220,8 @@ const AboutHelp = () => {
                   maxHeight: openFaq === idx ? '500px' : '0', 
                   overflow: 'hidden', 
                   transition: 'max-height 0.3s ease',
-                  background: 'var(--log-bg)'
+                  background: 'var(--log-bg)',
+                  borderTop: openFaq === idx ? '1px solid var(--glass-border)' : 'none'
                 }}>
                   <div style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
                     {faq.a}

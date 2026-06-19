@@ -44,7 +44,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
     const parts = text.split('**');
     return parts.map((part, index) => {
       if (index % 2 === 1) {
-        return <strong key={index} style={{ color: '#ffffff', fontWeight: 'bold' }}>{part}</strong>;
+        return <strong key={index} style={{ fontWeight: 'bold' }}>{part}</strong>;
       }
       return part;
     });
@@ -308,20 +308,20 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             onClick={() => setHelpOpen(true)}
             style={{ 
               cursor: 'pointer', 
-              opacity: 0.4, 
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
               transition: 'opacity 0.25s ease-in-out', 
               fontSize: '1.6rem',
               userSelect: 'none',
               padding: '0.25rem'
             }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 1}
-            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
+            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
             title={t('common.page_guide', 'Sayfa Kılavuzu')}
           >
             💡
           </span>
         </div>
-        <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
+        <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
         {/* Add Record Form */}
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.5rem', alignItems: 'flex-end' }}>
@@ -756,14 +756,14 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
               width: '90%', 
               padding: '2.5rem 2rem', 
               textAlign: 'center',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--glass-bg)',
+              border: '1px solid var(--glass-border)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
               borderRadius: '20px'
             }} 
             onClick={e => e.stopPropagation()}
           >
-            <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--primary)' }}>📲 {t('materials.upload_mobile_title', 'Mobil Fotoğraf Yükle')}</h3>
+            <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--accent)' }}>📲 {t('materials.upload_mobile_title', 'Mobil Fotoğraf Yükle')}</h3>
             <p className="card-subtitle" style={{ marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
               {renderDescription(t('materials.upload_mobile_desc', 'Telefonunuzu ve bilgisayarınızı **aynı WiFi ağına** bağlayın, ardından QR kodu kameranızla taratın:'))}
             </p>
@@ -773,7 +773,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
               </div>
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-              {t('materials.qr_link', 'Bağlantı:')} <code style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{qrModal.url}</code>
+              {t('materials.qr_link', 'Bağlantı:')} <code style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{qrModal.url}</code>
             </div>
             <button className="btn btn-danger" onClick={handleCloseQRModal} style={{ width: '100%', marginTop: '1.5rem', height: '42px', fontWeight: 'bold' }}>{t('common.cancel', 'İptal Et')}</button>
           </div>
