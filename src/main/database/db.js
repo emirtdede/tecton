@@ -436,6 +436,7 @@ async function getDB() {
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_currency', 'auto', 'Para Birimi Seçimi (auto, TRY, USD, EUR, GBP)']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_date_format', 'auto', 'Tarih Formatı Seçimi (auto, DD.MM.YYYY, YYYY-MM-DD, MM/DD/YYYY)']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_time_format', 'auto', 'Saat Formatı Seçimi (auto, 24h, 12h)']);
+    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', require('electron').app.getPath('documents') + '\\TectonBackups', 'Sessiz Bulut Yedekleme Klasörü']);
   } else {
     // Migration for existing databases to ensure new settings exist
     const keys = await db.all('SELECT setting_key FROM app_settings');
@@ -458,6 +459,9 @@ async function getDB() {
     }
     if (!existingKeys.includes('custom_time_format')) {
       await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_time_format', 'auto', 'Saat Formatı Seçimi (auto, 24h, 12h)']);
+    }
+    if (!existingKeys.includes('cloud_sync_folder')) {
+      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', require('electron').app.getPath('documents') + '\\TectonBackups', 'Sessiz Bulut Yedekleme Klasörü']);
     }
   }
 

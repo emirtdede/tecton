@@ -320,8 +320,12 @@ async function setupHandlers() {
 
   ipcMain.handle('system:set-cloud-folder', async () => {
     try {
+      const existing = await db.get("SELECT id, setting_value FROM app_settings WHERE setting_key = 'cloud_sync_folder'");
+      const defaultPath = existing && existing.setting_value ? existing.setting_value : app.getPath('documents');
+
       const { canceled, filePaths } = await dialog.showOpenDialog({
         title: 'Sessiz Bulut Yedekleme Klasörünü Seç',
+        defaultPath: defaultPath,
         properties: ['openDirectory']
       });
 
@@ -332,7 +336,6 @@ async function setupHandlers() {
       const folderPath = filePaths[0];
 
       // Upsert into app_settings
-      const existing = await db.get("SELECT id FROM app_settings WHERE setting_key = 'cloud_sync_folder'");
       if (existing) {
         await db.run("UPDATE app_settings SET setting_value = ? WHERE id = ?", [folderPath, existing.id]);
       } else {

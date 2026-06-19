@@ -179,12 +179,10 @@ function App() {
             i18n.changeLanguage(sMap['language']);
             document.documentElement.lang = sMap['language'];
           } else {
-            const supportedLangs = ['tr', 'en', 'zh', 'es', 'fr', 'ar', 'hi', 'ru', 'pt', 'de', 'sv', 'no', 'da', 'pl', 'it', 'nl', 'cs', 'ja', 'ko'];
-            const navLang = navigator.language.split('-')[0].toLowerCase();
-            const systemLang = supportedLangs.includes(navLang) ? navLang : 'tr';
-            i18n.changeLanguage(systemLang);
-            document.documentElement.lang = systemLang;
-            await window.api.db.create('app_settings', { setting_key: 'language', setting_value: systemLang, description: 'Uygulama Dili' });
+            const defaultLang = 'tr';
+            i18n.changeLanguage(defaultLang);
+            document.documentElement.lang = defaultLang;
+            await window.api.db.create('app_settings', { setting_key: 'language', setting_value: defaultLang, description: 'Uygulama Dili' });
           }
         }
 

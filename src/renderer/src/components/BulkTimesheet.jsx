@@ -385,7 +385,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
               min="0"
               step="0.5"
               value={formData.overtime_hours}
-              onChange={e => setFormData(prev => ({ ...prev, overtime_hours: Number(e.target.value) }))}
+              onChange={e => setFormData(prev => ({ ...prev, overtime_hours: e.target.value === '' ? '' : Number(e.target.value) }))}
             />
           </div>
 
