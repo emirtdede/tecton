@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "工作时间不能为0或更少。",
-    "restore_corrupted_error": "恢复失败，文件已损坏或无效。为了安全起见，已还原到以前的数据库。"
+    "restore_corrupted_error": "恢复失败，文件已损坏或无效。为了安全起见，已还原到以前的数据库。",
+    "backup_success": "备份成功完成！"
   },
   "dashboard": {
     "title": "人员管理",

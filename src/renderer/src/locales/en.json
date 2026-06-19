@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Working hours cannot be 0 or less.",
-    "restore_corrupted_error": "Restore failed, file is corrupted or invalid. Reverted to the previous database for security."
+    "restore_corrupted_error": "Restore failed, file is corrupted or invalid. Reverted to the previous database for security.",
+    "backup_success": "Backup completed successfully!"
   },
   "dashboard": {
     "title": "Personnel Management",

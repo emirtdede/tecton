@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Les heures de travail ne peuvent pas être égales ou inférieures à 0.",
-    "restore_corrupted_error": "La restauration a échoué, le fichier est corrompu ou invalide. Rétablissement de la base de données précédente pour des raisons de sécurité."
+    "restore_corrupted_error": "La restauration a échoué, le fichier est corrompu ou invalide. Rétablissement de la base de données précédente pour des raisons de sécurité.",
+    "backup_success": "Sauvegarde terminée avec succès!"
   },
   "dashboard": {
     "title": "Gestion du Personnel",

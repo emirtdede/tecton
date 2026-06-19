@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Las horas de trabajo no pueden ser 0 o menos.",
-    "restore_corrupted_error": "La restauración falló, el archivo está dañado o no es válido. Se volvió a la base de datos anterior por seguridad."
+    "restore_corrupted_error": "La restauración falló, el archivo está dañado o no es válido. Se volvió a la base de datos anterior por seguridad.",
+    "backup_success": "¡Copia de seguridad completada con éxito!"
   },
   "dashboard": {
     "title": "Gestión de Personal",

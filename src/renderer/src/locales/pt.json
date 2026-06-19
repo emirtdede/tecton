@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "As horas de trabalho não podem ser 0 ou menos.",
-    "restore_corrupted_error": "A restauração falhou, o arquivo está corrompido ou inválido. Revertido para o banco de dados anterior por segurança."
+    "restore_corrupted_error": "A restauração falhou, o arquivo está corrompido ou inválido. Revertido para o banco de dados anterior por segurança.",
+    "backup_success": "Backup concluído com sucesso!"
   },
   "dashboard": {
     "title": "Gestão de Pessoal",

@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Le ore di lavoro non possono essere 0 o inferiori.",
-    "restore_corrupted_error": "Ripristino non riuscito, il file è danneggiato o non valido. Ripristinato al database precedente per motivi di sicurezza."
+    "restore_corrupted_error": "Ripristino non riuscito, il file è danneggiato o non valido. Ripristinato al database precedente per motivi di sicurezza.",
+    "backup_success": "Backup completato con successo!"
   },
   "dashboard": {
     "title": "Gestione del personale",

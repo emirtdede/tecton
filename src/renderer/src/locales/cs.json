@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Pracovní doba nemůže být 0 nebo méně.",
-    "restore_corrupted_error": "Obnovení se nezdařilo, soubor je poškozen nebo neplatný. Z bezpečnostních důvodů byla obnovena předchozí databáze."
+    "restore_corrupted_error": "Obnovení se nezdařilo, soubor je poškozen nebo neplatný. Z bezpečnostních důvodů byla obnovena předchozí databáze.",
+    "backup_success": "Zálohování bylo úspěšně dokončeno!"
   },
   "dashboard": {
     "title": "Správa personálu",

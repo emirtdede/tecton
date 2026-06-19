@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Arbejdstimerne kan ikke være 0 eller mindre.",
-    "restore_corrupted_error": "Gendannelse mislykkedes, filen er beskadiget eller ugyldig. Vendte tilbage til den tidligere database af sikkerhedsmæssige årsager."
+    "restore_corrupted_error": "Gendannelse mislykkedes, filen er beskadiget eller ugyldig. Vendte tilbage til den tidligere database af sikkerhedsmæssige årsager.",
+    "backup_success": "Sikkerhedskopiering gennemført med succes!"
   },
   "dashboard": {
     "title": "Personalestyring",

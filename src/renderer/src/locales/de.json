@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Die Arbeitszeit darf nicht 0 oder weniger betragen.",
-    "restore_corrupted_error": "Wiederherstellung fehlgeschlagen, Datei ist beschädigt oder ungültig. Aus Sicherheitsgründen wurde die vorherige Datenbank wiederhergestellt."
+    "restore_corrupted_error": "Wiederherstellung fehlgeschlagen, Datei ist beschädigt oder ungültig. Aus Sicherheitsgründen wurde die vorherige Datenbank wiederhergestellt.",
+    "backup_success": "Backup erfolgreich abgeschlossen!"
   },
   "dashboard": {
     "title": "Personalverwaltung",

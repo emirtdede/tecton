@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Arbeidstimer kan ikke være 0 eller mindre.",
-    "restore_corrupted_error": "Gjenoppretting mislyktes, filen er skadet eller ugyldig. Tilbakestilt til forrige database av sikkerhetshensyn."
+    "restore_corrupted_error": "Gjenoppretting mislyktes, filen er skadet eller ugyldig. Tilbakestilt til forrige database av sikkerhetshensyn.",
+    "backup_success": "Sikkerhetskopiering fullført!"
   },
   "dashboard": {
     "title": "Personaladministrasjon",

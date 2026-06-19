@@ -387,7 +387,7 @@ const Settings = ({ activeTab = 'genel' }) => {
     if (window.api) {
       const res = await window.api.system.backupDB();
       if (res.success) {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: res.message, type: 'success' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.backup_success', 'Yedekleme başarıyla tamamlandı!'), type: 'success' } }));
       } else if (res.message !== 'İşlem iptal edildi') {
         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.backup_error', 'Yedekleme Hatası:') + ' ' + res.message, type: 'error' } }));
       }

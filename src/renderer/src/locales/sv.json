@@ -168,7 +168,8 @@
       }
     },
     "hours_zero_error": "Arbetstimmarna kan inte vara 0 eller mindre.",
-    "restore_corrupted_error": "Återställningen misslyckades, filen är skadad eller ogiltig. Återgick till den tidigare databasen av säkerhetsskäl."
+    "restore_corrupted_error": "Återställningen misslyckades, filen är skadad eller ogiltig. Återgick till den tidigare databasen av säkerhetsskäl.",
+    "backup_success": "Säkerhetskopieringen slutfördes framgångsrikt!"
   },
   "dashboard": {
     "title": "Personalhantering",
