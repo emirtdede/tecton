@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '../utils/formatUtils';
 
-const AnomalyPanel = ({ workers, balances }) => {
+const AnomalyPanel = ({ workers, balances, viewMode }) => {
   const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'balance' | 'expired' | 'approaching'
   const [searchName, setSearchName] = useState('');
@@ -151,19 +151,21 @@ const AnomalyPanel = ({ workers, balances }) => {
                     {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({negativeBalanceWorkers.length})
                   </h3>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: viewMode === 'list' ? 'column' : 'row', flexWrap: viewMode === 'list' ? 'nowrap' : 'wrap', gap: '0.5rem' }}>
                   {displayedBalance.map(w => (
                     <div 
                       key={w.id}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: viewMode === 'list' ? 'space-between' : 'flex-start',
                         gap: '0.5rem',
                         padding: '0.4rem 0.8rem',
                         borderRadius: '8px',
                         background: 'rgba(239, 68, 68, 0.12)',
                         border: '1px solid rgba(239, 68, 68, 0.25)',
-                        fontSize: '0.8rem'
+                        fontSize: '0.8rem',
+                        width: viewMode === 'list' ? '100%' : 'auto'
                       }}
                     >
                       <span style={{ fontWeight: '600', color: '#fca5a5' }}>{w.full_name}</span>
@@ -190,19 +192,21 @@ const AnomalyPanel = ({ workers, balances }) => {
                     {t('anomalies.hse_expired_title', 'İSG Süresi Dolanlar')} ({isgExpiredWorkers.length})
                   </h3>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: viewMode === 'list' ? 'column' : 'row', flexWrap: viewMode === 'list' ? 'nowrap' : 'wrap', gap: '0.5rem' }}>
                   {displayedExpired.map(w => (
                     <div 
                       key={w.id}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: viewMode === 'list' ? 'space-between' : 'flex-start',
                         gap: '0.5rem',
                         padding: '0.4rem 0.8rem',
                         borderRadius: '8px',
                         background: 'rgba(239, 68, 68, 0.12)',
                         border: '1px solid rgba(239, 68, 68, 0.25)',
-                        fontSize: '0.8rem'
+                        fontSize: '0.8rem',
+                        width: viewMode === 'list' ? '100%' : 'auto'
                       }}
                     >
                       <span style={{ fontWeight: '600', color: '#fca5a5' }}>{w.full_name}</span>
@@ -229,19 +233,21 @@ const AnomalyPanel = ({ workers, balances }) => {
                     {t('anomalies.hse_expiring_title', 'İSG Süresi Yaklaşanlar')} ({isgApproachingWorkers.length})
                   </h3>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: viewMode === 'list' ? 'column' : 'row', flexWrap: viewMode === 'list' ? 'nowrap' : 'wrap', gap: '0.5rem' }}>
                   {displayedApproaching.map(w => (
                     <div 
                       key={w.id}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: viewMode === 'list' ? 'space-between' : 'flex-start',
                         gap: '0.5rem',
                         padding: '0.4rem 0.8rem',
                         borderRadius: '8px',
                         background: 'rgba(245, 158, 11, 0.12)',
                         border: '1px solid rgba(245, 158, 11, 0.25)',
-                        fontSize: '0.8rem'
+                        fontSize: '0.8rem',
+                        width: viewMode === 'list' ? '100%' : 'auto'
                       }}
                     >
                       <span style={{ fontWeight: '600', color: '#fde68a' }}>{w.full_name}</span>

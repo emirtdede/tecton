@@ -119,6 +119,10 @@ function App() {
   // Filtre State
   const [filterText, setFilterText] = useState('');
   const [filterGroup, setFilterGroup] = useState('');
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('dashboard_view_mode') || 'grid';
+  });
+
 
   // Confirmation Modal State
   const [confirmModalState, setConfirmModalState] = useState({
@@ -767,7 +771,7 @@ function App() {
                           placeholder={t('dashboard.search')} 
                           value={filterText}
                           onChange={e => setFilterText(e.target.value)}
-                          style={{ width: '100%', paddingRight: '2.5rem' }}
+                          style={{ width: '100%', paddingRight: '2.5rem', marginBottom: 0 }}
                         />
                         {filterText && (
                           <button
@@ -797,13 +801,75 @@ function App() {
                         className="form-input" 
                         value={filterGroup} 
                         onChange={e => setFilterGroup(e.target.value)}
-                        style={{ flex: 1 }}
+                        style={{ flex: 1, marginBottom: 0 }}
                       >
                         <option value="">{t('dashboard.all_groups')}</option>
                         {workerGroups.map(g => (
                           <option key={g.id} value={g.id}>{g.name}</option>
                         ))}
                       </select>
+                      
+                      {/* View Mode Toggle Switcher */}
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: '0.25rem', 
+                        background: 'rgba(255, 255, 255, 0.05)', 
+                        padding: '4px', 
+                        borderRadius: '10px', 
+                        border: '1px solid var(--glass-border)',
+                        flexShrink: 0
+                      }}>
+                        <button
+                          type="button"
+                          onClick={() => { setViewMode('list'); localStorage.setItem('dashboard_view_mode', 'list'); }}
+                          title={t('media.view_list', 'Liste Görünümü')}
+                          style={{
+                            background: viewMode === 'list' ? 'var(--primary)' : 'transparent',
+                            border: 'none',
+                            color: viewMode === 'list' ? '#fff' : 'var(--text-muted)',
+                            padding: '7px 10px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease-in-out'
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6" />
+                            <line x1="8" y1="12" x2="21" y2="12" />
+                            <line x1="8" y1="18" x2="21" y2="18" />
+                            <line x1="3" y1="6" x2="3.01" y2="6" />
+                            <line x1="3" y1="12" x2="3.01" y2="12" />
+                            <line x1="3" y1="18" x2="3.01" y2="18" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setViewMode('grid'); localStorage.setItem('dashboard_view_mode', 'grid'); }}
+                          title={t('media.view_grid', 'Grid Görünümü')}
+                          style={{
+                            background: viewMode === 'grid' ? 'var(--primary)' : 'transparent',
+                            border: 'none',
+                            color: viewMode === 'grid' ? '#fff' : 'var(--text-muted)',
+                            padding: '7px 10px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease-in-out'
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
 
                     {loading ? (
@@ -838,45 +904,108 @@ function App() {
                                   {grouped[groupName].length} {t('group_report.person_count')}
                                 </span>
                               </h3>
-                              <div className="workers-grid">
-                                {grouped[groupName].map((worker) => {
-                                  const bal = balances[worker.id] || 0;
-                                  const isPositive = bal >= 0;
-                                  return (
-                                    <div key={worker.id} className="glass-card" onClick={() => openProfile(worker)} style={{ cursor: 'pointer', position: 'relative' }}>
-                                      <div className="card-header">
-                                        <div>
-                                          <h3 className="card-title">{worker.full_name}</h3>
-                                          <p className="card-subtitle">{worker.phone || t('dashboard.phone_not_found')}</p>
-                                        </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                          <div style={{ fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444', fontSize: '1.2rem' }}>
-                                            {formatCurrency(bal, i18n.language)}
+                              {viewMode === 'list' ? (
+                                <div className="fin-table-container">
+                                  <table className="fin-table">
+                                    <thead>
+                                      <tr>
+                                        <th style={{ width: '40%', textAlign: 'left' }}>{t('worker_modal.name', 'Ad Soyad')}</th>
+                                        <th style={{ width: '25%', textAlign: 'left' }}>{t('common.phone', 'Telefon')}</th>
+                                        <th style={{ width: '20%', textAlign: 'right' }}>{t('dashboard.net_balance', 'Net Bakiye')}</th>
+                                        <th style={{ width: '15%', textAlign: 'right' }}>{t('subcontractor.table_action', 'İşlem')}</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {grouped[groupName].map((worker) => {
+                                        const bal = balances[worker.id] || 0;
+                                        const isPositive = bal >= 0;
+                                        return (
+                                          <tr key={worker.id}>
+                                            <td 
+                                              style={{ fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }} 
+                                              onClick={() => openProfile(worker)}
+                                            >
+                                              {worker.full_name}
+                                            </td>
+                                            <td>{worker.phone || t('dashboard.phone_not_found')}</td>
+                                            <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444' }}>
+                                              {formatCurrency(bal, i18n.language)}
+                                            </td>
+                                            <td style={{ textAlign: 'right' }}>
+                                              <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }} onClick={e => e.stopPropagation()}>
+                                                <button 
+                                                  className="btn" 
+                                                  onClick={() => handleOpenDrawer(worker)}
+                                                  style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                  title={t('dashboard.edit', 'Düzenle')}
+                                                >
+                                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                    <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                  </svg>
+                                                </button>
+                                                <button 
+                                                  className="btn btn-danger" 
+                                                  onClick={() => handleDeleteWorker(worker.id)}
+                                                  style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                  title={t('common.delete', 'Sil')}
+                                                >
+                                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                    <polyline points="3 6 5 6 21 6" />
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                    <line x1="10" y1="11" x2="10" y2="17" />
+                                                    <line x1="14" y1="11" x2="14" y2="17" />
+                                                  </svg>
+                                                </button>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        );
+                                      })}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              ) : (
+                                <div className="workers-grid">
+                                  {grouped[groupName].map((worker) => {
+                                    const bal = balances[worker.id] || 0;
+                                    const isPositive = bal >= 0;
+                                    return (
+                                      <div key={worker.id} className="glass-card" onClick={() => openProfile(worker)} style={{ cursor: 'pointer', position: 'relative' }}>
+                                        <div className="card-header">
+                                          <div>
+                                            <h3 className="card-title">{worker.full_name}</h3>
+                                            <p className="card-subtitle">{worker.phone || t('dashboard.phone_not_found')}</p>
                                           </div>
-                                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('dashboard.net_balance')}</div>
+                                          <div style={{ textAlign: 'right' }}>
+                                            <div style={{ fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444', fontSize: '1.2rem' }}>
+                                              {formatCurrency(bal, i18n.language)}
+                                            </div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('dashboard.net_balance')}</div>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="card-actions" onClick={e => e.stopPropagation()}>
+                                          <button 
+                                            className="btn" 
+                                            onClick={() => handleOpenDrawer(worker)}
+                                            style={{ flex: 1 }}
+                                          >
+                                            {t('dashboard.edit')}
+                                          </button>
+                                          <button 
+                                            className="btn btn-danger" 
+                                            onClick={() => handleDeleteWorker(worker.id)}
+                                            style={{ flex: 1 }}
+                                          >
+                                            {t('dashboard.delete')}
+                                          </button>
                                         </div>
                                       </div>
-                                      
-                                      <div className="card-actions" onClick={e => e.stopPropagation()}>
-                                        <button 
-                                          className="btn" 
-                                          onClick={() => handleOpenDrawer(worker)}
-                                          style={{ flex: 1 }}
-                                        >
-                                          {t('dashboard.edit')}
-                                        </button>
-                                        <button 
-                                          className="btn btn-danger" 
-                                          onClick={() => handleDeleteWorker(worker.id)}
-                                          style={{ flex: 1 }}
-                                        >
-                                          {t('dashboard.delete')}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -886,8 +1015,8 @@ function App() {
 
                   {/* Right Column: Widgets / Anomaly & Reports (span 4) */}
                   <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <AnomalyPanel workers={filteredWorkers} balances={balances} />
-                    <GroupReportPanel activeProjectId={activeProjectId} workers={workers} balances={balances} />
+                    <AnomalyPanel workers={filteredWorkers} balances={balances} viewMode={viewMode} />
+                    <GroupReportPanel activeProjectId={activeProjectId} workers={workers} balances={balances} viewMode={viewMode} />
                   </div>
                 </div>
               )}

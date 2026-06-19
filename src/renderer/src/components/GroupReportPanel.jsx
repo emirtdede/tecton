@@ -6,7 +6,7 @@ import { formatCurrency } from '../utils/formatUtils';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const GroupReportPanel = ({ activeProjectId, workers, balances }) => {
+const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState([]);
@@ -166,7 +166,7 @@ const GroupReportPanel = ({ activeProjectId, workers, balances }) => {
   }
 
   return (
-    <div className="glass-card" style={{ marginBottom: '2rem' }}>
+    <div className="glass-card" style={{ marginBottom: '2rem', padding: viewMode === 'list' ? '1.25rem 0.5rem' : '1.5rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h3 className="card-title" style={{ marginBottom: 0 }}>{t('group_report.title')}</h3>
         <select className="btn" style={{ padding: '0.5rem', height: '38px' }} onChange={e => {
@@ -180,65 +180,106 @@ const GroupReportPanel = ({ activeProjectId, workers, balances }) => {
         </select>
       </div>
 
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap', padding: viewMode === 'list' ? '0 0.15rem' : '0' }}>
         <div style={{ flex: '1 1 150px' }}>
-          <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>{t('group_report.start_date')}</label>
+          <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '0.35rem', paddingLeft: '0.75rem' }}>{t('group_report.start_date')}</label>
           <CustomDatePicker className="form-input" style={{ padding: '0.25rem 0.5rem' }} value={startDate} onChange={e => handleStartDateChange(e.target.value)} />
         </div>
         <div style={{ flex: '1 1 150px' }}>
-          <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>{t('group_report.end_date')}</label>
+          <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '0.35rem', paddingLeft: '0.75rem' }}>{t('group_report.end_date')}</label>
           <CustomDatePicker className="form-input" style={{ padding: '0.25rem 0.5rem' }} value={endDate} onChange={e => handleEndDateChange(e.target.value)} />
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-        {reportData.map(group => {
-          const isPositive = group.new_balance >= 0;
-          return (
-            <div key={group.group_id} style={{ 
-              background: 'rgba(255,255,255,0.02)', 
-              border: '1px solid var(--glass-border)', 
-              borderRadius: '8px', 
-              padding: '1.2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
-                <h4 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.1rem' }}>{group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}</h4>
-                <span style={{ fontSize: '0.8rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
-                  {group.worker_count} {t('group_report.person_count')}
-                </span>
-              </div>
-              
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div style={{ flex: 1, borderRight: '1px solid rgba(255,255,255,0.05)', paddingRight: '1rem' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('group_report.period')}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
-                    <span>{t('group_report.earned')}</span>
-                    <span style={{ color: '#34d399' }}>+{formatCurrency(group.period_earned, i18n.language)}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                    <span>{t('group_report.advance')}</span>
-                    <span style={{ color: '#ef4444' }}>-{formatCurrency(group.period_advance, i18n.language)}</span>
-                  </div>
+      {viewMode === 'list' ? (
+        <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
+          <table className="fin-table" style={{ width: '100%', fontSize: '0.8rem' }}>
+            <thead>
+              <tr>
+                <th style={{ width: '25%', textAlign: 'left', padding: '0.5rem 0.15rem', fontSize: '0.8rem' }}>{t('settings.group_name_label', 'Grup Adı')}</th>
+                <th style={{ width: '10%', textAlign: 'left', padding: '0.5rem 0.15rem', fontSize: '0.8rem' }}>{t('group_report.person_count', 'Kişi')}</th>
+                <th style={{ width: '22%', textAlign: 'right', padding: '0.5rem 0.15rem', fontSize: '0.8rem' }}>{t('group_report.earned', 'Hak Ediş')}</th>
+                <th style={{ width: '21%', textAlign: 'right', padding: '0.5rem 0.15rem', fontSize: '0.8rem' }}>{t('group_report.advance', 'Avans')}</th>
+                <th style={{ width: '22%', textAlign: 'right', padding: '0.5rem 0.15rem', fontSize: '0.8rem' }}>{t('dashboard.net_balance', 'Bakiye')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportData.map(group => {
+                const isPositive = group.absolute_balance >= 0;
+                return (
+                  <tr key={group.group_id}>
+                    <td style={{ fontWeight: '600', textAlign: 'left', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                      {group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}
+                    </td>
+                    <td style={{ textAlign: 'left', padding: '0.6rem 0.15rem 0.6rem 0.35rem', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '0.75rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.15rem 0.4rem', borderRadius: '12px' }}>
+                        {group.worker_count}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right', color: '#34d399', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                      +{formatCurrency(group.period_earned, i18n.language)}
+                    </td>
+                    <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                      -{formatCurrency(group.period_advance, i18n.language)}
+                    </td>
+                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                      {formatCurrency(group.absolute_balance, i18n.language)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+          {reportData.map(group => {
+            return (
+              <div key={group.group_id} style={{ 
+                background: 'rgba(255,255,255,0.02)', 
+                border: '1px solid var(--glass-border)', 
+                borderRadius: '8px', 
+                padding: '1.2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+                  <h4 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.1rem' }}>{group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}</h4>
+                  <span style={{ fontSize: '0.8rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
+                    {group.worker_count} {t('group_report.person_count')}
+                  </span>
                 </div>
+                
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <div style={{ flex: 1, borderRight: '1px solid rgba(255,255,255,0.05)', paddingRight: '1rem' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('group_report.period')}</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
+                      <span>{t('group_report.earned')}</span>
+                      <span style={{ color: '#34d399' }}>+{formatCurrency(group.period_earned, i18n.language)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                      <span>{t('group_report.advance')}</span>
+                      <span style={{ color: '#ef4444' }}>-{formatCurrency(group.period_advance, i18n.language)}</span>
+                    </div>
+                  </div>
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('group_report.total_balance')}</div>
-                  <div style={{ 
-                    fontSize: '1.4rem', 
-                    fontWeight: 'bold', 
-                    color: group.absolute_balance >= 0 ? '#34d399' : '#ef4444' 
-                  }}>
-                    {formatCurrency(group.absolute_balance, i18n.language)}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('group_report.total_balance')}</div>
+                    <div style={{ 
+                      fontSize: '1.4rem', 
+                      fontWeight: 'bold', 
+                      color: group.absolute_balance >= 0 ? '#34d399' : '#ef4444' 
+                    }}>
+                      {formatCurrency(group.absolute_balance, i18n.language)}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
