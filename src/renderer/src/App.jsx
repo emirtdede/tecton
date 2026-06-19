@@ -200,6 +200,9 @@ function App() {
       console.error('Error fetching workers:', error);
     } finally {
       setLoading(false);
+      if (window.api?.window?.appReady) {
+        window.api.window.appReady();
+      }
     }
   };
 

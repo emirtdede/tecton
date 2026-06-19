@@ -4,7 +4,8 @@ contextBridge.exposeInMainWorld('api', {
   window: {
     minimize: () => ipcRenderer.invoke('window:minimize'),
     maximize: () => ipcRenderer.invoke('window:maximize'),
-    close: () => ipcRenderer.invoke('window:close')
+    close: () => ipcRenderer.invoke('window:close'),
+    appReady: () => ipcRenderer.send('window:app-ready')
   },
   // Generic DB Operations (Zero-Code Change Architecture)
   db: {

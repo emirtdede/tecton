@@ -51,18 +51,34 @@ function createWindow(theme) {
     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
   }
 
-  mainWindow.once('ready-to-show', () => {
+  let isReadyShown = false;
+  const showMainWindow = () => {
+    if (isReadyShown) return;
+    isReadyShown = true;
     if (splashWindow && !splashWindow.isDestroyed()) {
       splashWindow.close();
+      splashWindow = null;
     }
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.show();
       mainWindow.maximize();
     }
+  };
+
+  mainWindow.once('ready-to-show', () => {
+    // 3 seconds safety fallback in case React app has an error or ready signal is delayed
+    setTimeout(showMainWindow, 3000);
   });
+
+  const handleAppReady = () => {
+    showMainWindow();
+  };
+
+  ipcMain.on('window:app-ready', handleAppReady);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    ipcMain.off('window:app-ready', handleAppReady);
   });
 }
 
