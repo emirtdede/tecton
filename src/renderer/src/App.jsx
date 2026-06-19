@@ -19,6 +19,7 @@ import QualityReports from './components/QualityReports';
 import SubcontractorLedger from './components/SubcontractorLedger';
 import SubcontractorProfile from './components/SubcontractorProfile';
 import MediaGallery from './components/MediaGallery';
+import BulkTimesheet from './components/BulkTimesheet';
 import AboutHelp from './components/AboutHelp';
 
 import { exportToExcel, exportToCSV, exportToJSON, generateExcelTemplate } from './utils/exportUtils';
@@ -277,15 +278,17 @@ function App() {
   });
 
   const handleExport = (format) => {
+    const lang = i18n.language;
+    const isTr = lang === 'tr';
     const dataToExport = filteredWorkers.map(w => ({
-      'Ad Soyad': w.full_name,
-      'TC Kimlik No': w.tc_no || '-',
-      'Telefon': w.phone || '-',
-      'Günlük Yevmiye (TL)': w.daily_wage,
-      'Bağlı Olduğu Grup': workerGroups.find(g => g.id === w.group_id)?.name || '-',
-      'Şantiye': projects.find(p => p.id == w.project_id)?.name || '-',
-      'Durum': w.status === 'active' ? 'Aktif' : (w.status === 'passive' ? 'Pasif' : w.status || '-'),
-      'Etiketler': (() => {
+      [isTr ? 'Ad Soyad' : 'Full Name']: w.full_name,
+      [isTr ? 'TC Kimlik No' : 'TC Identity No']: w.tc_no || '-',
+      [isTr ? 'Telefon' : 'Phone']: w.phone || '-',
+      [isTr ? 'Günlük Yevmiye' : 'Daily Wage']: w.daily_wage,
+      [isTr ? 'Bağlı Olduğu Grup' : 'Group']: workerGroups.find(g => g.id === w.group_id)?.name || '-',
+      [isTr ? 'Şantiye' : 'Project']: projects.find(p => p.id == w.project_id)?.name || '-',
+      [isTr ? 'Durum' : 'Status']: w.status === 'active' ? (isTr ? 'Aktif' : 'Active') : (w.status === 'passive' ? (isTr ? 'Pasif' : 'Passive') : w.status || '-'),
+      [isTr ? 'Etiketler' : 'Tags']: (() => {
         try {
           const parsed = w.tags ? JSON.parse(w.tags) : [];
           return Array.isArray(parsed) ? parsed.join(', ') : '-';
@@ -293,13 +296,16 @@ function App() {
           return w.tags || '-';
         }
       })(),
-      'Net Bakiye (TL)': balances[w.id] || 0,
-      'İşe Başlama': w.start_date
+      [isTr ? 'Net Bakiye' : 'Net Balance']: balances[w.id] || 0,
+      [isTr ? 'İşe Başlama' : 'Start Date']: w.start_date,
+      [isTr ? 'İSG Başlangıç' : 'ISG Start Date']: w.isg_start_date || '-',
+      [isTr ? 'İSG Bitiş' : 'ISG End Date']: w.isg_bitis_tarihi || '-'
     }));
 
-    if (format === 'excel') exportToExcel(dataToExport, 'Personel_Listesi');
-    if (format === 'csv') exportToCSV(dataToExport, 'Personel_Listesi');
-    if (format === 'json') exportToJSON(dataToExport, 'Personel_Listesi');
+    const fName = isTr ? 'Personel_Listesi' : 'Personnel_List';
+    if (format === 'excel') exportToExcel(dataToExport, fName);
+    if (format === 'csv') exportToCSV(dataToExport, fName);
+    if (format === 'json') exportToJSON(dataToExport, fName);
   };
 
   const handleFileUpload = async (e) => {
@@ -379,7 +385,9 @@ function App() {
               start_date: cleanWorker.start_date || existingWorker.start_date,
               status: cleanWorker.status || existingWorker.status,
               tags: cleanWorker.tags, // Overwrite with Excel tags so edits/deletions take effect!
-              project_id: activeProjectId // Bind to active project
+              project_id: activeProjectId, // Bind to active project
+              isg_start_date: cleanWorker.isg_start_date || existingWorker.isg_start_date,
+              isg_bitis_tarihi: cleanWorker.isg_bitis_tarihi || existingWorker.isg_bitis_tarihi
             };
 
             await window.api.db.update('workers', existingWorker.id, updateData);
@@ -534,6 +542,14 @@ function App() {
               <span className="sidebar-icon">👥</span>
               <span className="sidebar-text">{t('nav.personnel')}</span>
             </div>
+            <div className={`sidebar-link ${view === 'subcontractor' || view === 'subcontractor_profile' ? 'active' : ''}`} onClick={() => setView('subcontractor')}>
+              <span className="sidebar-icon">🚜</span>
+              <span className="sidebar-text">{t('nav.subcontractors', 'Taşeron Carileri')}</span>
+            </div>
+            <div className={`sidebar-link ${view === 'bulk_timesheet' ? 'active' : ''}`} onClick={() => setView('bulk_timesheet')}>
+              <span className="sidebar-icon">📋</span>
+              <span className="sidebar-text">{t('bulk_timesheet.nav_title', 'Çoklu Puantaj')}</span>
+            </div>
             <div className={`sidebar-link ${view === 'production' ? 'active' : ''}`} onClick={() => setView('production')}>
               <span className="sidebar-icon">📐</span>
               <span className="sidebar-text">{t('nav.production', 'İmalat ve Metraj')}</span>
@@ -549,10 +565,6 @@ function App() {
             <div className={`sidebar-link ${view === 'quality' ? 'active' : ''}`} onClick={() => setView('quality')}>
               <span className="sidebar-icon">🛡️</span>
               <span className="sidebar-text">{t('nav.quality', 'Kalite Kontrol')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'subcontractor' || view === 'subcontractor_profile' ? 'active' : ''}`} onClick={() => setView('subcontractor')}>
-              <span className="sidebar-icon">🚜</span>
-              <span className="sidebar-text">{t('nav.subcontractors', 'Taşeron Carileri')}</span>
             </div>
             <div className={`sidebar-link ${view === 'media' ? 'active' : ''}`} onClick={() => setView('media')}>
               <span className="sidebar-icon">📷</span>
@@ -679,6 +691,8 @@ function App() {
             />
           ) : view === 'media' ? (
             <MediaGallery activeProjectId={activeProjectId} projects={projects} />
+          ) : view === 'bulk_timesheet' ? (
+            <BulkTimesheet activeProjectId={activeProjectId} projects={projects} />
           ) : (
             // Bento Grid Dashboard Layout
             <div style={{ animation: 'fadeIn 0.3s ease' }}>
@@ -716,7 +730,7 @@ function App() {
                       <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
                         {t('dashboard.import_excel')}
                       </button>
-                      <button className="btn" style={{ background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid #38bdf8' }} onClick={() => generateExcelTemplate(t)}>
+                      <button className="btn" style={{ background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid #38bdf8' }} onClick={() => generateExcelTemplate(t, i18n.language)}>
                         {t('about.download_template')}
                       </button>
                       <select className="btn" style={{ padding: '0.5rem' }} onChange={e => handleExport(e.target.value)} value="">
@@ -911,16 +925,20 @@ function App() {
       <GuideDrawer 
         isOpen={dashboardHelpOpen} 
         onClose={() => setDashboardHelpOpen(false)} 
-        title={t('guides.personnel.title')} 
+        title={t('guides.personnel.title', 'Personel Yönetim Rehberi (5N1K)')} 
         desc="" 
-        h1={t('guides.personnel.step1.title')} 
-        p1={t('guides.personnel.step1.desc')} 
-        h2={t('guides.personnel.step2.title')} 
-        p2={t('guides.personnel.step2.desc')} 
-        h3={t('guides.personnel.step3.title')} 
-        p3={t('guides.personnel.step3.desc')} 
-        h4={t('guides.personnel.step4.title')}
-        p4={t('guides.personnel.step4.desc')}
+        h1={t('guides.personnel.q1.title', '1. NE? (Personel Yönetimi Nedir?)')} 
+        p1={t('guides.personnel.q1.desc', 'Şantiyenizde görev alan mavi yaka ve beyaz yaka çalışanların puantaj, avans, hakediş ve İSG evrak durumlarını izleyen takip sistemidir.')} 
+        h2={t('guides.personnel.q2.title', '2. NEREDE? (Personel Verileri Nerede Depolanır?)')} 
+        p2={t('guides.personnel.q2.desc', 'Tüm personel kartları, gruplar ve cari hareketler yerel veritabanında saklanır. Aktif çalışma şantiyenize göre filtrelenir.')} 
+        h3={t('guides.personnel.q3.title', '3. NE ZAMAN? (Personel Girişi ve Puantaj Ne Zaman Yapılır?)')} 
+        p3={t('guides.personnel.q3.desc', 'Yeni bir personel işe başladığında sisteme kaydedilir. Puantaj ve avans girişleri günlük veya haftalık periyotlarla aksatılmadan işlenmelidir.')} 
+        h4={t('guides.personnel.q4.title', '4. NASIL? (Personel Ekleme ve Excel Aktarımı Nasıl Yapılır?)')} 
+        p4={t('guides.personnel.q4.desc', 'Sağ üstteki \'Personel Ekle\' butonuyla kart açabilir; toplu veri girişi için şablon indirip Excel\'den tek tıkla yükleme yapabilirsiniz.')} 
+        h5={t('guides.personnel.q5.title', '5. NEDEN? (Neden Detaylı Personel Takibi Yapılmalıdır?)')} 
+        p5={t('guides.personnel.q5.desc', 'Maaş hesaplarında uyuşmazlıkları önlemek, İSG belgelerinin sürelerini kaçırmamak ve şantiyenin anlık personel maliyetini doğru hesaplamak için tutulur.')} 
+        h6={t('guides.personnel.q6.title', '6. KİM? (Personel Listesini Kimler Yönetebilir?)')} 
+        p6={t('guides.personnel.q6.desc', 'Proje yöneticileri, şantiye şefleri ve idari işler sorumluları personel ekleyebilir, gruplayabilir ve puantaj/avans hareketlerini yönetebilir.')} 
       />
 
       {undoAvailable && (

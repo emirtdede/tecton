@@ -10,6 +10,8 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('list'); // 'list' is default
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Search & Filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,6 +87,10 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
     fetchMedia();
   }, [activeProjectId]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy, filterType, filterPhoto, activeProjectId]);
+
   // Filter and Sort logic
   const filteredItems = mediaItems.filter(item => {
     const matchesSearch = !searchQuery || 
@@ -113,6 +119,14 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
     return 0;
   });
 
+  // Pagination logic
+  const itemsPerPage = viewMode === 'list' ? 7 : 12;
+  const totalItems = sortedItems.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  const validCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (validCurrentPage - 1) * itemsPerPage;
+  const paginatedItems = sortedItems.slice(startIndex, startIndex + itemsPerPage);
+
   if (!activeProjectId) {
     return (
       <div className="glass-card text-center" style={{ padding: '3rem' }}>
@@ -124,7 +138,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
 
   return (
     <>
-      <div className="glass-card">
+      <div className="glass-card" style={{ padding: '1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
           <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('media.gallery_title', '📷 Şantiye Medya Galerisi')}</h2>
           <span 
@@ -144,15 +158,15 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
             💡
           </span>
         </div>
-        <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
+        <p className="card-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
         {/* Unified Search & Filters Toolbar Container */}
         <div style={{ 
           background: 'rgba(255, 255, 255, 0.02)', 
           border: '1px solid var(--glass-border)', 
           borderRadius: '12px', 
-          padding: '1rem', 
-          marginBottom: '1.5rem',
+          padding: '0.5rem 1rem', 
+          marginBottom: '0.75rem',
           display: 'flex', 
           gap: '1rem', 
           alignItems: 'center', 
@@ -226,19 +240,166 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
               <option value="no">{t('filters.without_photo', 'Fotoğrafsız')}</option>
             </select>
           </div>
+
+          {/* View Mode Toggle Switcher */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '0.25rem', 
+            background: 'rgba(255, 255, 255, 0.05)', 
+            padding: '4px', 
+            borderRadius: '10px', 
+            border: '1px solid var(--glass-border)',
+            flexShrink: 0,
+            marginLeft: 'auto'
+          }}>
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              title={t('media.view_list', 'Liste Görünümü')}
+              style={{
+                background: viewMode === 'list' ? 'var(--primary)' : 'transparent',
+                border: 'none',
+                color: viewMode === 'list' ? '#fff' : 'var(--text-muted)',
+                padding: '7px 10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease-in-out'
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <line x1="3" y1="6" x2="3.01" y2="6" />
+                <line x1="3" y1="12" x2="3.01" y2="12" />
+                <line x1="3" y1="18" x2="3.01" y2="18" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('gallery')}
+              title={t('media.view_grid', 'Galeri Görünümü')}
+              style={{
+                background: viewMode === 'gallery' ? 'var(--primary)' : 'transparent',
+                border: 'none',
+                color: viewMode === 'gallery' ? '#fff' : 'var(--text-muted)',
+                padding: '7px 10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease-in-out'
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {loading ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
             {[1, 2, 3, 4].map(n => <div key={n} className="skeleton" style={{ height: '180px', borderRadius: '12px' }}></div>)}
           </div>
-        ) : sortedItems.length === 0 ? (
+        ) : paginatedItems.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', border: '1px dashed var(--glass-border)', borderRadius: '12px' }}>
             {t('empty.media', 'Arama kriterlerine uygun medya kaydı bulunamadı.')}
           </div>
+        ) : viewMode === 'list' ? (
+          /* List View (Table layout) */
+          <div className="fin-table-container">
+            <table className="fin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '80px' }}>{t('common.photo', 'Görsel')}</th>
+                  <th>{t('common.title', 'Başlık')}</th>
+                  <th>{t('media.item_type', 'İçerik Türü')}</th>
+                  <th>{t('common.date', 'Tarih')}</th>
+                  <th style={{ width: '80px', textAlign: 'right' }}>{t('subcontractor.table_action', 'İşlem')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedItems.map(item => (
+                  <tr key={item.id}>
+                    <td>
+                      {item.base64 ? (
+                        <img 
+                          src={item.base64} 
+                          alt={item.title} 
+                          style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--glass-border)' }} 
+                          onClick={() => setSelectedImage(item.base64)}
+                        />
+                      ) : (
+                        <div style={{ 
+                          width: '45px', 
+                          height: '45px', 
+                          borderRadius: '6px', 
+                          background: 'rgba(255, 255, 255, 0.03)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          color: 'var(--text-muted)',
+                          fontSize: '1.2rem',
+                          border: '1px dashed rgba(255, 255, 255, 0.08)'
+                        }}>
+                          📄
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ fontWeight: '500' }}>
+                      {item.title}
+                    </td>
+                    <td>
+                      <span style={{ 
+                        fontSize: '0.75rem', 
+                        fontWeight: '700', 
+                        color: item.type === 'report' ? 'var(--danger)' : 'var(--success)',
+                        background: item.type === 'report' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        textTransform: 'uppercase'
+                      }}>
+                        {item.typeLabel}
+                      </span>
+                    </td>
+                    <td>
+                      📅 {formatDate(item.date, i18n.language)}
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      {item.base64 ? (
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ width: '28px', height: '28px', padding: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 'auto' }}
+                          onClick={() => setSelectedImage(item.base64)}
+                          title={t('common.view', 'Görüntüle')}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
+          /* Gallery/Grid View */
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
-            {sortedItems.map(item => (
+            {paginatedItems.map(item => (
               <div 
                 key={item.id} 
                 className="glass-card" 
@@ -295,6 +456,45 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
             ))}
           </div>
         )}
+
+        {/* Premium Pagination Controls */}
+        {!loading && totalItems > 0 && (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginTop: '1rem',
+            paddingTop: '0.75rem',
+            borderTop: '1px solid var(--glass-border)'
+          }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              {t('common.page', 'Sayfa')} {validCurrentPage} / {totalPages} ({totalItems} {t('common.records', 'Kayıt')})
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={validCurrentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                style={{ padding: '6px 14px', fontSize: '0.85rem', cursor: validCurrentPage === 1 ? 'not-allowed' : 'pointer' }}
+              >
+                {t('common.prev', 'Önceki')}
+              </button>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                {t('common.page', 'Sayfa')} {validCurrentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={validCurrentPage === totalPages}
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                style={{ padding: '6px 14px', fontSize: '0.85rem', cursor: validCurrentPage === totalPages ? 'not-allowed' : 'pointer' }}
+              >
+                {t('common.next_short', 'Sonraki')}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Lightbox / Fullscreen Image Viewer Modal */}
@@ -309,12 +509,18 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
         onClose={() => setHelpOpen(false)} 
         title={t('guides.media.title')} 
         desc="" 
-        h1={t('guides.media.step1.title')} 
-        p1={t('guides.media.step1.desc')} 
-        h2={t('guides.media.step2.title')} 
-        p2={t('guides.media.step2.desc')} 
-        h3={t('guides.media.step3.title')} 
-        p3={t('guides.media.step3.desc')} 
+        h1={t('guides.media.q1.title')} 
+        p1={t('guides.media.q1.desc')} 
+        h2={t('guides.media.q2.title')} 
+        p2={t('guides.media.q2.desc')} 
+        h3={t('guides.media.q3.title')} 
+        p3={t('guides.media.q3.desc')} 
+        h4={t('guides.media.q4.title')} 
+        p4={t('guides.media.q4.desc')} 
+        h5={t('guides.media.q5.title')} 
+        p5={t('guides.media.q5.desc')} 
+        h6={t('guides.media.q6.title')} 
+        p6={t('guides.media.q6.desc')} 
       />
     </>
   );

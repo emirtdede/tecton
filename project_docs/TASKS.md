@@ -36,11 +36,17 @@
 
 ### FAZ 6: ŞANTİYEOS V1.0 STABLE (NİHAİ SÜRÜM YENİLİKLERİ)
 - [x] **Bölgesel Format Ayarları**: Para birimi, tarih ve saat formatlarının kullanıcı tanımlı manuel ayarlanabilmesi.
-- [x] **Geri Al (Undo) & Çöp Kutusu**: Soft-delete yapısı, verilerin kazara silinmesini önlemek için Çöp Kutusu modülü ve Geri Yükleme desteği.
+### FAZ 7: İSG VE ÇOKLU İŞLEMLER OTOMASYONU (Bulk & Safety)
+- [x] **İSG (İş Sağlığı ve Güvenliği) Takibi**: İşçi ve Taşeron veritabanı şemalarına İSG başlangıç ve bitiş tarihlerinin eklenmesi, profil kartlarına renk kodlu uyarı rozetlerinin konulması.
+- [x] **Taşeron Toplu İçe/Dışa Aktarım**: Excel ve CSV üzerinden Taşeron kayıtlarının sistem diliyle (i18n uyumlu) çoklu aktarımı, otomatik geri yükleme noktası oluşturulması.
+- [x] **Çoklu Puantaj (Bulk Timesheet)**: Tek ekrandan tüm aktif personellere veya seçili gruplara aynı anda yevmiye girişi yapılabilmesini sağlayan "Çoklu Puantaj" arayüzünün geliştirilmesi.
+- [x] **Genişletilmiş i18n Çevirileri**: İSG, Taşeron Bulk ve Çoklu Puantaj özelliklerinin 19 dünya diline manuel olarak, anadil doğallığında çevrilmesi.
+- [x] **Gelişmiş İSG Logları**: İSG tarihleri güncellendiğinde sistem loglarında `Ahmet Yılmaz adlı personelin İSG tarihleri güncellendi. Başlangıç: X, Bitiş: Y` şeklinde akıllı log basılması.
 
 ---
 
 ## Tamamlananlar
+- [x] Faz 7: İSG, Taşeron Toplu İşlemler ve Çoklu Puantaj (Bulk Timesheet) başarıyla tamamlandı.
 - [x] Dahili Dil Paketi (Pre-bundled i18n): Uygulama kutudan çıktığı an 10 farklı dünya dilini destekleyecek şekilde ayarlandı.
 - [x] PDF Modülü Onarımı ve Geliştirmesi: Ayarlar'dan çekilecek "Şirket Adı" ve "Logo" ile dinamik PDF anteti oluşturulması.
 - [x] Uluslararasılaştırma ve Tema (i18n): i18next kurularak çoklu dil desteği (TR/EN) ve tema geçişi tamamlandı.

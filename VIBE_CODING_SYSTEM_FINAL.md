@@ -1,879 +1,105 @@
-# Vibe Coding — Proje Bilgi Merkezi Sistemi
+# VIBE CODING SYSTEM — Kurumsal Otonom Yazılım Mimarisi (.rules)
 
-> AI ajanlarla uzun soluklu projelerde tutarlı çalışmak için
-> tasarlanmış tek merkezli bilgi sistemi.
-> Araçtan ve projeden bağımsız.
+> Bu dosya, otonom yapay zeka ajanlarıyla (AI Agents) geliştirme yapmak için tasarlanmış,
+> araçtan bağımsız (tool-agnostic) TEK MERKEZİLİ sistem anayasasıdır.
+> Ajan, her göreve sadece bu dosyayı okuyarak başlar ve bağlama göre diğer dosyalara yönlenir.
 
 ---
 
-## Klasör Yapısı
+## 1. MİMARİ KLASÖR YAPISI
 
 ```text
 project-root/
 │
 ├── src/
 ├── public/
-├── [paket yöneticisi dosyası]
+├── locales/                     ← Çoklu dil metinleri (Hardcoded metin YASAK)
+│   ├── tr.js                    ← Ana Dil
+│   └── en.js                    ← İkinci Dil
+│
+├── .env                         ← GİZLİ: Tüm API/Secret Keyler (Asla commit edilmez)
 ├── .gitignore
-├── [ajan kural dosyası]            ← Ajanın çalışma anayasası
+├── .rules                       ← BU DOSYA: Ajanın TEK anayasası
 │
 └── project_docs/
     │
-    ├── PROJECT_SPECIFICATION.md     ← Projenin ana kaynağı
-    ├── ARCHITECTURE.md              ← Teknik kararlar
-    ├── DATABASE_SCHEMA.md           ← Veri modeli
-    ├── API_SPECIFICATION.md         ← Endpoint listesi
-    ├── UI_UX_GUIDELINES.md          ← Tasarım sistemi
-    ├── DEVELOPMENT_ROADMAP.md       ← Versiyon planı
+    ├── PRD.md                   ← Ürün Gereksinimleri (Amacı ve hedefler)
+    ├── SRS.md                   ← Yazılım Gereksinimleri (İşlevsel/Teknik)
+    ├── SAD.md                   ← Sistem Mimarisi & DB Şemaları (TDD detayları)
+    ├── API_SPECIFICATION.md     ← Endpoint Listesi (Swagger formatında)
     │
-    ├── MEMORY.md                    ← Ajanın proje hafızası (max 100 satır)
-    ├── RULES.md                     ← Yasaklar ve zorunlular
-    ├── GLOSSARY.md                  ← Projeye özgü terimler
-    │
-    ├── CHANGELOG.md                 ← Son 30 günün değişiklikleri
-    ├── CHANGELOG_ARCHIVE/           ← Eski kayıtlar (YYYY-MM.md)
-    │
-    ├── TASKS.md                     ← Görev listesi
-    ├── TECHNICAL_DEBT.md            ← Sonraya bırakılan işler
-    ├── DECISIONS.md                 ← Mimari karar kayıtları
-    ├── RISKS.md                     ← Aktif riskler
-    │
-    ├── FILE_STRUCTURE.md            ← Proje dosya haritası
-    ├── TESTING_STATUS.md            ← Test takibi
-    ├── ENVIRONMENT.md               ← Env değişkenleri ve local kurulum
-    └── SECURITY.md                  ← Güvenlik kuralları ve hassas alanlar
-```
-
-> **Ajan kural dosyası nedir?**
-> Kullandığın AI ajanının proje kökünde aradığı yapılandırma dosyası.
-> Her araçta farklı adı vardır:
->
-> | Araç | Dosya Adı |
-> |---|---|
-> | Cline | `.clinerules` |
-> | Cursor | `.cursorrules` |
-> | Roo Code | `.roorules` |
-> | Aider | `.aider.conf.yml` |
-> | GitHub Copilot | `.github/copilot-instructions.md` |
->
-> Bu dokümandaki "Ajan Talimatları" bölümünü kopyalayıp
-> kullandığın aracın dosyasına yapıştır.
-
----
-
-## Dosyaların Görevleri ve Şablonları
-
----
-
-### PROJECT_SPECIFICATION.md
-
-Projenin ana kaynağı. Bu dosya değişirse proje değişmiş sayılır.
-
-```markdown
-# [Proje Adı] — Spesifikasyon
-
-## Proje Amacı
-[Projenin tek cümlelik özeti]
-
-## Hedef Kullanıcılar
-- [Kullanıcı tipi 1]
-- [Kullanıcı tipi 2]
-
-## Temel Özellikler
-- [Özellik 1]
-- [Özellik 2]
-- [Özellik 3]
-
-## İş Kuralları
-- [Kural 1]
-- [Kural 2]
-
-## Yetki Sistemi
-- Guest: [yetkiler]
-- User: [yetkiler]
-- Admin: [yetkiler]
-
-## Monetizasyon
-[Ücretlendirme modeli]
-
-## Teknik Gereksinimler
-- Minimum çalışma ortamı sürümü:
-- Tarayıcı desteği:
-- Mobil uyumluluk:
+    ├── MEMORY.md                ← Proje Özeti (Max 100 satır)
+    ├── TASKS.md                 ← Eyleme geçirilebilir Todo Listeleri
+    ├── CHANGELOG.md             ← Conventional Commits geçmişi
+    └── SECURITY.md              ← Güvenlik kuralları
 ```
 
 ---
 
-### ARCHITECTURE.md
+## 2. KATI MİMARİ STANDARTLAR (CRITICAL RULES)
 
-Teknik kararların özeti. Neden bu teknoloji sorusunun cevabı burada olmalı.
+Ajan, geliştirme yaparken aşağıdaki prensipleri **İHLAL EDEMEZ:**
 
-```markdown
-# Mimari
+1. **Çoklu Dil (i18n) Zorunluluğu:** Kod içine sabit metin (hardcoded text) yazmak **KESİNLİKLE YASAKTIR**. Uyarı mesajları, onay metinleri, başlıklar ve arayüdeki tüm yazılar `locales/` altındaki `tr.js` ve `en.js` dosyalarında key-value mantığıyla tutulacaktır. Uygulamanın ana dili Türkçe'dir.
 
-## Stack
+2. **Data-Driven & Zero-Code Change:** İş kuralları koda gömülmeyecektir. Değişkenlik gösterebilecek tüm iş mantıkları ve durumlar (states) konfigürasyon dosyalarından, veritabanından veya `.env` üzerinden yönetilecektir.
 
-| Katman        | Teknoloji          | Versiyon | Sebep                      |
-|---------------|--------------------|----------|----------------------------|
-| Frontend      | [teknoloji]        | [x.x]+   | [seçim sebebi]             |
-| Backend       | [teknoloji]        | [x.x]+   | [seçim sebebi]             |
-| Veritabanı    | [teknoloji]        | [x.x]+   | [seçim sebebi]             |
-| Cache         | [teknoloji]        | [x.x]+   | [seçim sebebi]             |
-| Kimlik Doğr.  | [yöntem/teknoloji] | —        | [seçim sebebi]             |
-| Dosya Depo    | [teknoloji]        | —        | [seçim sebebi]             |
-| Deployment    | [teknoloji]        | —        | [seçim sebebi]             |
+3. **Test-Driven Development (TDD):** Herhangi bir özellik (feature) kodunu yazmadan **ÖNCE** ilgili birim (unit) veya entegrasyon testlerini yazmak zorunludur. Testler yazılmadan asıl koda dokunulamaz.
 
-## Klasör Mimarisi
-[monorepo / modüler / layered — seçilen yaklaşım]
+4. **Yan Etki (Side-Effect) İzolasyonu & Saf Fonksiyonlar:** Veritabanı yazmaları, API istekleri ve DOM/UI manipülasyonları gibi "yan etkiler", asıl iş kurallarını (business logic) çalıştıran saf fonksiyonlardan kesin sınırlarla ayrılmalıdır.
 
-## Önemli Kısıtlamalar
-- [Kısıt 1]
-- [Kısıt 2]
-```
+5. **Katı Bağımlılık Kilidi:** Kullanıcının AÇIK ONAYI olmadan yeni bir paket (npm, pip vb.) kurmak yasaktır. Kurulan paketlerin sürümleri esnek değil, KESİN sürüm numarasıyla kilitlenmelidir.
+
+6. **Encoding & Assets:** Sistemdeki tüm dosyalar istisnasiz **UTF-8** formatındadır. Özel karakter (Türkçe karakter vb.) destekleyen fontlar kullanılmalı, asenkron işlemlerde `try/catch` blokları zorunlu tutulmalıdır.
 
 ---
 
-### DATABASE_SCHEMA.md
+## 3. GÜVENLİK VE FALLBACK (B PLANI) SİSTEMİ
 
-Tüm tablo yapıları. Her değişiklikten sonra güncellenmeli.
+### 3.1. Proje Güvenliği & Fallback
 
-```markdown
-# Veritabanı Şeması
+* **Sırların Korunması:** Tüm API key, secret, veritabanı stringleri SADECE `.env` dosyasında durur. Kodun içine asla yazılmaz.
+* **Graceful Degradation:** Çalışma zamanında (runtime) bir API yanıt vermezse veya DB koparsa sistem beyaz ekran veremez. i18n üzerinden uygun hata mesajı gösterilmeli veya önbellekten (cache) veri dönülmelidir.
+* **Audit & Logging:** İnsan tarafından okunabilir loglama adımları; veri mutasyonları, giriş/çıkış işlemleri ve sistem hataları için plana zorunlu olarak dahil edilecektir.
 
-## Tablolar
+### 3.2. Ajan (Anti-Loop) Fallback Sistemi
 
-### [tablo_adı]
-| Kolon        | Tip           | Özellik          |
-|--------------|---------------|------------------|
-| id           | [tip]         | PK               |
-| [kolon]      | [tip]         | [kısıt]          |
-| [kolon]      | [tip]         | [kısıt]          |
-| created_at   | TIMESTAMP     | DEFAULT NOW()    |
-
-### [tablo_adı]
-| Kolon        | Tip           | Özellik                |
-|--------------|---------------|------------------------|
-| id           | [tip]         | PK                     |
-| [parent]_id  | [tip]         | FK → [parent_tablo].id |
-| [kolon]      | [tip]         | [kısıt]                |
-| created_at   | TIMESTAMP     | DEFAULT NOW()          |
-
-## İlişkiler
-- [tablo] → [tablo] ([1:N / N:N / 1:1])
-- [diğer ilişkiler]
-
-## İndeksler
-- [tablo].[kolon]
-- [tablo].[kolon]
-```
+* **Sonsuz Döngü Kırıcısı:** Eğer ajan (sen), aynı hatayı (derleme, test, lint) çözmek için üst üste **3 KEZ** başarısız olursan, denemeyi derhal durdur. Durumu raporla ve kullanıcıdan açıkça yönlendirme iste.
+* Eğer okuman gereken bir dosyayı bulamazsan veya yazdığın komut çökerse, tahminde bulunma; işlemi **rollback** yap (geri al).
 
 ---
 
-### API_SPECIFICATION.md
+## 4. AJAN TALİMATLARI — ÇALIŞMA PROTOKOLÜ
 
-Tüm endpoint'ler. Frontend ile backend arasındaki sözleşme.
+**Ajan (AI) bu bölümü okuyup doğrudan uygulamalıdır.**
 
-```markdown
-# API Spesifikasyonu
+### A. DİNAMİK BAĞLAM OKUMA (Dynamic Context Routing)
 
-Base URL: /api/[versiyon]
+Her göreve başlarken tüm dosyaları okumak **YASAKTIR**. Sadece Kapsam ile ilgili dosyaları oku:
 
-## [Modül Adı]
+* **Yeni özellik mi eklenecek?** Önce `PRD.md` ve `SRS.md` oku.
+* **Veritabanı veya mimari mi değişecek?** Önce `SAD.md` oku.
+* **Güvenlik/Auth işlemi mi var?** Önce `SECURITY.md` oku.
+* **Genel durum nedir?** Sadece `MEMORY.md` oku.
+* *(Not: Hiçbir proje dokümanı 250 satırı geçemez. Geçiyorsa alt dosyalara bölüp referansla).*
 
-### POST /[modül]/[aksiyon]
-Body: { [alan], [alan] }
-Response: { [alan], [alan] }
+### B. PLANLAMA VE GÖREV FORMATI
 
-### POST /[modül]/[aksiyon]
-Body: { [alan], [alan] }
-Response: { [alan], [alan] }
+* Uzun markdown planlamaları yapma. Sadece net, eyleme geçirilebilir **ToDo Listeleri** oluştur (`TASKS.md`).
+* Görevler için **KESİNLİKLE** efor veya zaman tahmini (saat, gün, hafta) YAPMA. Odak sadece işi adımlara bölmektir.
+* Yeni plan dosyalarını `/plans` dizinine kaydet.
 
-### POST /[modül]/[aksiyon]
-Auth: [yöntem]
-Response: { [alan] }
+### C. GÖREV SONUNDA YAPILACAKLAR
 
-## [Modül Adı]
+Bir modülü veya görevi bitirdiğinde şunları güncelle:
 
-### GET /[modül]/:id
-Auth: [yöntem]
-Response: { [alan] }
+1. `MEMORY.md` (Özet durumu güncelle - Max 100 satır sınırını aşma).
+2. `TASKS.md` (Tamamlananları [x] yap).
+3. Eklentiler varsa `locales/` dosyaları.
 
-### PATCH /[modül]/:id
-Auth: [yöntem] ([rol kısıtı])
-Body: { [alan]?, [alan]? }
-Response: { [alan] }
+### D. GIT & VERSİYONLAMA
 
-## [Diğer Modüller]
+Testleri başarıyla geçen veya önemli bir dönüm noktasına ulaşan her kod parçası için **Conventional Commits** standardında commit öner:
 
-## Hata Kodları
-| Kod | Anlamı               |
-|-----|----------------------|
-| 400 | Geçersiz istek       |
-| 401 | Kimlik doğrulanamadı |
-| 403 | Yetkisiz             |
-| 404 | Bulunamadı           |
-| 500 | Sunucu hatası        |
-```
-
----
-
-### UI_UX_GUIDELINES.md
-
-Tasarım sistemi. Ajanın UI yazarken referans alacağı tek kaynak.
-
-```markdown
-# UI/UX Kılavuzu
-
-## Tema
-- Açık / Koyu Mod: [destekleniyor / desteklenmiyor]
-- Varsayılan: [sistem tercihi / açık / koyu]
-
-## Stil
-- Genel konsept: [örn. Minimal, Glassmorphism, Brutalist, Material]
-- CSS framework: [Tailwind / CSS Modules / Styled Components / diğer]
-
-## Renk Paleti
-| İsim          | Değer     | Kullanım          |
-|---------------|-----------|-------------------|
-| primary       | [#hex]    | Butonlar, CTA     |
-| secondary     | [#hex]    | Sidebar, Header   |
-| background    | [#hex]    | Ana arka plan     |
-| surface       | [#hex]    | Kartlar           |
-| text          | [#hex]    | Genel metin       |
-| error         | [#hex]    | Hata durumu       |
-| success       | [#hex]    | Başarı durumu     |
-
-## Tipografi
-- Font: [font ailesi]
-- Heading: [ağırlık]
-- Body: [ağırlık]
-- Kod: [monospace font]
-
-## Animasyon
-- Kütüphane: [Framer Motion / CSS transitions / diğer]
-- Süre: [x]ms (micro), [x]ms (sayfa)
-- Easing: [easing türü]
-
-## Bileşen Kuralları
-- Buton: [min genişlik], [border-radius]
-- Input: [border stili], [focus stili]
-- Modal: [arka plan stili], [max genişlik]
-
-## Erişilebilirlik
-- ARIA label'ları zorunlu
-- Kontrast oranı min 4.5:1
-- Klavye navigasyonu desteklenmeli
-```
-
----
-
-### DEVELOPMENT_ROADMAP.md
-
-Versiyon planı. Önceliklerin ve kapsamın tek kaynağı.
-
-```markdown
-# Geliştirme Yol Haritası
-
-## V1 — Temel (Şu an)
-- [ ] [Temel özellik 1]
-- [ ] [Temel özellik 2]
-- [ ] [Temel özellik 3]
-
-## V2 — [Tema]
-- [ ] [Özellik 1]
-- [ ] [Özellik 2]
-- [ ] [Özellik 3]
-
-## V3 — [Tema]
-- [ ] [Özellik 1]
-- [ ] [Özellik 2]
-- [ ] [Özellik 3]
-
-## V4 — [Tema]
-- [ ] [Özellik 1]
-- [ ] [Özellik 2]
-- [ ] [Özellik 3]
-
-## İptal Edilen / Ertelenen
-- [Sebep ile birlikte listele]
-```
-
----
-
-### MEMORY.md
-
-**En kritik dosya.** Ajanın her oturumda ilk okuduğu yer.
-
-**Kural: maksimum 100 satır. Öz tut. Detay diğer dosyalarda.**
-
-```markdown
-# Proje Hafızası
-
-Son güncelleme: YYYY-MM-DD
-
-## Proje Özeti
-[2-3 cümle: Proje ne, kimin için, temel hedef ne]
-
-## Teknik Özet
-- Frontend: [teknoloji]
-- Backend: [teknoloji]
-- DB: [teknoloji]
-- Auth: [yöntem]
-
-## Şu Anki Durum
-- Tamamlanan: [modüller]
-- Devam eden: [aktif modül]
-- Sıradaki: [planlanan modül]
-
-## Son Yapılan İş
-[Son görevin 3-5 cümlelik özeti]
-
-## Dikkat Edilmesi Gerekenler
-- [Kritik uyarı 1]
-- [Kritik uyarı 2]
-
-## Açık Sorunlar
-- [Çözülmemiş teknik sorun varsa]
-```
-
----
-
-### RULES.md
-
-Yasaklar ve zorunlular. Ajan bu dosyayı her görev öncesinde okur.
-
-```markdown
-# Proje Kuralları
-
-## Kesin Yasaklar
-
-Bu kurallar kullanıcı açıkça izin vermedikçe geçerlidir:
-
-- Dosya silme yasak.
-- Teknoloji değiştirme yasak.
-- Mimari değiştirme yasak.
-- Çalışan sistemi yeniden yazma yasak.
-- Onaysız refactor yasak.
-- Çoklu modülü aynı anda değiştirme yasak.
-
-## Zorunlu Kurallar
-
-- Büyük görevleri küçük adımlara böl.
-- Önce mevcut kodu oku, sonra değiştir.
-- Her değişiklik minimum etki prensibi ile yapılmalı.
-- Belirsiz durumda tahmin etme, kullanıcıya sor.
-- GLOSSARY.md'deki terimleri kullan.
-- MEMORY.md güncellenmeden görev bitmez.
-
-## Kod Standartları
-
-- [Linting kuralı, örn. ESLint + Prettier]
-- [Naming convention, örn. camelCase / kebab-case]
-- [Yorum dili: Türkçe / İngilizce]
-- [Test zorunluluğu: kritik modüllerde zorunlu]
-```
-
----
-
-### GLOSSARY.md
-
-Projeye özgü terimler. Ajan bu dosya sayesinde domain dilini öğrenir
-ve tutarsız terminoloji kullanmaz.
-
-```markdown
-# Sözlük
-
-## Kullanıcı Tipleri
-- **[Tip adı]**: [açıklama — ne yapabilir, ne yapamaz]
-- **[Tip adı]**: [açıklama]
-- **[Tip adı]**: [açıklama]
-
-## İş Terimleri
-- **[Terim]**: [Projeye özgü tanım]
-- **[Terim]**: [Projeye özgü tanım]
-- **[Terim]**: [Projeye özgü tanım]
-
-## Teknik Terimler
-- **[Kısaltma veya özel terim]**: [Açıklama]
-
-## Kullanılmayacak Terimler
-- "[Eski/yanlış terim]" → "[Doğru terim]" kullan
-- [Diğer tercih edilen alternatifler]
-```
-
----
-
-### CHANGELOG.md
-
-Son 30 günün değişiklikleri. 200 satırı geçince eski kayıtlar
-`CHANGELOG_ARCHIVE/YYYY-MM.md` dosyasına taşınır.
-
-```markdown
-# Değişiklik Geçmişi
-
-## YYYY-MM-DD
-- [Eklenen özellik veya modül]
-- [Değiştirilen davranış]
-- [Oluşturulan dosya veya yapı]
-
-## YYYY-MM-DD
-- [Değişiklik]
-- [Değişiklik]
-```
-
----
-
-### TASKS.md
-
-Görev listesi. Her görev sonunda güncellenir.
-
-```markdown
-# Görev Listesi
-
-## Aktif Görev
-- [ ] [Görev adı] — devam ediyor
-
-## Sıradaki
-- [ ] [Görev 1]
-- [ ] [Görev 2]
-- [ ] [Görev 3]
-
-## Tamamlanan
-- [x] [Görev]
-- [x] [Görev]
-- [x] [Görev]
-
-## Engellenen
-- [ ] [Görev] — [neden engellenmiş, ne gerekiyor]
-```
-
----
-
-### TECHNICAL_DEBT.md
-
-Bilinçli olarak sonraya bırakılan işler. "Şimdi değil, ama mutlaka."
-
-```markdown
-# Teknik Borç
-
-## Yüksek Öncelik
-- [ ] [İş] — [neden borç alındı, ne zaman ödenmeli]
-- [ ] [İş] — [açıklama]
-
-## Orta Öncelik
-- [ ] [İş] — [açıklama]
-- [ ] [İş] — [açıklama]
-
-## Düşük Öncelik
-- [ ] [İş] — [açıklama]
-- [ ] [İş] — [açıklama]
-
-## Ödenen Borçlar
-- [x] [İş] — ([tarih])
-```
-
----
-
-### DECISIONS.md
-
-Mimari karar kayıtları (ADR). "Neden böyle yaptık?" sorusunun cevabı.
-
-```markdown
-# Mimari Kararlar
-
-## ADR-001 — [Karar Başlığı]
-Tarih: YYYY-MM-DD
-Durum: Aktif
-
-Karar: [Ne yapılacağına karar verildi?]
-
-Sebep:
-[Neden bu seçenek tercih edildi? 2-3 cümle.]
-
-Alternatifler değerlendirildi:
-- [Seçenek A]: [Neden reddedildi]
-- [Seçenek B]: [Neden reddedildi]
-
-Sonuç: [Seçilen çözüm] tercih edildi.
-
----
-
-## ADR-002 — [Karar Başlığı]
-Tarih: YYYY-MM-DD
-Durum: Aktif
-
-Karar: [Karar metni]
-
-Sebep:
-[Gerekçe]
-
----
-
-## [Yeni kararlar buraya eklenir]
-```
-
----
-
-### RISKS.md
-
-Aktif riskler. Her görev sonunda gözden geçirilir.
-
-```markdown
-# Risk Kaydı
-
-## Yüksek Risk
-- **[Risk başlığı]** — [Durum ve çözüm için gerekli adım]
-
-## Orta Risk
-- **[Risk başlığı]** — [Açıklama]
-
-## Düşük Risk
-- **[Risk başlığı]** — [Açıklama]
-
-## Kapanan Riskler
-- ~~[Risk]~~ → [Nasıl çözüldü] ([tarih])
-```
-
----
-
-### FILE_STRUCTURE.md
-
-Projenin dosya haritası. Her yeni modülden sonra güncellenir.
-
-```markdown
-# Dosya Yapısı
-
-## Genel Bakış
-
-src/
-├── [modül-1]/
-│   ├── [modül].controller.[uzantı]
-│   ├── [modül].service.[uzantı]
-│   ├── [modül].module.[uzantı]
-│   └── [alt-klasör]/
-│       └── [dosya].[uzantı]
-│
-├── [modül-2]/
-│   ├── [modül].controller.[uzantı]
-│   ├── [modül].service.[uzantı]
-│   └── [alt-klasör]/
-│       └── [dosya].[uzantı]
-│
-├── [ortak-klasör]/
-│   ├── [yardımcı-klasör]/
-│   └── [yardımcı-klasör]/
-│
-└── [giriş-dosyası].[uzantı]
-
-## Klasör Kuralları
-- [Kural 1: hangi dosyalar nereye gider]
-- [Kural 2]
-- [Kural 3]
-```
-
----
-
-### TESTING_STATUS.md
-
-Test takibi. Hangi modülün test edildiği, hangisinin edilmediği.
-
-```markdown
-# Test Durumu
-
-## Birim Testler
-| Modül             | Durum         | Notlar                |
-|-------------------|---------------|-----------------------|
-| [Modül Adı]       | ✓ Tamamlandı  |                       |
-| [Modül Adı]       | ✗ Eksik       | Öncelik: Yüksek       |
-| [Modül Adı]       | ✗ Eksik       |                       |
-
-## Entegrasyon Testleri
-| Akış              | Durum         | Notlar                |
-|-------------------|---------------|-----------------------|
-| [Akış Adı]        | ✓ Tamamlandı  |                       |
-| [Akış Adı]        | ✗ Eksik       |                       |
-
-## E2E Testler
-| Senaryo           | Durum         | Notlar                |
-|-------------------|---------------|-----------------------|
-| [Senaryo Adı]     | ✗ Planlandı   | [Hangi versiyonda]    |
-
-## Test Ortamı
-- Framework: [test aracı]
-- E2E: [e2e aracı]
-- Coverage hedefi: [%] (kritik modüller)
-```
-
----
-
-### ENVIRONMENT.md
-
-Ortam değişkenleri ve local kurulum adımları.
-
-```markdown
-# Ortam Yapılandırması
-
-## Kurulum Adımları
-
-# 1. Bağımlılıkları yükle
-[paket yöneticisi install komutu]
-
-# 2. Ortam dosyasını oluştur
-cp .env.example .env
-
-# 3. Veritabanını başlat
-[veritabanı başlatma komutu]
-
-# 4. Migration / seed çalıştır
-[migration komutu]
-
-# 5. Uygulamayı başlat
-[dev başlatma komutu]
-
-## Environment Değişkenleri
-
-# Uygulama
-NODE_ENV=development
-PORT=[port]
-
-# Veritabanı
-DATABASE_URL=[bağlantı string formatı]
-
-# Kimlik Doğrulama
-[AUTH_SECRET_KEY]=[açıklama]
-[AUTH_EXPIRES_IN]=[açıklama]
-
-# Cache (varsa)
-[CACHE_URL]=[açıklama]
-
-# Dosya Depolama (varsa)
-[STORAGE_KEY]=[açıklama]
-[STORAGE_SECRET]=[açıklama]
-[STORAGE_BUCKET]=[açıklama]
-[STORAGE_REGION]=[açıklama]
-
-## Gereksinimler
-- [Çalışma ortamı]: [versiyon]+
-- [Veritabanı]: [versiyon]+
-- [Diğer bağımlılık]: [versiyon]+
-- [Container aracı] (opsiyonel ama önerilir)
-```
-
----
-
-### SECURITY.md
-
-Güvenlik kuralları ve hassas alanlar. Ajan bu dosyayı auth
-veya kullanıcı verisiyle ilgili iş yaparken okumalı.
-
-```markdown
-# Güvenlik Kuralları
-
-## Hassas Alanlar
-Bu alanlara dokunurken ekstra dikkatli ol:
-
-- `[auth modülü]` — kimlik doğrulama ve token işlemleri
-- `[kullanıcı modülü]` — kişisel veri
-- `.env` dosyası — asla commit etme
-- `[admin modülü]` — yetki kontrolü zorunlu
-
-## Zorunlu Kurallar
-
-### Şifre
-- [Hashing algoritması ve parametresi]
-- Plain text asla saklanmaz, loglanmaz
-
-### Token / Oturum
-- Secret değerler .env'de tutulur, kod içinde olmaz
-- Access token süresi: [süre]
-- Refresh token süresi: [süre]
-- Token güvenli bir yerde saklanmalı (httpOnly cookie önerilir)
-
-### API
-- Tüm endpoint'lerde input validation zorunlu
-- Rate limiting: kritik endpoint'lerde zorunlu
-- CORS: sadece izin verilen origin'lar
-
-### Veri
-- Kullanıcı verisi response'da minimal dön (hassas alanlar asla)
-- Veritabanı sorguları ORM / parameterized query ile yapılmalı
-- Log'lara kişisel veri yazma
-
-## Güvenlik Kontrol Listesi (Canlıya Geçmeden)
-- [ ] Tüm endpoint'lerde yetki kontrolü var mı?
-- [ ] Rate limiting aktif mi?
-- [ ] CORS kısıtlaması yapıldı mı?
-- [ ] .env değerleri production'da güvenli mi?
-- [ ] Admin rotaları kısıtlandı mı?
-```
-
----
-
-## Ajan Talimatları — Nihai Sürüm
-
-Aşağıdaki içeriği kullandığın AI ajanının kural dosyasına kopyala.
-
-```text
-════════════════════════════════════════
-PROJE BAŞLANGICI
-════════════════════════════════════════
-
-E�er project_docs klasörü yoksa oluştur.
-
-Aşağıdaki dosyaları ve klasörü oluştur:
-
-  PROJECT_SPECIFICATION.md
-  ARCHITECTURE.md
-  DATABASE_SCHEMA.md
-  API_SPECIFICATION.md
-  UI_UX_GUIDELINES.md
-  DEVELOPMENT_ROADMAP.md
-  MEMORY.md
-  RULES.md
-  GLOSSARY.md
-  CHANGELOG.md
-  CHANGELOG_ARCHIVE/
-  TASKS.md
-  TECHNICAL_DEBT.md
-  DECISIONS.md
-  RISKS.md
-  FILE_STRUCTURE.md
-  TESTING_STATUS.md
-  ENVIRONMENT.md
-  SECURITY.md
-
-────────────────────────────────────────
-GÖREV BAŞLAMADAN ÖNCE
-────────────────────────────────────────
-
-Her görev öncesinde şu dosyaları sırayla oku:
-
-  1. MEMORY.md                 → Projenin özeti
-  2. RULES.md                  → Yasaklar ve zorunlular
-  3. TASKS.md                  → Güncel görev listesi
-  4. PROJECT_SPECIFICATION.md  → Kapsam dışına çıkma
-  5. ARCHITECTURE.md           → Teknik sınırlar
-
-UYARI KONTROLÜ:
-MEMORY.md'nin "Son güncelleme" tarihine bak.
-E�er 7 günden eskiyse kullanıcıyı şöyle uyar:
-
-"⚠️ MEMORY.md [X] gündür güncellenmemiş.
-Devam etmeden önce güncellemek ister misin?"
-
-Güvenlikle ilgili bir görevse SECURITY.md'yi de oku.
-Yeni bir terimle karşılaşırsan GLOSSARY.md'yi kontrol et.
-
-────────────────────────────────────────
-ÇALIŞMA KURALLARI
-────────────────────────────────────────
-
-KESİN YASAKLAR (kullanıcı izni olmadan):
-  ✗ Dosya silme
-  ✗ Teknoloji değiştirme
-  ✗ Mimari değiştirme
-  ✗ Çalışan sistemi yeniden yazma
-  ✗ Gereksiz refactor
-  ✗ Aynı anda birden fazla modülü değiştirme
-
-ZORUNLU KURALLAR:
-  ✓ Büyük görevleri küçük adımlara böl
-  ✓ Önce mevcut kodu oku, sonra değiştir
-  ✓ Her değişiklik minimum etki prensibi ile yapılmalı
-  ✓ Belirsiz durumda tahmin etme, kullanıcıya sor
-  ✓ GLOSSARY.md'deki terimleri kullan
-  ✓ Yeni mimari karar alındıysa DECISIONS.md'ye yaz
-
-────────────────────────────────────────
-GÖREV SONUNDA
-────────────────────────────────────────
-
-ZORUNLU (her görev sonunda güncelle):
-
-  MEMORY.md
-    → Durumu, son yapılan işi, sıradaki adımı güncelle
-    → Maksimum 100 satır — öz tut, aşma
-    → "Son güncelleme" tarihini yaz
-    → MEMORY.md güncellenmeden görev bitmez.
-
-  CHANGELOG.md
-    → Tarih ve yapılan değişiklikleri ekle
-    → 200 satırı geçince eski kayıtları
-      CHANGELOG_ARCHIVE/YYYY-MM.md dosyasına taşı
-
-  TASKS.md
-    → Tamamlananları [x] işaretle
-    → Ortaya çıkan yeni görevleri ekle
-
-GEREKİRSE güncelle:
-  DATABASE_SCHEMA.md    (şema değiştiyse)
-  API_SPECIFICATION.md  (endpoint eklendi/değiştiyse)
-  FILE_STRUCTURE.md     (yeni dosya/klasör eklendiyse)
-  TECHNICAL_DEBT.md     (borç eklendi/ödendiyse)
-  DECISIONS.md          (mimari karar alındıysa)
-  RISKS.md              (yeni risk belirlendiyse)
-  TESTING_STATUS.md     (test yazıldıysa)
-  ENVIRONMENT.md        (yeni env değişkeni eklendiyse)
-  SECURITY.md           (güvenlik kuralı değiştiyse)
-
-────────────────────────────────────────
-RAPORLAMA
-────────────────────────────────────────
-
-Her görev sonunda kısa rapor ver:
-
-  ✓ Oluşturulan dosyalar
-  ✓ Değiştirilen dosyalar
-  ✗ Silinen dosyalar (varsa)
-  ⚠ Tespit edilen riskler
-  → Önerilen sonraki adım
-
-────────────────────────────────────────
-GIT
-────────────────────────────────────────
-
-Önemli bir modül tamamlandığında commit öner.
-
-Commit formatı:
-  feat(modül): kısa açıklama
-  fix(modül): kısa açıklama
-  docs(modül): kısa açıklama
-  refactor(modül): kısa açıklama
-
-Örnek:
-  feat(auth): giriş ve kayıt endpoint'leri eklendi
-  fix(users): profil güncelleme validasyon hatası düzeltildi
-```
-
----
-
-## Hızlı Başlangıç Kılavuzu
-
-Yeni bir projeye başlarken takip edilecek sıra:
-
-1. `project_docs/` klasörünü oluştur
-2. `PROJECT_SPECIFICATION.md`'yi doldur (en önemli adım)
-3. `ARCHITECTURE.md`'de stack kararını yaz
-4. `MEMORY.md`'yi proje özetiyle başlat
-5. Ajan kural dosyasını proje köküne ekle
-6. Diğer dosyaları ihtiyaç oldukça doldur
-
----
-
-## İpuçları
-
-**MEMORY.md kısa tutulmazsa sistem yavaşlar.**
-Her güncelleme de "bu bilgi MEMORY.md'de mi olmalı yoksa
-başka bir dosyada mı?" sorusunu sor.
-
-**DECISIONS.md'yi ihmal etme.**
-"Neden böyle yaptık?" sorusu 2 ay sonra gelecek.
-O zaman cevabın olsun.
-
-**GLOSSARY.md sürpriz değer katar.**
-Ajan proje dilini öğrendikten sonra tutarsız terim
-kullanmaz. Domain özgü terimler için bu dosyayı besle.
-
-**CHANGELOG_ARCHIVE/ sistemi şişmeyi önler.**
-CHANGELOG.md 200 satırı geçince arşivle.
-Tarihsel kayıt kaybolmaz, ama aktif dosya okunabilir kalır.
+* `feat(auth): giriş ekranına i18n desteği eklendi`
+* `test(users): profil kayıt unit testleri yazıldı`

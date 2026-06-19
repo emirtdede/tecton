@@ -33,15 +33,34 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
   });
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
 
-  // Search & Pagination states
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date_desc');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 3;
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const handleFilterStartDateChange = (val) => {
+    if (val && endDate && new Date(val) > new Date(endDate)) {
+      setStartDate(endDate);
+      setEndDate(val);
+    } else {
+      setStartDate(val);
+    }
+  };
+
+  const handleFilterEndDateChange = (val) => {
+    if (val && startDate && new Date(startDate) > new Date(val)) {
+      setEndDate(startDate);
+      setStartDate(val);
+    } else {
+      setEndDate(val);
+    }
+  };
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, startDate, endDate]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -186,11 +205,17 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
   };
 
   // Filter and paginated journals
-  const filteredJournals = journals.filter(j => 
-    j.notes.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (j.weather_desc && j.weather_desc.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    j.journal_date.includes(searchQuery)
-  );
+  const filteredJournals = journals.filter(j => {
+    if (searchQuery && 
+        !j.notes.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !(j.weather_desc && j.weather_desc.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        !j.journal_date.includes(searchQuery)) {
+      return false;
+    }
+    if (startDate && j.journal_date < startDate) return false;
+    if (endDate && j.journal_date > endDate) return false;
+    return true;
+  });
 
   // Apply sorting
   filteredJournals.sort((a, b) => {
@@ -223,9 +248,9 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
   }
 
   return (
-    <div ref={containerRef} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', alignItems: 'start', position: 'relative' }}>
+    <div ref={containerRef} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', alignItems: 'start', position: 'relative' }}>
       {/* Main List and Form */}
-      <div className="glass-card">
+      <div className="glass-card" style={{ padding: '1.25rem', gap: '0.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
             <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{t('journal.title', '📓 Şantiye Günlük Jurnali')}</h2>
@@ -250,9 +275,9 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
         </div>
 
         {/* Add/Edit Journal Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div className="form-group" style={{ flex: 2, minWidth: '200px', marginBottom: 0 }}>
               <label className="form-label">{t('common.date', 'Tarih')}</label>
               <CustomDatePicker 
                 className="form-input" 
@@ -262,7 +287,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
               />
             </div>
             
-            <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+            <div className="form-group" style={{ width: '180px', marginBottom: 0 }}>
               <label className="form-label">{t('journal.worker_count', 'Çalışan Personel Sayısı')}</label>
               <input 
                 type="number" 
@@ -273,9 +298,35 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                 required
               />
             </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: 0 }}>
+              <button type="submit" className="btn btn-primary" style={{ padding: '0.75rem 1.25rem', whiteSpace: 'nowrap' }}>
+                {editingId ? t('common.save', 'Güncelle') : t('journal.save_btn', 'Jurnali Kaydet / Güncelle')}
+              </button>
+              {editingId && (
+                <button 
+                  type="button" 
+                  className="btn" 
+                  onClick={() => {
+                    setEditingId(null);
+                    setFormData({
+                      journal_date: todayStr,
+                      weather_temp: '',
+                      weather_desc: '',
+                      weather_icon: '',
+                      worker_count: '0',
+                      notes: ''
+                    });
+                  }}
+                  style={{ padding: '0.75rem 1.25rem' }}
+                >
+                  {t('common.cancel', 'Vazgeç')}
+                </button>
+              )}
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
             <div style={{ flex: 1 }}>
               <span className="form-label" style={{ marginBottom: '0.25rem' }}>{t('journal.weather', 'Hava Durumu')}</span>
               {weatherLoading ? (
@@ -319,7 +370,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             <textarea 
               className="form-input" 
               placeholder={t('journal.notes_ph', 'Örn: 2. kat kolon demirleri bağlandı, C30 beton dökümü gerçekleştirildi...')} 
-              rows="4"
+              rows="2"
               value={formData.notes}
               onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               style={{ resize: 'vertical', fontFamily: 'inherit' }}
@@ -327,30 +378,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             ></textarea>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', alignSelf: 'flex-end' }}>
-            <button type="submit" className="btn btn-primary">
-              {editingId ? t('common.save', 'Güncelle') : t('journal.save_btn', 'Jurnali Kaydet / Güncelle')}
-            </button>
-            {editingId && (
-              <button 
-                type="button" 
-                className="btn" 
-                onClick={() => {
-                  setEditingId(null);
-                  setFormData({
-                    journal_date: todayStr,
-                    weather_temp: '',
-                    weather_desc: '',
-                    weather_icon: '',
-                    worker_count: '0',
-                    notes: ''
-                  });
-                }}
-              >
-                {t('common.cancel', 'Vazgeç')}
-              </button>
-            )}
-          </div>
+          {/* Buttons removed from bottom as they are now in the top row */}
         </form>
 
         {/* Filters & Search Bar */}
@@ -359,13 +387,14 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             background: 'rgba(255, 255, 255, 0.02)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
-            padding: '1rem', 
-            marginBottom: '1.5rem',
+            padding: '0.75rem', 
+            marginBottom: '0.5rem',
             display: 'flex', 
-            gap: '1rem', 
+            gap: '0.75rem', 
             alignItems: 'center', 
             flexWrap: 'wrap' 
           }}>
+            {/* Search */}
             <div style={{ position: 'relative', flex: 2, minWidth: '200px', display: 'flex', alignItems: 'center' }}>
               <input 
                 type="text"
@@ -400,11 +429,34 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
               )}
             </div>
 
+            {/* Start Date */}
+            <div style={{ flex: 1.2, minWidth: '160px' }}>
+              <CustomDatePicker 
+                className="form-input" 
+                value={startDate} 
+                onChange={e => handleFilterStartDateChange(e.target.value)} 
+                style={{ marginBottom: 0 }}
+                placeholder={t('worker_profile.filter.start_date', 'Başlangıç')}
+              />
+            </div>
+
+            {/* End Date */}
+            <div style={{ flex: 1.2, minWidth: '160px' }}>
+              <CustomDatePicker 
+                className="form-input" 
+                value={endDate} 
+                onChange={e => handleFilterEndDateChange(e.target.value)} 
+                style={{ marginBottom: 0 }}
+                placeholder={t('worker_profile.filter.end_date', 'Bitiş')}
+              />
+            </div>
+
+            {/* Sort */}
             <select 
               className="form-input" 
               value={sortBy} 
               onChange={e => setSortBy(e.target.value)}
-              style={{ flex: 1, minWidth: '200px', marginBottom: 0 }}
+              style={{ flex: 1.5, minWidth: '180px', marginBottom: 0 }}
             >
               <option value="date_desc">{t('filters.newest', 'Tarih: Yeniden Eskiye')}</option>
               <option value="date_asc">{t('filters.oldest', 'Tarih: Eskiden Yeniye')}</option>
@@ -422,10 +474,10 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             {searchQuery ? t('journal.no_results', 'Arama kriterlerine uygun jurnal kaydı bulunamadı.') : t('empty.journal', 'Henüz günlük jurnal kaydı bulunmuyor.')}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {paginatedJournals.map(j => (
-              <div key={j.id} className="glass-card" style={{ padding: '1.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
+              <div key={j.id} className="glass-card" style={{ padding: '1rem 1.25rem', gap: '0.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '0.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <strong style={{ fontSize: '1.05rem', color: 'var(--primary)' }}>{formatDate(j.journal_date, i18n.language)}</strong>
                     {j.weather_desc && (
@@ -443,17 +495,27 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                       <button 
                         className="btn" 
                         onClick={() => handleStartEdit(j)}
-                        style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
+                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)' }}
+                        title={t('dashboard.edit', 'Düzenle')}
                       >
-                        {t('dashboard.edit', 'Düzenle')}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
                       </button>
                     )}
                     <button 
                       className="btn btn-danger" 
                       onClick={() => handleDelete(j.id)}
-                      style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
+                      style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      title={t('common.delete', 'Sil')}
                     >
-                      {t('common.delete', 'Sil')}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -472,48 +534,85 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                 padding: '1rem',
                 marginTop: '1rem',
                 display: 'flex',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '1rem',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '0 0 12px 12px'
               }}>
-                <button 
-                  className="btn" 
-                  disabled={currentPage === 1} 
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                >
-                  {t('common.prev', 'Önceki')}
-                </button>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+                  {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} {t('global.recordsCount', { count: filteredJournals.length })}
                 </span>
-                <button 
-                  className="btn" 
-                  disabled={currentPage === totalPages} 
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                >
-                  {t('common.next', 'Sonraki')}
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <button 
+                    className="btn" 
+                    disabled={currentPage === 1} 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    style={{ 
+                      padding: '0.4rem 1rem', 
+                      fontSize: '0.85rem',
+                      fontWeight: '600',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid var(--glass-border)',
+                      borderRadius: '8px',
+                      color: 'var(--text-main)',
+                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                      opacity: currentPage === 1 ? 0.5 : 1,
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                    onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                  >
+                    {t('common.prev', 'Önceki')}
+                  </button>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+                  </span>
+                  <button 
+                    className="btn" 
+                    disabled={currentPage === totalPages} 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    style={{ 
+                      padding: '0.4rem 1rem', 
+                      fontSize: '0.85rem',
+                      fontWeight: '600',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid var(--glass-border)',
+                      borderRadius: '8px',
+                      color: 'var(--text-main)',
+                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                      opacity: currentPage === totalPages ? 0.5 : 1,
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                    onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                  >
+                    {t('common.next', 'Sonraki')}
+                  </button>
+                </div>
               </div>
             )}
           </div>
         )}
       </div>
 
+
       <GuideDrawer 
         isOpen={helpOpen} 
         onClose={() => setHelpOpen(false)} 
         title={t('guides.journal.title')} 
         desc="" 
-        h1={t('guides.journal.step1.title')} 
-        p1={t('guides.journal.step1.desc')} 
-        h2={t('guides.journal.step2.title')} 
-        p2={t('guides.journal.step2.desc')} 
-        h3={t('guides.journal.step3.title')} 
-        p3={t('guides.journal.step3.desc')} 
+        h1={t('guides.journal.q1.title')} 
+        p1={t('guides.journal.q1.desc')} 
+        h2={t('guides.journal.q2.title')} 
+        p2={t('guides.journal.q2.desc')} 
+        h3={t('guides.journal.q3.title')} 
+        p3={t('guides.journal.q3.desc')} 
+        h4={t('guides.journal.q4.title')} 
+        p4={t('guides.journal.q4.desc')} 
+        h5={t('guides.journal.q5.title')} 
+        p5={t('guides.journal.q5.desc')} 
+        h6={t('guides.journal.q6.title')} 
+        p6={t('guides.journal.q6.desc')} 
       />
 
       <ConfirmationModal 

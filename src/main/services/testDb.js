@@ -23,11 +23,21 @@ async function setupTestDB() {
       deleted_at TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS worker_groups (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      is_active BOOLEAN DEFAULT 1,
+      is_deleted BOOLEAN DEFAULT 0,
+      deleted_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS workers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       full_name TEXT NOT NULL,
       daily_wage REAL NOT NULL,
       project_id INTEGER,
+      isg_start_date DATE,
       isg_bitis_tarihi DATE,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP
@@ -155,6 +165,35 @@ async function setupTestDB() {
       phone TEXT,
       daily_wage REAL NOT NULL,
       status TEXT DEFAULT 'active',
+      isg_start_date DATE,
+      isg_expiry_date DATE,
+      is_deleted BOOLEAN DEFAULT 0,
+      deleted_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS subcontractor_transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subcontractor_id INTEGER NOT NULL,
+      trans_date DATE NOT NULL,
+      type TEXT NOT NULL,
+      amount REAL NOT NULL,
+      description TEXT,
+      project_id INTEGER,
+      linked_cash_id INTEGER,
+      is_deleted BOOLEAN DEFAULT 0,
+      deleted_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS worker_leaves (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      worker_id INTEGER NOT NULL,
+      project_id INTEGER,
+      start_date DATE NOT NULL,
+      end_date DATE NOT NULL,
+      type TEXT NOT NULL,
+      description TEXT,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

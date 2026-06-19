@@ -410,7 +410,9 @@
     "details": "Détails",
     "start_date": "Date de début",
     "end_date": "Date de fin",
-    "amount": "Montant"
+    "amount": "Montant",
+    "records": "Enregistrements",
+    "pagination_info": "Page {{page}} / {{total}} ({{records}} Enregistrements)"
   },
   "worker_modal": {
     "title_new": "Ajouter du Personnel",
@@ -586,7 +588,10 @@
     "help_p2": "Cliquez sur n’importe quelle photo pour la voir en taille réelle et afficher le bon de livraison ou le rapport qualité associé.",
     "help_h3": "3. Filtres de catégorie",
     "help_p3": "Filtrez les médias par type (photos du bon de livraison ou photos du contrôle qualité) ou effectuez une recherche par notes.",
-    "no_image": "Aucune image"
+    "no_image": "Aucune image",
+    "view_list": "Vue Liste",
+    "view_grid": "Vue Galerie",
+    "item_type": "Type de contenu"
   },
   "subcontractor": {
     "title": "🚜 Grands livres des sous-traitants",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Guide de gestion de chantier de construction",
-      "step1": {
-        "title": "1. Chantier de construction actif",
-        "desc": "Sélectionnez un projet à définir comme actif."
+      "title": "Guide du Chantier & de l'Espace de Travail (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que la gestion des chantiers/espaces de travail ?)",
+        "desc": "Un panneau de gestion qui vous permet de définir les emplacements physiques de vos projets et de segmenter les données par chantier."
       },
-      "step2": {
-        "title": "2. Emplacement et météo",
-        "desc": "Spécifiez un emplacement pour recevoir automatiquement les prévisions météorologiques quotidiennes."
+      "q2": {
+        "title": "2. OÙ ? (Où les données des chantiers sont-elles stockées ?)",
+        "desc": "Tous les chantiers ajoutés et toutes les transactions liées à ces chantiers sont stockés dans la base de données locale."
       },
-      "step3": {
-        "title": "3. Recherche et pagination",
-        "desc": "Recherchez instantanément sur les chantiers de construction."
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il définir un nouveau chantier ?)",
+        "desc": "Il doit être enregistré dès l'ouverture physique d'un nouveau site ou avant toute affectation de sous-traitant ou de personnel."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment sélectionner, réorganiser et gérer les chantiers ?)",
+        "desc": "Ajoutez un chantier via le formulaire, réorganisez la liste par glisser-déposer, et cliquez sur 'Sélectionner l'espace' pour l'activer."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi créer des espaces de travail par chantier ?)",
+        "desc": "Pour générer des rapports indépendants pour les journaux, pointages, mouvements de caisse et de matériel sans mélanger les données."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer la liste des chantiers ?)",
+        "desc": "Les dirigeants d'entreprise, coordinateurs généraux et responsables du siège peuvent créer, modifier ou supprimer des chantiers."
       }
     },
     "personnel": {
-      "title": "Guide de gestion du personnel",
-      "step1": {
-        "title": "1. Ajouter du personnel et Excel",
-        "desc": "Utilisez le modèle Excel pour télécharger une liste en masse."
+      "title": "Guide de Gestion du Personnel (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que la gestion du personnel ?)",
+        "desc": "Un système de suivi qui gère le pointage, les acomptes, les salaires et la validité des documents de sécurité des ouvriers et cadres du chantier."
       },
-      "step2": {
-        "title": "2. Analyse de groupe",
-        "desc": "Analysez les dépenses par catégorie de groupe."
+      "q2": {
+        "title": "2. OÙ ? (Où les données du personnel sont-elles stockées ?)",
+        "desc": "Toutes les fiches du personnel, les groupes et les mouvements financiers sont stockés dans la base locale et filtrés selon le chantier actif."
       },
-      "step3": {
-        "title": "3. Carte de pointage et relevé de compte",
-        "desc": "Cliquez sur le nom pour voir la partition."
+      "q3": {
+        "title": "3. QUAND ? (Quand enregistrer le personnel et le pointage ?)",
+        "desc": "Le personnel est enregistré à l'embauche. Le pointage et les acomptes doivent être saisis de manière quotidienne ou hebdomadaire sans délai."
       },
-      "step4": {
-        "title": "4. Gestion des autorisations",
-        "desc": "Enregistrez les jours où le personnel est en arrêt maladie ou en congé."
+      "q4": {
+        "title": "4. COMMENT ? (Comment ajouter du personnel et importer d'Excel ?)",
+        "desc": "Cliquez sur 'Ajouter du personnel' en haut à droite ; téléchargez le modèle d'importation en masse pour charger vos fichiers Excel en un clic."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi suivre le personnel en détail ?)",
+        "desc": "Pour éviter les erreurs de paie, ne pas manquer les dates d'expiration des documents de sécurité et calculer précisément le coût de main-d'œuvre du chantier."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer la liste du personnel ?)",
+        "desc": "Les directeurs de projet, conducteurs de travaux et responsables administratifs peuvent enregistrer les employés, créer les groupes et gérer le pointage."
       }
     },
     "quantity": {
-      "title": "Guide de production",
-      "step1": {
-        "title": "1. Dossiers de production",
-        "desc": "Enregistrez la production quotidienne."
+      "title": "Guide de Suivi des Travaux & Métrés (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que le suivi des métrés ?)",
+        "desc": "Un système de suivi qui mesure l'avancement physique du projet en enregistrant les quantités et unités (m², m³, tonne, etc.) des travaux réalisés."
       },
-      "step2": {
-        "title": "2. Archives et détails",
-        "desc": "Écrivez des notes pour conserver une archive chronologique."
+      "q2": {
+        "title": "2. OÙ ? (Où les données de métrés sont-elles stockées ?)",
+        "desc": "Les données sont stockées dans la base locale. Vous pouvez préciser des emplacements spécifiques (blocs, étages) dans les notes."
       },
-      "step3": {
-        "title": "3. Recherche et filtres",
-        "desc": "Filtrer par plage de dates ou par unité."
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il enregistrer l'avancement ?)",
+        "desc": "Au fur et à mesure de l'achèvement des travaux quotidiens ou de l'établissement des calculs de métrés, de manière quotidienne."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment consulter les données d'avancement ?)",
+        "desc": "Utilisez la barre de recherche pour chercher par nom d'ouvrage ou par notes, et filtrez par plage de dates et type d'unité."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi suivre les métrés ?)",
+        "desc": "Pour calculer les taux d'avancement du projet, valider les situations des sous-traitants et contrôler le respect du planning."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut enregistrer l'avancement ?)",
+        "desc": "Les conducteurs de travaux, ingénieurs méthodes/métrés ou contrôleurs peuvent saisir les enregistrements d'avancement."
       }
     },
     "delivery": {
-      "title": "Guide des bons de livraison",
-      "step1": {
-        "title": "1. Fournisseur et matériel",
-        "desc": "Enregistrez les noms des fournisseurs et des matériaux."
+      "title": "Guide des Bons de Livraison & Matériaux (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que le suivi des livraisons ?)",
+        "desc": "Un système de suivi qui enregistre numériquement la quantité, l'unité (m³, tonne, kg, etc.), le nom du fournisseur et les bons de livraison physiques des matériaux reçus sur le chantier."
       },
-      "step2": {
-        "title": "2. Documenter les photos",
-        "desc": "Téléchargez des photos du bon de livraison pour les archives numériques."
+      "q2": {
+        "title": "2. OÙ ? (Où les données de livraison sont-elles stockées ?)",
+        "desc": "Les données sont stockées dans la base de données locale, tandis que les photos des factures ou reçus sont stockées en toute sécurité dans le dossier local du projet."
       },
-      "step3": {
-        "title": "3. Recherche intelligente",
-        "desc": "Recherchez des numéros de bons de livraison ou des fournisseurs."
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il enregistrer les livraisons ?)",
+        "desc": "Immédiatement lorsque les véhicules du fournisseur livrent les matériaux sur le chantier et que le bon de livraison physique est signé."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment télécharger des photos de reçus ?)",
+        "desc": "En sélectionnant des fichiers depuis votre PC ou en scannant le code QR avec votre caméra mobile pour les transférer sans fil via le réseau local (LAN)."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi enregistrer les matériaux ?)",
+        "desc": "Pour vérifier les factures des fournisseurs, suivre la consommation de matériaux (béton, acier, etc.) en temps réel et prévenir les pertes ou vols."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut enregistrer les livraisons ?)",
+        "desc": "Les conducteurs de travaux, gestionnaires de stock, ingénieurs de projet ou personnel administratif peuvent ajouter de nouveaux bons."
       }
     },
     "journal": {
-      "title": "Guide des revues",
-      "step1": {
-        "title": "1. Météo",
-        "desc": "Enregistrez la météo quotidienne et l’état général."
+      "title": "Guide du Journal de Chantier (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce qu'un journal de chantier ?)",
+        "desc": "Un journal de chantier est un registre officiel où les conditions météo, le nombre d'ouvriers actifs et toutes les activités du site sont enregistrés chronologiquement."
       },
-      "step2": {
-        "title": "2. Chronologie",
-        "desc": "Enregistrez les événements importants dans l’ordre."
+      "q2": {
+        "title": "2. OÙ ? (Où ces données sont-elles stockées ?)",
+        "desc": "Les enregistrements du journal sont stockés dans la base de données SQLite locale et filtrés selon le projet actif."
       },
-      "step3": {
-        "title": "3. Histoire",
-        "desc": "Parcourez facilement les jours précédents."
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il remplir le journal ?)",
+        "desc": "Il doit être rempli à la fin de chaque journée de travail ou en continu. Les filtres de date permettent une recherche historique facile."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment la météo et le nombre d'ouvriers sont-ils récupérés ?)",
+        "desc": "La météo est automatiquement récupérée via OpenWeather selon l'emplacement du projet. Le nombre d'ouvriers est calculé de manière autonome à partir des feuilles de temps."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir un journal de chantier ?)",
+        "desc": "Pour constituer une archive historique, officielle et vérifiable en cas de litiges de travail, de paiements d'avancement ou de réclamations de sous-traitants."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer ces enregistrements ?)",
+        "desc": "Les conducteurs de travaux ou le personnel autorisé peuvent modifier les entrées. Pour l'intégrité des données, la modification n'est autorisée que pour le jour même."
       }
     },
     "quality": {
-      "title": "Guide Qualité",
-      "step1": {
-        "title": "1. Statuts des rapports",
-        "desc": "Mettez à jour le statut lorsque le problème est résolu."
+      "title": "Guide du Contrôle Qualité (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que le suivi du contrôle qualité?)",
+        "desc": "Un système de rapport numérique qui enregistre les défauts techniques, les travaux défectueux ou manquants avec des photos et assure leur suivi jusqu'à résolution."
       },
-      "step2": {
-        "title": "2. Preuve visuelle",
-        "desc": "Incluez des photos de tout problème détecté."
+      "q2": {
+        "title": "2. OÙ ? (Où ces enregistrements sont-ils conservés?)",
+        "desc": "Les enregistrements sont stockés dans la base de données locale, sous le projet actif. Les emplacements spécifiques peuvent être détaillés dans la description."
       },
-      "step3": {
-        "title": "3. Filtrage",
-        "desc": "Filtrez pour suivre les problèmes ouverts."
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il créer un rapport?)",
+        "desc": "Immédiatement lorsqu'un défaut ou un problème de qualité est identifié sur le site. Une fois le problème corrigé, son statut passe à 'RÉSOLU'."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment télécharger des photos?)",
+        "desc": "En sélectionnant des fichiers sur votre ordinateur ou sans fil en utilisant l'utilitaire de transfert mobile réseau local (LAN) via QR code."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir des rapports de qualité?)",
+        "desc": "Pour garantir la conformité aux spécifications de construction, documenter la responsabilité du sous-traitant/ouvrier et prévenir les réclamations techniques ou financières futures."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer ces rapports?)",
+        "desc": "Les conducteurs de travaux, ingénieurs de contrôle ou inspecteurs qualité peuvent ouvrir et fermer les rapports. Toutes les modifications sont suivies dans les journaux système."
       }
     },
     "subcontractor": {
-      "title": "Guide du sous-traitant",
-      "step1": {
-        "title": "1. Salaire journalier",
-        "desc": "Gardez une trace des salaires quotidiens des sous-traitants."
+      "title": "Guide des Comptes Sous-traitants (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que le compte sous-traitant ?)",
+        "desc": "Un système de suivi des comptes courants qui gère les coordonnées, les tarifs journaliers et les soldes financiers des sous-traitants (terrassement, ferraillage, restauration, etc.) sur votre chantier."
       },
-      "step2": {
-        "title": "2. Rechercher et filtrer",
-        "desc": "Recherchez dans la liste des sous-traitants."
+      "q2": {
+        "title": "2. OÙ ? (Où les données sont-elles stockées ?)",
+        "desc": "Toutes les fiches sous-traitants et les transactions sont stockées dans la base de données locale. Elles sont isolées et filtrées par projet."
       },
-      "step3": {
-        "title": "3. Mettre à jour et modifier",
-        "desc": "Mettez à jour les journaux quotidiens à tout moment."
+      "q3": {
+        "title": "3. QUAND ? (Quand saisir les transactions ?)",
+        "desc": "Les transactions doivent être saisies dès qu'une situation de travaux est validée ou qu'un paiement/acompte est versé. Les documents de sécurité doivent également être mis à jour selon leur expiration."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment gérer les situations et paiements ?)",
+        "desc": "Cliquez sur le bouton détails à côté de la fiche sous-traitant pour accéder à son profil ; ajoutez de nouvelles situations et des paiements pour calculer automatiquement le solde net."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir un compte sous-traitant ?)",
+        "desc": "Pour éviter les erreurs manuelles dans les comptes de sous-traitance et de location de machines, visualiser le solde net en temps réel et suivre automatiquement la validité des documents réglementaires."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer les comptes sous-traitants ?)",
+        "desc": "Les conducteurs de travaux, les comptables et les chefs de projet peuvent créer des sous-traitants, saisir des situations/paiements et partager des relevés par WhatsApp."
       }
     },
     "media": {
-      "title": "Guide des médias",
-      "step1": {
-        "title": "1. Chronologie visuelle",
-        "desc": "Examinez les images de chantier de construction par ordre chronologique."
+      "title": "Guide de la Galerie Média (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que la galerie média ?)",
+        "desc": "Un centre d'archives visuelles qui regroupe toutes les photos téléchargées lors des livraisons de matériaux (bons de livraison) ou des rapports qualité."
       },
-      "step2": {
-        "title": "2. Détails rapides",
-        "desc": "Cliquez sur n'importe quelle photo pour l'afficher en taille réelle."
+      "q2": {
+        "title": "2. OÙ ? (Où les fichiers média sont-ils stockés ?)",
+        "desc": "Les images sont stockées en toute sécurité sur le disque local sous le dossier de votre projet. La base de données ne conserve que leurs chemins relatifs."
       },
-      "step3": {
-        "title": "3. Filtres de catégorie",
-        "desc": "Filtrez par bon de livraison ou rapports qualité."
+      "q3": {
+        "title": "3. QUAND ? (Quand les images sont-elles ajoutées ?)",
+        "desc": "Elles sont ajoutées en même temps que les rapports de progression/qualité sont rédigés ou que les reçus de matériaux sont enregistrés."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment filtrer et rechercher des médias ?)",
+        "desc": "Vous pouvez rechercher par titre via la barre de recherche et filtrer par tri (date), par type de contenu (bon de livraison/rapport) ou par statut de photo."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir un archivage photo ?)",
+        "desc": "Pour prouver visuellement la qualité de la construction sur site, sauvegarder numériquement les bons de livraison et résoudre rapidement les litiges rétrospectifs."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut utiliser la galerie média ?)",
+        "desc": "Tous les membres autorisés de l'équipe projet, y compris les conducteurs de travaux, ingénieurs, personnel administratif et maîtres d'ouvrage."
       }
     },
     "cash": {
-      "title": "Guide de gestion du coffre-fort",
-      "step1": {
-        "title": "1. Registres des revenus/dépenses",
-        "desc": "Enregistrez les revenus et les dépenses."
+      "title": "Guide de Gestion de Caisse (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que la gestion de caisse ?)",
+        "desc": "Un système de suivi financier qui enregistre toutes les entrées de fonds (recettes/avances) et sorties de fonds (dépenses/paiements sous-traitants)."
       },
-      "step2": {
-        "title": "2. Situation financière mensuelle",
-        "desc": "Consultez les flux de trésorerie et le solde mensuels."
+      "q2": {
+        "title": "2. OÙ ? (Où les enregistrements de caisse sont-ils stockés ?)",
+        "desc": "Les données sont stockées en toute sécurité dans la base de données locale. Les transactions sont filtrables par 'Siège' ou par chantier spécifique."
       },
-      "step3": {
-        "title": "3. Exporter",
-        "desc": "Téléchargez les transactions au format PDF ou Excel."
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il enregistrer les transactions ?)",
+        "desc": "Dès qu'un paiement est effectué, qu'une avance est versée ou qu'un règlement de situation est perçu."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment interroger et exporter les données de caisse ?)",
+        "desc": "Filtrez par plage de dates, chantier, type de transaction ou description; exportez les rapports instantanément en Excel, CSV, JSON ou PDF."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir un livre de caisse ?)",
+        "desc": "Pour suivre le flux de trésorerie en temps réel, visualiser le solde net, gérer précisément les comptes tiers et éviter les dépassements de budget."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer les opérations de caisse ?)",
+        "desc": "Les directeurs de projet, comptables et conducteurs de travaux peuvent saisir des écritures. Les suppressions sont soumises à confirmation."
       }
     },
     "recycle": {
-      "title": "Guide des déchets",
-      "step1": {
-        "desc": "Les enregistrements supprimés sont répertoriés ici avec suppression logicielle.",
-        "title": "Comment ça marche ?"
+      "title": "Guide de la Corbeille (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que la corbeille ?)",
+        "desc": "Un système de récupération qui conserve temporairement les chantiers, dossiers du personnel, transactions financières, bons de livraison, journaux de chantier et rapports qualité supprimés accidentellement."
       },
-      "step2": {
-        "title": "Récupération de données",
-        "desc": "Utilisez le bouton de restauration pour récupérer les enregistrements."
+      "q2": {
+        "title": "2. OÙ ? (Où les données supprimées sont-elles conservées ?)",
+        "desc": "Les données supprimées ne sont pas effacées définitivement. Elles sont marquées d'un indicateur de suppression logique dans la base de données locale."
       },
-      "step3": {
-        "title": "Séparation du projet",
-        "desc": "Filtrez votre corbeille par projets."
+      "q3": {
+        "title": "3. QUAND ? (Quand puis-je restaurer les données ?)",
+        "desc": "Vous pouvez restaurer n'importe quel élément supprimé à tout moment. Il n'y a pas de date d'expiration ou de cycle de purge automatique."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment restaurer et rechercher des données ?)",
+        "desc": "Cliquez sur le bouton 'Restaurer' à droite de la ligne pour récupérer les données en quelques secondes. Vous pouvez filtrer par date, type ou chantier."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi utiliser une corbeille ?)",
+        "desc": "Conçue pour éviter la perte définitive de données suite à des suppressions accidentelles lors de journées de travail denses et pour maintenir une traçabilité totale."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut restaurer les données ?)",
+        "desc": "Les conducteurs de travaux, ingénieurs ou administrateurs disposant des droits de suppression/restauration peuvent initier la récupération."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Guide de production"
     },
     "subcontractor_profile": {
-      "title": "Guide du relevé de compte sous-traitant",
-      "step1": {
-        "title": "1. Ajout de situations de travaux",
-        "desc": "Saisissez ici les travaux réalisés par le sous-traitant sur le chantier ainsi que leurs montants. Cela augmente les créances du sous-traitant (la dette de l'entreprise) mais n'entraîne pas de sortie de fonds de la caisse."
+      "title": "Guide Détails & Relevé du Sous-traitant (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que le suivi du relevé sous-traitant ?)",
+        "desc": "Un relevé détaillé par date et note des travaux réalisés (situations de travaux) et des paiements/acomptes versés au sous-traitant."
       },
-      "step2": {
-        "title": "2. Paiements intégrés à la caisse",
-        "desc": "Enregistrez ici les paiements en espèces et les acomptes versés au sous-traitant. Cela réduit le solde du sous-traitant et crée automatiquement une sortie de trésorerie dans la Caisse."
+      "q2": {
+        "title": "2. OÙ ? (Où les données sont-elles stockées ?)",
+        "desc": "Les mouvements de compte courant sont stockées dans la base de données locale. Les paiements saisis sont automatiquement intégrés dans le journal de caisse."
       },
-      "step3": {
-        "title": "3. Solde net du compte",
-        "desc": "Affiche votre dette nette actuelle envers le sous-traitant, calculée en soustrayant les paiements effectués du total des situations de travaux acquises."
+      "q3": {
+        "title": "3. QUAND ? (Quand ajouter les situations et les paiements ?)",
+        "desc": "Les situations de travaux doivent être saisies à la livraison des travaux par le sous-traitant, et les paiements/acomptes enregistrés dès le versement."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment exporter et partager sur WhatsApp ?)",
+        "desc": "Générez des rapports avec les filtres de dates, téléchargez-les en PDF/Excel en un clic, ou partagez-les directement par WhatsApp."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir un relevé détaillé ?)",
+        "desc": "Pour éviter les litiges de comptes et les doubles paiements avec les sous-traitants, et déclarer les dettes nettes de l'entreprise avec précision."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer cette page de profil ?)",
+        "desc": "Les conducteurs de travaux, coordinateurs de projet et comptables autorisés peuvent ajouter ou supprimer des situations et des paiements."
+      }
+    },
+    "logs": {
+      "title": "Guide des Journaux Système (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce qu'un journal système ?)",
+        "desc": "Un système de registre numérique qui enregistre chronologiquement les opérations de base de données (création, mise à jour, suppression), les événements en arrière-plan et les erreurs."
+      },
+      "q2": {
+        "title": "2. OÙ ? (Où les journaux sont-ils stockés ?)",
+        "desc": "Les journaux système sont stockés localement sur votre disque. Ils sont hors ligne et ne sont jamais envoyés à un serveur externe."
+      },
+      "q3": {
+        "title": "3. QUAND ? (Quand les journaux sont-ils écrits ?)",
+        "desc": "Écrits de manière autonome avec une précision à la milliseconde dès qu'un utilisateur effectue une action ou qu'une erreur de l'application est capturée."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment inspecter les journaux ?)",
+        "desc": "Utilisez la barre de recherche ou filtrez par type pour voir les Info (bleu), DB Création (vert), DB Mise à jour (jaune) ou DB Suppression/Erreur (rouge)."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi conserver les journaux système ?)",
+        "desc": "Pour suivre les modifications des utilisateurs (audit logs) rétrospectivement, localiser l'origine exacte des erreurs et maintenir la sécurité."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut accéder aux journaux ?)",
+        "desc": "Seul l'administrateur exécutant cette instance ou les techniciens autorisés ayant accès à la machine locale peuvent lire ces journaux."
+      }
+    },
+    "bulk": {
+      "title": "Guide de Saisie Collective des Pointages (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que la saisie collective ?)",
+        "desc": "Un système de saisie rapide autonome permettant d'enregistrer les détails de pointage (salaires, heures sup, notes) pour plusieurs ouvriers travaillant sur le même chantier le même jour, en une seule fois."
+      },
+      "q2": {
+        "title": "2. OÙ ? (Où les pointages sont-ils enregistrés ?)",
+        "desc": "Les fiches de pointage de tous les ouvriers sélectionnés sont enregistrées sous forme de lignes distinctes dans la base de données. Chaque enregistrement met à jour la situation de l'ouvrier."
+      },
+      "q3": {
+        "title": "3. QUAND ? (Quand faut-il saisir les pointages collectifs ?)",
+        "desc": "À la fin de la journée, en fin de poste ou avant les cycles de règlement pour un suivi efficace de l'ensemble de la main-d'œuvre active."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment saisir les pointages collectifs ?)",
+        "desc": "Sélectionnez le personnel dans le panneau gauche (recherche et 'Tout sélectionner'), indiquez la date, le type d'heure et les heures sup dans le panneau droit, puis cliquez sur 'Tout enregistrer'."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi utiliser la saisie collective ?)",
+        "desc": "Pour éliminer la tâche fastidieuse de saisie individuelle des pointages pour des dizaines d'ouvriers, gagner du temps et minimiser les erreurs de saisie."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer les pointages collectifs ?)",
+        "desc": "Les conducteurs de travaux, pointeurs, responsables administratifs ou directeurs de projet autorisés peuvent effectuer ces saisies."
+      }
+    },
+    "worker_profile": {
+      "title": "Guide Relevé & Profil du Personnel (5W1H)",
+      "q1": {
+        "title": "1. QUOI ? (Qu'est-ce que le suivi du relevé du personnel ?)",
+        "desc": "Un relevé de compte courant contenant le détail des jours travaillés (pointage), des salaires acquis, des acomptes reçus et de l'historique des congés."
+      },
+      "q2": {
+        "title": "2. OÙ ? (Où les données sont-elles stockées ?)",
+        "desc": "Tous les enregistrements de pointage, acomptes et congés sont stockés dans la base de données locale. Les paiements s'intègrent automatiquement dans la Caisse."
+      },
+      "q3": {
+        "title": "3. QUAND ? (Quand saisir le pointage et les acomptes ?)",
+        "desc": "Le pointage est saisi quotidiennement à la fin de la journée. Les acomptes ou paiements hebdomadaires sont enregistrés immédiatement lors du versement."
+      },
+      "q4": {
+        "title": "4. COMMENT ? (Comment exporter et partager sur WhatsApp ?)",
+        "desc": "Utilisez les filtres de dates pour générer le relevé, téléchargez-le en PDF/Excel en un clic, ou partagez-le directement avec l'employé par WhatsApp."
+      },
+      "q5": {
+        "title": "5. POURQUOI ? (Pourquoi tenir un relevé du personnel détaillé ?)",
+        "desc": "Pour résoudre définitivement les litiges de salaire ou d'acompte en fin de mois et prouver l'exactitude des rémunérations antérieures."
+      },
+      "q6": {
+        "title": "6. QUI ? (Qui peut gérer cette page de profil ?)",
+        "desc": "Les chefs de projet, conducteurs de travaux ou comptables autorisés peuvent saisir ou supprimer du pointage, des acomptes et des congés."
       }
     }
   },
@@ -1166,5 +1380,46 @@
     "Yıllık": "Annuel",
     "Mazeret": "Excuse",
     "Sağlık": "Médical"
+  },
+  "isg": {
+    "section_title": "SST (Santé et Sécurité au Travail)",
+    "start_date": "Date de Début SST",
+    "expiry_date": "Date d'Expiration SST",
+    "badge_valid": "SST Valide",
+    "badge_approaching": "SST Approche",
+    "badge_expired": "SST Expiré",
+    "badge_undefined": "SST Non défini",
+    "update_btn": "Mettre à Jour SST",
+    "update_title": "Mettre à Jour les Dates SST",
+    "update_success": "Dates SST mises à jour avec succès.",
+    "days": "jours"
+  },
+  "bulk_timesheet": {
+    "title": "Saisie Groupée des Feuilles de Temps",
+    "nav_title": "Feuilles Groupées",
+    "select_workers": "Sélectionner les Travailleurs",
+    "select_all": "Tout Sélectionner",
+    "deselect_all": "Tout Désélectionner",
+    "selected_count": "{{count}} travailleurs sélectionnés",
+    "form_title": "Détails de la Feuille de Temps",
+    "save_btn": "Tout Enregistrer",
+    "save_success": "Feuilles de temps enregistrées avec succès pour {{count}} travailleurs.",
+    "save_error": "Certaines entrées ont échoué. Succès : {{success}}, Erreur : {{error}}",
+    "no_workers_selected": "Veuillez sélectionner au moins un travailleur.",
+    "no_workers": "Aucun travailleur actif trouvé.",
+    "search_workers": "Rechercher des travailleurs...",
+    "preview_wage": "Salaire Estimé",
+    "guide_step1_title": "1. Sélection du Personnel",
+    "guide_step1_desc": "Sélectionnez les travailleurs dans le panneau de gauche pour la saisie des feuilles de temps. Utilisez le bouton 'Tout Sélectionner' pour sélectionner tout le monde.",
+    "guide_step2_title": "2. Détails de la Feuille de Temps",
+    "guide_step2_desc": "Entrez les détails tels que la date, le type de travail et les heures supplémentaires. Ces détails seront appliqués à tous les travailleurs sélectionnés.",
+    "guide_step3_title": "3. Sauvegarde Groupée",
+    "guide_step3_desc": "Cliquez sur 'Tout Enregistrer' pour créer des entrées de feuille de temps pour tous les travailleurs sélectionnés."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importer (Excel/CSV)",
+    "export_btn": "Exporter",
+    "download_template": "Télécharger le Modèle",
+    "import_success": "{{count}} enregistrements de sous-traitant importés avec succès."
   }
 }

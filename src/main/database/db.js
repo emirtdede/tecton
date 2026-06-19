@@ -274,6 +274,24 @@ async function getDB() {
     // Column might already exist, ignore
   }
 
+  try {
+    await db.run('ALTER TABLE workers ADD COLUMN isg_start_date DATE');
+  } catch (err) {
+    // Column might already exist, ignore
+  }
+
+  // ISG Date Migrations for subcontractor_ledgers
+  try {
+    await db.run('ALTER TABLE subcontractor_ledgers ADD COLUMN isg_start_date DATE');
+  } catch (err) {
+    // Column might already exist, ignore
+  }
+  try {
+    await db.run('ALTER TABLE subcontractor_ledgers ADD COLUMN isg_expiry_date DATE');
+  } catch (err) {
+    // Column might already exist, ignore
+  }
+
   // Tags Migrations
   const tablesWithTags = ['workers', 'timesheets', 'transactions', 'cash_register', 'materials', 'quality_reports', 'subcontractor_ledgers', 'subcontractor_transactions'];
   for (const t of tablesWithTags) {

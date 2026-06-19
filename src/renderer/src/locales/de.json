@@ -410,7 +410,9 @@
     "details": "Details",
     "start_date": "Startdatum",
     "end_date": "Enddatum",
-    "amount": "Betrag"
+    "amount": "Betrag",
+    "records": "Einträge",
+    "pagination_info": "Seite {{page}} / {{total}} ({{records}} Einträge)"
   },
   "worker_modal": {
     "title_new": "Neues Personal hinzufügen",
@@ -586,7 +588,10 @@
     "help_p2": "Klicken Sie auf ein Foto, um es in voller Größe anzuzeigen und den zugehörigen Lieferschein oder Qualitätsbericht anzuzeigen.",
     "help_h3": "3. Kategoriefilter",
     "help_p3": "Filtern Sie Medien nach Typ (Lieferscheinfotos vs. Qualitätskontrollfotos) oder suchen Sie nach Notizen.",
-    "no_image": "Kein Bild"
+    "no_image": "Kein Bild",
+    "view_list": "Listenansicht",
+    "view_grid": "Galerieansicht",
+    "item_type": "Inhaltstyp"
   },
   "subcontractor": {
     "title": "🚜 Subunternehmer-Konten",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Handbuch zur Standortverwaltung",
-      "step1": {
-        "title": "1. Aktiver Arbeitsbereich",
-        "desc": "Wählen Sie ein Projekt aus, um es als aktiv festzulegen."
+      "title": "Baustellen- & Arbeitsbereichsleitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Baustellen-/Arbeitsbereichsverwaltung?)",
+        "desc": "Ein Verwaltungsportal, mit dem Sie physische Standorte Ihrer Projekte definieren und Daten baustellenspezifisch trennen können."
       },
-      "step2": {
-        "title": "2. Standort und Wetter",
-        "desc": "Geben Sie einen Standort ein, um täglich automatisch das Wetter abzurufen."
+      "q2": {
+        "title": "2. WO? (Wo werden Baustellendaten gespeichert?)",
+        "desc": "Alle hinzugefügten Baustellen und alle mit diesen Baustellen verknüpften Transaktionen werden in der lokalen Datenbank gespeichert."
       },
-      "step3": {
-        "title": "3. Suche und Paginierung",
-        "desc": "Suchen Sie sofort zwischen Baustellen."
+      "q3": {
+        "title": "3. WANN? (Wann sollte eine neue Baustelle angelegt werden?)",
+        "desc": "Sie sollte im System definiert werden, sobald ein neuer physischer Standort eröffnet wird oder bevor Nachunternehmer/Personal zugewiesen werden."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie Baustellen auswählen, sortieren und verwalten?)",
+        "desc": "Fügen Sie eine neue Baustelle über das Formular hinzu, sortieren Sie die Liste per Drag-and-Drop und klicken Sie auf 'Arbeitsbereich auswählen', um sie zu aktivieren."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum baustellenbezogene Arbeitsbereiche erstellen?)",
+        "desc": "Um alle Bautagebücher, Stundenzettel, Kassenbuchungen und Materialbewegungen unabhängig und ohne Vermischung zu protokollieren."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf die Baustellenliste verwalten?)",
+        "desc": "Unternehmensinhaber, Generalkoordinatoren und Hauptverwaltungsmitarbeiter können Baustellen anlegen, bearbeiten oder löschen."
       }
     },
     "personnel": {
-      "title": "Mitarbeiterführer",
-      "step1": {
-        "title": "1. Fügen Sie Mitarbeiter und Excel hinzu",
-        "desc": "Verwenden Sie die Excel-Vorlage, um eine Liste in großen Mengen hochzuladen."
+      "title": "Personalverwaltungs-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Personalverwaltung?)",
+        "desc": "Ein Verfolgungssystem zur Überwachung von Anwesenheit, Vorschüssen, verdientem Lohn und Arbeitsschutzdokumenten von Arbeitern und Angestellten auf Ihrer Baustelle."
       },
-      "step2": {
-        "title": "2. Gruppenanalyse",
-        "desc": "Analysieren Sie die Kosten nach Gruppenkategorie."
+      "q2": {
+        "title": "2. WO? (Wo werden Personaldaten gespeichert?)",
+        "desc": "Alle Mitarbeiterkarten, Gruppen und Kontobewegungen werden in der lokalen Datenbank gespeichert, gefiltert nach Ihrer aktiven Baustelle."
       },
-      "step3": {
-        "title": "3. Scorecard und Aussagen",
-        "desc": "Klicken Sie auf den Namen, um die Anzeigetafel anzuzeigen."
+      "q3": {
+        "title": "3. WANN? (Wann Mitarbeiter anlegen und Anwesenheit erfassen?)",
+        "desc": "Neue Mitarbeiter werden bei Arbeitsbeginn registriert. Anwesenheits- und Vorschussbuchungen sollten täglich oder wöchentlich ohne Verzögerung erfasst werden."
       },
-      "step4": {
-        "title": "4. Berechtigungsverwaltung",
-        "desc": "Erfassen Sie die Tage, an denen das Personal entschuldigt oder krankgeschrieben ist."
+      "q4": {
+        "title": "4. WIE? (Wie Mitarbeiter hinzufügen und Excel importieren?)",
+        "desc": "Klicken Sie oben rechts auf 'Mitarbeiter hinzufügen', um eine Karte zu erstellen; laden Sie die Vorlage für Massenerfassungen herunter und importieren Sie sie mit einem Klick aus Excel."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum Personal detailliert verfolgen?)",
+        "desc": "Um Gehaltsunstimmigkeiten zu vermeiden, das Ablaufdatum von Arbeitsschutzdokumenten nicht zu verpassen und die Lohnkosten der Baustelle in Echtzeit korrekt zu berechnen."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf die Personalliste verwalten?)",
+        "desc": "Projektleiter, Bauleiter und Verwaltungsangestellte können neue Mitarbeiter definieren, Gruppen erstellen und Anwesenheit/Vorschüsse verwalten."
       }
     },
     "quantity": {
-      "title": "Produktionsleitfaden",
-      "step1": {
-        "title": "1. Einträge",
-        "desc": "Aufzeichnungen."
+      "title": "Aufmaß- & Baufortschrittsleitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Baufortschrittsverfolgung?)",
+        "desc": "Ein System zur Messung des physischen Fortschritts durch Erfassung von Mengen und Einheiten (m², m³, Tonnen usw.) fertiggestellter Arbeiten."
       },
-      "step2": {
-        "title": "2. Archiv",
-        "desc": "Archiv."
+      "q2": {
+        "title": "2. WO? (Wo werden Fortschrittsdaten gespeichert?)",
+        "desc": "Daten werden in der lokalen Datenbank gespeichert. Sie können spezifische Orte wie Blöcke oder Stockwerke in den Notizen angeben."
       },
-      "step3": {
-        "title": "3. Suche",
-        "desc": "Filter."
+      "q3": {
+        "title": "3. WANN? (Wann sollte der Baufortschritt erfasst werden?)",
+        "desc": "Sobald tägliche Arbeiten abgeschlossen sind oder Aufmaßberechnungen vorliegen, sollten diese unverzüglich täglich erfasst werden."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie werden Fortschrittsdaten abgefragt?)",
+        "desc": "Verwenden Sie die Suchleiste, um nach Leistungsbeschreibungen oder Notizen zu suchen; filtern Sie nach Datumsbereich und Einheiten."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum Baufortschritt verfolgen?)",
+        "desc": "Zur Berechnung der Projektfortschrittsrate, Überprüfung von Subunternehmer-Abschlagszahlungen und Einhaltung des Terminplans."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf Fortschritt erfassen?)",
+        "desc": "Bauleiter, Aufmaßingenieure oder Projektleiter können neue Fortschrittsdatensätze hinzufügen und bestehende aktualisieren."
       }
     },
     "delivery": {
-      "title": "Leitfaden zum Lieferschein",
-      "step1": {
-        "title": "1. Lieferant und Material",
-        "desc": "Notieren Sie Lieferanten- und Materialnamen."
+      "title": "Lieferschein- & Materialleitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Lieferschein- und Materialerfassung?)",
+        "desc": "Ein Verfolgungssystem, das Menge, Einheit (m³, Tonne, kg usw.), Lieferantennamen und physische Lieferscheine der auf der Baustelle eingegangenen Materialien digital erfasst."
       },
-      "step2": {
-        "title": "2. Fotos dokumentieren",
-        "desc": "Laden Sie Lieferscheinfotos für das digitale Archiv hoch."
+      "q2": {
+        "title": "2. WO? (Wo werden Materialdaten gespeichert?)",
+        "desc": "Materialdaten werden in der lokalen Datenbank gespeichert, während hochgeladene Rechnungs- oder Belegfotos sicher in Ihrem lokalen Projektordner abgelegt werden."
       },
-      "step3": {
-        "title": "3. Intelligente Suche",
-        "desc": "Suchen Sie nach Lieferscheinnummern oder Lieferanten."
+      "q3": {
+        "title": "3. WANN? (Wann sollten Lieferungen erfasst werden?)",
+        "desc": "Sofort, wenn die Lieferantenfahrzeuge die Materialien auf der Baustelle anliefern und der physische Lieferschein unterzeichnet ist."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie lädt man Belegfotos hoch?)",
+        "desc": "Durch Auswahl von Dateien von Ihrem PC oder Scannen des QR-Codes mit Ihrer mobilen Kamera zur kabellosen Übertragung im lokalen Netzwerk (LAN)."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum Materialaufzeichnungen führen?)",
+        "desc": "Zur Überprüfung von Lieferantenrechnungen, zur Verfolgung des Materialverbrauchs (Beton, Bewehrungsstahl usw.) und zur Vermeidung von Materialverlusten."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf Materialbuchungen vornehmen?)",
+        "desc": "Bauleiter, Lagerverwalter, Projektingenieure oder Verwaltungspersonal können Lieferscheine erfassen und historische Einträge bearbeiten."
       }
     },
     "journal": {
-      "title": "Zeitschriftenführer",
-      "step1": {
-        "title": "1. Wetter",
-        "desc": "Zeichnen Sie täglich das Wetter und den Allgemeinzustand auf."
+      "title": "Bautagebuch-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist ein Bautagebuch?)",
+        "desc": "Ein Bautagebuch ist ein offizielles Protokoll, in dem tägliche Wetterbedingungen, aktive Arbeiterzahlen und alle Baustellenaktivitäten chronologisch erfasst werden."
       },
-      "step2": {
-        "title": "2. Chronologische Aufzeichnung",
-        "desc": "Notieren Sie wichtige Ereignisse der Reihe nach."
+      "q2": {
+        "title": "2. WO? (Wo werden diese Daten gespeichert?)",
+        "desc": "Bautagebucheinträge werden in der lokalen SQLite-Datenbank gespeichert und basierend auf dem aktiven Projekt gefiltert."
       },
-      "step3": {
-        "title": "3. Geschichte",
-        "desc": "Durchsuchen Sie ganz einfach die vergangenen Tage."
+      "q3": {
+        "title": "3. WANN? (Wann sollte das Tagebuch ausgefüllt werden?)",
+        "desc": "Es sollte am Ende jedes Arbeitstages oder fortlaufend ausgefüllt werden. Datumsfilter ermöglichen eine einfache historische Suche."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie werden Wetter und Arbeiterzahl ermittelt?)",
+        "desc": "Das Wetter wird automatisch über OpenWeather basierend auf dem Projektstandort abgerufen. Die Arbeiterzahl wird autonom aus den täglichen Stundenzetteln berechnet."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum ein Bautagebuch führen?)",
+        "desc": "Um ein historisches, offizielles und überprüfbares Archiv für zukünftige Arbeitskonflikte, Abschlagszahlungen oder Nachforderungen von Subunternehmern aufzubauen."
+      },
+      "q6": {
+        "title": "6. WER? (Wer kann diese Einträge verwalten?)",
+        "desc": "Bauleiter oder autorisiertes Personal können Einträge bearbeiten. Zur Wahrung der Datenintegrität ist die Bearbeitung nur für den aktuellen Tag zulässig."
       }
     },
     "quality": {
-      "title": "Qualitätsleitfaden",
-      "step1": {
-        "title": "1. Berichtsstatus",
-        "desc": "Status aktualisieren nach Lösung."
+      "title": "Leitfaden für Qualitätskontrolle (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Qualitätskontrolle?)",
+        "desc": "Ein digitales Berichterstattungssystem zur Erfassung von technischen Mängeln, fehlerhaften oder fehlenden Bauarbeiten mit Fotobeweisen, das deren Behebung nachverfolgt."
       },
-      "step2": {
-        "title": "2. Visueller Beweis",
-        "desc": "Fotos hinzufügen."
+      "q2": {
+        "title": "2. WO? (Wo werden diese Aufzeichnungen aufbewahrt?)",
+        "desc": "Aufzeichnungen werden in der lokalen Datenbank unter dem aktiven Projekt gespeichert. Spezifische Orte können in der Beschreibung detailliert werden."
       },
-      "step3": {
-        "title": "3. Filtern",
-        "desc": "Offene Probleme filtern."
+      "q3": {
+        "title": "3. WANN? (Wann sollte ein Bericht erstellt werden?)",
+        "desc": "Sofort bei Feststellung eines Mangels oder Qualitätsproblems vor Ort. Nach der Behebung wird der Status auf 'ERLEDIGT' geändert."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie lädt man Fotos hoch?)",
+        "desc": "Durch Auswahl von Dateien auf Ihrem Computer oder drahtlos mit dem mobilen Foto-Uploader im lokalen Netzwerk (LAN) per QR-Code."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum Qualitätsberichte führen?)",
+        "desc": "Um die Einhaltung von Bauspezifikationen zu gewährleisten, die Haftung von Subunternehmern/Arbeitern für fehlerhafte Arbeiten zu dokumentieren und zukünftige Ansprüche zu verhindern."
+      },
+      "q6": {
+        "title": "6. WER? (Wer kann diese Berichte verwalten?)",
+        "desc": "Bauleiter, Prüfingenieure oder Qualitätsprüfer können Berichte öffnen und schließen. Alle Änderungen werden in den Systemprotokollen erfasst."
       }
     },
     "subcontractor": {
-      "title": "Subunternehmer-Leitfaden",
-      "step1": {
-        "title": "1. Tageslohn",
-        "desc": "Tageslöhne verfolgen."
+      "title": "Nachunternehmer-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist ein Nachunternehmer-Konto?)",
+        "desc": "Ein Kontokorrent-Verfolgungssystem zur Überwachung von Namen, Kontaktdaten, Tagessätzen und finanziellen Soll-/Haben-Salden von Nachunternehmern (Erdarbeiten, Eisenflechter, Catering usw.) auf Ihrer Baustelle."
       },
-      "step2": {
-        "title": "2. Suchen und Filtern",
-        "desc": "In Liste suchen."
+      "q2": {
+        "title": "2. WO? (Wo werden die Daten gespeichert?)",
+        "desc": "Alle Nachunternehmerkarten und Kontobewegungen werden in der lokalen Datenbank gespeichert. Sie werden projektbezogen isoliert und gefiltert."
       },
-      "step3": {
-        "title": "3. Aktualisieren",
-        "desc": "Jederzeit aktualisieren."
+      "q3": {
+        "title": "3. WANN? (Wann Kontobewegungen erfassen?)",
+        "desc": "Transaktionen sollten sofort erfasst werden, wenn ein Abschlag verdient oder eine Zahlung/ein Vorschuss geleistet wird. Arbeitsschutzdokumente sollten ebenfalls nach Ablaufdatum aktualisiert werden."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie Abschlagszahlungen und Zahlungen verwalten?)",
+        "desc": "Klicken Sie auf die Detailschaltfläche neben der Nachunternehmerkarte, um auf das Profil zuzugreifen. Fügen Sie neue Abschläge und Zahlungen hinzu, um den Nettosaldo automatisch zu berechnen."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum ein Nachunternehmer-Konto führen?)",
+        "desc": "Um manuelle Fehler bei Nachunternehmer- und Maschinenmietkonten zu vermeiden, den Netto-Soll-/Haben-Status in Echtzeit anzuzeigen und die Gültigkeit von Arbeitsschutzdokumenten automatisch zu verfolgen."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf Nachunternehmer-Konten verwalten?)",
+        "desc": "Bauleiter, Buchhalter und Projektleiter können neue Nachunternehmer anlegen, Abschläge/Zahlungen erfassen und Kontoauszüge per WhatsApp teilen."
       }
     },
     "media": {
-      "title": "Medien-Leitfaden",
-      "step1": {
-        "title": "1. Visuelle Zeitleiste",
-        "desc": "Bilder chronologisch prüfen."
+      "title": "Medien-Galerie Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist die Mediengalerie?)",
+        "desc": "Ein visuelles Archivzentrum, das alle Fotos sammelt, die während Materiallieferungen (Lieferscheine) oder Qualitätsberichten hochgeladen wurden."
       },
-      "step2": {
-        "title": "2. Schnelldetails",
-        "desc": "Klicken Sie auf ein Foto für die Vollbildansicht."
+      "q2": {
+        "title": "2. WO? (Wo werden Mediendateien gespeichert?)",
+        "desc": "Bilder werden sicher auf der lokalen Festplatte in Ihrem Projektordner gespeichert. Die Datenbank speichert nur die Dateipfade."
       },
-      "step3": {
-        "title": "3. Kategoriefilter",
-        "desc": "Nach Lieferschein oder Qualitätsbericht filtern."
+      "q3": {
+        "title": "3. WANN? (Wann werden Bilder hinzugefügt?)",
+        "desc": "Sie werden gleichzeitig hinzugefügt, wenn Fortschritts-/Qualitätsberichte geschrieben oder Materialbelege gespeichert werden."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie filtert und sucht man Medien?)",
+        "desc": "Sie können mit der Suchleiste nach Titel suchen und nach Sortierung (Datum), Inhaltstyp (Lieferschein/Bericht) oder Fotostatus filtern."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum ein Fotoarchiv führen?)",
+        "desc": "Um die Bauqualität vor Ort visuell nachzuweisen, physische Lieferscheine digital zu sichern und rückwirkende Streitigkeiten schnell zu lösen."
+      },
+      "q6": {
+        "title": "6. WER? (Wer kann die Mediengalerie nutzen?)",
+        "desc": "Alle autorisierten Mitglieder des Projektteams, einschließlich Bauleiter, Prüfingenieure, Verwaltungspersonal und Eigentümer."
       }
     },
     "cash": {
-      "title": "Kassenführungsleitfaden",
-      "step1": {
-        "title": "1. Einnahmen/Ausgaben",
-        "desc": "Einnahmen und Ausgaben erfassen."
+      "title": "Kassenführungs-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Kassenverwaltung?)",
+        "desc": "Ein Finanzverfolgungssystem, das alle Bareinzahlungen (Einnahmen/Vorschüsse) und Barauszahlungen (Ausgaben/Subunternehmerzahlungen) der Projekte erfasst."
       },
-      "step2": {
-        "title": "2. Monatlicher Finanzstatus",
-        "desc": "Monatlichen Cashflow und Saldo anzeigen."
+      "q2": {
+        "title": "2. WO? (Wo werden Kassenberichte gespeichert?)",
+        "desc": "Daten werden sicher in der lokalen Datenbank gespeichert. Transaktionen können für die 'Zentrale' oder einzelne Projekte gefiltert werden."
       },
-      "step3": {
-        "title": "3. Exportieren",
-        "desc": "Transaktionen als PDF oder Excel herunterladen."
+      "q3": {
+        "title": "3. WANN? (Wann sollten Transaktionen erfasst werden?)",
+        "desc": "Sofort nach Tätigung einer Zahlung, Gewährung eines Vorschusses oder Erhalt einer Abschlagszahlung."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie werden Kassendaten abgefragt und exportiert?)",
+        "desc": "Filtern Sie nach Datumsbereich, Projekt, Transaktionstyp oder Beschreibung und exportieren Sie Berichte direkt als Excel, CSV, JSON oder PDF."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum ein Kassenbuch führen?)",
+        "desc": "Zur Überwachung des Echtzeit-Cashflows, Einsicht des Netto-Saldos, genauen Verwaltung von Mitarbeiter-/Subunternehmerkonten und Vermeidung von Budgetüberschreitungen."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf Kassenvorgänge verwalten?)",
+        "desc": "Projektleiter, Finanzmitarbeiter und Bauleiter können Buchungen vornehmen. Löschungen werden durch Bestätigungsdialoge abgesichert."
       }
     },
     "recycle": {
-      "title": "Papierkorb-Handbuch",
-      "step1": {
-        "title": "Wie es funktioniert?",
-        "desc": "Gelöschte Datensätze hier."
+      "title": "Papierkorb-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist der Papierkorb?)",
+        "desc": "Ein Wiederherstellungssystem, das versehentlich gelöschte Baustellen, Personalakten, Kassenbewegungen, Lieferscheine, Bautagebücher und Qualitätsberichte vorübergehend speichert."
       },
-      "step2": {
-        "title": "Wiederherstellung",
-        "desc": "Schaltfläche verwenden."
+      "q2": {
+        "title": "2. WO? (Wo werden gelöschte Daten aufbewahrt?)",
+        "desc": "Gelöschte Daten werden nicht dauerhaft gelöscht, sondern in der lokalen Datenbank als gelöscht markiert und auf dieser Seite aufgelistet."
       },
-      "step3": {
-        "title": "Projekttrennung",
-        "desc": "Nach Projekt filtern."
+      "q3": {
+        "title": "3. WANN? (Wann kann ich Daten wiederherstellen?)",
+        "desc": "Sie können gelöschte Einträge jederzeit nach dem Löschen wiederherstellen. Es gibt kein Ablaufdatum und keinen automatischen Bereinigungszyklus."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie werden Daten wiederhergestellt und gesucht?)",
+        "desc": "Klicken Sie rechts in der Liste auf 'Wiederherstellen', um Daten in Sekundenschnelle zu retten. Sie können nach Datum, Datensatztyp und Projekt filtern."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum gibt es einen Papierkorb?)",
+        "desc": "Entwickelt, um dauerhaften Datenverlust durch versehentliches Löschen im hektischen Baustellenalltag zu verhindern und die Rückverfolgbarkeit zu wahren."
+      },
+      "q6": {
+        "title": "6. WER? (Wer kann Daten wiederherstellen?)",
+        "desc": "Autorisierte Bauleiter, Ingenieure oder Kontoinhaber mit Lösch-/Wiederherstellungsrechten können die Wiederherstellung veranlassen."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Produktionsleitfaden"
     },
     "subcontractor_profile": {
-      "title": "Subunternehmer-Kontoauszug Leitfaden",
-      "step1": {
-        "title": "1. Fortschrittszahlungen hinzufügen",
-        "desc": "Geben Sie hier die vom Subunternehmer auf der Baustelle geleisteten Arbeiten und deren Beträge ein. Dies erhöht die Forderungen des Subunternehmers (Schulden des Unternehmens), führt jedoch nicht zu einem Mittelabfluss aus der Kasse."
+      "title": "Leitfaden für Nachunternehmer-Details & Auszüge (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist die Nachunternehmer-Auszugsverfolgung?)",
+        "desc": "Eine detaillierte datums- und notizbasierte Aufschlüsselung der erbrachten Leistungen (Abschläge) und geleisteten Zahlungen/Vorschüsse an einen Nachunternehmer."
       },
-      "step2": {
-        "title": "2. Kassenintegrierte Zahlungen",
-        "desc": "Erfassen Sie hier die an den Subunternehmer geleisteten Barzahlungen und Vorschüsse. Dies reduziert den Saldo des Subunternehmers und erzeugt automatisch einen Mittelabfluss in der Kasse."
+      "q2": {
+        "title": "2. WO? (Wo werden die Buchungen gespeichert?)",
+        "desc": "Kontokorrenttransaktionen werden in der lokalen Datenbank gespeichert. Erfasste Zahlungen werden automatisch in das Kassenbuch integriert."
       },
-      "step3": {
-        "title": "3. Netto-Kontostand",
-        "desc": "Zeigt Ihre aktuellen Nettoschulden gegenüber dem Subunternehmer an, die durch Abzug der geleisteten Zahlungen von den gesamten verdienten Fortschrittszahlungen berechnet werden."
+      "q3": {
+        "title": "3. WANN? (Wann Abschläge und Zahlungen hinzufügen?)",
+        "desc": "Abschläge sollten erfasst werden, wenn Arbeiten übergeben werden, und Zahlungen/Vorschüsse zeitgleich bei der Auszahlung."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie exportieren und über WhatsApp teilen?)",
+        "desc": "Sie können Berichte über die Datumsbereichsfilter erstellen, diese mit einem Klick als PDF/Excel herunterladen oder direkt per WhatsApp teilen."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum einen detaillierten Auszug führen?)",
+        "desc": "Um Unstimmigkeiten bei der Abrechnung und Doppelzahlungen zu vermeiden und die Nettoverbindlichkeiten des Unternehmens fehlerfrei zu melden."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf diese Profilseite verwalten?)",
+        "desc": "Autorisierte Bauleiter, Projektkoordinatoren und Buchhalter können Abschläge und Zahlungen hinzufügen oder löschen."
+      }
+    },
+    "logs": {
+      "title": "Systemprotokoll-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was sind Systemprotokolle?)",
+        "desc": "Ein digitales Protokollsystem, das kritische Datenbankoperationen (Erstellen, Aktualisieren, Löschen), Hintergrundereignisse und Fehler chronologisch aufzeichnet."
+      },
+      "q2": {
+        "title": "2. WO? (Wo werden Protokolldateien gespeichert?)",
+        "desc": "Systemprotokolle werden lokal auf Ihrer Festplatte gespeichert. Sie sind offline und werden niemals an externe Server gesendet."
+      },
+      "q3": {
+        "title": "3. WANN? (Wann werden Protokolle geschrieben?)",
+        "desc": "Sie werden automatisch mit Millisekundengenauigkeit aufgezeichnet, sobald ein Benutzer eine Aktion ausführt oder ein Fehler auftritt."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie werden Protokolle überprüft?)",
+        "desc": "Verwenden Sie die Suchleiste oder filtern Sie nach Typ, um Info (blau), DB Erstellen (grün), DB Aktualisieren (gelb) oder DB Löschen/Fehler (rot) anzuzeigen."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum Systemprotokolle führen?)",
+        "desc": "Um Benutzeränderungen (Audit-Logs) rückwirkend zu verfolgen, die genaue Ursache von Fehlern zu finden und die Systemsicherheit zu gewährleisten."
+      },
+      "q6": {
+        "title": "6. WER? (Wer kann auf die Protokolle zugreifen?)",
+        "desc": "Nur der Administrator dieser Instanz oder autorisierte Support-Mitarbeiter mit Zugriff auf den lokalen PC können diese Protokolle lesen."
+      }
+    },
+    "bulk": {
+      "title": "Sammel-Stundenzettel-Leitfaden (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist Sammel-Stundenzettelerfassung?)",
+        "desc": "Ein schnelles Erfassungssystem zur gleichzeitigen Buchung von Stundenzettel-Details (Löhne, Überstunden, Notizen) für mehrere Mitarbeiter am selben Tag auf derselben Baustelle."
+      },
+      "q2": {
+        "title": "2. WO? (Wo werden Stundenzettel gespeichert?)",
+        "desc": "Die Stundenzettel aller ausgewählten Arbeiter werden als separate Zeilen in der Datenbank gespeichert und aktualisieren direkt deren Konten."
+      },
+      "q3": {
+        "title": "3. WANN? (Wann sollten Sammel-Stundenzettel erfasst werden?)",
+        "desc": "Am Ende des Tages, nach Schichtende oder vor Abschlagszahlungszyklen zur schnellen Erfassung der gesamten Belegschaft."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie erfasst man Sammel-Stundenzettel?)",
+        "desc": "Wählen Sie Mitarbeiter links aus (mit Suche & 'Alle auswählen'), geben Sie Datum, Arbeitszeit und Überstunden rechts ein und klicken Sie auf 'Sammel-Speichern'."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum Sammel-Stundenzettel nutzen?)",
+        "desc": "Um die mühsame Einzelbuchung für Dutzende von Arbeitern zu vermeiden, Zeit zu sparen und Tippfehler zu minimieren."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf Sammel-Stundenzettel verwalten?)",
+        "desc": "Autorisierte Bauleiter, Zeitbeauftragte, Verwaltungsmitarbeiter oder Projektleiter können Sammelbuchungen vornehmen."
+      }
+    },
+    "worker_profile": {
+      "title": "Leitfaden für Personalprofil & Auszüge (5W1H)",
+      "q1": {
+        "title": "1. WAS? (Was ist die Personal-Auszugsverfolgung?)",
+        "desc": "Ein detaillierter Nachweis über Arbeitstage (Anwesenheit), verdienten Lohn, erhaltene Vorschüsse und Urlaubsverlauf des ausgewählten Mitarbeiters."
+      },
+      "q2": {
+        "title": "2. WO? (Wo werden die Buchungen gespeichert?)",
+        "desc": "Alle Anwesenheits-, Vorschuss- und Urlaubseinträge werden in der lokalen Datenbank gespeichert. Zahlungen werden automatisch ins Kassenbuch integriert."
+      },
+      "q3": {
+        "title": "3. WANN? (Wann Anwesenheit und Vorschüsse erfassen?)",
+        "desc": "Anwesenheit wird täglich nach Arbeitsende erfasst. Vorschüsse oder wöchentliche Zahlungen werden sofort bei der Auszahlung gebucht."
+      },
+      "q4": {
+        "title": "4. WIE? (Wie exportieren und über WhatsApp teilen?)",
+        "desc": "Verwenden Sie die Datumsbereichsfilter, um den Auszug zu erstellen, laden Sie ihn als PDF/Excel herunter oder teilen Sie ihn direkt per WhatsApp mit dem Mitarbeiter."
+      },
+      "q5": {
+        "title": "5. WARUM? (Warum ein detailliertes Mitarbeiterkonto führen?)",
+        "desc": "Um Gehalts- oder Vorschussstreitigkeiten am Monatsende endgültig zu klären und den Nachweis über historische Lohnansprüche fehlerfrei zu erbringen."
+      },
+      "q6": {
+        "title": "6. WER? (Wer darf die Personalprofilseite verwalten?)",
+        "desc": "Autorisierte Projektleiter, Bauleiter oder Buchhalter können Anwesenheiten, Vorschüsse und Urlaubszeiten hinzufügen oder löschen."
       }
     }
   },
@@ -1165,5 +1379,46 @@
     "Yıllık": "Jährlich",
     "Mazeret": "Entschuldigung",
     "Sağlık": "Medizinisch"
+  },
+  "isg": {
+    "section_title": "AGS (Arbeits- und Gesundheitsschutz)",
+    "start_date": "AGS-Startdatum",
+    "expiry_date": "AGS-Ablaufdatum",
+    "badge_valid": "AGS Gültig",
+    "badge_approaching": "AGS Läuft ab",
+    "badge_expired": "AGS Abgelaufen",
+    "badge_undefined": "AGS Nicht definiert",
+    "update_btn": "AGS Aktualisieren",
+    "update_title": "AGS-Daten Aktualisieren",
+    "update_success": "AGS-Daten erfolgreich aktualisiert.",
+    "days": "Tage"
+  },
+  "bulk_timesheet": {
+    "title": "Massen-Zeiterfassung",
+    "nav_title": "Massen-Zeiterfassung",
+    "select_workers": "Mitarbeiter auswählen",
+    "select_all": "Alle auswählen",
+    "deselect_all": "Auswahl aufheben",
+    "selected_count": "{{count}} Mitarbeiter ausgewählt",
+    "form_title": "Zeiterfassungsdetails",
+    "save_btn": "Alle speichern",
+    "save_success": "Zeiterfassung für {{count}} Mitarbeiter erfolgreich gespeichert.",
+    "save_error": "Einige Einträge fehlgeschlagen. Erfolg: {{success}}, Fehler: {{error}}",
+    "no_workers_selected": "Bitte wählen Sie mindestens einen Mitarbeiter.",
+    "no_workers": "Keine aktiven Mitarbeiter gefunden.",
+    "search_workers": "Mitarbeiter suchen...",
+    "preview_wage": "Geschätzter Lohn",
+    "guide_step1_title": "1. Mitarbeiter auswählen",
+    "guide_step1_desc": "Wählen Sie im linken Bereich die Mitarbeiter für die Zeiterfassung aus. Mit der Schaltfläche 'Alle auswählen' können Sie alle Mitarbeiter auf einmal auswählen.",
+    "guide_step2_title": "2. Zeiterfassungsdetails",
+    "guide_step2_desc": "Geben Sie im rechten Bereich Zeiterfassungsdetails wie Datum, Arbeitstyp und Überstunden ein. Diese Details gelten für alle ausgewählten Mitarbeiter.",
+    "guide_step3_title": "3. Massenspeicherung",
+    "guide_step3_desc": "Klicken Sie auf 'Alle speichern', um Zeiterfassungseinträge für alle ausgewählten Mitarbeiter zu erstellen. Der jeweilige Tageslohn wird für die Berechnung verwendet."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importieren (Excel/CSV)",
+    "export_btn": "Exportieren",
+    "download_template": "Vorlage herunterladen",
+    "import_success": "{{count}} Subunternehmer-Datensätze erfolgreich importiert."
   }
 }

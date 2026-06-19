@@ -410,7 +410,9 @@
     "details": "Detalhes",
     "start_date": "Data de início",
     "end_date": "Data de término",
-    "amount": "Valor"
+    "amount": "Valor",
+    "records": "Registros",
+    "pagination_info": "Página {{page}} / {{total}} ({{records}} Registros)"
   },
   "worker_modal": {
     "title_new": "Adicionar Novo Pessoal",
@@ -586,7 +588,10 @@
     "help_p2": "Clique em qualquer foto para vê-la em tamanho real e visualizar a nota de entrega ou relatório de qualidade associado.",
     "help_h3": "3. Filtros de categoria",
     "help_p3": "Filtre a mídia por tipo (fotos da nota de entrega vs. fotos do controle de qualidade) ou pesquise por notas.",
-    "no_image": "Sem imagem"
+    "no_image": "Sem imagem",
+    "view_list": "Visualização em Lista",
+    "view_grid": "Visualização em Galeria",
+    "item_type": "Tipo de Conteúdo"
   },
   "subcontractor": {
     "title": "🚜 Razões de subempreiteiros",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Guia de gerenciamento de canteiro de obras",
-      "step1": {
-        "title": "1. Canteiro de obras ativo",
-        "desc": "Selecione um projeto para definir como ativo."
+      "title": "Guia de Obras & Espaços de Trabalho (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a gestão de obras?)",
+        "desc": "Um painel de gestão que permite definir as localizações físicas dos seus projetos e filtrar dados com base em cada obra específica."
       },
-      "step2": {
-        "title": "2. Localização e clima",
-        "desc": "Especifique um local para receber automaticamente a previsão do tempo diária."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os dados das obras?)",
+        "desc": "Todas as obras adicionadas e todas as transações associadas a elas são guardadas na base de dados local."
       },
-      "step3": {
-        "title": "3. Pesquisa e paginação",
-        "desc": "Pesquise instantaneamente em canteiros de obras."
+      "q3": {
+        "title": "3. QUANDO? (Quando cadastrar uma nova obra?)",
+        "desc": "Deve ser cadastrada no sistema assim que uma nova obra física é iniciada ou antes de alocar subempreiteiros/pessoal."
+      },
+      "q4": {
+        "title": "4. COMO? (Como selecionar, ordenar e gerir obras?)",
+        "desc": "Adicione uma nova obra pelo formulário, ordene a lista arrastando e soltando itens, e clique em 'Selecionar espaço de trabalho' para ativá-la."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que criar espaços de trabalho por obra?)",
+        "desc": "Para emitir relatórios de diários de obra, ponto, caixa e materiais de forma independente, sem misturar os registos."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir a lista de obras?)",
+        "desc": "Proprietários da empresa, coordenadores gerais e diretores da sede podem cadastrar, editar ou eliminar obras."
       }
     },
     "personnel": {
-      "title": "Guia de gestão de pessoal",
-      "step1": {
-        "title": "1. Adicione equipe e Excel",
-        "desc": "Use o modelo do Excel para fazer upload em massa de uma lista."
+      "title": "Guia de Gestão de Pessoal (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a gestão de pessoal?)",
+        "desc": "Um sistema de controle para monitorizar presenças, adiantamentos, salários e validade de documentos de segurança de operários e técnicos da obra."
       },
-      "step2": {
-        "title": "2. Análise de Grupo",
-        "desc": "Analise despesas por categoria de grupo."
+      "q2": {
+        "title": "2. ONDE? (Onde ficam os dados do pessoal?)",
+        "desc": "Todas as fichas de pessoal, grupos e transações financeiras são guardadas na base de dados local, filtradas pelo projeto ativo."
       },
-      "step3": {
-        "title": "3. Scorecard e extrato de conta",
-        "desc": "Clique no nome para ver a pontuação."
+      "q3": {
+        "title": "3. QUANDO? (Quando registar o pessoal e as presenças?)",
+        "desc": "Os novos colaboradores devem ser registados na contratação. O ponto e adiantamentos devem ser lançados diária ou semanalmente."
       },
-      "step4": {
-        "title": "4. Gerenciamento de permissões",
-        "desc": "Registre os dias em que a equipe está de licença médica ou de licença."
+      "q4": {
+        "title": "4. COMO? (Como adicionar pessoal e importar do Excel?)",
+        "desc": "Clique em 'Adicionar pessoal' no topo direito; descarregue o modelo para inserção em massa e importe a folha de Excel com um clique."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que acompanhar o pessoal detalhadamente?)",
+        "desc": "Para evitar divergências salariais, acompanhar a validade de documentos obrigatórios e calcular o custo de mão-de-obra real da obra."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir a lista de pessoal?)",
+        "desc": "Gestores de projeto, diretores de obra e responsáveis de pessoal podem cadastrar colaboradores, criar grupos e gerir pontos/adiantamentos."
       }
     },
     "quantity": {
-      "title": "Guia de produção",
-      "step1": {
-        "title": "1. Registros de produção",
-        "desc": "Grave a produção diária."
+      "title": "Guia de Medições & Execução (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é o controle de medições?)",
+        "desc": "Um sistema que mede o avanço físico do projeto registando quantidades e unidades (m², m³, toneladas, etc.) dos trabalhos executados."
       },
-      "step2": {
-        "title": "2. Arquivo e detalhes",
-        "desc": "Escreva notas para manter um arquivo cronológico."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os dados?)",
+        "desc": "Os dados são guardados na base de dados local. Pode indicar locais específicos como blocos ou pisos nas notas."
       },
-      "step3": {
-        "title": "3. Pesquisa e filtros",
-        "desc": "Filtre por período ou unidade."
+      "q3": {
+        "title": "3. QUANDO? (Quando devem ser registradas as medições?)",
+        "desc": "À medida que os trabalhos diários são concluídos ou quando são feitos cálculos de avanço, devem ser registados diariamente."
+      },
+      "q4": {
+        "title": "4. COMO? (Como consultar os dados de medições?)",
+        "desc": "Use a barra de pesquisa para procurar por nome do trabalho ou notas; filtre a lista por período de datas e tipo de unidade."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que controlar a execução?)",
+        "desc": "Para calcular a taxa de conclusão do projeto, validar medições de subempreiteiros e controlar o cumprimento de prazos."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode registrar medições?)",
+        "desc": "Diretores de obra, engenheiros de medições ou supervisores de projeto podem adicionar registos de avanço."
       }
     },
     "delivery": {
-      "title": "Guia de Nota de Entrega",
-      "step1": {
-        "title": "1. Fornecedor e Material",
-        "desc": "Registre os nomes dos fornecedores e dos materiais."
+      "title": "Guia de Guias de Remessa & Materiais (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é o registro de materiais?)",
+        "desc": "Um sistema de controlo que regista digitalmente a quantidade, unidade (m³, tonelada, kg, etc.), fornecedor e guias físicas dos materiais recebidos na obra."
       },
-      "step2": {
-        "title": "2. Fotos de documentos",
-        "desc": "Carregue fotos da nota de entrega para arquivo digital."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os dados?)",
+        "desc": "Os registos são guardados na base de dados local, enquanto as fotos das guias são armazenadas de forma segura na pasta local do projeto."
       },
-      "step3": {
-        "title": "3. Pesquisa inteligente",
-        "desc": "Pesquise números de notas de entrega ou fornecedores."
+      "q3": {
+        "title": "3. QUANDO? (Quando devem ser registadas as entregas?)",
+        "desc": "Imediatamente quando os veículos do fornecedor entregam os materiais na obra e a guia física é assinada."
+      },
+      "q4": {
+        "title": "4. COMO? (Como carregar fotos das guias?)",
+        "desc": "Selecionando ficheiros do PC ou digitalizando o código QR com a câmara do telemóvel para transferi-los sem fios através da rede local (LAN)."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter o registro de materiais?)",
+        "desc": "Para verificar faturas de fornecedores, monitorizar o consumo de materiais (betão, aço, etc.) e evitar perdas ou furtos."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode registar guias?)",
+        "desc": "Diretores de obra, fiéis de armazém, engenheiros ou administrativos podem adicionar novas guias de remessa."
       }
     },
     "journal": {
-      "title": "Guia do diário",
-      "step1": {
-        "title": "1. Clima",
-        "desc": "Registre diariamente o clima e as condições gerais."
+      "title": "Guia do Diário de Obra (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é o diário de obra?)",
+        "desc": "O diário de obra é um registo oficial onde as condições meteorológicas, o número de trabalhadores ativos e todas as atividades do site são registados cronologicamente."
       },
-      "step2": {
-        "title": "2. Registro cronológico",
-        "desc": "Registre eventos importantes em ordem."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados estes registos?)",
+        "desc": "Os registos são guardados na base de dados SQLite local e filtrados com base no projeto ativo."
       },
-      "step3": {
-        "title": "3. História",
-        "desc": "Navegue facilmente nos dias anteriores."
+      "q3": {
+        "title": "3. QUANDO? (Quando deve ser preenchido o diário?)",
+        "desc": "Deve ser preenchido no final de cada dia de trabalho ou continuamente. Os filtros de data facilitam a pesquisa histórica."
+      },
+      "q4": {
+        "title": "4. COMO? (Como são obtidos o clima e o número de operários?)",
+        "desc": "O clima é obtido automaticamente via OpenWeather com base na localização do projeto. O número de operários é calculado a partir das folhas de ponto diárias."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter um diário de obra?)",
+        "desc": "Para construir um arquivo histórico, oficial e verificável para futuras disputas laborais, pagamentos ou reclamações de subempreiteiros."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir estes registos?)",
+        "desc": "Os diretores de obra ou pessoal autorizado podem editar. A edição só é permitida para o registo do dia atual."
       }
     },
     "quality": {
-      "title": "Guia de qualidade",
-      "step1": {
-        "title": "1. Status do relatório",
-        "desc": "Atualize o status quando o problema for resolvido."
+      "title": "Guia de Controle de Qualidade (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é o controle de qualidade?)",
+        "desc": "Um sistema digital de relatórios que regista defeitos técnicos, trabalhos defeituosos ou em falta com provas fotográficas e os acompanha até à resolução."
       },
-      "step2": {
-        "title": "2. Evidência Visual",
-        "desc": "Inclua fotos de quaisquer problemas detectados."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados estes registos?)",
+        "desc": "Os registos são guardados na base de dados local sob o projeto ativo. Locais específicos podem ser detalhados na descrição."
       },
-      "step3": {
-        "title": "3. Filtragem",
-        "desc": "Filtre para acompanhar os problemas em aberto."
+      "q3": {
+        "title": "3. QUANDO? (Quando deve ser criado um relatório?)",
+        "desc": "Imediatamente quando um defeito ou problema de qualidade é identificado na obra. Uma vez corrigido, o estado muda para 'RESOLVIDO'."
+      },
+      "q4": {
+        "title": "4. COMO? (Como carregar fotos?)",
+        "desc": "Selecionando ficheiros do computador ou sem fios usando o uploader móvel de rede local (LAN) via código QR."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter relatórios de qualidade?)",
+        "desc": "Para garantir a conformidade com as especificações de construção, documentar a responsabilidade do subempreiteiro/trabalhador e evitar reclamações futuras."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir estes relatórios?)",
+        "desc": "Os diretores de obra, engenheiros de controle ou inspetores de qualidade podem abrir e fechar relatórios. Todas as alterações são registadas nos logs."
       }
     },
     "subcontractor": {
-      "title": "Guia do Subcontratado",
-      "step1": {
-        "title": "1. Salário Diário",
-        "desc": "Acompanhe os salários diários dos subcontratados."
+      "title": "Guia de Subempreiteiros (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a conta corrente de subempreiteiro?)",
+        "desc": "Um sistema de acompanhamento de conta corrente que monitoriza nomes, contactos, diárias e saldos de subempreiteiros (escavação, cofragem, catering, etc.) na sua obra."
       },
-      "step2": {
-        "title": "2. Pesquisa e filtro",
-        "desc": "Pesquise a lista de subcontratados."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os dados?)",
+        "desc": "Todas as fichas de subempreiteiros e transações de conta corrente são guardadas na base de dados local, isoladas e filtradas por projeto."
       },
-      "step3": {
-        "title": "3. Atualizar e editar",
-        "desc": "Atualize diários a qualquer momento."
+      "q3": {
+        "title": "3. QUANDO? (Quando registar os movimentos?)",
+        "desc": "Os movimentos devem ser registados imediatamente quando um auto de medição é aprovado ou um pagamento/adiantamento é efetuado. Os documentos de segurança devem ser mantidos atualizados."
+      },
+      "q4": {
+        "title": "4. COMO? (Como gerir autos de medição e pagamentos?)",
+        "desc": "Clique no botão de detalhes ao lado da ficha do subempreiteiro para aceder ao perfil; adicione autos e pagamentos para calcular automaticamente o saldo líquido."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter uma conta de subempreiteiro?)",
+        "desc": "Para evitar erros manuais em contas de subempreiteiros e aluguer de equipamentos, visualizar o saldo líquido em tempo real e rastrear datas de validade de documentos."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir as contas de subempreiteiros?)",
+        "desc": "Diretores de obra, contabilistas e gestores de projeto podem registar subempreiteiros, inserir autos/pagamentos e partilhar extratos pelo WhatsApp."
       }
     },
     "media": {
-      "title": "Guia de mídia",
-      "step1": {
-        "title": "1. Linha do tempo visual",
-        "desc": "Examine as imagens do canteiro de obras cronologicamente."
+      "title": "Guia da Galeria de Mídia (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a Galeria de Mídia?)",
+        "desc": "Um centro de arquivo visual que reúne todas as fotos carregadas durante as entregas de materiais (guias de remessa) ou relatórios de qualidade."
       },
-      "step2": {
-        "title": "2. Detalhes rápidos",
-        "desc": "Clique em qualquer foto para ver em tamanho grande."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os ficheiros?)",
+        "desc": "As imagens são guardadas de forma segura no disco local na pasta do seu projeto. A base de dados guarda apenas os caminhos relativos."
       },
-      "step3": {
-        "title": "3. Filtros de categoria",
-        "desc": "Filtre por nota de entrega ou relatórios de qualidade."
+      "q3": {
+        "title": "3. QUANDO? (Quando são adicionadas as imagens?)",
+        "desc": "São adicionadas simultaneamente quando são redigidos relatórios de progresso/qualidade ou guardadas guias de materiais."
+      },
+      "q4": {
+        "title": "4. COMO? (Como filtrar e pesquisar mídia?)",
+        "desc": "Pode pesquisar por título usando a barra de pesquisa e filtrar por ordem (data), tipo de conteúdo (guia / relatório) ou estado de foto."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter um arquivo de fotos?)",
+        "desc": "Para comprovar visualmente a qualidade da construção na obra, fazer backup digital das guias físicas e resolver rapidamente disputas retroativas."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode usar a galeria de mídia?)",
+        "desc": "Todos os membros autorizados da equipa do projeto, incluindo diretores de obra, engenheiros, pessoal administrativo e proprietários."
       }
     },
     "cash": {
-      "title": "Guia de gerenciamento do Vault",
-      "step1": {
-        "title": "1. Registros de receitas/despesas",
-        "desc": "Registre receitas e despesas."
+      "title": "Guia de Gestão de Caixa (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a gestão de caixa?)",
+        "desc": "Um sistema de controlo financeiro que regista todos os fluxos de entrada (receitas/adiantamentos) e saída (despesas/pagamentos a subempreiteiros)."
       },
-      "step2": {
-        "title": "2. Situação Financeira Mensal",
-        "desc": "Visualize o fluxo de caixa e o saldo mensal."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os registos?)",
+        "desc": "Os dados são guardados de forma segura na base de dados local. As transações podem ser filtradas por 'Sede' ou por obras específicas."
       },
-      "step3": {
-        "title": "3. Exportar",
-        "desc": "Baixe transações como PDF ou Excel."
+      "q3": {
+        "title": "3. QUANDO? (Quando devem ser registadas as transações?)",
+        "desc": "Imediatamente no momento em que um pagamento é feito, um adiantamento é concedido ou uma receita de medição é recebida."
+      },
+      "q4": {
+        "title": "4. COMO? (Como consultar e exportar dados de caixa?)",
+        "desc": "Filtre por período de datas, projeto, tipo de transação ou descrição; exporte relatórios instantaneamente para Excel, CSV, JSON ou PDF."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter um livro de caixa?)",
+        "desc": "Para monitorizar o fluxo de caixa em tempo real, ver o saldo líquido, gerir contas de colaboradores/subempreiteiros e evitar desvios orçamentais."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir as operações de caixa?)",
+        "desc": "Gestores de projeto, administrativos financeiros e diretores de obra podem lançar movimentos. As eliminações requerem confirmação."
       }
     },
     "recycle": {
-      "title": "Guia de lixo",
-      "step1": {
-        "title": "Como funciona?",
-        "desc": "Os registros excluídos são listados aqui com exclusão reversível."
+      "title": "Guia da Lixeira (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a Lixeira?)",
+        "desc": "Um sistema de recuperação que retém temporariamente obras, registros de pessoal, movimentos de caixa, guias de remessa, diários e relatórios de qualidade apagados por engano."
       },
-      "step2": {
-        "title": "Recuperação de dados",
-        "desc": "Use o botão restaurar para recuperar os registros."
+      "q2": {
+        "title": "2. ONDE? (Onde ficam os dados eliminados?)",
+        "desc": "Os dados eliminados não são apagados permanentemente. São marcados com um sinalizador de exclusão lógica na base de dados local e listados aqui."
       },
-      "step3": {
-        "title": "Separação de Projetos",
-        "desc": "Filtre seu lixo por projetos."
+      "q3": {
+        "title": "3. QUANDO? (Quando posso restaurar os dados?)",
+        "desc": "Pode restaurar qualquer item apagado a qualquer momento após a sua eliminação. Não existe limite de tempo ou ciclo de limpeza automática."
+      },
+      "q4": {
+        "title": "4. COMO? (Como restaurar e procurar dados?)",
+        "desc": "Clique no botão 'Restaurar' no lado direito da lista para recuperar os dados em segundos. Pode filtrar por data, tipo de registro e projeto."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que a Lixeira é necessária?)",
+        "desc": "Projetada para evitar a perda definitiva de dados devido a exclusões acidentais no ritmo intenso da obra e para manter a rastreabilidade total."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode recuperar dados?)",
+        "desc": "Gestores de obra autorizados, engenheiros ou proprietários da conta com privilégios de exclusão/restauração podem iniciar a recuperação."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Guia de produção"
     },
     "subcontractor_profile": {
-      "title": "Guia de extrato de subcontratante",
-      "step1": {
-        "title": "1. Adicionar pagamentos por progresso",
-        "desc": "Insira aqui o trabalho realizado pelo subcontratante na obra e os respetivos montantes. Isto aumenta as contas a receber do subcontratante (dívida da empresa), mas não causa uma saída de dinheiro da caixa."
+      "title": "Guia de Detalhes & Extrato de Subempreiteiro (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é o extrato de subempreiteiro?)",
+        "desc": "Um detalhamento de datas e notas sobre os trabalhos realizados (autos de medição) e pagamentos/adiantamentos feitos ao subempreiteiro."
       },
-      "step2": {
-        "title": "2. Pagamentos integrados na caixa",
-        "desc": "Registe aqui os pagamentos em numerário e adiantamentos efetuados ao subcontratante. Isto reduz o saldo do subcontratante e cria automaticamente uma saída de dinheiro na Caixa."
+      "q2": {
+        "title": "2. ONDE? (Onde são guardadas as transações?)",
+        "desc": "As transações de conta corrente são guardadas no banco de dados local. Os pagamentos entram automaticamente no Livro de Caixa."
       },
-      "step3": {
-        "title": "3. Saldo líquido da conta",
-        "desc": "Mostra a sua dívida líquida atual para com o subcontratante, calculada subtraindo os pagamentos efetuados do total de pagamentos por progresso ganhos."
+      "q3": {
+        "title": "3. QUANDO? (Quando adicionar autos e pagamentos?)",
+        "desc": "Os autos de medição devem ser lançados quando o subempreiteiro conclui a etapa, e os pagamentos registados no momento do desembolso."
+      },
+      "q4": {
+        "title": "4. COMO? (Como exportar e partilhar pelo WhatsApp?)",
+        "desc": "Gere relatórios usando filtros de datas, descarregue em PDF/Excel com um clique ou envie diretamente pelo WhatsApp."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter um extrato detalhado?)",
+        "desc": "Para evitar discrepâncias nas contas e pagamentos duplicados com os subempreiteiros, controlando o saldo real de dívida da empresa."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir esta página de perfil?)",
+        "desc": "Diretores de obra, coordenadores de projeto e contabilistas autorizados podem registar ou apagar autos e pagamentos."
+      }
+    },
+    "logs": {
+      "title": "Guia de Logs do Sistema (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que são logs do sistema?)",
+        "desc": "Um sistema de diário digital que regista cronologicamente operações críticas na base de dados (criar, atualizar, apagar), eventos em segundo plano e erros."
+      },
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os logs?)",
+        "desc": "Os logs do sistema são guardados localmente no seu disco. Estão offline e nunca são enviados para servidores externos."
+      },
+      "q3": {
+        "title": "3. QUANDO? (Quando são criados os logs?)",
+        "desc": "Escritos autonomamente com precisão de milissegundos no exato momento em que um utilizador faz uma alteração ou ocorre um erro."
+      },
+      "q4": {
+        "title": "4. COMO? (Como inspecionar os logs?)",
+        "desc": "Use a barra de pesquisa ou filtre por tipo para ver Info (azul), DB Criar (verde), DB Atualizar (amarelo) ou DB Apagar/Erro (vermelho)."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter logs do sistema?)",
+        "desc": "Para rastrear retrospectivamente as alterações dos utilizadores (logs de auditoria), diagnosticar erros e garantir a integridade da segurança."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode aceder aos logs?)",
+        "desc": "Apenas o administrador do computador ou técnicos de suporte autorizados com acesso físico ao PC podem ler estes registos."
+      }
+    },
+    "bulk": {
+      "title": "Guia de Folhas de Ponto Coletivas (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é a folha de ponto coletiva?)",
+        "desc": "Um sistema rápido de entrada autónomo que permite registar dados de ponto (salários, horas extras, notas) para vários colaboradores no mesmo dia e obra de uma só vez."
+      },
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os pontos?)",
+        "desc": "Os registos de ponto de todos os operários selecionados são guardados como linhas separadas na base de dados, atualizando as suas contas correntes."
+      },
+      "q3": {
+        "title": "3. QUANDO? (Quando devem ser registradas?)",
+        "desc": "No fim do dia, no fim do turno ou antes dos ciclos de pagamentos para um acompanhamento rápido de toda a força de trabalho ativa."
+      },
+      "q4": {
+        "title": "4. COMO? (Como registar folhas de ponto coletivas?)",
+        "desc": "Selecione o pessoal à esquerda (com pesquisa e 'Selecionar tudo'), indique data, tipo de dia e horas extras à direita, e clique em 'Guardar tudo'."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que usar a entrada coletiva?)",
+        "desc": "Para eliminar a tarefa fastidiosa de introduzir folhas de ponto uma a uma para dezenas de colaboradores em obras grandes, poupando tempo."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir folhas de ponto coletivas?)",
+        "desc": "Diretores de obra, apontadores, administrativos ou gestores de projeto autorizados podem efetuar lançamentos coletivos."
+      }
+    },
+    "worker_profile": {
+      "title": "Guia de Detalhes & Extrato de Funcionário (5W1H)",
+      "q1": {
+        "title": "1. O QUÊ? (O que é o extrato do funcionário?)",
+        "desc": "Um extrato contendo o detalhamento dos dias trabalhados (ponto), salários adquiridos, adiantamentos recebidos e histórico de folgas."
+      },
+      "q2": {
+        "title": "2. ONDE? (Onde são guardados os dados?)",
+        "desc": "Todos os registos de ponto, adiantamentos e folgas são guardados no banco de dados local. Os pagamentos são integrados no Livro de Caixa."
+      },
+      "q3": {
+        "title": "3. QUANDO? (Quando lançar pontos e adiantamentos?)",
+        "desc": "As presenças são registadas diariamente após o turno. Os adiantamentos ou pagamentos semanais são registados na data do pagamento."
+      },
+      "q4": {
+        "title": "4. COMO? (Como exportar e partilhar pelo WhatsApp?)",
+        "desc": "Use os filtros de datas para gerar o extrato, descarregue em PDF/Excel com um clique ou envie diretamente ao funcionário pelo WhatsApp."
+      },
+      "q5": {
+        "title": "5. PORQUÊ? (Por que manter um extrato detalhado do pessoal?)",
+        "desc": "Para resolver de forma definitiva conflitos salariais ou de adiantamentos no fim do mês e comprovar o histórico de pagamentos."
+      },
+      "q6": {
+        "title": "6. QUEM? (Quem pode gerir a página de perfil do funcionário?)",
+        "desc": "Diretores de obra, gestores de projeto ou contabilistas autorizados podem lançar ou apagar presenças, adiantamentos e folgas."
       }
     }
   },
@@ -1166,5 +1380,46 @@
     "Yıllık": "Anual",
     "Mazeret": "Desculpa",
     "Sağlık": "Médico"
+  },
+  "isg": {
+    "section_title": "SST (Segurança e Saúde no Trabalho)",
+    "start_date": "Data de Início SST",
+    "expiry_date": "Data de Expiração SST",
+    "badge_valid": "SST Válido",
+    "badge_approaching": "SST Próximo",
+    "badge_expired": "SST Expirado",
+    "badge_undefined": "SST Indefinido",
+    "update_btn": "Atualizar SST",
+    "update_title": "Atualizar Datas SST",
+    "update_success": "Datas SST atualizadas com sucesso.",
+    "days": "dias"
+  },
+  "bulk_timesheet": {
+    "title": "Entrada em Massa de Folha de Ponto",
+    "nav_title": "Ponto em Massa",
+    "select_workers": "Selecionar Trabalhadores",
+    "select_all": "Selecionar Todos",
+    "deselect_all": "Desselecionar Todos",
+    "selected_count": "{{count}} trabalhadores selecionados",
+    "form_title": "Detalhes da Folha de Ponto",
+    "save_btn": "Salvar Todos",
+    "save_success": "Folha de ponto salva com sucesso para {{count}} trabalhadores.",
+    "save_error": "Alguns registros falharam. Sucesso: {{success}}, Erro: {{error}}",
+    "no_workers_selected": "Selecione pelo menos um trabalhador.",
+    "no_workers": "Nenhum trabalhador ativo encontrado.",
+    "search_workers": "Buscar trabalhadores...",
+    "preview_wage": "Salário Estimado",
+    "guide_step1_title": "1. Seleção de Pessoal",
+    "guide_step1_desc": "Selecione os trabalhadores no painel esquerdo. Use 'Selecionar Todos' para selecionar todos de uma vez.",
+    "guide_step2_title": "2. Detalhes da Folha de Ponto",
+    "guide_step2_desc": "Insira detalhes como data, tipo de trabalho e horas extras. Estes serão aplicados a todos os selecionados.",
+    "guide_step3_title": "3. Salvamento em Massa",
+    "guide_step3_desc": "Clique em 'Salvar Todos' para criar registros de folha de ponto para todos os trabalhadores selecionados."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importar (Excel/CSV)",
+    "export_btn": "Exportar",
+    "download_template": "Baixar Modelo",
+    "import_success": "{{count}} registros de subempreiteiro importados com sucesso."
   }
 }

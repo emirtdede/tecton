@@ -1,7 +1,13 @@
 # Değişiklik Geçmişi
 
+## 2026-06-17
+- [Eklenen Özellik] İşçi ve Taşeron profillerine "İSG (İş Sağlığı ve Güvenliği)" modülü eklendi. Renk kodlu uyarı sistemiyle yaklaşan veya süresi dolan sertifikalar kolayca takip edilebilir hale getirildi.
+- [Eklenen Özellik] Saha puantörlerinin işini hızlandıran "Çoklu Puantaj (Bulk Timesheet)" sayfası eklendi. Tek ekrandan birden fazla personeli seçip aynı anda yevmiye girişi yapılabilmesi sağlandı.
+- [Eklenen Özellik] Taşeron listeleri için "Toplu İçe / Dışa Aktarım" (Excel, CSV) desteği eklendi.
+- [Eklenen Özellik] Uygulamanın Çoklu Dil (i18n) kapasitesi 19 farklı dile genişletildi (Türkçe, İngilizce, Almanca, İspanyolca, Fransızca, İtalyanca, Arapça, Rusça vb.). Tüm çeviriler manuel olarak yerel dile uygun hale getirildi.
+- [Eklenen Özellik] Sistem logları modülüne İSG güncellemeleri için özel Türkçe log mesajları eklendi.
+
 ## 2026-06-16
-- [Eklenen Özellik] Taşeron detaylarının, hak ediş ve ödeme işlemlerinin cari hesap formatında incelenebildiği yeni "Taşeron Profili (Subcontractor Profile)" ekranı geliştirildi.
 - [Düzeltme] İşçi Profil ekranındaki dolgular (padding) ve profil kartı dizilimi görsel olarak iyileştirildi.
 - [Düzeltme] Kılavuz çekmecesindeki (GuideDrawer) açıklama metinlerinin boş olduğu durumlardaki boşluk hatası giderildi.
 - [Düzeltme] Özel takvim bileşenindeki (CustomDatePicker) (X) temizleme butonunun takvim ikonuyla çakışması sorunu giderildi ve zorunlu alanlarda da gösterilmesi sağlandı.

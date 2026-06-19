@@ -42,6 +42,8 @@
 | daily_wage   | REAL          | NOT NULL         |
 | group_id     | INTEGER       | FK → worker_groups.id |
 | start_date   | DATE          |                  |
+| isg_start_date | DATE        | İSG Başlangıç    |
+| isg_bitis_tarihi| DATE       | İSG Bitiş        |
 | status       | TEXT          | DEFAULT 'active' |
 | extra_data   | TEXT          | JSON (Esnek Metadatalar) |
 | is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
@@ -101,12 +103,131 @@
 | new_values   | TEXT          | JSON (Yeni değerler)   |
 | created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
 
+### subcontractor_ledgers (Taşeron ve Alt Yüklenici Cari)
+| Kolon          | Tip           | Özellik                |
+|----------------|---------------|------------------------|
+| id             | INTEGER       | PK, AUTOINCREMENT      |
+| project_id     | INTEGER       | FK → projects.id       |
+| name           | TEXT          | NOT NULL               |
+| service_type   | TEXT          | NOT NULL               |
+| phone          | TEXT          |                        |
+| daily_wage     | REAL          | NOT NULL               |
+| status         | TEXT          | DEFAULT 'active'       |
+| isg_start_date | DATE          | İSG Başlangıç          |
+| isg_expiry_date| DATE          | İSG Bitiş              |
+| is_deleted     | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at     | TIMESTAMP     |                        |
+| created_at     | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### projects (Şantiye Yönetimi)
+| Kolon        | Tip           | Özellik                |
+|--------------|---------------|------------------------|
+| id           | INTEGER       | PK, AUTOINCREMENT      |
+| name         | TEXT          | NOT NULL               |
+| location     | TEXT          |                        |
+| status       | TEXT          | DEFAULT 'active'       |
+| sort_order   | INTEGER       | DEFAULT 0              |
+| is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at   | TIMESTAMP     |                        |
+| created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### production_records (İmalat Kayıtları)
+| Kolon        | Tip           | Özellik                |
+|--------------|---------------|------------------------|
+| id           | INTEGER       | PK, AUTOINCREMENT      |
+| project_id   | INTEGER       | FK → projects.id       |
+| item_name    | TEXT          | NOT NULL               |
+| quantity     | REAL          | NOT NULL               |
+| unit         | TEXT          | NOT NULL               |
+| notes        | TEXT          |                        |
+| record_date  | DATE          | NOT NULL               |
+| is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at   | TIMESTAMP     |                        |
+| created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### materials (Malzeme ve İrsaliye Kayıtları)
+| Kolon          | Tip           | Özellik                |
+|----------------|---------------|------------------------|
+| id             | INTEGER       | PK, AUTOINCREMENT      |
+| project_id     | INTEGER       | FK → projects.id       |
+| supplier       | TEXT          | NOT NULL               |
+| material_type  | TEXT          | NOT NULL               |
+| quantity       | REAL          | NOT NULL               |
+| unit           | TEXT          | NOT NULL               |
+| receipt_number | TEXT          |                        |
+| receipt_date   | DATE          | NOT NULL               |
+| photo_path     | TEXT          | İrsaliye fotoğraf yolu |
+| notes          | TEXT          |                        |
+| is_deleted     | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at     | TIMESTAMP     |                        |
+| created_at     | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### daily_journals (Şantiye Günlük Jurnal)
+| Kolon        | Tip           | Özellik                |
+|--------------|---------------|------------------------|
+| id           | INTEGER       | PK, AUTOINCREMENT      |
+| project_id   | INTEGER       | FK → projects.id       |
+| journal_date | DATE          | UNIQUE (project_id ile), NOT NULL |
+| weather_temp | REAL          | Hava sıcaklığı (OpenWeather) |
+| weather_desc | TEXT          | Hava durumu açıklaması |
+| weather_icon | TEXT          | Hava durumu ikonu      |
+| notes        | TEXT          |                        |
+| worker_count | INTEGER       | O gün çalışan işçi sayısı |
+| is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at   | TIMESTAMP     |                        |
+| created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### quality_reports (Kalite Raporları ve Tutanaklar)
+| Kolon        | Tip           | Özellik                |
+|--------------|---------------|------------------------|
+| id           | INTEGER       | PK, AUTOINCREMENT      |
+| project_id   | INTEGER       | FK → projects.id       |
+| title        | TEXT          | NOT NULL               |
+| description  | TEXT          |                        |
+| status       | TEXT          | DEFAULT 'open'         |
+| photo_path   | TEXT          | Tutanak/Hata fotoğrafı |
+| report_date  | DATE          | NOT NULL               |
+| is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at   | TIMESTAMP     |                        |
+| created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### subcontractor_transactions (Taşeron İşlemleri)
+| Kolon            | Tip           | Özellik                |
+|------------------|---------------|------------------------|
+| id               | INTEGER       | PK, AUTOINCREMENT      |
+| subcontractor_id | INTEGER       | FK → subcontractor_ledgers.id |
+| trans_date       | DATE          | NOT NULL               |
+| type             | TEXT          | NOT NULL (odeme, avans vb.) |
+| amount           | REAL          | NOT NULL               |
+| description      | TEXT          |                        |
+| project_id       | INTEGER       | FK → projects.id       |
+| linked_cash_id   | INTEGER       | FK → cash_register.id  |
+| is_deleted       | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at       | TIMESTAMP     |                        |
+| created_at       | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
+### worker_leaves (Personel İzinleri)
+| Kolon        | Tip           | Özellik                |
+|--------------|---------------|------------------------|
+| id           | INTEGER       | PK, AUTOINCREMENT      |
+| worker_id    | INTEGER       | FK → workers.id        |
+| project_id   | INTEGER       | FK → projects.id       |
+| start_date   | DATE          | NOT NULL               |
+| end_date     | DATE          | NOT NULL               |
+| type         | TEXT          | NOT NULL (Ücretli, Ücretsiz vb.) |
+| description  | TEXT          |                        |
+| is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
+| deleted_at   | TIMESTAMP     |                        |
+| created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
+
 ## İlişkiler
-- workers → timesheets (1:N)
-- workers → transactions (1:N)
+- projects → workers, timesheets, transactions, cash_register, production_records, materials, daily_journals, quality_reports, subcontractor_ledgers, subcontractor_transactions, worker_leaves, audit_logs (1:N)
+- workers → timesheets, transactions, worker_leaves (1:N)
 - work_types → timesheets (1:N)
 - worker_groups → workers (1:N)
+- subcontractor_ledgers → subcontractor_transactions (1:N)
 - cash_register ↔ transactions (1:1 Opsiyonel Kasa Otonomisi)
+- cash_register ↔ subcontractor_transactions (1:1 Opsiyonel Kasa Otonomisi)
 
 ## İndeksler
 - workers.group_id (Gruba göre filtreleme ve raporlama için)
@@ -117,3 +238,5 @@
 - transactions.trans_date (Aylık ödeme analizleri için)
 - transactions.linked_cash_id (Otonom işlem silme için)
 - audit_logs.table_name, audit_logs.record_id (Geçmiş aramaları için)
+- projects.id (Şantiye tabanlı tüm raporlamalar için)
+- daily_journals (project_id, journal_date) (Aynı şantiyede günde bir jurnal için UNIQUE constraint)

@@ -498,6 +498,36 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
               </div>
             )}
 
+            {/* ISG Badge */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}>
+              {(() => {
+                const expiryDate = subcontractor.isg_expiry_date;
+                if (!expiryDate) {
+                  return (
+                    <span style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                      🛡️ {t('isg.badge_undefined', 'İSG Tanımsız')}
+                    </span>
+                  );
+                }
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const expiry = new Date(expiryDate); expiry.setHours(0, 0, 0, 0);
+                const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                let badgeBg, badgeColor, badgeText, badgeIcon;
+                if (diffDays < 0) {
+                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = '🔴'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                } else if (diffDays <= 30) {
+                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = '🟡'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                } else {
+                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = '🟢'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                }
+                return (
+                  <span style={{ fontSize: '0.8rem', background: badgeBg, color: badgeColor, padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                    {badgeIcon} {badgeText}
+                  </span>
+                );
+              })()}
+            </div>
+
             <hr style={{ borderTop: '1px solid var(--glass-border)', margin: '1rem 0' }} />
             
             {/* Ozet Kartlari */}
@@ -743,14 +773,20 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       <GuideDrawer 
         isOpen={helpOpen} 
         onClose={() => setHelpOpen(false)} 
-        title={t('guides.subcontractor_profile.title', 'Taşeron Ekstresi Rehberi')} 
+        title={t('guides.subcontractor_profile.title', 'Taşeron Detay & Ekstre Rehberi (5N1K)')} 
         desc="" 
-        h1={t('guides.subcontractor_profile.step1.title', '1. Hakediş Ekleme')} 
-        p1={t('guides.subcontractor_profile.step1.desc', 'Taşeronun şantiyede yaptığı işleri ve tutarlarını buradan girin. Bu işlem taşeronun alacağını (şirketin borcunu) artırır ancak kasadan nakit çıkışı yapmaz.')} 
-        h2={t('guides.subcontractor_profile.step2.title', '2. Kasa Entegrasyonlu Ödemeler')} 
-        p2={t('guides.subcontractor_profile.step2.desc', 'Taşerona yaptığınız nakit ödemeleri ve avansları buradan kaydedin. Bu işlem taşeronun bakiyesini düşürür ve otomatik olarak Kasa\'dan nakit çıkışı yapar.')} 
-        h3={t('guides.subcontractor_profile.step3.title', '3. Net Cari Bakiye')} 
-        p3={t('guides.subcontractor_profile.step3.desc', 'Toplam hakedişten yapılan ödemelerin çıkarılmasıyla elde edilen, taşerona olan güncel net borcunuzu gösterir.')} 
+        h1={t('guides.subcontractor_profile.q1.title', '1. NE? (Taşeron Detay/Ekstre Takibi Nedir?)')} 
+        p1={t('guides.subcontractor_profile.q1.desc', 'Taşeronun yaptığı işlerin (hakediş) ve yapılan ödemelerin/avansların tarih ve not bazlı detaylı dökümüdür.')} 
+        h2={t('guides.subcontractor_profile.q2.title', '2. NEREDE? (İşlemler Nerede Görünür ve Saklanır?)')} 
+        p2={t('guides.subcontractor_profile.q2.desc', 'Cari hesap hareketleri yerel veritabanında saklanır. Yapılan ödemeler otomatik olarak Kasa Yönetimi sayfasına da entegre edilir.')} 
+        h3={t('guides.subcontractor_profile.q3.title', '3. NE ZAMAN? (Hakediş ve Ödemeler Ne Zaman Eklenmelidir?)')} 
+        p3={t('guides.subcontractor_profile.q3.desc', 'Sahada taşeron tarafından iş teslimi yapıldığında hakediş, ödeme yapıldığında ise ödeme/avans kaydı eşzamanlı girilmelidir.')} 
+        h4={t('guides.subcontractor_profile.q4.title', '4. NASIL? (Dışa Aktarma ve WhatsApp Paylaşımı Nasıl Yapılır?)')} 
+        p4={t('guides.subcontractor_profile.q4.desc', 'Sayfa üstündeki tarih aralığı filtrelerini kullanarak rapor oluşturabilir, tek tuşla PDF/Excel formatında indirebilir veya WhatsApp\'tan gönderebilirsiniz.')} 
+        h5={t('guides.subcontractor_profile.q5.title', '5. NEDEN? (Neden Detaylı Cari Ekstre Tutulmalıdır?)')} 
+        p5={t('guides.subcontractor_profile.q5.desc', 'Taşeronla aranızdaki hesap uyuşmazlıklarını ve mükerrer ödemeleri önlemek, firmanın net borç yükümlülüklerini hatasız raporlamak için tutulur.')} 
+        h6={t('guides.subcontractor_profile.q6.title', '6. KİM? (Bu Profil Sayfasını Kimler Yönetebilir?)')} 
+        p6={t('guides.subcontractor_profile.q6.desc', 'Yetkilendirilmiş şantiye şefleri, proje koordinatörleri ve muhasebe sorumluları hakediş/ödeme ekleyebilir veya silebilir.')} 
       />
     </div>
   );

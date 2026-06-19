@@ -410,7 +410,9 @@
     "details": "Szczegóły",
     "start_date": "Data początkowa",
     "end_date": "Data końcowa",
-    "amount": "Kwota"
+    "amount": "Kwota",
+    "records": "Rekordów",
+    "pagination_info": "Strona {{page}} / {{total}} ({{records}} Rekordów)"
   },
   "worker_modal": {
     "title_new": "Dodaj",
@@ -586,7 +588,10 @@
     "help_p2": "Kliknij dowolne zdjęcie, aby zobaczyć je w pełnym rozmiarze i wyświetlić powiązany dowód dostawy lub raport jakości.",
     "help_h3": "3. Filtry kategorii",
     "help_p3": "Filtruj multimedia według typu (zdjęcia z dowodu dostawy a zdjęcia z kontroli jakości) lub wyszukuj według notatek.",
-    "no_image": "Brak obrazu"
+    "no_image": "Brak obrazu",
+    "view_list": "Widok Listy",
+    "view_grid": "Widok Galerii",
+    "item_type": "Typ zawartości"
   },
   "subcontractor": {
     "title": "🚜 Księgi podwykonawców",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Przewodnik zarządzania placem budowy",
-      "step1": {
-        "title": "1. Aktywny plac budowy",
-        "desc": "Wybierz projekt, który chcesz ustawić jako aktywny."
+      "title": "Szablony Budów i Obszarów Roboczych (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest zarządzanie budowami?)",
+        "desc": "Panel administracyjny pozwalający definiować fizyczne lokalizacje Twoich projektów w celu separowania danych na poziomie danej budowy."
       },
-      "step2": {
-        "title": "2. Lokalizacja i pogoda",
-        "desc": "Określ lokalizację, aby automatycznie otrzymywać codzienną prognozę pogody."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane dane o budowach?)",
+        "desc": "Wszystkie utworzone budowy i powiązane z nimi operacje są przechowywane w lokalnej bazie danych."
       },
-      "step3": {
-        "title": "3. Wyszukiwanie i stronicowanie",
-        "desc": "Natychmiastowe przeszukiwanie placów budowy."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy utworzyć nową budowę?)",
+        "desc": "Należy ją zarejestrować w systemie natychmiast po fizycznym otwarciu nowego placu budowy lub przed przypisaniem podwykonawców/personelu."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak wybierać, sortować i zarządzać budowami?)",
+        "desc": "Dodaj budowę za pomocą formularza, zmieniaj kolejność na liście metodą przeciągnij i upuść i kliknij 'Wybierz obszar roboczy', aby ją aktywować."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego tworzyć osobne obszary dla budów?)",
+        "desc": "Aby prowadzić dzienniki, taryfy obecności, operacje kasowe i magazynowe w sposób niezależny, bez mieszania wpisów."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać listą budów?)",
+        "desc": "Właściciele firmy, główni koordynatorzy oraz kadra zarządzająca w biurze głównym mogą tworzyć, edytować i usuwać budowy."
       }
     },
     "personnel": {
-      "title": "Przewodnik zarządzania personelem",
-      "step1": {
-        "title": "1. Dodaj personel i Excel",
-        "desc": "Użyj szablonu programu Excel, aby zbiorczo przesłać listę."
+      "title": "Zarządzanie Personelem (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest zarządzanie personelem?)",
+        "desc": "System śledzenia obecności, zaliczek, zarobków oraz ważności dokumentów BHP pracowników fizycznych i umysłowych na budowie."
       },
-      "step2": {
-        "title": "2. Analiza grupowa",
-        "desc": "Analizuj wydatki według kategorii grupowych."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są przechowywane dane personelu?)",
+        "desc": "Karty pracowników, grupy oraz operacje finansowe są zapisywane w lokalnej bazie danych i filtrowane na podstawie wybranego projektu."
       },
-      "step3": {
-        "title": "3. Karta wyników i wyciąg z konta",
-        "desc": "Kliknij nazwę, aby zobaczyć wynik."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy rejestrować pracowników i uzupełniać taryfę?)",
+        "desc": "Nowych pracowników rejestruj przy zatrudnieniu. Wpisy o obecności i zaliczkach wprowadzaj codziennie lub cotygodniowo."
       },
-      "step4": {
-        "title": "4. Zarządzanie uprawnieniami",
-        "desc": "Rejestruj dni, w których personel przebywa na zwolnieniu lekarskim lub urlopie."
+      "q4": {
+        "title": "4. JAK? (Jak dodawać pracowników i importować z Excela?)",
+        "desc": "Kliknij 'Dodaj pracownika' w prawym górnym rogu; do masowej rejestracji pobierz szablon i zaimportuj plik Excel jednym kliknięciem."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego szczegółowo monitorować personel?)",
+        "desc": "Aby zapobiegać błędom w wypłatach, nie przegapić terminów badań/szkoleń BHP i kontrolować koszty pracy na bieżąco."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać listą personelu?)",
+        "desc": "Menedżerowie projektu, kierownicy budowy i pracownicy działu kadr mogą dodawać pracowników, tworzyć grupy i zarządzać obecnością."
       }
     },
     "quantity": {
-      "title": "Przewodnik po produkcji",
-      "step1": {
-        "title": "1. Dokumentacja produkcyjna",
-        "desc": "Rekordowa dzienna produkcja."
+      "title": "Przewodnik po Obmiarach i Postępie (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest rejestracja obmiarów?)",
+        "desc": "System śledzenia mierzący fizyczny postęp projektu poprzez rejestrowanie ilości i jednostek (m², m³, tony itp.) wykonanych robót."
       },
-      "step2": {
-        "title": "2. Archiwum i szczegóły",
-        "desc": "Twórz notatki, aby zachować chronologiczne archiwum."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane dane o postępie?)",
+        "desc": "Dane są przechowywane w lokalnej bazie danych. Dokładne lokalizacje, takie jak bloki lub piętra, można opisać w uwagach."
       },
-      "step3": {
-        "title": "3. Wyszukiwanie i filtry",
-        "desc": "Filtruj według zakresu dat lub jednostki."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy rejestrować obmiary?)",
+        "desc": "W miarę kończenia codziennych prac lub sporządzania obliczeń obmiarowych, należy je wprowadzać codziennie bez opóźnień."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak przeglądać dane o postępie?)",
+        "desc": "Użyj paska wyszukiwania, aby szukać po nazwie roboty lub uwagach; filtruj listę według zakresu dat i typów jednostek."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego prowadzić rejestr obmiarów?)",
+        "desc": "Aby obliczać stopień zaawansowania projektu, weryfikować płatności podwykonawców i kontrolować harmonogram."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może wprowadzać obmiary?)",
+        "desc": "Kierownicy budowy, inżynierowie obmiarów lub nadzorcy projektu mogą dodawać nowe rekordy obmiarowe."
       }
     },
     "delivery": {
-      "title": "Przewodnik po dowodach dostawy",
-      "step1": {
-        "title": "1. Dostawca i materiał",
-        "desc": "Zapisz nazwy dostawców i materiałów."
+      "title": "Przewodnik po WZ-kach i Materiałach (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest rejestracja materiałów?)",
+        "desc": "System śledzenia zapisujący cyfrowo ilość, jednostkę (m³, tona, kg itp.), nazwę dostawcy oraz fizyczne dokumenty WZ materiałów przyjętych na budowie."
       },
-      "step2": {
-        "title": "2. Dokumentuj zdjęcia",
-        "desc": "Prześlij zdjęcia listów przewozowych do archiwum cyfrowego."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane dane?)",
+        "desc": "Dane są przechowywane w lokalnej bazie danych, natomiast zdjęcia dokumentów WZ są bezpiecznie zapisywane w lokalnym folderze projektu."
       },
-      "step3": {
-        "title": "3. Inteligentne wyszukiwanie",
-        "desc": "Wyszukaj numery listów przewozowych lub dostawców."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy rejestrować dostawy?)",
+        "desc": "Natychmiast po dostarczeniu materiałów przez pojazdy dostawcy na budowę i podpisaniu fizycznego dokumentu WZ."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak przesyłać zdjęcia dokumentów?)",
+        "desc": "Wybierając pliki z komputera lub skanując kod QR aparatem w telefonie, aby przesłać je bezprzewodowo za pośrednictwem sieci lokalnej (LAN)."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego prowadzić rejestr materiałów?)",
+        "desc": "Aby weryfikować faktury dostawców, kontrolować zużycie materiałów (beton, stal itp.) oraz zapobiegać stratom lub kradzieżom."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może wprowadzać WZ-ki?)",
+        "desc": "Kierownicy budowy, magazynierzy, inżynierowie budowy lub personel administracyjny mogą dodawać nowe dokumenty WZ."
       }
     },
     "journal": {
-      "title": "Przewodnik po dzienniku",
-      "step1": {
-        "title": "1. Pogoda",
-        "desc": "Rejestruj codzienną pogodę i ogólny stan."
+      "title": "Przewodnik po Dzienniku Budowy (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest dziennik budowy?)",
+        "desc": "Dziennik budowy to oficjalny rejestr, w którym chronologicznie zapisuje się codzienne warunki pogodowe, liczbę aktywnych pracowników oraz wszystkie działania na budowie."
       },
-      "step2": {
-        "title": "2. Zapis chronologiczny",
-        "desc": "Rejestruj ważne wydarzenia w odpowiedniej kolejności."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane te rekordy?)",
+        "desc": "Rekordy są zapisywane w lokalnej bazie danych SQLite i filtrowane na podstawie aktywnego projektu."
       },
-      "step3": {
-        "title": "3. Historia",
-        "desc": "Z łatwością przeglądaj poprzednie dni."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy prowadzić dziennik?)",
+        "desc": "Należy go uzupełniać na koniec każdego dnia pracy lub na bieżąco. Filtry daty ułatwiają wyszukiwanie w historii."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak są pobierane pogoda i liczba pracowników?)",
+        "desc": "Pogoda jest automatycznie pobierana z OpenWeather na podstawie lokalizacji projektu. Liczba pracowników jest obliczana z dziennych kart pracy."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego warto prowadzić dziennik?)",
+        "desc": "Aby stworzyć historyczne, oficjalne i weryfikowalne archiwum na potrzeby przyszłych sporów pracowniczych, płatności etapowych lub roszczeń podwykonawców."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać tymi wpisami?)",
+        "desc": "Kierownicy budowy lub upoważniony personel. Ze względu na integralność danych, edycja jest dozwolona tylko dla wpisu z bieżącego dnia."
       }
     },
     "quality": {
-      "title": "Przewodnik po jakości",
-      "step1": {
-        "title": "1. Raportuj statusy",
-        "desc": "Zaktualizuj status, gdy problem zostanie rozwiązany."
+      "title": "Przewodnik po Kontroli Jakości (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest kontrola jakości?)",
+        "desc": "Cyfrowy system raportowania, który rejestruje usterki techniczne, wadliwe lub brakujące prace budowlane wraz z dokumentacją zdjęciową i śledzi je aż do rozwiązania."
       },
-      "step2": {
-        "title": "2. Dowody wizualne",
-        "desc": "Dołącz zdjęcia wszelkich wykrytych problemów."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są przechowywane te raporty?)",
+        "desc": "Raporty są przechowywane w lokalnej bazie danych w ramach aktywnego projektu. Dokładne lokalizacje można opisać w szczegółach."
       },
-      "step3": {
-        "title": "3. Filtrowanie",
-        "desc": "Filtruj, aby śledzić otwarte problemy."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy utworzyć raport?)",
+        "desc": "Natychmiast po zidentyfikowaniu wady na budowie. Po naprawieniu problemu status zmienia się na 'ROZWIĄZANY'."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak przesyłać zdjęcia?)",
+        "desc": "Wybierając pliki z komputera lub bezprzewodowo za pomocą mobilnego uploader'a w sieci lokalnej (LAN) przez kod QR."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego warto prowadzić raporty jakości?)",
+        "desc": "Aby zagwarantować zgodność ze specyfikacjami budowlanymi, udokumentować odpowiedzialność podwykonawcy/pracownika za wadliwe wykonanie i zapobiec przyszłym roszczeniom."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać tymi raportami?)",
+        "desc": "Kierownicy budowy, inżynierowie nadzoru lub inspektorzy jakości. Wszystkie zmiany są rejestrowane w logach systemowych."
       }
     },
     "subcontractor": {
-      "title": "Przewodnik podwykonawcy",
-      "step1": {
-        "title": "1. Dzienna płaca",
-        "desc": "Śledź dzienne zarobki podwykonawców."
+      "title": "Przewodnik po Podwykonawcach (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest kartoteka podwykonawcy?)",
+        "desc": "System śledzenia rachunku bieżącego monitorujący nazwy, kontakty, stawki dzienne i salda finansowe podwykonawców (wykopy, zbrojenia, catering itp.) na Twojej budowie."
       },
-      "step2": {
-        "title": "2. Szukaj i filtruj",
-        "desc": "Przeszukaj listę podwykonawców."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane dane?)",
+        "desc": "Wszystkie karty podwykonawców i transakcje są przechowywane w lokalnej bazie danych, izolowane i filtrowane na poziomie konkretnego projektu."
       },
-      "step3": {
-        "title": "3. Aktualizuj i edytuj",
-        "desc": "Aktualizuj dzienniki codzienne w dowolnym momencie."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy wprowadzać transakcje?)",
+        "desc": "Transakcje należy rejestrować niezwłocznie po naliczeniu odbioru częściowego lub dokonaniu płatności/zaliczki. Dokumenty BHP również należy aktualizować na bieżąco."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak zarządzać odbiorami i płatnościami?)",
+        "desc": "Kliknij przycisk szczegółów obok karty podwykonawcy, aby przejść do profilu; dodawaj nowe odbiory i płatności, by automatycznie obliczyć saldo netto."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego prowadzić kartotekę podwykonawców?)",
+        "desc": "Aby wyeliminować błędy ręczne w rozliczeniach podwykonawców i wynajmu maszyn, widzieć saldo netto w czasie rzeczywistym i automatycznie śledzić ważność dokumentów BHP."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać kontami podwykonawców?)",
+        "desc": "Kierownicy budowy, księgowi i menedżerowie projektów mogą definiować podwykonawców, wprowadzać odbiory/płatności oraz udostępniać wyciągi przez WhatsApp."
       }
     },
     "media": {
-      "title": "Przewodnik multimedialny",
-      "step1": {
-        "title": "1. Wizualna oś czasu",
-        "desc": "Przeglądaj zdjęcia z placu budowy chronologicznie."
+      "title": "Przewodnik po Galerii Mediów (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest Galeria Mediów?)",
+        "desc": "Wizualne centrum archiwizacji, które gromadzi pod jednym dachem wszystkie zdjęcia przesłane podczas dostaw materiałów (wz-ki) lub raportów jakości."
       },
-      "step2": {
-        "title": "2. Szybkie szczegóły",
-        "desc": "Kliknij dowolne zdjęcie, aby wyświetlić je w pełnym rozmiarze."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są przechowywane pliki?)",
+        "desc": "Zdjęcia są bezpiecznie przechowywane na dysku lokalnym w folderze projektu. Baza danych zachowuje jedynie ich ścieżki względne."
       },
-      "step3": {
-        "title": "3. Filtry kategorii",
-        "desc": "Filtruj według dowodu dostawy lub raportów jakości."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy są dodawane zdjęcia?)",
+        "desc": "Są dodawane równolegle podczas wpisywania raportów postępu/jakości lub zapisywania dokumentów przyjęcia materiałów."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak filtrować i przeszukiwać media?)",
+        "desc": "Możesz wyszukiwać po tytule za pomocą paska wyszukiwania oraz filtrować według sortowania (data), typu treści (wz-ka / raport) lub statusu zdjęcia."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego warto prowadzić archiwum zdjęć?)",
+        "desc": "Aby wizualnie potwierdzić jakość wykonania prac na budowie, cyfrowo zabezpieczyć fizyczne wz-ki i szybko rozwiązywać spory."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może korzystać z galerii mediów?)",
+        "desc": "Wszyscy uprawnieni członkowie zespołu projektowego, w tym kierownicy budowy, inżynierowie nadzoru, personel administracyjny i inwestorzy."
       }
     },
     "cash": {
-      "title": "Przewodnik zarządzania skarbcem",
-      "step1": {
-        "title": "1. Ewidencja dochodów/wydatków",
-        "desc": "Rejestruj dochody i wydatki."
+      "title": "Przewodnik po Zarządzaniu Kasą (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest zarządzanie kasą?)",
+        "desc": "System śledzenia finansowego rejestrujący wszelkie wpływy gotówkowe (przychody/zaliczki) oraz wydatki (koszty/płatności dla podwykonawców) projektów."
       },
-      "step2": {
-        "title": "2. Miesięczna sytuacja finansowa",
-        "desc": "Przeglądaj miesięczne przepływy pieniężne i saldo."
+      "q2": {
+        "title": "2. GDRIE? (Gdzie są przechowywane zapisy kasowe?)",
+        "desc": "Dane są bezpiecznie przechowywane w lokalnej bazie danych. Transakcje można filtrować dla 'Centrali' lub poszczególnych budów."
       },
-      "step3": {
-        "title": "3. Eksportuj",
-        "desc": "Pobierz transakcje w formacie PDF lub Excel."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy rejestrować transakcje?)",
+        "desc": "Natychmiast po dokonaniu płatności, wypłaceniu zaliczki lub otrzymaniu płatności za etap robót."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak przeglądać i raportować dane kasowe?)",
+        "desc": "Filtruj według zakresu dat, projektu, typu transakcji lub opisu; eksportuj raporty natychmiast do formatów Excel, CSV, JSON lub PDF."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego warto prowadzić księgę kasową?)",
+        "desc": "Aby monitorować przepływy pieniężne w czasie rzeczywistym, sprawdzać stan salda netto, precyzyjnie rozliczać podwykonawców i unikać przekroczeń budżetu."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać operacjami kasowymi?)",
+        "desc": "Kierownicy projektów, personel finansowy oraz kierownicy budowy mogą dodawać transakcje. Usuwanie wymaga potwierdzenia."
       }
     },
     "recycle": {
-      "title": "Przewodnik po śmieciach",
-      "step1": {
-        "title": "Jak to działa?",
-        "desc": "Usunięte rekordy są tutaj wymienione z miękkim usunięciem."
+      "title": "Przewodnik po Koszu (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest Kosz?)",
+        "desc": "System odzyskiwania danych, który tymczasowo przechowuje przypadkowo usunięte budowy, wpisy personelu, transakcje kasowe, dokumenty WZ, dzienniki budowy i raporty jakości."
       },
-      "step2": {
-        "title": "Odzyskiwanie danych",
-        "desc": "Użyj przycisku przywracania, aby odzyskać rekordy."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie trafiają usunięte dane?)",
+        "desc": "Usunięte dane nie są kasowane trwale. Są oznaczane flagą logicznego usunięcia (soft-delete) w lokalnej bazie danych i listowane na tej stronie."
       },
-      "step3": {
-        "title": "Rozdzielenie projektu",
-        "desc": "Filtruj kosz według projektów."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy mogę przywrócić dane?)",
+        "desc": "Możesz przywrócić dowolny usunięty element w dowolnym momencie. Nie ma limitu czasu ani automatycznego opróżniania kosza."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak przywracać i wyszukiwać dane?)",
+        "desc": "Kliknij przycisk 'Przywróć' po prawej stronie listy, aby odzyskać wpis w kilka sekund. Możesz filtrować po dacie, typie rekordu i projekcie."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego kosz jest potrzebny?)",
+        "desc": "Zaprojektowany, aby zapobiegać bezpowrotnej utracie danych w wyniku przypadkowych usunięć w trakcie intensywnych prac na budowie."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może odzyskać dane?)",
+        "desc": "Uprawnieni kierownicy budowy, inżynierowie lub właściciele konta posiadający uprawnienia do usuwania/przywracania w aplikacji."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Przewodnik po produkcji"
     },
     "subcontractor_profile": {
-      "title": "Przewodnik po wyciągu podwykonawcy",
-      "step1": {
-        "title": "1. Dodawanie płatności za postępy",
-        "desc": "Wprowadź tutaj prace wykonane przez podwykonawcę na placu budowy oraz ich kwoty. Zwiększa to należności podwykonawcy (dług firmy), ale nie powoduje wypływu gotówki z kasy."
+      "title": "Szczegóły i Wyciąg z Konta Podwykonawcy (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest wyciąg z konta podwykonawcy?)",
+        "desc": "Szczegółowe zestawienie wg dat i opisów wykonanych prac (odbiorów) oraz płatności/zaliczek przekazanych podwykonawcy."
       },
-      "step2": {
-        "title": "2. Płatności zintegrowane z kasą",
-        "desc": "Zarejestruj tutaj płatności gotówkowe i zaliczki wypłacone podwykonawcy. Zmniejsza to saldo podwykonawcy i automatycznie tworzy wypływ gotówki w Kasie."
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane transakcje?)",
+        "desc": "Ruchy na rachunku są zapisywane w lokalnej bazie danych. Wprowadzone płatności automatycznie trafiają do rejestru Kasowego."
       },
-      "step3": {
-        "title": "3. Saldo netto konta",
-        "desc": "Pokazuje aktualny dług netto wobec podwykonawcy, obliczony poprzez odjęcie dokonanych płatności od sumy uzyskanych płatności za postępy."
+      "q3": {
+        "title": "3. KIEDY? (Kiedy wprowadzać odbiory i płatności?)",
+        "desc": "Odbiory częściowe wpisuj po dostarczeniu prac przez podwykonawcę, a płatności/zaliczki rejestruj w momencie ich przekazania."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak eksportować raporty i dzielić się przez WhatsApp?)",
+        "desc": "Generuj raporty według zakresu dat, pobieraj jako PDF/Excel jednym kliknięciem lub wysyłaj bezpośrednio przez WhatsApp."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego prowadzić szczegółowy wyciąg?)",
+        "desc": "Aby zapobiegać niezgodnościom w rozliczeniach i podwójnym płatnościom dla podwykonawców oraz poprawnie wyliczać dług netto firmy."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać tym profilem?)",
+        "desc": "Kierownicy budowy, koordynatorzy projektów i księgowi z uprawnieniami mogą dodawać oraz usuwać odbiory i płatności."
+      }
+    },
+    "logs": {
+      "title": "Przewodnik po Logach Systemowych (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to są logi systemowe?)",
+        "desc": "Cyfrowy rejestr zapisujący chronologicznie kluczowe operacje bazodanowe (dodawanie, edycja, usuwanie), zdarzenia w tle oraz potencjalne błędy."
+      },
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane logi?)",
+        "desc": "Logi są zapisywane lokalnie na Twoim dysku. Działają w trybie offline i nigdy nie są wysyłane na serwery zewnętrzne."
+      },
+      "q3": {
+        "title": "3. KIEDY? (Kiedy powstają logi?)",
+        "desc": "Zapisywane autonomicznie z dokładnością do milisekund w momencie, gdy użytkownik wykona operację lub aplikacja zgłosi błąd."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak przeglądać logi?)",
+        "desc": "Użyj paska wyszukiwania lub filtruj po typie: Info (niebieski), DB Create (zielony), DB Update (żółty) lub DB Delete/Error (czerwony)."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego prowadzi się logi?)",
+        "desc": "Aby śledzić modyfikacje użytkowników (logi audytowe) wstecz, odnajdywać przyczyny błędów i dbać o stabilność oraz bezpieczeństwo systemu."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto ma dostęp do logów?)",
+        "desc": "Wyłącznie administrator tego komputera lub upoważnieni inżynierowie wsparcia technicznego z bezpośrednim dostępem do urządzenia."
+      }
+    },
+    "bulk": {
+      "title": "Przewodnik po Karcie Pracy Zbiorczej (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest zbiorcza karta pracy?)",
+        "desc": "Autonomiczny system szybkiego wprowadzania, pozwalający na rejestrację szczegółów czasu pracy (stawki, nadgodziny, uwagi) dla wielu pracowników na tej samej budowie i w tym samym dniu za jednym razem."
+      },
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane zbiorcze karty pracy?)",
+        "desc": "Karty pracy wszystkich wybranych pracowników są zapisywane jako osobne wiersze w bazie danych. Każdy wpis bezpośrednio aktualizuje kartotekę pracownika."
+      },
+      "q3": {
+        "title": "3. KIEDY? (Kiedy należy rejestrować czas pracy zbiorczo?)",
+        "desc": "Na koniec dnia, po zakończeniu zmiany lub przed cyklami płatności, aby szybko monitorować całą aktywną kadrę."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak rejestrować czas pracy zbiorczo?)",
+        "desc": "Wybierz pracowników w lewym panelu (z wyszukiwarką i 'Zaznacz wszystko'), w prawym panelu określ datę, rodzaj pracy i nadgodziny, a następnie kliknij 'Zapisz wszystko'."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego korzystać ze zbiorczej karty pracy?)",
+        "desc": "Aby wyeliminować żmudne wpisywanie kart pracy pojedynczo dla dziesiątek pracowników na dużych budowach, zaoszczędzić czas i zminimalizować błędy."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać zbiorczą kartą pracy?)",
+        "desc": "Uprawnieni kierownicy budowy, dyspozytorzy, pracownicy administracyjni lub kierownicy projektów."
+      }
+    },
+    "worker_profile": {
+      "title": "Szczegóły i Wyciąg z Konta Pracownika (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co to jest wyciąg z konta pracownika?)",
+        "desc": "Zestawienie konta zawierające szczegółowy wykaz dni przepracowanych (obecności), naliczonych zarobków, pobranych zaliczek oraz historii urlopów."
+      },
+      "q2": {
+        "title": "2. GDZIE? (Gdzie są zapisywane dane?)",
+        "desc": "Wszystkie wpisy dotyczące obecności, zaliczek i urlopów są zapisywane w lokalnej bazie danych. Płatności są automatycznie powiązane z modułem Kasowym."
+      },
+      "q3": {
+        "title": "3. KIEDY? (Kiedy wpisywać obecność i zaliczki?)",
+        "desc": "Obecność wprowadzaj codziennie na koniec dnia pracy. Zaliczki lub wypłaty tygodniowe rejestruj niezwłocznie po ich przekazaniu."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak eksportować raporty i dzielić się przez WhatsApp?)",
+        "desc": "Filtruj zestawienie według dat, pobieraj jako PDF/Excel jednym kliknięciem lub wysyłaj bezpośrednio pracownikowi przez WhatsApp."
+      },
+      "q5": {
+        "title": "5. DLACZEGO? (Dlaczego prowadzić szczegółowe zestawienie?)",
+        "desc": "Aby ostatecznie rozwiewać wątpliwości płacowe i rozliczenia zaliczek pod koniec miesiąca oraz potwierdzać historię zarobków."
+      },
+      "q6": {
+        "title": "6. KTO? (Kto może zarządzać tym profilem?)",
+        "desc": "Uprawnieni kierownicy budowy, menedżerowie projektów lub księgowi mogą dodawać oraz usuwać obecności, zaliczki i urlopy."
       }
     }
   },
@@ -1166,5 +1380,46 @@
     "Yıllık": "Coroczny",
     "Mazeret": "Wymówka",
     "Sağlık": "Medyczny"
+  },
+  "isg": {
+    "section_title": "BHP (Bezpieczeństwo i Higiena Pracy)",
+    "start_date": "Data Rozpoczęcia BHP",
+    "expiry_date": "Data Wygaśnięcia BHP",
+    "badge_valid": "BHP Ważne",
+    "badge_approaching": "BHP Zbliża się",
+    "badge_expired": "BHP Wygasło",
+    "badge_undefined": "BHP Nieokreślone",
+    "update_btn": "Aktualizuj BHP",
+    "update_title": "Aktualizuj Daty BHP",
+    "update_success": "Daty BHP zaktualizowane pomyślnie.",
+    "days": "dni"
+  },
+  "bulk_timesheet": {
+    "title": "Masowe Wprowadzanie Karty Czasu Pracy",
+    "nav_title": "Masowa Karta Czasu",
+    "select_workers": "Wybierz Pracowników",
+    "select_all": "Zaznacz Wszystkich",
+    "deselect_all": "Odznacz Wszystkich",
+    "selected_count": "{{count}} pracowników wybranych",
+    "form_title": "Szczegóły Karty Czasu",
+    "save_btn": "Zapisz Wszystko",
+    "save_success": "Karta czasu pracy zapisana pomyślnie dla {{count}} pracowników.",
+    "save_error": "Niektóre rekordy nie powiodły się. Sukces: {{success}}, Błąd: {{error}}",
+    "no_workers_selected": "Wybierz co najmniej jednego pracownika.",
+    "no_workers": "Nie znaleziono aktywnych pracowników.",
+    "search_workers": "Szukaj pracowników...",
+    "preview_wage": "Szacowane Wynagrodzenie",
+    "guide_step1_title": "1. Wybór Pracowników",
+    "guide_step1_desc": "Wybierz pracowników z lewego panelu. Użyj 'Zaznacz Wszystkich' aby wybrać wszystkich naraz.",
+    "guide_step2_title": "2. Szczegóły Karty Czasu",
+    "guide_step2_desc": "Wprowadź szczegóły takie jak data, typ pracy i godziny nadliczbowe. Będą one zastosowane do wszystkich wybranych pracowników.",
+    "guide_step3_title": "3. Masowy Zapis",
+    "guide_step3_desc": "Kliknij 'Zapisz Wszystko' aby utworzyć rekordy karty czasu dla wszystkich wybranych pracowników."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importuj (Excel/CSV)",
+    "export_btn": "Eksportuj",
+    "download_template": "Pobierz Szablon",
+    "import_success": "{{count}} rekordów podwykonawcy zaimportowanych pomyślnie."
   }
 }

@@ -409,7 +409,9 @@
     "details": "Details",
     "start_date": "Start Date",
     "end_date": "End Date",
-    "amount": "Amount"
+    "amount": "Amount",
+    "records": "Records",
+    "pagination_info": "Page {{page}} / {{total}} ({{records}} Records)"
   },
   "worker_modal": {
     "title_new": "Add New Personnel",
@@ -591,7 +593,10 @@
     "help_p2": "Click any photo to see it in full size and view the associated delivery note or quality report.",
     "help_h3": "3. Category Filters",
     "help_p3": "Filter media by type (Delivery Note photos vs. Quality Control photos) or search by notes.",
-    "no_image": "No Image"
+    "no_image": "No Image",
+    "view_list": "List View",
+    "view_grid": "Gallery View",
+    "item_type": "Content Type"
   },
   "subcontractor": {
     "title": "🚜 Subcontractor Ledgers",
@@ -801,157 +806,273 @@
   },
   "guides": {
     "site": {
-      "title": "Construction Site Management Guide",
-      "step1": {
-        "title": "1. Active Construction Site",
-        "desc": "Select a project to set as active."
+      "title": "Project Site & Workspace Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Site/Workspace Management?)",
+        "desc": "A management panel that allows you to define physical locations where your projects are executed and separate data on a site-specific basis."
       },
-      "step2": {
-        "title": "2. Location and Weather",
-        "desc": "Specify a location to automatically receive daily weather forecast."
+      "q2": {
+        "title": "2. WHERE? (Where is Project Site Data Stored?)",
+        "desc": "All added project sites and all transactions linked to these sites are stored in the local database."
       },
-      "step3": {
-        "title": "3. Search and Paging",
-        "desc": "Instantly search across construction sites."
+      "q3": {
+        "title": "3. WHEN? (When should a New Project Site be Defined?)",
+        "desc": "It should be defined in the system as soon as a new physical site is opened or before any subcontractor/personnel assignments are made."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Select, Reorder, and Manage Sites?)",
+        "desc": "Add a new site using the form, drag-and-drop items in the list to reorder them, and click 'Select Workspace' to set a site active."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Create Site-Based Workspaces?)",
+        "desc": "To report all daily journals, timesheets, cash transactions, and material movements independently without mixing them up."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage the Project Sites List?)",
+        "desc": "Company owners, general coordinators, and headquarters executives can define, edit, or delete project sites."
       }
     },
     "personnel": {
-      "title": "Staff Guide",
-      "step1": {
-        "title": "1. Add Staff and Excel",
-        "desc": "Use the Excel template to bulk upload a list."
+      "title": "Personnel Management Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Personnel Management?)",
+        "desc": "A tracking system that monitors the attendance, advances, progress earnings, and OHS document status of blue-collar and white-collar employees working on your site."
       },
-      "step2": {
-        "title": "2. Group Analysis",
-        "desc": "Analyze costs by group category."
+      "q2": {
+        "title": "2. WHERE? (Where is Personnel Data Stored?)",
+        "desc": "All employee cards, groups, and ledger transactions are stored in the local database, filtered by your active project site."
       },
-      "step3": {
-        "title": "3. Scorecard and Statements",
-        "desc": "Click on the name to see the scoreboard."
+      "q3": {
+        "title": "3. WHEN? (When to Add Personnel and Log Attendance?)",
+        "desc": "New employees are registered when they start. Attendance and advance entries should be logged daily or weekly without delay."
       },
-      "step4": {
-        "title": "4. Permission Management",
-        "desc": "Record the days when the personnel is excused or on sick leave."
+      "q4": {
+        "title": "4. HOW? (How to Add Personnel and Import/Export Excel?)",
+        "desc": "Click 'Add Personnel' in the top right to create a card; download the template for bulk data entries and import from Excel with one click."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Track Personnel in Detail?)",
+        "desc": "To prevent salary discrepancies, avoid missing OHS document expiration dates, and calculate the real-time labor cost of the site correctly."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage the Personnel List?)",
+        "desc": "Project managers, site chiefs, and administrative officers can define new employees, create groups, and manage attendance/advances."
       }
     },
     "quantity": {
-      "title": "Production Guide",
-      "step1": {
-        "title": "1. Production Records",
-        "desc": "Record daily production."
+      "title": "Quantity Survey & Production Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Quantity Survey tracking?)",
+        "desc": "A tracking system that measures physical progress in the project by recording quantities and units (m², m³, ton, etc.) of completed on-site works."
       },
-      "step2": {
-        "title": "2. Archive and Details",
-        "desc": "Write notes to keep a chronological archive."
+      "q2": {
+        "title": "2. WHERE? (Where is Production Data Kept?)",
+        "desc": "Data is stored in the local database. You can add specific locations like blocks, floors, or axes in the description/notes area."
       },
-      "step3": {
-        "title": "3. Search and Filters",
-        "desc": "Filter by date range or unit."
+      "q3": {
+        "title": "3. WHEN? (When should Production be Logged?)",
+        "desc": "As daily works are completed or when quantity/progress calculations are made, they must be recorded on a daily basis without delay."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Query Production Data?)",
+        "desc": "Use the search bar to search by item name or notes; filter the list by date range and unit types."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Track Quantity Surveys?)",
+        "desc": "To calculate project completion rates, verify subcontractor progress payments, and ensure compliance with the planned schedule."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Log Production entries?)",
+        "desc": "Site chiefs, quantity survey engineers, or project supervisors can add new production records and update existing ones."
       }
     },
     "delivery": {
-      "title": "Delivery Note Guide",
-      "step1": {
-        "title": "1. Supplier and Material",
-        "desc": "Record supplier and material names."
+      "title": "Delivery Note & Material Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Material Delivery Tracking?)",
+        "desc": "A tracking system that digitally records the quantity, unit (m³, ton, kg, etc.), supplier name, and physical delivery note documents of construction materials received on site."
       },
-      "step2": {
-        "title": "2. Document Photos",
-        "desc": "Upload delivery note photos for digital archive."
+      "q2": {
+        "title": "2. WHERE? (Where are Delivery Records Stored?)",
+        "desc": "Material records are stored in the local database, while uploaded invoice or receipt photos are securely stored under your local project folder."
       },
-      "step3": {
-        "title": "3. Smart Search",
-        "desc": "Search delivery note numbers or suppliers."
+      "q3": {
+        "title": "3. WHEN? (When should Deliveries be Recorded?)",
+        "desc": "Immediately when the supplier vehicles deliver the materials to the site and the physical delivery note is signed."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Upload Receipt Photos?)",
+        "desc": "By selecting files from your PC or scanning the QR code with your mobile camera to transfer them wirelessly via the local area network (LAN)."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep Material Records?)",
+        "desc": "To verify supplier invoices, track instantaneous material consumption (concrete, rebar, etc.), and prevent loss or theft of construction assets."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Log Material Entries?)",
+        "desc": "Site chiefs, warehouse managers, project engineers, or administrative staff can add new delivery notes and edit historical entries."
       }
     },
     "journal": {
-      "title": "Journal Guide",
-      "step1": {
-        "title": "1. Weather",
-        "desc": "Record daily weather and general condition."
+      "title": "Daily Journal Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is a Daily Journal?)",
+        "desc": "A daily journal is an official record where daily weather conditions, active worker counts, and all site activities, deliveries, and events are recorded chronologically."
       },
-      "step2": {
-        "title": "2. Chronological Record",
-        "desc": "Record important events in order."
+      "q2": {
+        "title": "2. WHERE? (Where are these Records Stored?)",
+        "desc": "Journal records are stored in the local SQLite database and filtered based on the active project (workspace)."
       },
-      "step3": {
-        "title": "3. History",
-        "desc": "Easily browse previous days."
+      "q3": {
+        "title": "3. WHEN? (When should the Journal be Recorded?)",
+        "desc": "It should be recorded at the end of each work day or concurrently. Date filters allow easy historical search."
+      },
+      "q4": {
+        "title": "4. HOW? (How are Weather and Worker Counts Fetched?)",
+        "desc": "Weather is automatically fetched via OpenWeather based on project location. Worker counts are autonomously calculated from the daily timesheets."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Daily Journal?)",
+        "desc": "To build a historical, official, and verifiable archive for future labor disputes, progress payments, or subcontractor claims."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage These Records?)",
+        "desc": "Site managers or authorized personnel can edit. For data integrity, editing is only allowed for the current day's record."
       }
     },
     "quality": {
-      "title": "Quality Guide",
-      "step1": {
-        "title": "1. Report Statuses",
-        "desc": "Update the status when the issue is resolved."
+      "title": "Quality Control & Report Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Quality Control Tracking?)",
+        "desc": "A digital reporting system that records technical defects, faulty, or missing construction activities with photo evidence and tracks them until resolved."
       },
-      "step2": {
-        "title": "2. Visual Evidence",
-        "desc": "Include photos of any problems detected."
+      "q2": {
+        "title": "2. WHERE? (Where are these Records Kept?)",
+        "desc": "Records are stored in the local database, isolated under the active project. Specific locations (blocks, floors) can be detailed in the description."
       },
-      "step3": {
-        "title": "3. Filtering",
-        "desc": "Filter to keep track of open issues."
+      "q3": {
+        "title": "3. WHEN? (When should a Report be Created?)",
+        "desc": "Instantly when a defect or quality issue is identified on site. Once the issue is corrected, its status is changed to 'RESOLVED'."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Upload Photos?)",
+        "desc": "By selecting files from your computer or wirelessly using the local network (LAN) mobile photo uploader via QR code."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep Quality Reports?)",
+        "desc": "To guarantee compliance with construction specifications, document subcontractor/worker liability for faulty work, and prevent future technical or financial claims."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage These Reports?)",
+        "desc": "Site managers, control engineers, or quality inspectors can open and close reports. All modifications are autonomously tracked in the system audit logs."
       }
     },
     "subcontractor": {
-      "title": "Subcontractor Guide",
-      "step1": {
-        "title": "1. Daily Wage",
-        "desc": "Keep track of subcontractors' daily wages."
+      "title": "Subcontractor Ledger Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Subcontractor Ledger?)",
+        "desc": "A current account tracking system that monitors the names, contact info, daily wage rates, and financial debit/credit balances of subcontractors (excavation, ironwork, catering, etc.) on your site."
       },
-      "step2": {
-        "title": "2. Search and Filter",
-        "desc": "Search the subcontractor list."
+      "q2": {
+        "title": "2. WHERE? (Where is Data Stored?)",
+        "desc": "All subcontractor cards and ledger transactions are stored in the local database. They are isolated and filtered on a project basis."
       },
-      "step3": {
-        "title": "3. Update and Edit",
-        "desc": "Update daily journals at any time."
+      "q3": {
+        "title": "3. WHEN? (When to Enter Ledger Transactions?)",
+        "desc": "Transactions should be recorded immediately when a progress billing is earned or a payment/advance is made. OHS documents should also be kept updated based on expiration dates."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Manage Progress Billings and Payments?)",
+        "desc": "Click the detail button next to the subcontractor card to access their profile; add new progress billings and payments to automatically calculate the net balance."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Subcontractor Ledger?)",
+        "desc": "To prevent manual errors in subcontractor and machine rental accounts, view net debit/credit status in real-time, and automatically track OHS document durations."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage Subcontractor Accounts?)",
+        "desc": "Site chiefs, accounting officers, and project managers can define new subcontractors, enter progress billings/payments, and share account statements via WhatsApp."
       }
     },
     "media": {
-      "title": "Media Guide",
-      "step1": {
-        "title": "1. Visual Timeline",
-        "desc": "Examine construction site images chronologically."
+      "title": "Media Gallery Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is the Media Gallery?)",
+        "desc": "A visual archive center that collects all photos uploaded during material deliveries (delivery notes) or quality reports under one roof."
       },
-      "step2": {
-        "title": "2. Quick Details",
-        "desc": "Click on any photo to view full size."
+      "q2": {
+        "title": "2. WHERE? (Where are Media Files Stored?)",
+        "desc": "Images are securely stored on the local disk under your project folder. The database only keeps their relative file paths."
       },
-      "step3": {
-        "title": "3. Category Filters",
-        "desc": "Filter by delivery note or quality reports."
+      "q3": {
+        "title": "3. WHEN? (When are Images Added?)",
+        "desc": "They are added concurrently when progress/quality reports are written or material receipt notes are saved."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Filter and Search Media?)",
+        "desc": "You can search by title using the search bar, and filter by sorting (date), content type (delivery note / report), or photo status."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Photo Archive?)",
+        "desc": "To visually prove construction quality on-site, digitally back up the physical delivery notes, and quickly resolve retrospective disputes."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Use the Media Gallery?)",
+        "desc": "All authorized project team members, including site managers, control engineers, administrative staff, and project owners, can view it."
       }
     },
     "cash": {
-      "title": "Vault Management Guide",
-      "step1": {
-        "title": "1. Income/Expense Records",
-        "desc": "Record income and expenses."
+      "title": "Cash Register Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Cash Register Management?)",
+        "desc": "A financial tracking system that records all cash inflows (income/advances) and cash outflows (expenses/subcontractor payments) of the projects."
       },
-      "step2": {
-        "title": "2. Monthly Financial Situation",
-        "desc": "View monthly cash flow and balance."
+      "q2": {
+        "title": "2. WHERE? (Where are Cash Records Stored?)",
+        "desc": "Data is securely stored in the local database. Transactions can be filtered and reported for 'Headquarters' or individual project sites."
       },
-      "step3": {
-        "title": "3. Export",
-        "desc": "Download transactions as PDF or Excel."
+      "q3": {
+        "title": "3. WHEN? (When should Transactions be Recorded?)",
+        "desc": "Instantly when a payment is made, an advance is issued, or progress payment is received."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Query and Report Cash Data?)",
+        "desc": "Filter by date range, project, transaction type, or description; export reports instantly in Excel, CSV, JSON, or PDF format."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Cash Register?)",
+        "desc": "To monitor real-time cash flow, view net balance status, manage personnel/subcontractor current accounts accurately, and prevent budget overruns."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage Cash Operations?)",
+        "desc": "Project managers, finance staff, and site chiefs can insert transactions. Deletion operations are audited via confirmation modals."
       }
     },
     "recycle": {
-      "title": "Trash Guide",
-      "step1": {
-        "title": "How Does It Work?",
-        "desc": "Deleted records are listed here with soft deletion."
+      "title": "Recycle Bin Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is the Recycle Bin?)",
+        "desc": "A recovery system that temporarily holds accidentally deleted construction sites, personnel records, cash transactions, delivery notes, daily journals, and quality reports."
       },
-      "step2": {
-        "title": "Data Recovery",
-        "desc": "Use the restore button to recover the records."
+      "q2": {
+        "title": "2. WHERE? (Where is Deleted Data Kept?)",
+        "desc": "Deleted data is not permanently erased. It is marked with a soft-deleted flag in the local database and listed on this page."
       },
-      "step3": {
-        "title": "Project Separation",
-        "desc": "Filter your trash by projects."
+      "q3": {
+        "title": "3. WHEN? (When Can I Restore Data?)",
+        "desc": "You can restore any deleted item at any time after its deletion. There is no expiration date or automatic purge cycle."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Restore and Search Data?)",
+        "desc": "Click the 'Restore' button on the right side of the list to recover data in seconds. You can filter by date, record type, and project."
+      },
+      "q5": {
+        "title": "5. WHY? (Why is the Recycle Bin Needed?)",
+        "desc": "Designed to prevent permanent data loss due to accidental deletions under intense site work conditions and to maintain complete traceability."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Recover Data?)",
+        "desc": "Authorized site managers, engineers, or account owners who have delete/restore privileges in the application can initiate the recovery process."
       }
     },
     "production": {
@@ -970,18 +1091,111 @@
       "title": "Production Guide"
     },
     "subcontractor_profile": {
-      "title": "Subcontractor Statement Guide",
-      "step1": {
-        "title": "1. Adding Progress Payments",
-        "desc": "Enter the work done by the subcontractor on site and its amounts here. This increases the subcontractor's receivables (company's debt) but does not cause a cash outflow from the register."
+      "title": "Subcontractor Profile & Statement Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Subcontractor Statement Tracking?)",
+        "desc": "A detailed date- and note-based statement breakdown of the works completed (progress billing) and payments/advances made to a subcontractor."
       },
-      "step2": {
-        "title": "2. Cash Register Integrated Payments",
-        "desc": "Record the cash payments and advances made to the subcontractor here. This reduces the subcontractor's balance and automatically creates a cash outflow in the Cash Register."
+      "q2": {
+        "title": "2. WHERE? (Where are Transactions Stored?)",
+        "desc": "Current account transactions are stored in the local database. Logged payments are automatically integrated into the Cash Register page."
       },
-      "step3": {
-        "title": "3. Net Account Balance",
-        "desc": "Shows your current net debt to the subcontractor, calculated by subtracting the payments made from the total progress payments earned."
+      "q3": {
+        "title": "3. WHEN? (When to Add Progress Billings and Payments?)",
+        "desc": "Progress billings should be entered when work is delivered by the subcontractor, and payments/advances should be recorded simultaneously when paid."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Export and Share via WhatsApp?)",
+        "desc": "You can generate reports using the date range filters, download them as PDF/Excel with one click, or share them directly via WhatsApp."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Detailed Statement?)",
+        "desc": "To prevent accounting discrepancies and double payments with subcontractors, and to report the company's net debt liabilities without errors."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage This Profile Page?)",
+        "desc": "Authorized site managers, project coordinators, and accountants can add or delete progress billings and payments."
+      }
+    },
+    "logs": {
+      "title": "System Logs Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What are System Logs?)",
+        "desc": "A digital ledger system that records critical database operations (create, update, delete), background events, and potential errors chronologically."
+      },
+      "q2": {
+        "title": "2. WHERE? (Where are Log Files Kept?)",
+        "desc": "System logs are stored locally on your disk. They are completely offline and never sent to any external server or cloud provider."
+      },
+      "q3": {
+        "title": "3. WHEN? (When are Logs Written?)",
+        "desc": "Written autonomously with millisecond precision the exact instant a user performs an action or when an application error is caught."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Inspect Logs?)",
+        "desc": "Use the search bar to filter, or filter by log type to view Info (blue), DB Create (green), DB Update (yellow), or DB Delete/Error (red)."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep System Logs?)",
+        "desc": "To track user modifications (audit logs) retrospectively, locate the exact root cause of errors, and maintain security."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Access the Logs?)",
+        "desc": "Only the administrator running this instance or authorized support engineers with access to the local machine can read these logs."
+      }
+    },
+    "bulk": {
+      "title": "Bulk Timesheet Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Bulk Timesheet Entry?)",
+        "desc": "An autonomous fast-entry system that allows logging timesheet details (wages, overtime, notes) for multiple personnel working on the same site on the same day in one go."
+      },
+      "q2": {
+        "title": "2. WHERE? (Where are Timesheets Stored?)",
+        "desc": "Timesheet records for all selected workers are stored as separate rows in the database. Each record directly updates that worker's current account statement."
+      },
+      "q3": {
+        "title": "3. WHEN? (When should Bulk Timesheets be Logged?)",
+        "desc": "At the end of the day, shift end, or before progress payment cycles for prompt tracking of the entire active workforce."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Log Bulk Timesheets?)",
+        "desc": "Select personnel from the left panel (with search and 'Select All' support), specify the date, work type (Full Day, Half Day, etc.) and overtime on the right panel, and click 'Save All'."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Use Bulk Timesheet Entry?)",
+        "desc": "To eliminate the tedious task of entering timesheets individually for dozens of workers on large sites, save time, and minimize entry errors."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage Bulk Timesheets?)",
+        "desc": "Authorized site chiefs, timesheet clerks, administrative officers, or project managers can perform bulk timesheet entries."
+      }
+    },
+    "worker_profile": {
+      "title": "Personnel Profile & Statement Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Personnel Statement Tracking?)",
+        "desc": "A current account statement containing the breakdown of the selected employee's worked days (attendance), earned wages, received advances, and leave history."
+      },
+      "q2": {
+        "title": "2. WHERE? (Where is Data Stored?)",
+        "desc": "All attendance, advance, and leave records are stored in the local database. Payments are automatically integrated into the Cash Register page."
+      },
+      "q3": {
+        "title": "3. WHEN? (When to Log Attendance and Advances?)",
+        "desc": "Attendance is logged daily when work is completed. Advances or weekly payments are recorded immediately when paid."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Export and Share via WhatsApp?)",
+        "desc": "Use the date range filters to generate the statement, download it as PDF/Excel with one click, or share it directly with the employee via WhatsApp."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Detailed Personnel Ledger?)",
+        "desc": "To definitively resolve salary or advance disputes at the end of the month and to prove the accuracy of historical progress payments."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage the Personnel Profile Page?)",
+        "desc": "Authorized project managers, site chiefs, or accounting staff can add/delete attendance, advances, and leaves."
       }
     }
   },
@@ -1144,5 +1358,46 @@
     "Yıllık": "Annual",
     "Mazeret": "Excuse",
     "Sağlık": "Medical"
+  },
+  "isg": {
+    "section_title": "OHS (Occupational Health & Safety)",
+    "start_date": "OHS Start Date",
+    "expiry_date": "OHS Expiry Date",
+    "badge_valid": "OHS Valid",
+    "badge_approaching": "OHS Approaching",
+    "badge_expired": "OHS Expired",
+    "badge_undefined": "OHS Undefined",
+    "update_btn": "Update OHS",
+    "update_title": "Update OHS Dates",
+    "update_success": "OHS dates updated successfully.",
+    "days": "days"
+  },
+  "bulk_timesheet": {
+    "title": "Bulk Timesheet Entry",
+    "nav_title": "Bulk Timesheet",
+    "select_workers": "Select Workers",
+    "select_all": "Select All",
+    "deselect_all": "Deselect All",
+    "selected_count": "{{count}} workers selected",
+    "form_title": "Timesheet Details",
+    "save_btn": "Save All",
+    "save_success": "Timesheet saved successfully for {{count}} workers.",
+    "save_error": "Some records failed. Success: {{success}}, Error: {{error}}",
+    "no_workers_selected": "Please select at least one worker.",
+    "no_workers": "No active workers found.",
+    "search_workers": "Search workers...",
+    "preview_wage": "Estimated Wage",
+    "guide_step1_title": "1. Select Workers",
+    "guide_step1_desc": "Select workers from the left panel for timesheet entry. Use the Select All button to select all workers at once.",
+    "guide_step2_title": "2. Timesheet Details",
+    "guide_step2_desc": "Enter timesheet details such as date, work type and overtime hours from the right panel. These details will be applied to all selected workers.",
+    "guide_step3_title": "3. Bulk Save",
+    "guide_step3_desc": "Click Save All to create timesheet records for all selected workers. Each worker's own daily wage will be used for calculation."
+  },
+  "subcontractor_import": {
+    "import_btn": "Import (Excel/CSV)",
+    "export_btn": "Export",
+    "download_template": "Download Template",
+    "import_success": "{{count}} subcontractor records imported successfully."
   }
 }

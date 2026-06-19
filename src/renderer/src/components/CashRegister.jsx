@@ -690,52 +690,57 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
-                  <button 
-                    type="button" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-                    style={{ 
-                      padding: '0.4rem 1rem', 
-                      fontSize: '0.9rem', 
-                      fontWeight: '600', 
-                      background: 'rgba(255,255,255,0.03)', 
-                      border: '1px solid var(--glass-border)', 
-                      borderRadius: '8px', 
-                      color: 'var(--text-main)',
-                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === 1 ? 0.5 : 1,
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                    onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
-                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} ({filteredTransactions.length} {t('common.records', 'Kayıt')})
                   </span>
-                  <button 
-                    type="button" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
-                    style={{ 
-                      padding: '0.4rem 1rem', 
-                      fontSize: '0.9rem', 
-                      fontWeight: '600', 
-                      background: 'rgba(255,255,255,0.03)', 
-                      border: '1px solid var(--glass-border)', 
-                      borderRadius: '8px', 
-                      color: 'var(--text-main)',
-                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === totalPages ? 0.5 : 1,
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                    onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button 
+                      type="button" 
+                      disabled={currentPage === 1} 
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                      style={{ 
+                        padding: '0.4rem 1rem', 
+                        fontSize: '0.9rem', 
+                        fontWeight: '600', 
+                        background: 'rgba(255,255,255,0.03)', 
+                        border: '1px solid var(--glass-border)', 
+                        borderRadius: '8px', 
+                        color: 'var(--text-main)',
+                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                        opacity: currentPage === 1 ? 0.5 : 1,
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                      onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    >
+                      {t('common.prev', 'Önceki')}
+                    </button>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                      {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+                    </span>
+                    <button 
+                      type="button" 
+                      disabled={currentPage === totalPages} 
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                      style={{ 
+                        padding: '0.4rem 1rem', 
+                        fontSize: '0.9rem', 
+                        fontWeight: '600', 
+                        background: 'rgba(255,255,255,0.03)', 
+                        border: '1px solid var(--glass-border)', 
+                        borderRadius: '8px', 
+                        color: 'var(--text-main)',
+                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                        opacity: currentPage === totalPages ? 0.5 : 1,
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                      onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    >
+                      {t('common.next', 'Sonraki')}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -756,12 +761,18 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
         onClose={() => setHelpOpen(false)} 
         title={t('guides.cash.title')} 
         desc="" 
-        h1={t('guides.cash.step1.title')} 
-        p1={t('guides.cash.step1.desc')} 
-        h2={t('guides.cash.step2.title')} 
-        p2={t('guides.cash.step2.desc')} 
-        h3={t('guides.cash.step3.title')} 
-        p3={t('guides.cash.step3.desc')} 
+        h1={t('guides.cash.q1.title')} 
+        p1={t('guides.cash.q1.desc')} 
+        h2={t('guides.cash.q2.title')} 
+        p2={t('guides.cash.q2.desc')} 
+        h3={t('guides.cash.q3.title')} 
+        p3={t('guides.cash.q3.desc')} 
+        h4={t('guides.cash.q4.title')} 
+        p4={t('guides.cash.q4.desc')} 
+        h5={t('guides.cash.q5.title')} 
+        p5={t('guides.cash.q5.desc')} 
+        h6={t('guides.cash.q6.title')} 
+        p6={t('guides.cash.q6.desc')} 
       />
     </div>
   );

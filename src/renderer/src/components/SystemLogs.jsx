@@ -307,31 +307,61 @@ const SystemLogs = () => {
           padding: '1rem',
           marginTop: '1rem',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           alignItems: 'center',
-          gap: '1rem',
           backdropFilter: 'blur(10px)',
           borderRadius: '0 0 8px 8px'
         }}>
-          <button 
-            className="btn" 
-            disabled={currentPage === 1} 
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-          >
-            {t('common.prev', 'Önceki')}
-          </button>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+            {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} {t('global.recordsCount', { count: filteredLogs.length })}
           </span>
-          <button 
-            className="btn" 
-            disabled={currentPage === totalPages} 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-          >
-            {t('common.next', 'Sonraki')}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              className="btn" 
+              disabled={currentPage === 1} 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              style={{ 
+                padding: '0.4rem 1rem', 
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid var(--glass-border)',
+                borderRadius: '8px',
+                color: 'var(--text-main)',
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                opacity: currentPage === 1 ? 0.5 : 1,
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+              onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            >
+              {t('common.prev', 'Önceki')}
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+            </span>
+            <button 
+              className="btn" 
+              disabled={currentPage === totalPages} 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              style={{ 
+                padding: '0.4rem 1rem', 
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid var(--glass-border)',
+                borderRadius: '8px',
+                color: 'var(--text-main)',
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                opacity: currentPage === totalPages ? 0.5 : 1,
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+              onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            >
+              {t('common.next', 'Sonraki')}
+            </button>
+          </div>
         </div>
       )}
       </div>
@@ -339,14 +369,20 @@ const SystemLogs = () => {
       <GuideDrawer 
         isOpen={isGuideOpen} 
         onClose={() => setIsGuideOpen(false)} 
-        title={t('logs.guide.title', 'Sistem Kayıtları Kılavuzu')} 
-        desc={t('logs.guide.intro', 'Sistem Kayıtları sayfası, uygulamada gerçekleşen kritik veritabanı işlemlerini, sistem olaylarını ve olası hataları kronolojik olarak takip etmenizi sağlar.')} 
-        h1={t('logs.guide.levels_title', '1. Log Düzeyleri ve Renkleri')} 
-        p1={t('logs.guide.levels_desc', 'Aktiviteler önem derecesine göre renklendirilir: Mavi loglar (Info) normal sistem bildirimlerini, Yeşil loglar (DB Create) yeni veri eklemelerini, Sarı loglar (DB Update) veri güncellemelerini, Kırmızı loglar ise silme işlemlerini (DB Delete) ve kritik hataları (Error) temsil eder.')} 
-        h2={t('logs.guide.large_data_title', '2. Uzun Log Verileri (Base64)')} 
-        p2={t('logs.guide.large_data_desc', 'Şantiye logosu gibi resim dosyalarını güncellediğinizde veritabanına büyük boyutlu Base64 metin kodları kaydedilir. Bu tür durumlarda log satırlarında çok uzun metin blokları görmeniz normaldir; bu veriler sisteme görsel yüklemelerin başarıyla kaydedildiğini doğrular.')} 
-        h3={t('logs.guide.filter_export_title', '3. Arama, Filtreleme ve Dışa Aktarım')} 
-        p3={t('logs.guide.filter_export_desc', 'Belirli bir tarih aralığı, kelime veya log türüne (Info, Error, vb.) göre anında filtreleme yapabilirsiniz. Ayrıca tüm kayıtları Excel, CSV, JSON, Markdown veya Düz Metin (.txt) olarak bilgisayarınıza indirebilirsiniz.')} 
+        title={t('guides.logs.title', 'Sistem Kayıtları Kılavuzu (5N1K)')} 
+        desc="" 
+        h1={t('guides.logs.q1.title')} 
+        p1={t('guides.logs.q1.desc')} 
+        h2={t('guides.logs.q2.title')} 
+        p2={t('guides.logs.q2.desc')} 
+        h3={t('guides.logs.q3.title')} 
+        p3={t('guides.logs.q3.desc')} 
+        h4={t('guides.logs.q4.title')} 
+        p4={t('guides.logs.q4.desc')} 
+        h5={t('guides.logs.q5.title')} 
+        p5={t('guides.logs.q5.desc')} 
+        h6={t('guides.logs.q6.title')} 
+        p6={t('guides.logs.q6.desc')} 
       />
     </>
   );

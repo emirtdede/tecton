@@ -410,7 +410,9 @@
     "details": "Details",
     "start_date": "Startdatum",
     "end_date": "Einddatum",
-    "amount": "Bedrag"
+    "amount": "Bedrag",
+    "records": "Records",
+    "pagination_info": "Pagina {{page}} / {{total}} ({{records}} Records)"
   },
   "worker_modal": {
     "title_new": "Toevoegen",
@@ -586,7 +588,10 @@
     "help_p2": "Klik op een foto om deze op volledige grootte te bekijken en de bijbehorende pakbon of kwaliteitsrapport te bekijken.",
     "help_h3": "3. Categoriefilters",
     "help_p3": "Filter media op type (foto's van leveringsnota versus foto's van kwaliteitscontrole) of zoek op notities.",
-    "no_image": "Geen afbeelding"
+    "no_image": "Geen afbeelding",
+    "view_list": "Lijstweergave",
+    "view_grid": "Galerijweergave",
+    "item_type": "Inhoudstype"
   },
   "subcontractor": {
     "title": "🚜 Onderaannemer registers",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Handleiding voor bouwplaatsbeheer",
-      "step1": {
-        "title": "1. Actieve bouwplaats",
-        "desc": "Selecteer een project dat u als actief wilt instellen."
+      "title": "Gids Projectlocaties & Werkruimten (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is locatie- en werkruimtebeheer?)",
+        "desc": "Een beheerpaneel waarmee u de fysieke locaties van uw projecten definieert om gegevens baustellenspecifiek te scheiden."
       },
-      "step2": {
-        "title": "2. Locatie en weer",
-        "desc": "Geef een locatie op waar u automatisch de dagelijkse weersvoorspelling wilt ontvangen."
+      "q2": {
+        "title": "2. WAAR? (Waar worden locatiegegevens opgeslagen?)",
+        "desc": "Alle toegevoegde projectlocaties en alle daaraan gekoppelde transacties worden opgeslagen in de lokale database."
       },
-      "step3": {
-        "title": "3. Zoeken en paging",
-        "desc": "Zoek direct op bouwlocaties."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer een nieuwe locatie aanmaken?)",
+        "desc": "Deze moet in het systeem worden geregistreerd zodra een nieuwe fysieke locatie wordt geopend of voordat onderaannemers/personeel worden toegewezen."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe locaties selecteren, ordenen en beheren?)",
+        "desc": "Voeg een nieuwe locatie toe met het formulier, sleep items in de lijst om ze te ordenen, en klik op 'Werkruimte selecteren' om deze te activeren."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom locatiegebonden werkruimten maken?)",
+        "desc": "Om alle dagboeken, urenstaten, kasboekingen en materiaalbewegingen onafhankelijk te rapporteren zonder gegevens te vermengen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan de projectlocatielijst beheren?)",
+        "desc": "Unternehmenseigenaren, algemeen coördinatoren en hoofdkantoormedewerkers kunnen locaties toevoegen, bewerken of verwijderen."
       }
     },
     "personnel": {
-      "title": "Gids voor personeelsbeheer",
-      "step1": {
-        "title": "1. Voeg Staf en Excel toe",
-        "desc": "Gebruik de Excel-sjabloon om een ​​lijst in bulk te uploaden."
+      "title": "Gids Personeelsbeheer (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is personeelsbeheer?)",
+        "desc": "Een systeem dat de aanwezigheid, voorschotten, loonberekeningen en geldigheid van veiligheidsdocumenten van arbeiders en personeel bewaakt."
       },
-      "step2": {
-        "title": "2. Groepsanalyse",
-        "desc": "Analyseer de uitgaven per groepscategorie."
+      "q2": {
+        "title": "2. WAAR? (Waar worden personeelsgegevens bewaard?)",
+        "desc": "Alle personeelskaarten, groepen en transacties worden opgeslagen in de lokale database, gefilterd op uw actieve bouwproject."
       },
-      "step3": {
-        "title": "3. Scorekaart en rekeningoverzicht",
-        "desc": "Klik op de naam om de partituur te bekijken."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer personeel invoeren en aanwezigheid registreren?)",
+        "desc": "Nieuwe werknemers worden geregistreerd bij indiensttreding. Aanwezigheids- en voorschottransacties moeten dagelijks of wekelijks worden ingevoerd."
       },
-      "step4": {
-        "title": "4. Toestemmingsbeheer",
-        "desc": "Registreer de dagen waarop het personeel ziek of met verlof is."
+      "q4": {
+        "title": "4. HOE? (Hoe personeel toevoegen en Excel importeren?)",
+        "desc": "Klik rechtsboven op 'Personeel toevoegen'; download het sjabloon voor bulkimport om Excel-lijsten met één klik in te laden."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom personeel in detail bijhouden?)",
+        "desc": "Om loonverschillen te voorkomen, vervaldata van veiligheidsdocumenten in de gaten te houden en de actuele personeelskosten correct te berekenen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan de personeelslijst beheren?)",
+        "desc": "Projectmanagers, bouwleiders en administratief medewerkers kunnen medewerkers definiëren, groepen aanmaken en aanwezigheid/voorschotten beheren."
       }
     },
     "quantity": {
-      "title": "Productiegids",
-      "step1": {
-        "title": "1. Productiegegevens",
-        "desc": "Registreer de dagelijkse productie."
+      "title": "Opmeting & Productie Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is voortgangsregistratie?)",
+        "desc": "Een systeem dat de fysieke voortgang van het project meet door hoeveelheden en eenheden (m², m³, ton, enz.) van voltooide werken te registreren."
       },
-      "step2": {
-        "title": "2. Archief en details",
-        "desc": "Schrijf aantekeningen om een ​​chronologisch archief bij te houden."
+      "q2": {
+        "title": "2. WAAR? (Waar worden voortgangsgegevens opgeslagen?)",
+        "desc": "Gegevens worden opgeslagen in de lokale database. U kunt specifieke locaties zoals blokken of verdiepingen in de notities vermelden."
       },
-      "step3": {
-        "title": "3. Zoeken en filters",
-        "desc": "Filter op datumbereik of eenheid."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer moet voortgang worden genoteerd?)",
+        "desc": "Zodra dagelijkse werkzaamheden zijn voltooid of opmetingsberekeningen zijn gemaakt, moeten deze dagelijks worden ingevoerd."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe raadpleeg je voortgangsgegevens?)",
+        "desc": "Gebruik de zoekbalk om te zoeken op werknaam of notities; filter de lijst op datumbereik en eenheidstypes."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom voortgang registreren?)",
+        "desc": "Om de voortgangspercentages van het project te berekenen, termijnen van onderaannemers te verifiëren en de planning te bewaken."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan voortgang invoeren?)",
+        "desc": "Bouwleiders, calculatoren of projectmanagers kunnen nieuwe voortgangsrecords toevoegen en bewerken."
       }
     },
     "delivery": {
-      "title": "Gids voor leveringsnota's",
-      "step1": {
-        "title": "1. Leverancier en materiaal",
-        "desc": "Noteer leveranciers- en materiaalnamen."
+      "title": "Leveringsbon & Materiaal Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is materiaalregistratie?)",
+        "desc": "Een systeem dat digitaal de hoeveelheid, eenheid (m³, ton, kg, enz.), leverancier en fysieke leveringsbonnen registreert van materialen die op de bouwplaats binnenkomen."
       },
-      "step2": {
-        "title": "2. Documenteer foto's",
-        "desc": "Upload foto's van de leveringsbon voor digitaal archief."
+      "q2": {
+        "title": "2. WAAR? (Waar worden materiaalgegevens opgeslagen?)",
+        "desc": "Materiaalgegevens worden opgeslagen in de lokale database; geüploade foto's van bonnen worden veilig bewaard in uw lokale projectmap."
       },
-      "step3": {
-        "title": "3. Slim zoeken",
-        "desc": "Zoek pakbonnummers of leveranciers."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer moeten leveringen worden genoteerd?)",
+        "desc": "Direct wanneer de voertuigen van de leverancier de materialen op de bouwplaats afleveren en de fysieke leveringsbon is ondertekend."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe upload je foto's van bonnen?)",
+        "desc": "Door bestanden van uw PC te selecteren of de QR-code met uw mobiele camera te scannen om ze draadloos over te zetten via het lokale netwerk (LAN)."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom materiaalregistratie bijhouden?)",
+        "desc": "Om facturen van leveranciers te verifiëren, materiaalverbruik (beton, wapening, enz.) te volgen en verlies of diefstal te voorkomen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan leveringsbonnen invoeren?)",
+        "desc": "Bouwleiders, magazijnbeheerders, projectingenieurs of administratief personeel kunnen nieuwe leveringsbonnen toevoegen."
       }
     },
     "journal": {
-      "title": "Tijdschriftgids",
-      "step1": {
-        "title": "1. Weer",
-        "desc": "Registreer dagelijks het weer en de algemene toestand."
+      "title": "Bautageboek Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is een dagboek?)",
+        "desc": "Een dagboek is een officieel verslag waarin dagelijkse weersomstandigheden, actieve werknemersaantallen en alle activiteiten op de bouwplaats chronologisch worden bijgehouden."
       },
-      "step2": {
-        "title": "2. Chronologische registratie",
-        "desc": "Registreer belangrijke gebeurtenissen op volgorde."
+      "q2": {
+        "title": "2. WAAR? (Waar worden deze gegevens opgeslagen?)",
+        "desc": "Dagboekgegevens worden opgeslagen in de lokale SQLite-database en gefilterd op basis van het actieve project."
       },
-      "step3": {
-        "title": "3. Geschiedenis",
-        "desc": "Blader eenvoudig door voorgaande dagen."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer moet het dagboek worden ingevuld?)",
+        "desc": "Het moet aan het einde van elke werkdag of doorlopend worden ingevuld. Datumfilters maken historisch zoeken eenvoudig."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe worden het weer en het aantal werknemers opgehaald?)",
+        "desc": "Het weer wordt automatisch opgehaald via OpenWeather op basis van de projectlocatie. Het aantal werknemers wordt berekend uit de dagelijkse urenstaten."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom een dagboek bijhouden?)",
+        "desc": "Om een historisch, officieel en controleerbaar archief op te bouwen voor toekomstige arbeidsconflicten, voortgangsbetalingen of claims van onderaannemers."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan deze gegevens beheren?)",
+        "desc": "Bouwleiders of geautoriseerd personeel kunnen gegevens bewerken. Bewerken is alleen toegestaan voor de huidige dag."
       }
     },
     "quality": {
-      "title": "Kwaliteitsgids",
-      "step1": {
-        "title": "1. Rapportstatussen",
-        "desc": "Werk de status bij wanneer het probleem is opgelost."
+      "title": "Kwaliteitscontrole Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is kwaliteitscontrole?)",
+        "desc": "Een digitaal rapportagesysteem om technische gebreken, foutieve of ontbrekende bouwwerkzaamheden te registreren met fotobewijs en deze op te volgen tot ze zijn opgelost."
       },
-      "step2": {
-        "title": "2. Visueel bewijs",
-        "desc": "Voeg foto's toe van eventuele gedetecteerde problemen."
+      "q2": {
+        "title": "2. WAAR? (Waar worden deze rapporten bewaard?)",
+        "desc": "Rapporten worden opgeslagen in de lokale database onder het actieve project. Specifieke locaties kunnen in de omschrijving worden gedetailleerd."
       },
-      "step3": {
-        "title": "3. Filteren",
-        "desc": "Filter om openstaande problemen bij te houden."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer moet een rapport worden gemaakt?)",
+        "desc": "Direct wanneer een defect of kwaliteitsprobleem op de bouwplaats wordt vastgesteld. Zodra het is opgelost, verandert de status naar 'OPGELOST'."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe upload je foto's?)",
+        "desc": "Door bestanden te selecteren van uw computer of draadloos met de mobiele foto-uploader in het lokale netwerk (LAN) via een QR-code."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom kwaliteitsrapporten bijhouden?)",
+        "desc": "Om naleving van de bouwspecificaties te garanderen, de aansprakelijkheid van onderaannemers/werknemers te documenteren en toekomstige claims te voorkomen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan deze rapporten beheren?)",
+        "desc": "Bouwleiders, toezichthouders of kwaliteitsinspecteurs kunnen rapporten openen en sluiten. Wijzigingen worden bijgehouden in de systeemlogs."
       }
     },
     "subcontractor": {
-      "title": "Gids voor onderaannemers",
-      "step1": {
-        "title": "1. Dagloon",
-        "desc": "Houd de daglonen van onderaannemers bij."
+      "title": "Onderaannemers Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is de onderaannemersrekening?)",
+        "desc": "Een systeem voor het bijhouden van lopende rekeningen, contactgegevens, dagtarieven en financiële saldi van onderaannemers (graafwerk, vlechtwerk, catering, enz.) op uw bouwplaats."
       },
-      "step2": {
-        "title": "2. Zoeken en filteren",
-        "desc": "Zoek in de lijst met onderaannemers."
+      "q2": {
+        "title": "2. WAAR? (Waar worden gegevens opgeslagen?)",
+        "desc": "Alle kaarten en transacties van onderaannemers worden opgeslagen in de lokale database, geïsoleerd en gefilterd per project."
       },
-      "step3": {
-        "title": "3. Bijwerken en bewerken",
-        "desc": "Update dagbladen op elk gewenst moment."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer transacties invoeren?)",
+        "desc": "Transacties moeten onmiddellijk worden geregistreerd bij het behalen van een voortgangstermijn of het doen van een betaling/voorschot. Houd ook veiligheidsdocumenten up-to-date."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe voortgangstermijnen en betalingen beheren?)",
+        "desc": "Klik op de detailknop naast de onderaannemer om naar het profiel te gaan; voeg nieuwe termijnen en betalingen toe om het nettosaldo automatisch te berekenen."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom een onderaannemersrekening bijhouden?)",
+        "desc": "Om handmatige fouten in rekeningen van onderaannemers en machineverhuur te voorkomen, het nettosaldo realtime in te zien en de geldigheid van documenten automatisch te volgen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan onderaannemersrekeningen beheren?)",
+        "desc": "Bouwleiders, accountants en projectmanagers kunnen onderaannemers definiëren, termijnen/betalingen invoeren en rekeningoverzichten delen via WhatsApp."
       }
     },
     "media": {
-      "title": "Mediagids",
-      "step1": {
-        "title": "1. Visuele tijdlijn",
-        "desc": "Bekijk afbeeldingen van bouwplaatsen chronologisch."
+      "title": "Mediagalerie Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is de Mediagalerie?)",
+        "desc": "Een visueel archiefcentrum dat alle foto's verzamelt die zijn geüpload tijdens materiaalleveringen (lieferscheinen) of kwaliteitsrapporten."
       },
-      "step2": {
-        "title": "2. Snelle details",
-        "desc": "Klik op een foto om de volledige grootte te bekijken."
+      "q2": {
+        "title": "2. WAAR? (Waar worden mediabestanden opgeslagen?)",
+        "desc": "Afbeeldingen worden veilig opgeslagen op de lokale schijf in uw projectmap. De database bewaart alleen hun relatieve bestandspaden."
       },
-      "step3": {
-        "title": "3. Categoriefilters",
-        "desc": "Filter op pakbon of kwaliteitsrapporten."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer worden afbeeldingen toegevoegd?)",
+        "desc": "Ze worden tegelijkertijd toegevoegd wanneer voortgangs-/kwaliteitsrapporten worden geschreven of materiaalontvangstbewijzen worden opgeslagen."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe filter en zoek je media?)",
+        "desc": "U kunt op titel zoeken met de zoekbalk en filteren op sortering (datum), inhoudstype (leveringsbon / rapport) of fotostatus."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom een fotoarchief bijhouden?)",
+        "desc": "Om de bouwkwaliteit op de bouwplaats visueel aan te tonen, fysieke leveringsbonnen digitaal te back-uppen en geschillen snel op te lossen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan de mediagalerie gebruiken?)",
+        "desc": "Alle geautoriseerde projectteamleden, inclusief bouwleiders, toezichthouders, administratief personeel en projecteigenaren."
       }
     },
     "cash": {
-      "title": "Gids voor kluisbeheer",
-      "step1": {
-        "title": "1. Inkomsten-/uitgavengegevens",
-        "desc": "Registreer inkomsten en uitgaven."
+      "title": "Kassabeheer Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is kassabeheer?)",
+        "desc": "Een financieel volgsysteem dat alle contante instromen (inkomsten/voorschotten) en uitstromen (uitgaven/betalingen aan onderaannemers) registreert."
       },
-      "step2": {
-        "title": "2. Maandelijkse financiële situatie",
-        "desc": "Bekijk de maandelijkse cashflow en het saldo."
+      "q2": {
+        "title": "2. WAAR? (Waar worden de kassagegevens opgeslagen?)",
+        "desc": "Gegevens worden veilig opgeslagen in de lokale database. Transacties kunnen worden gefilterd voor 'Hoofdkantoor' of specifieke projecten."
       },
-      "step3": {
-        "title": "3. Exporteren",
-        "desc": "Download transacties als PDF of Excel."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer moeten transacties worden genoteerd?)",
+        "desc": "Direct wanneer een betaling is gedaan, een voorschot is verstrekt, of een termijnbetaling is ontvangen."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe raadpleeg en exporteer je kassagegevens?)",
+        "desc": "Filter op datumbereik, project, transactietype of omschrijving; exporteer rapporten direct in Excel, CSV, JSON of PDF."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom een kasboek bijhouden?)",
+        "desc": "Om realtime kasstromen te bewaken, het netto-saldo in te zien, rekeningen van personeel/onderaannemers nauwkeurig te beheren en budgetoverschrijdingen te voorkomen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan kassa-operaties beheren?)",
+        "desc": "Projectmanagers, financiële medewerkers en bouwleiders kunnen transacties toevoegen. Verwijderingen worden gecontroleerd via bevestigingsvensters."
       }
     },
     "recycle": {
-      "title": "Vuilnisgids",
-      "step1": {
-        "title": "Hoe werkt het?",
-        "desc": "Verwijderde records worden hier weergegeven met zachte verwijdering."
+      "title": "Prullenbak Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is de Prullenbak?)",
+        "desc": "Een herstelsysteem dat per ongeluk verwijderde bouwplaatsen, personeelsdossiers, kastransacties, leveringsbonnen, dagboeken en kwaliteitsrapporten tijdelijk bewaart."
       },
-      "step2": {
-        "title": "Gegevensherstel",
-        "desc": "Gebruik de herstelknop om de records te herstellen."
+      "q2": {
+        "title": "2. WAAR? (Waar blijven verwijderde gegevens?)",
+        "desc": "Verwijderde gegevens worden niet permanent gewist. Ze worden gemarkeerd met een logische verwijderingsvlag in de lokale database."
       },
-      "step3": {
-        "title": "Projectscheiding",
-        "desc": "Filter uw prullenbak op projecten."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer kan ik gegevens herstellen?)",
+        "desc": "U kunt elk verwijderd item op elk moment herstellen. Er is geen vervaldatum of automatische opschoningscyclus."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe herstel en zoek ik gegevens?)",
+        "desc": "Klik op de knop 'Herstellen' aan de rechterkant van de lijst om gegevens direct te herstellen. U kunt filteren op datum, recordtype en project."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom is de prullenbak nodig?)",
+        "desc": "Ontworpen om permanent gegevensverlies door onbedoelde verwijderingen tijdens drukke werkzaamheden te voorkomen en traceerbaarheid te behouden."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan gegevens herstellen?)",
+        "desc": "Geautoriseerde projectmanagers, toezichthouders of accounteigenaren met herstelrechten in de applicatie kunnen het herstel starten."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Productiegids"
     },
     "subcontractor_profile": {
-      "title": "Handleiding rekeningoverzicht onderaannemer",
-      "step1": {
-        "title": "1. Termijnbetalingen toevoegen",
-        "desc": "Voer hier het werk in dat door de onderaannemer op de bouwplaats is uitgevoerd en de bijbehorende bedragen. Dit verhoogt de vorderingen van de onderaannemer (schuld van het bedrijf), maar veroorzaakt geen uitgaande kasstroom uit de kassa."
+      "title": "Gids Details & Rekeningoverzicht Onderaannemer (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is de status van het onderaannemersoverzicht?)",
+        "desc": "Een gedetailleerd overzicht op basis van datum en notities van de voltooide werken (termijnen) en betalingen/voorschotten aan de onderaannemer."
       },
-      "step2": {
-        "title": "2. Kassa-geïntegreerde betalingen",
-        "desc": "Registreer hier de contante betalingen en voorschotten die aan de onderaannemer zijn gedaan. Dit verlaagt het saldo van de onderaannemer en creëert automatisch een uitgaande kasstroom in de Kassa."
+      "q2": {
+        "title": "2. WAAR? (Waar worden transacties opgeslagen?)",
+        "desc": "Lopende rekeningtransacties worden opgeslagen in de lokale database. Ingevoerde betalingen worden automatisch gesynchroniseerd met de Kas."
       },
-      "step3": {
-        "title": "3. Netto rekeningsaldo",
-        "desc": "Toont uw huidige nettoschuld aan de onderaannemer, berekend door de uitgevoerde betalingen af te trekken van de in totaal verdiende termijnbetalingen."
+      "q3": {
+        "title": "3. WANNEER? (Wanneer termijnen en betalingen invoeren?)",
+        "desc": "Termijnen moeten worden ingevoerd bij oplevering van het werk door de onderaannemer, en betalingen/voorschotten direct bij betaling."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe exporteren en delen via WhatsApp?)",
+        "desc": "Genereer rapporten met de datumfilters, download ze als PDF/Excel met één klik, of deel ze rechtstreeks via WhatsApp."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom een gedetailleerd overzicht bijhouden?)",
+        "desc": "Om boekhoudkundige geschillen en dubbele betalingen met onderaannemers te voorkomen, en de nettoschuld van het bedrijf foutloos te rapporteren."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan deze profielpagina beheren?)",
+        "desc": "Geautoriseerde bouwleiders, projectcoördinatoren en accountants kunnen termijnen en betalingen toevoegen of verwijderen."
+      }
+    },
+    "logs": {
+      "title": "Systeemlogboek Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat zijn systeemlogs?)",
+        "desc": "Een digitaal logboeksysteem dat kritieke databasebewerkingen (aanmaken, bijwerken, verwijderen), achtergrondgebeurtenissen en fouten chronologisch registreert."
+      },
+      "q2": {
+        "title": "2. WAAR? (Waar worden de logs bewaard?)",
+        "desc": "Systeemlogs worden lokaal op uw schijf opgeslagen. Ze zijn offline en worden nooit naar externe servers verzonden."
+      },
+      "q3": {
+        "title": "3. WANNEER? (Wanneer worden logs geschreven?)",
+        "desc": "Automatisch geschreven met milliseconde-precisie op het exacte moment dat een gebruiker een actie uitvoert of een fout optreedt."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe bekijk en doorzoek je logs?)",
+        "desc": "Gebruik de zoekbalk of filter op type om Info (blauw), DB Aanmaken (groen), DB Bijwerken (geel) of DB Verwijderen/Fout (rood) te bekijken."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom systeemlogs bijhouden?)",
+        "desc": "Om gebruikerswijzigingen (audit logs) achteraf te reconstrueren, de oorzaak van fouten op te sporen en de systeembewaking te garanderen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie heeft toegang tot de logs?)",
+        "desc": "Alleen de beheerder van deze computer of geautoriseerde supportmedewerkers met toegang tot de lokale PC kunnen deze logs inzien."
+      }
+    },
+    "bulk": {
+      "title": "Sammel-Urenstaat Gids (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is de Sammel-Urenstaat?)",
+        "desc": "Een snel invoersysteem waarmee in één keer urenstaatdetails (lonen, overuren, notities) voor meerdere medewerkers op dezelfde dag en bouwplaats kunnen worden ingevoerd."
+      },
+      "q2": {
+        "title": "2. WAAR? (Waar worden urenstaten opgeslagen?)",
+        "desc": "De urenstaten van alle geselecteerde arbeiders worden als afzonderlijke rijen in de database opgeslagen en werken direct hun rekeningen bij."
+      },
+      "q3": {
+        "title": "3. WANNEER? (Wanneer moeten sammel-urenstaten worden genoteerd?)",
+        "desc": "Aan het einde van de dag, na de ploegendienst, of vóór betalingscycli om snel de gehele actieve personeelsbezetting bij te houden."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe voer ik sammel-urenstaten in?)",
+        "desc": "Selecteer personeel in het linkerpaneel (met zoekfunctie en 'Alles selecteren'), geef datum, werktype en overuren op in het rechterpaneel en klik op 'Alles opslaan'."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom sammel-urenstaten gebruiken?)",
+        "desc": "Om het tijdrovende werk van individueel invoeren voor tientallen werknemers op grote bouwplaatsen te elimineren, tijd te besparen en invoerfouten te beperken."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan sammel-urenstaten beheren?)",
+        "desc": "Geautoriseerde bouwleiders, planners, administratief medewerkers of projectmanagers kunnen sammel-urenstaten invoeren."
+      }
+    },
+    "worker_profile": {
+      "title": "Gids Details & Rekeningoverzicht Medewerker (5W1H)",
+      "q1": {
+        "title": "1. WAT? (Wat is het overzicht van medewerkerstransacties?)",
+        "desc": "Een rekeningoverzicht met de specificatie van gewerkte dagen (aanwezigheid), opgebouwd loon, ontvangen voorschotten en verlofhistorie."
+      },
+      "q2": {
+        "title": "2. WAAR? (Waar worden gegevens opgeslagen?)",
+        "desc": "Alle aanwezigheids-, voorschot- en verlofgegevens worden opgeslagen in de lokale database. Betalingen worden automatisch verwerkt in de Kas."
+      },
+      "q3": {
+        "title": "3. WANNEER? (Wanneer aanwezigheid en voorschotten invoeren?)",
+        "desc": "Aanwezigheid wordt dagelijks ingevoerd na afloop van de werkdag. Voorschotten of wekelijkse betalingen worden direct bij uitbetaling genoteerd."
+      },
+      "q4": {
+        "title": "4. HOE? (Hoe exporteren en delen via WhatsApp?)",
+        "desc": "Gebruik de datumfilters om het overzicht te genereren, download het als PDF/Excel met één klik, of deel het rechtstreeks via WhatsApp met de medewerker."
+      },
+      "q5": {
+        "title": "5. WAAROM? (Waarom een gedetailleerde medewerkersrekening bijhouden?)",
+        "desc": "Om loon- of voorschotgeschillen aan het einde van de maand definitief op te lossen en de juistheid van uitbetaalde lonen aan te tonen."
+      },
+      "q6": {
+        "title": "6. WIE? (Wie kan de profielpagina van medewerkers beheren?)",
+        "desc": "Geautoriseerde bouwleiders, projectmanagers of accountants kunnen aanwezigheid, voorschotten en verlof toevoegen of verwijderen."
       }
     }
   },
@@ -1166,5 +1380,46 @@
     "Yıllık": "Jaarlijks",
     "Mazeret": "Excuus",
     "Sağlık": "Medisch"
+  },
+  "isg": {
+    "section_title": "AVG (Arbeidsveiligheid en Gezondheid)",
+    "start_date": "AVG Startdatum",
+    "expiry_date": "AVG Vervaldatum",
+    "badge_valid": "AVG Geldig",
+    "badge_approaching": "AVG Bijna Verlopen",
+    "badge_expired": "AVG Verlopen",
+    "badge_undefined": "AVG Niet Gedefinieerd",
+    "update_btn": "AVG Bijwerken",
+    "update_title": "AVG Datums Bijwerken",
+    "update_success": "AVG datums succesvol bijgewerkt.",
+    "days": "dagen"
+  },
+  "bulk_timesheet": {
+    "title": "Bulk Urenregistratie",
+    "nav_title": "Bulk Urenstaat",
+    "select_workers": "Selecteer Werknemers",
+    "select_all": "Alles Selecteren",
+    "deselect_all": "Selectie Opheffen",
+    "selected_count": "{{count}} werknemers geselecteerd",
+    "form_title": "Urenstaat Details",
+    "save_btn": "Alles Opslaan",
+    "save_success": "Urenstaat succesvol opgeslagen voor {{count}} werknemers.",
+    "save_error": "Sommige records zijn mislukt. Succes: {{success}}, Fout: {{error}}",
+    "no_workers_selected": "Selecteer minimaal één werknemer.",
+    "no_workers": "Geen actieve werknemers gevonden.",
+    "search_workers": "Werknemers zoeken...",
+    "preview_wage": "Geschat Loon",
+    "guide_step1_title": "1. Werknemers Selecteren",
+    "guide_step1_desc": "Selecteer werknemers in het linkerpaneel. Gebruik 'Alles Selecteren' om iedereen tegelijk te selecteren.",
+    "guide_step2_title": "2. Urenstaat Details",
+    "guide_step2_desc": "Voer details in zoals datum, werktype en overuren. Deze worden toegepast op alle geselecteerde werknemers.",
+    "guide_step3_title": "3. Bulk Opslaan",
+    "guide_step3_desc": "Klik op 'Alles Opslaan' om urenregistraties aan te maken voor alle geselecteerde werknemers."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importeren (Excel/CSV)",
+    "export_btn": "Exporteren",
+    "download_template": "Sjabloon Downloaden",
+    "import_success": "{{count}} onderaannemer-records succesvol geïmporteerd."
   }
 }

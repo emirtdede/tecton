@@ -428,7 +428,9 @@
     "details": "Detay",
     "start_date": "Başlangıç Tarihi",
     "end_date": "Bitiş Tarihi",
-    "amount": "Tutar"
+    "amount": "Tutar",
+    "records": "Kayıt",
+    "pagination_info": "Sayfa {{page}} / {{total}} ({{records}} Kayıt)"
   },
   "worker_modal": {
     "title_new": "Yeni Personel Ekle",
@@ -587,7 +589,10 @@
     "help_p2": "Herhangi bir görsele tıklayarak orijinal boyutta inceleyebilir ve ilişkili olduğu tutanak veya irsaliyeye ulaşabilirsiniz.",
     "help_h3": "3. Kategori Filtresi",
     "help_p3": "Görselleri sadece İrsaliye fotoğrafları veya sadece Kalite Kontrol fotoğrafları olacak şekilde filtreleyebilirsiniz.",
-    "no_image": "Görsel Yok"
+    "no_image": "Görsel Yok",
+    "view_list": "Liste Görünümü",
+    "view_grid": "Galeri Görünümü",
+    "item_type": "İçerik Türü"
   },
   "subcontractor": {
     "title": "🚜 Taşeron ve Alt Yüklenici Carileri",
@@ -787,157 +792,273 @@
   "settings.parameters": "Parametreler",
   "guides": {
     "site": {
-      "title": "Şantiye Yönetim Rehberi",
-      "step1": {
-        "title": "1. Aktif Şantiye",
-        "desc": "Aktif olarak ayarlamak için bir proje seçin."
+      "title": "Şantiye & Çalışma Alanı Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Şantiye/Çalışma Alanı Yönetimi Nedir?)",
+        "desc": "Projenizin yürütüldüğü fiziki lokasyonları sisteme tanımlayarak verileri şantiye bazlı ayrıştırmanızı sağlayan yönetim panelidir."
       },
-      "step2": {
-        "title": "2. Konum ve Hava Durumu",
-        "desc": "Günlük hava durumunu otomatik olarak almak için bir konum belirtin."
+      "q2": {
+        "title": "2. NEREDE? (Şantiye Verileri Nerede Depolanır?)",
+        "desc": "Eklenen tüm şantiyeler ve bu şantiyelere bağlı tüm hareketler yerel veritabanında saklanır."
       },
-      "step3": {
-        "title": "3. Arama ve Sayfalama",
-        "desc": "Şantiyeler arasında anında arama yapın."
+      "q3": {
+        "title": "3. NE ZAMAN? (Yeni Şantiye Ne Zaman Tanımlanmalıdır?)",
+        "desc": "Fiziki olarak yeni bir şantiye sahası açıldığında veya taşeron/personel atamaları yapılmadan önce sisteme girilmelidir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Şantiye Nasıl Seçilir, Sıralanır ve Yönetilir?)",
+        "desc": "Üstteki formla yeni şantiye ekleyebilir, listeden sürükle-bırak yöntemiyle sırasını değiştirebilir ve 'Çalışma Alanı Seç' ile o şantiyeyi aktif hale getirebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Şantiye Bazlı Çalışma Alanları Oluşturulmalıdır?)",
+        "desc": "Tüm günlük jurnalleri, puantajları, kasa işlemlerini ve malzeme hareketlerini birbirine karıştırmadan, bağımsız raporlayabilmek için şantiye bazlı çalışılır."
+      },
+      "q6": {
+        "title": "6. KİM? (Şantiye Listesini Kimler Yönetebilir?)",
+        "desc": "Firma sahipleri, genel koordinatörler ve merkez ofis yetkilileri yeni şantiye tanımlayabilir, düzenleyebilir veya silebilir."
       }
     },
     "personnel": {
-      "title": "Personel Rehberi",
-      "step1": {
-        "title": "1. Personel Ekle ve Excel",
-        "desc": "Toplu liste yüklemek için Excel şablonunu kullanın."
+      "title": "Personel Yönetim Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Personel Yönetimi Nedir?)",
+        "desc": "Şantiyenizde görev alan mavi yaka ve beyaz yaka çalışanların puantaj, avans, hakediş ve İSG evrak durumlarını izleyen takip sistemidir."
       },
-      "step2": {
-        "title": "2. Grup Analizi",
-        "desc": "Grup kategorisine göre maliyetleri analiz edin."
+      "q2": {
+        "title": "2. NEREDE? (Personel Verileri Nerede Depolanır?)",
+        "desc": "Tüm personel kartları, gruplar ve cari hareketler yerel veritabanında saklanır. Aktif çalışma şantiyenize göre filtrelenir."
       },
-      "step3": {
-        "title": "3. Puantaj ve Ekstreler",
-        "desc": "Puantaj tablosunu görmek için isme tıklayın."
+      "q3": {
+        "title": "3. NE ZAMAN? (Personel Girişi ve Puantaj Ne Zaman Yapılır?)",
+        "desc": "Yeni bir personel işe başladığında sisteme kaydedilir. Puantaj ve avans girişleri günlük veya haftalık periyotlarla aksatılmadan işlenmelidir."
       },
-      "step4": {
-        "title": "4. İzin Yönetimi",
-        "desc": "Personelin mazeretli veya raporlu olduğu günleri kaydedin."
+      "q4": {
+        "title": "4. NASIL? (Personel Ekleme ve Excel Aktarımı Nasıl Yapılır?)",
+        "desc": "Sağ üstteki 'Personel Ekle' butonuyla kart açabilir; toplu veri girişi için şablon indirip Excel'den tek tıkla yükleme yapabilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Detaylı Personel Takibi Yapılmalıdır?)",
+        "desc": "Maaş hesaplarında uyuşmazlıkları önlemek, İSG belgelerinin sürelerini kaçırmamak ve şantiyenin anlık personel maliyetini doğru hesaplamak için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Personel Listesini Kimler Yönetebilir?)",
+        "desc": "Proje yöneticileri, şantiye şefleri ve idari işler sorumluları personel ekleyebilir, gruplayabilir ve puantaj/avans hareketlerini yönetebilir."
       }
     },
     "quantity": {
-      "title": "Üretim Rehberi",
-      "step1": {
-        "title": "1. Üretim Kayıtları",
-        "desc": "Günlük üretimi kaydedin."
+      "title": "Metraj & İmalat Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Metraj ve İmalat Takibi Nedir?)",
+        "desc": "Sahada tamamlanan imalatların miktarlarını ve birimlerini (m², m³, ton vb.) kaydederek projedeki fiziki ilerlemeyi ölçen takip sistemidir."
       },
-      "step2": {
-        "title": "2. Arşiv ve Detaylar",
-        "desc": "Kronolojik bir arşiv tutmak için notlar yazın."
+      "q2": {
+        "title": "2. NEREDE? (İmalat Verileri Nerede Tutulur?)",
+        "desc": "Veriler yerel veritabanında saklanır. Kayıt formuna blok, kat ve aks gibi konum bilgilerini açıklama olarak ekleyebilirsiniz."
       },
-      "step3": {
-        "title": "3. Arama ve Filtreler",
-        "desc": "Tarih aralığına veya birime göre filtreleyin."
+      "q3": {
+        "title": "3. NE ZAMAN? (Metraj Kaydı Ne Zaman Girilmelidir?)",
+        "desc": "Günlük imalatlar tamamlandıkça veya ataşman/metraj hesapları çıkarıldıkça, geciktirilmeden gün bazında sisteme kaydedilmelidir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Metraj Verileri Nasıl Sorgulanır?)",
+        "desc": "Üst paneldeki arama barıyla imalat kalemine veya notlara göre arayabilir; tarih aralığı ve birim türlerine göre listeyi süzebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden İmalat Takibi Yapılmalıdır?)",
+        "desc": "Proje ilerleme oranını hesaplamak, taşeron hakedişlerini doğrulamak ve işin planlanan takvime uygunluğunu denetlemek amacıyla tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Metraj Girişini Kimler Yapabilir?)",
+        "desc": "Şantiye şefleri, hakediş/metraj mühendisleri ve kontrol yetkilileri yeni imalat kaydı girip mevcut kayıtları güncelleyebilir."
       }
     },
     "delivery": {
-      "title": "İrsaliye Rehberi",
-      "step1": {
-        "title": "1. Tedarikçi ve Malzeme",
-        "desc": "Tedarikçi ve malzeme isimlerini kaydedin."
+      "title": "İrsaliye & Malzeme Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (İrsaliye ve Malzeme Girişi Nedir?)",
+        "desc": "Şantiyeye gelen malzemelerin miktarlarını, birimlerini (m³, ton, kg vb.), tedarikçi firma adlarını ve fiziki irsaliye evraklarını dijital olarak kaydeden takip sistemidir."
       },
-      "step2": {
-        "title": "2. Belge Fotoğrafları",
-        "desc": "Dijital arşiv için irsaliye fotoğraflarını yükleyin."
+      "q2": {
+        "title": "2. NEREDE? (Kayıtlar Nerede Saklanır?)",
+        "desc": "Malzeme verileri yerel veritabanında saklanır; yüklenen fatura veya teslimat fişi fotoğrafları ise yerel proje klasörünüzde depolanır."
       },
-      "step3": {
-        "title": "3. Akıllı Arama",
-        "desc": "İrsaliye numaralarında veya tedarikçilerde arama yapın."
+      "q3": {
+        "title": "3. NE ZAMAN? (Girişler Ne Zaman Yapılmalıdır?)",
+        "desc": "Tedarikçi araçları malzemeyi şantiyeye teslim ettiği ve irsaliye belgesi imzalandığı anda gecikmeksizin sisteme girilmelidir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Fotoğraflar Nasıl Yüklenir?)",
+        "desc": "Bilgisayardan dosya seçerek ya da 'Mobilden Yükle' butonuyla açılan QR kodu telefon kamerasıyla taratıp, yerel ağ (LAN) üzerinden kablosuz olarak yükleyebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Malzeme Kayıtları Tutulmalıdır?)",
+        "desc": "Tedarikçi hakedişlerini doğrulamak, şantiyedeki anlık malzeme sarfiyatını (beton, demir vb.) izlemek ve kayıp/çalıntı malzemelerin önüne geçmek için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Malzeme Girişini Kimler Yapabilir?)",
+        "desc": "Şantiye şefleri, depo sorumluları, şantiye mühendisleri veya idari işler yetkilileri yeni irsaliye ekleyebilir ve geçmiş kayıtları düzenleyebilir."
       }
     },
     "journal": {
-      "title": "Yevmiye Rehberi",
-      "step1": {
-        "title": "1. Hava Durumu",
-        "desc": "Günlük hava durumunu ve genel durumu kaydedin."
+      "title": "Şantiye Günlük Jurnali Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Şantiye Jurnali Nedir?)",
+        "desc": "Şantiye jurnali; günlük hava durumu, çalışan personel sayısı, yapılan tüm imalatlar, sevkiyatlar ve sahada yaşanan olayların kronolojik olarak kaydedildiği resmi şantiye günlüğüdür."
       },
-      "step2": {
-        "title": "2. Kronolojik Kayıt",
-        "desc": "Önemli olayları sırasıyla kaydedin."
+      "q2": {
+        "title": "2. NEREDE? (Kayıtlar Nerede Saklanır?)",
+        "desc": "Jurnal kayıtları şantiyenin yerel SQLite veritabanında saklanır ve seçilen aktif şantiye (çalışma alanı) bazında izole edilerek listelenir."
       },
-      "step3": {
-        "title": "3. Geçmiş",
-        "desc": "Önceki günlere kolayca göz atın."
+      "q3": {
+        "title": "3. NE ZAMAN? (Jurnal Kaydı Ne Zaman Girilmelidir?)",
+        "desc": "Her iş gününün sonunda veya gün içinde eşzamanlı olarak girilmelidir. Tarih filtreleri sayesinde geçmişe yönelik sorgulamalar kolayca yapılabilir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Hava Durumu ve Personel Sayısı Nasıl Çekilir?)",
+        "desc": "Şantiye konumu girildiğinde hava durumu OpenWeather üzerinden otomatik alınır. Personel sayısı ise girilen puantajlardan otonom hesaplanıp forma yansıtılır."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Jurnal Kaydı Tutulmalıdır?)",
+        "desc": "İleride oluşabilecek işçilik uyuşmazlıklarında, hakediş ve metraj hesaplamalarında ya da taşeron iddialarında geriye dönük resmi ve kanıtlanabilir bir arşiv oluşturmak için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Bu Kayıtları Kimler Yönetebilir?)",
+        "desc": "Şantiye şefi veya yetkilendirilmiş personel tarafından girilebilir. Veri tutarlılığı için sadece güncel tarihteki kayıtlar düzenlenebilir, geçmişe yönelik değişiklik kısıtlıdır."
       }
     },
     "quality": {
-      "title": "Kalite Rehberi",
-      "step1": {
-        "title": "1. Rapor Durumları",
-        "desc": "Sorun çözüldüğünde durumu güncelleyin."
+      "title": "Kalite Kontrol ve Tutanak Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Kalite Tutanak Takibi Nedir?)",
+        "desc": "Şantiyedeki teknik aksaklıkları, hatalı veya eksik imalatları fotoğraflı/dosyalı olarak kaydeden ve çözülene kadar takip edilmesini sağlayan dijital tutanak sistemidir."
       },
-      "step2": {
-        "title": "2. Görsel Kanıt",
-        "desc": "Tespit edilen sorunların fotoğraflarını ekleyin."
+      "q2": {
+        "title": "2. NEREDE? (Tutanak Kayıtları Neresidir?)",
+        "desc": "Kayıtlar yerel veritabanında saklanır; isterseniz tutanağın ilişkili olduğu şantiyeyi ve tespit yerini (blok, kat) detaylıca yazabilirsiniz."
       },
-      "step3": {
-        "title": "3. Filtreleme",
-        "desc": "Açık sorunları takip etmek için filtreleyin."
+      "q3": {
+        "title": "3. NE ZAMAN? (Tutanak Ne Zaman Düzenlenmelidir?)",
+        "desc": "Hatalı imalat veya kalite sorunu sahada tespit edildiği an, gecikmeden sisteme eklenmelidir. Sorun çözüldüğünde ise durumu 'ÇÖZÜLDÜ' olarak güncellenir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Fotoğraf Nasıl Yüklenir?)",
+        "desc": "Bilgisayardan dosya seçerek ya da yerel ağ (LAN) mobil fotoğraf yükleyicisi sayesinde telefon kamerasıyla çekilen QR kod aracılığıyla kablosuz olarak yüklenebilir."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Tutanak Tutulmalıdır?)",
+        "desc": "İşin şartnameye uygunluğunu garanti altına almak, hatalı işleri resmiyete kavuşturarak taşeron/usta sorumluluğunu belgelemek ve ileride doğabilecek teknik/mali sorunları önlemek için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Bu Süreci Kimler Yönetebilir?)",
+        "desc": "Şantiye şefleri, kontrol mühendisleri veya kalite yetkilileri tutanak açıp kapatabilir. Yapılan tüm değişiklikler sistem kayıtlarında (audit log) otonom olarak kaydedilir."
       }
     },
     "subcontractor": {
-      "title": "Taşeron Rehberi",
-      "step1": {
-        "title": "1. Günlük Yevmiye",
-        "desc": "Taşeronların günlük yevmiyelerini takip edin."
+      "title": "Taşeron Yönetim Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Taşeron Carisi Nedir?)",
+        "desc": "Şantiyenizdeki alt yüklenicilerin (hafriyat, demir, katering vb.) isim, telefon ve yevmiye bedelleriyle finansal alacak/borç dengelerini izleyen cari takip sistemidir."
       },
-      "step2": {
-        "title": "2. Arama ve Filtreleme",
-        "desc": "Taşeron listesinde arama yapın."
+      "q2": {
+        "title": "2. NEREDE? (Veriler Nerede Saklanır?)",
+        "desc": "Tüm taşeron kartları ve cari hesap hareketleri yerel veritabanında saklanır. Şantiye bazında izole edilerek filtrelenir."
       },
-      "step3": {
-        "title": "3. Güncelleme ve Düzenleme",
-        "desc": "Günlük yevmiyeleri dilediğiniz zaman güncelleyin."
+      "q3": {
+        "title": "3. NE ZAMAN? (Cari Hareketler Ne Zaman Girilir?)",
+        "desc": "Hakediş kazandıklarında veya ödeme/avans yapıldığında anında cari hareket olarak girilmelidir. İSG belgeleri de bitiş tarihlerine göre sürekli güncel tutulmalıdır."
+      },
+      "q4": {
+        "title": "4. NASIL? (Hakediş ve Ödemeler Nasıl Yönetilir?)",
+        "desc": "Taşeron kartının yanındaki detay butonuna basarak profiline girebilir; yeni hakediş ve ödeme ekleyerek net bakiyeyi otonom hesaplatabilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Taşeron Carisi Tutulmalıdır?)",
+        "desc": "Farklı taşeron ve makine kiralama hesaplarında el yazısı hatalarını önlemek, net borç/alacak durumunu anlık görmek ve İSG evrak sürelerini otonom takip etmek için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Taşeron Hesaplarını Kimler Yönetebilir?)",
+        "desc": "Şantiye şefleri, muhasebe sorumluları ve proje yöneticileri yeni taşeron tanımlayabilir, hakediş/ödeme girebilir ve hesap özetini WhatsApp üzerinden taşerona iletebilir."
       }
     },
     "media": {
-      "title": "Medya Rehberi",
-      "step1": {
-        "title": "1. Görsel Zaman Çizelgesi",
-        "desc": "Şantiye görüntülerini kronolojik olarak inceleyin."
+      "title": "Medya Galerisi Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Şantiye Medya Galerisi Nedir?)",
+        "desc": "Şantiyede imalat veya malzeme teslimatı (irsaliye/fiş) esnasında yüklenen tüm fotoğrafları tek bir çatı altında toplayan görsel arşiv merkezidir."
       },
-      "step2": {
-        "title": "2. Hızlı Detaylar",
-        "desc": "Tam boyutta görüntülemek için herhangi bir fotoğrafa tıklayın."
+      "q2": {
+        "title": "2. NEREDE? (Medya Dosyaları Nerede Tutulur?)",
+        "desc": "Görseller yerel diskte şantiye klasörünüz altında güvenli bir biçimde depolanır. Veritabanında ise bu görsellerin dosya yolları saklanır."
       },
-      "step3": {
-        "title": "3. Kategori Filtreleri",
-        "desc": "İrsaliye veya kalite raporlarına göre filtreleyin."
+      "q3": {
+        "title": "3. NE ZAMAN? (Görseller Ne Zaman Eklenir?)",
+        "desc": "İmalat ilerleme raporları yazılırken veya malzeme teslim fişleri sisteme işlenirken eşzamanlı olarak eklenir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Medya Nasıl Filtrelenir ve Aranır?)",
+        "desc": "Arama çubuğunu kullanarak başlığa göre arayabilir; sıralama (tarih), içerik türü (irsaliye/tutanak) veya görsel durumuna göre filtreleyebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Fotoğraflı Arşiv Tutulmalıdır?)",
+        "desc": "Şantiyedeki imalat kalitesini görsel olarak kanıtlamak, irsaliyelerin asıllarını dijitalde yedeklemek ve geriye dönük anlaşmazlıkları hızla çözmek için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Medya Galerisini Kimler Kullanabilir?)",
+        "desc": "Şantiye şefleri, kontrol mühendisleri, idari personel ve yöneticiler dahil olmak üzere projede yetkili tüm ekip üyeleri görüntüleyebilir."
       }
     },
     "cash": {
-      "title": "Kasa Yönetim Rehberi",
-      "step1": {
-        "desc": "Gelir ve giderleri kaydedin.",
-        "title": "1. Gelir/Gider Kayıtları"
+      "title": "Kasa Yönetimi Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Kasa Yönetimi Nedir?)",
+        "desc": "Şantiyeye ait nakit girişlerini (gelir/avans) ve nakit çıkışlarını (gider/taşeron ödemesi) kayıt altına alan finansal takip sistemidir."
       },
-      "step2": {
-        "title": "2. Aylık Finansal Durum",
-        "desc": "Aylık nakit akışını ve bakiyeyi görüntüleyin."
+      "q2": {
+        "title": "2. NEREDE? (Kasa Kayıtları Nerede Saklanır?)",
+        "desc": "Veriler güvenli bir şekilde yerel veritabanında saklanır. Her işlem 'Merkez' veya ilişkili olduğu şantiye (proje) bazında filtrelenip raporlanabilir."
       },
-      "step3": {
-        "title": "3. Dışa Aktarma",
-        "desc": "İşlemleri PDF veya Excel olarak indirin."
+      "q3": {
+        "title": "3. NE ZAMAN? (Finansal İşlemler Ne Zaman Girilmelidir?)",
+        "desc": "Ödeme yapıldığı, avans verildiği veya hakediş tahsilatı gerçekleştiği anda gecikmeksizin sisteme girilmelidir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Raporlama ve Arama Nasıl Yapılır?)",
+        "desc": "Tarih aralığı, şantiye, işlem yönü veya açıklamaya göre filtreleme yapabilir; tek tıkla Excel, CSV, JSON veya PDF raporu alabilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Kasa Defteri Tutulmalıdır?)",
+        "desc": "Şantiyelerin anlık nakit akışını ve net bakiye durumunu görmek, personel/taşeron cari hesaplarını doğru yönetmek ve bütçe aşımını önlemek için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Kasa Eylemlerini Kimler Yönetebilir?)",
+        "desc": "Proje yöneticileri, muhasebe/finans sorumluları ve şantiye şefleri yeni işlem ekleyebilir. Silme işlemleri onay modülüyle denetlenir."
       }
     },
     "recycle": {
-      "title": "Çöp Kutusu Rehberi",
-      "step1": {
-        "title": "Nasıl Çalışır?",
-        "desc": "Silinen kayıtlar yumuşak silme işlemi ile burada listelenir."
+      "title": "Çöp Kutusu Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Çöp Kutusu Nedir?)",
+        "desc": "Yanlışlıkla silinen şantiyeleri, personelleri, kasa işlemlerini, irsaliyeleri, jurnal ve kalite raporlarını geçici olarak bekleten geri kazanım sistemidir."
       },
-      "step2": {
-        "title": "Veri Kurtarma",
-        "desc": "Kayıtları kurtarmak için geri yükle butonunu kullanın."
+      "q2": {
+        "title": "2. NEREDE? (Silinen Veriler Nerede Bekler?)",
+        "desc": "Silinen veriler tamamen yok edilmez, yerel veritabanında 'silindi' (soft-deleted) bayrağıyla işaretlenip bu sayfada listelenir."
       },
-      "step3": {
-        "title": "Proje Ayrımı",
-        "desc": "Çöp kutunuzu projelere göre filtreleyin."
+      "q3": {
+        "title": "3. NE ZAMAN? (Geri Yükleme Ne Zaman Yapılabilir?)",
+        "desc": "Bir veri silindiği andan itibaren dilediğiniz zaman çöp kutusundan geri yüklenebilir. Herhangi bir zaman aşımı veya otomatik temizleme süresi yoktur."
+      },
+      "q4": {
+        "title": "4. NASIL? (Veriler Nasıl Geri Yüklenir ve Aranır?)",
+        "desc": "Listenin sağındaki 'Geri Yükle' butonuna tıklayarak veriyi saniyeler içinde kurtarabilirsiniz. Tarih, veri türü ve şantiye bazlı filtreleri kullanabilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Çöp Kutusu Tasarlanmıştır?)",
+        "desc": "Şantiye ortamının yoğun çalışma temposunda oluşabilecek hatalı silme işlemlerinde veri kaybını önlemek ve geriye dönük izlenebilirliği korumak için tasarlanmıştır."
+      },
+      "q6": {
+        "title": "6. KİM? (Veri Kurtarma İşlemini Kimler Yapabilir?)",
+        "desc": "Uygulamada silme ve kurtarma yetkisine sahip olan şantiye yöneticileri, teknik yetkililer veya hesap sahipleri veri kurtarma işlemini tetikleyebilir."
       }
     },
     "production": {
@@ -956,18 +1077,111 @@
       "title": "Üretim Rehberi"
     },
     "subcontractor_profile": {
-      "title": "Taşeron Ekstresi Rehberi",
-      "step1": {
-        "title": "1. Hakediş Ekleme",
-        "desc": "Taşeronun şantiyede yaptığı işleri ve tutarlarını buradan girin. Bu işlem taşeronun alacağını (şirketin borcunu) artırır ancak kasadan nakit çıkışı yapmaz."
+      "title": "Taşeron Detay & Ekstre Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Taşeron Detay/Ekstre Takibi Nedir?)",
+        "desc": "Taşeronun yaptığı işlerin (hakediş) ve yapılan ödemelerin/avansların tarih ve not bazlı detaylı dökümüdür."
       },
-      "step2": {
-        "title": "2. Kasa Entegrasyonlu Ödemeler",
-        "desc": "Taşerona yaptığınız nakit ödemeleri ve avansları buradan kaydedin. Bu işlem taşeronun bakiyesini düşürür ve otomatik olarak Kasa'dan nakit çıkışı yapar."
+      "q2": {
+        "title": "2. NEREDE? (İşlemler Nerede Görünür ve Saklanır?)",
+        "desc": "Cari hesap hareketleri yerel veritabanında saklanır. Yapılan ödemeler otomatik olarak Kasa Yönetimi sayfasına da entegre edilir."
       },
-      "step3": {
-        "title": "3. Net Cari Bakiye",
-        "desc": "Toplam hakedişten yapılan ödemelerin çıkarılmasıyla elde edilen, taşerona olan güncel net borcunuzu gösterir."
+      "q3": {
+        "title": "3. NE ZAMAN? (Hakediş ve Ödemeler Ne Zaman Eklenmelidir?)",
+        "desc": "Sahada taşeron tarafından iş teslimi yapıldığında hakediş, ödeme yapıldığında ise ödeme/avans kaydı eşzamanlı girilmelidir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Dışa Aktarma ve WhatsApp Paylaşımı Nasıl Yapılır?)",
+        "desc": "Sayfa üstündeki tarih aralığı filtrelerini kullanarak rapor oluşturabilir, tek tuşla PDF/Excel formatında indirebilir veya WhatsApp'tan gönderebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Detaylı Cari Ekstre Tutulmalıdır?)",
+        "desc": "Taşeronla aranızdaki hesap uyuşmazlıklarını ve mükerrer ödemeleri önlemek, firmanın net borç yükümlülüklerini hatasız raporlamak için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Bu Profil Sayfasını Kimler Yönetebilir?)",
+        "desc": "Yetkilendirilmiş şantiye şefleri, proje koordinatörleri ve muhasebe sorumluları hakediş/ödeme ekleyebilir veya silebilir."
+      }
+    },
+    "logs": {
+      "title": "Sistem Kayıtları Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Sistem Logu Nedir?)",
+        "desc": "Uygulamada gerçekleştirilen kritik veritabanı işlemlerini (ekleme, güncelleme, silme), arkaplan olaylarını ve olası hataları kronolojik sırayla tutan dijital günlük sistemidir."
+      },
+      "q2": {
+        "title": "2. NEREDE? (Log Dosyaları Nerede Tutulur?)",
+        "desc": "Sistem kayıtları, yerel uygulamanın kurulu olduğu dizindeki log dosyalarında güvenle saklanır. Harici veya bulut tabanlı bir sunucuya gönderilmez."
+      },
+      "q3": {
+        "title": "3. NE ZAMAN? (Loglar Ne Zaman Oluşturulur?)",
+        "desc": "Kullanıcı veya sistem herhangi bir veritabanı eylemi gerçekleştirdiğinde veya bir hata alındığında otonom olarak milisaniye hassasiyetiyle anında kaydedilir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Hatalar ve Değişiklikler Nasıl İncelenir?)",
+        "desc": "Arama çubuğundan filtreleme yaparak; mavi (bilgi), yeşil (yeni veri), sarı (güncelleme) veya kırmızı (silme/hata) renk kodlarına göre logları süzebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Sistem Logları Tutulur?)",
+        "desc": "Geriye dönük kullanıcı hareketlerini (audit log) takip etmek, olası teknik hataları tespit edip hata kaynağına (hata kodu/milisaniye) ulaşmak ve güvenliği sağlamak için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Sistem Kayıtlarına Kimler Erişebilir?)",
+        "desc": "Yalnızca bilgisayarda yüklü olan uygulamanın yöneticisi ve yetkilendirilmiş teknik destek personeli arayüz veya yerel klasör üzerinden loglara erişebilir."
+      }
+    },
+    "bulk": {
+      "title": "Çoklu Puantaj Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Çoklu Puantaj Girişi Nedir?)",
+        "desc": "Aynı gün aynı şantiyede çalışan birden fazla personelin günlük puantaj (yevmiye, mesai, açıklama) bilgilerini tek seferde toplu olarak girmeyi sağlayan otonom hızlı giriş sistemidir."
+      },
+      "q2": {
+        "title": "2. NEREDE? (Puantajlar Nereye Kaydedilir?)",
+        "desc": "Seçilen tüm personellerin puantaj kayıtları veritabanında ayrı ayrı satırlar halinde saklanır; her biri ilgili personelin cari hesap kartına yansır."
+      },
+      "q3": {
+        "title": "3. NE ZAMAN? (Toplu Puantaj Ne Zaman Girilmelidir?)",
+        "desc": "Gün sonunda, mesai bitiminde veya hakediş dönemleri öncesinde sahada çalışan tüm ekibin toplu yevmiye takibi için anında girilmelidir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Toplu Puantaj Girişi Nasıl Yapılır?)",
+        "desc": "Sol panelden personelleri seçip (arama ve 'Tümünü Seç' desteğiyle), sağ panelden tarih, çalışma tipi (Tam Gün, Yarım Gün vb.) ve mesaiyi seçerek 'Toplu Kaydet'e basmanız yeterlidir."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Çoklu Puantaj Girişi Yapılmalıdır?)",
+        "desc": "Büyük şantiyelerde onlarca işçiye tek tek puantaj girme zahmetini ortadan kaldırmak, zamandan tasarruf etmek ve veri giriş hatalarını minimuma indirmek için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Bu Süreci Kimler Yönetebilir?)",
+        "desc": "Projedeki yetkili şantiye şefleri, puantörler, idari işler sorumluları veya şantiye yöneticileri toplu puantaj girişi yapabilir."
+      }
+    },
+    "worker_profile": {
+      "title": "Personel Detay & Ekstre Rehberi (5N1K)",
+      "q1": {
+        "title": "1. NE? (Personel Ekstre Takibi Nedir?)",
+        "desc": "Seçilen personelin çalıştığı günlerin (puantaj), hak ettiği ücretlerin, aldığı avansların ve izin geçmişinin dökümünü içeren cari hesabıdır."
+      },
+      "q2": {
+        "title": "2. NEREDE? (Veriler Nerede Görünür ve Saklanır?)",
+        "desc": "Personelin tüm puantaj, avans ve izin hareketleri yerel veritabanında saklanır. Kasa entegrasyonu sayesinde yapılan ödemeler Kasa Yönetimi sayfasında da görünür."
+      },
+      "q3": {
+        "title": "3. NE ZAMAN? (Puantaj ve Avans Ne Zaman Girilmelidir?)",
+        "desc": "Çalışan sahada mesai yaptığında günlük olarak puantajı işlenir. Avans veya haftalık ödeme verildiğinde ise anında avans hareketi olarak kaydedilir."
+      },
+      "q4": {
+        "title": "4. NASIL? (Raporlama ve WhatsApp Paylaşımı Nasıl Yapılır?)",
+        "desc": "Tarih filtrelerini kullanarak personelin cari hesap ekstresini oluşturabilir, tek tıkla PDF/Excel formatında indirebilir veya WhatsApp üzerinden personelin kendisine gönderebilirsiniz."
+      },
+      "q5": {
+        "title": "5. NEDEN? (Neden Detaylı Personel Cari Takibi Yapılmalıdır?)",
+        "desc": "Personel ile ay sonunda yaşanabilecek maaş ve avans uyuşmazlıklarını kesin olarak çözmek ve geriye dönük hak ediş doğruluğunu ispatlamak için tutulur."
+      },
+      "q6": {
+        "title": "6. KİM? (Personel Profil Sayfasını Kimler Yönetebilir?)",
+        "desc": "Proje yöneticisi, şantiye şefi veya muhasebe yetkilisi personelin profil sayfasından puantaj, avans ve izin ekleme/silme işlemlerini yapabilir."
       }
     }
   },
@@ -1130,5 +1344,46 @@
     "Yıllık": "Yıllık",
     "Mazeret": "Mazeret",
     "Sağlık": "Sağlık"
+  },
+  "isg": {
+    "section_title": "İSG (İş Sağlığı ve Güvenliği)",
+    "start_date": "İSG Başlangıç Tarihi",
+    "expiry_date": "İSG Bitiş Tarihi",
+    "badge_valid": "İSG Geçerli",
+    "badge_approaching": "İSG Yaklaşıyor",
+    "badge_expired": "İSG Süresi Doldu",
+    "badge_undefined": "İSG Tanımsız",
+    "update_btn": "İSG Güncelle",
+    "update_title": "İSG Tarihlerini Güncelle",
+    "update_success": "İSG tarihleri başarıyla güncellendi.",
+    "days": "gün"
+  },
+  "bulk_timesheet": {
+    "title": "Çoklu Puantaj Girişi",
+    "nav_title": "Çoklu Puantaj",
+    "select_workers": "Personel Seçin",
+    "select_all": "Tümünü Seç",
+    "deselect_all": "Seçimi Kaldır",
+    "selected_count": "{{count}} personel seçildi",
+    "form_title": "Puantaj Bilgileri",
+    "save_btn": "Toplu Kaydet",
+    "save_success": "{{count}} personel için puantaj başarıyla kaydedildi.",
+    "save_error": "Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}",
+    "no_workers_selected": "Lütfen en az bir personel seçin.",
+    "no_workers": "Aktif personel bulunamadı.",
+    "search_workers": "Personel ara...",
+    "preview_wage": "Tahmini Ücret",
+    "guide_step1_title": "1. Personel Seçimi",
+    "guide_step1_desc": "Sol panelden puantaj girişi yapılacak personelleri seçin. Tümünü Seç butonu ile tüm personeli tek seferde seçebilirsiniz.",
+    "guide_step2_title": "2. Puantaj Bilgileri",
+    "guide_step2_desc": "Sağ panelden tarih, çalışma tipi ve mesai saati gibi puantaj bilgilerini girin. Bu bilgiler seçili tüm personele uygulanacaktır.",
+    "guide_step3_title": "3. Toplu Kaydet",
+    "guide_step3_desc": "Toplu Kaydet butonuna tıklayarak seçili tüm personel için puantaj kaydı oluşturun. Her personelin kendi yevmiyesi üzerinden hesaplama yapılır."
+  },
+  "subcontractor_import": {
+    "import_btn": "İçe Aktar (Excel/CSV)",
+    "export_btn": "Dışa Aktar",
+    "download_template": "Taslak İndir",
+    "import_success": "{{count}} taşeron kaydı başarıyla içe aktarıldı."
   }
 }

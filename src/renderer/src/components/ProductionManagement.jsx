@@ -46,7 +46,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
     }
   };
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 7;
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
@@ -178,7 +178,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
         <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
         {/* Add Record Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '2rem', alignItems: 'flex-end' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.5rem', alignItems: 'flex-end' }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">{t('production.item_name', 'İmalat Kalemi')}</label>
             <input 
@@ -271,7 +271,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
             padding: '1rem', 
-            marginBottom: '1.5rem',
+            marginBottom: '0',
             display: 'flex', 
             gap: '1rem', 
             alignItems: 'center', 
@@ -354,7 +354,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
             {searchQuery ? t('production.no_results', 'Arama kriterlerine uygun imalat kaydı bulunamadı.') : t('empty.production', 'Bu şantiye için henüz bir imalat kaydı girilmemiş.')}
           </div>
         ) : (
-          <div className="fin-table-container">
+          <div className="fin-table-container" style={{ marginTop: '0.5rem' }}>
             <table className="fin-table">
               <thead>
                 <tr>
@@ -375,20 +375,30 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                     <td>{r.unit}</td>
                     <td style={{ color: 'var(--text-muted)' }}>{r.notes || '-'}</td>
                     <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
                         <button 
                           className="btn" 
                           onClick={() => handleStartEdit(r)}
-                          style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          title={t('dashboard.edit', 'Düzenle')}
                         >
-                          {t('dashboard.edit', 'Düzenle')}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
                         </button>
                         <button 
                           className="btn btn-danger" 
                           onClick={() => handleDelete(r.id)}
-                          style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          title={t('common.delete', 'Sil')}
                         >
-                          {t('common.delete', 'Sil')}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            <line x1="10" y1="11" x2="10" y2="17" />
+                            <line x1="14" y1="11" x2="14" y2="17" />
+                          </svg>
                         </button>
                       </div>
                     </td>
@@ -405,34 +415,39 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                 background: 'var(--option-bg, #0f172a)',
                 borderTop: '1px solid var(--glass-border)',
                 zIndex: 10,
-                padding: '1rem',
-                marginTop: '1.5rem',
+                padding: '1rem 1.5rem',
+                marginTop: '0',
                 display: 'flex',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 gap: '1rem',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '0 0 12px 12px'
               }}>
-                <button 
-                  className="btn" 
-                  disabled={currentPage === 1} 
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                >
-                  {t('common.prev', 'Önceki')}
-                </button>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
+                  {t('common.pagination_info', 'Sayfa {{page}} / {{total}} ({{records}} Kayıt)', { page: currentPage, total: totalPages, records: filteredRecords.length })}
                 </span>
-                <button 
-                  className="btn" 
-                  disabled={currentPage === totalPages} 
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                >
-                  {t('common.next', 'Sonraki')}
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <button 
+                    className="btn" 
+                    disabled={currentPage === 1} 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  >
+                    {t('common.prev', 'Önceki')}
+                  </button>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    {t('common.page', 'Sayfa')} {currentPage} / {totalPages}
+                  </span>
+                  <button 
+                    className="btn" 
+                    disabled={currentPage === totalPages} 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  >
+                    {t('common.next', 'Sonraki')}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -452,12 +467,18 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
         onClose={() => setHelpOpen(false)} 
         title={t('guides.quantity.title')} 
         desc="" 
-        h1={t('guides.quantity.step1.title')} 
-        p1={t('guides.quantity.step1.desc')} 
-        h2={t('guides.quantity.step2.title')} 
-        p2={t('guides.quantity.step2.desc')} 
-        h3={t('guides.quantity.step3.title')} 
-        p3={t('guides.quantity.step3.desc')} 
+        h1={t('guides.quantity.q1.title')} 
+        p1={t('guides.quantity.q1.desc')} 
+        h2={t('guides.quantity.q2.title')} 
+        p2={t('guides.quantity.q2.desc')} 
+        h3={t('guides.quantity.q3.title')} 
+        p3={t('guides.quantity.q3.desc')} 
+        h4={t('guides.quantity.q4.title')} 
+        p4={t('guides.quantity.q4.desc')} 
+        h5={t('guides.quantity.q5.title')} 
+        p5={t('guides.quantity.q5.desc')} 
+        h6={t('guides.quantity.q6.title')} 
+        p6={t('guides.quantity.q6.desc')} 
       />
     </div>
   );

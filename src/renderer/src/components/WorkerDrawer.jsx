@@ -15,7 +15,9 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
     daily_wage: '',
     group_id: '',
     start_date: new Date().toISOString().split('T')[0],
-    status: 'active'
+    status: 'active',
+    isg_start_date: '',
+    isg_bitis_tarihi: ''
   });
   const [tags, setTags] = useState([]);
   const [tcError, setTcError] = useState('');
@@ -39,7 +41,9 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
         daily_wage: worker.daily_wage || '',
         group_id: worker.group_id || '',
         start_date: worker.start_date || new Date().toISOString().split('T')[0],
-        status: worker.status || 'active'
+        status: worker.status || 'active',
+        isg_start_date: worker.isg_start_date || '',
+        isg_bitis_tarihi: worker.isg_bitis_tarihi || ''
       });
       try {
         setTags(worker.tags ? JSON.parse(worker.tags) : []);
@@ -54,7 +58,9 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
         daily_wage: '',
         group_id: '',
         start_date: new Date().toISOString().split('T')[0],
-        status: 'active'
+        status: 'active',
+        isg_start_date: '',
+        isg_bitis_tarihi: ''
       });
       setTags([]);
     }
@@ -66,10 +72,21 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
     if (name === 'tc_no') {
       setTcError(''); // Clear error on change
     }
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'group_id' ? (value ? Number(value) : null) : value
-    }));
+    setFormData(prev => {
+      let updated = {
+        ...prev,
+        [name]: name === 'group_id' ? (value ? Number(value) : null) : value
+      };
+      if (name === 'isg_start_date' && value && updated.isg_bitis_tarihi && new Date(value) > new Date(updated.isg_bitis_tarihi)) {
+        updated.isg_start_date = updated.isg_bitis_tarihi;
+        updated.isg_bitis_tarihi = value;
+      }
+      if (name === 'isg_bitis_tarihi' && value && updated.isg_start_date && new Date(updated.isg_start_date) > new Date(value)) {
+        updated.isg_bitis_tarihi = updated.isg_start_date;
+        updated.isg_start_date = value;
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = (e) => {
@@ -193,6 +210,32 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
               onChange={handleChange} 
               required 
             />
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              🛡️ {t('isg.section_title', 'İSG (İş Sağlığı ve Güvenliği)')}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
+                <label className="form-label">{t('isg.start_date', 'İSG Başlangıç Tarihi')}</label>
+                <CustomDatePicker 
+                  name="isg_start_date" 
+                  className="form-input" 
+                  value={formData.isg_start_date} 
+                  onChange={handleChange} 
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
+                <label className="form-label">{t('isg.expiry_date', 'İSG Bitiş Tarihi')}</label>
+                <CustomDatePicker 
+                  name="isg_bitis_tarihi" 
+                  className="form-input" 
+                  value={formData.isg_bitis_tarihi} 
+                  onChange={handleChange} 
+                />
+              </div>
+            </div>
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem' }}>

@@ -4,7 +4,7 @@ import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
 import { useTranslation } from 'react-i18next';
-import { GripVertical, Edit2, Check, X, Trash2 } from 'lucide-react';
+import { GripVertical, Edit2, Check, X, Trash2, RotateCcw } from 'lucide-react';
 
 const Settings = ({ activeTab = 'genel' }) => {
   const { t, i18n } = useTranslation();
@@ -1295,7 +1295,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                 );
               }
 
-              const itemsPerPage = 15;
+              const itemsPerPage = 8;
               const totalPages = Math.ceil(filteredDeletedItems.length / itemsPerPage);
               const displayedItems = filteredDeletedItems.slice(
                 (recycleCurrentPage - 1) * itemsPerPage,
@@ -1364,32 +1364,52 @@ const Settings = ({ activeTab = 'genel' }) => {
                               </td>
                               <td style={{ padding: '1rem', textAlign: 'right' }}>
                                 {isRestored ? (
-                                  <button 
-                                    className="btn" 
-                                    disabled
+                                  <span 
                                     style={{ 
                                       padding: '6px 12px', 
                                       fontSize: '0.8rem',
-                                      background: 'rgba(255, 255, 255, 0.05)',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '6px',
+                                      background: 'rgba(255, 255, 255, 0.03)',
                                       color: 'var(--text-muted)',
                                       border: '1px solid var(--glass-border)',
-                                      cursor: 'not-allowed',
-                                      opacity: 0.6
+                                      borderRadius: '6px',
+                                      fontWeight: '500'
                                     }}
                                   >
-                                    ✓ {t('global.restored', 'Geri Yüklendi')}
-                                  </button>
+                                    <Check size={13} style={{ color: 'var(--success)' }} />
+                                    {t('global.restored', 'Geri Yüklendi')}
+                                  </span>
                                 ) : (
                                   <button 
                                     className="btn btn-primary" 
                                     onClick={() => handleRestore(item.table, item.id)}
                                     style={{ 
-                                      padding: '6px 12px', 
+                                      padding: '6px 14px', 
                                       fontSize: '0.8rem',
-                                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '6px',
+                                      background: 'rgba(16, 185, 129, 0.08)',
+                                      color: '#10b981',
+                                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                                      borderRadius: '6px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.background = '#10b981';
+                                      e.currentTarget.style.color = '#fff';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.background = 'rgba(16, 185, 129, 0.08)';
+                                      e.currentTarget.style.color = '#10b981';
                                     }}
                                   >
-                                    🔄 {t('global.restore', 'Geri Yükle')}
+                                    <RotateCcw size={13} />
+                                    {t('global.restore', 'Geri Yükle')}
                                   </button>
                                 )}
                               </td>
@@ -1410,41 +1430,54 @@ const Settings = ({ activeTab = 'genel' }) => {
                       flexWrap: 'wrap',
                       gap: '1rem'
                     }}>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
                         {t('common.page_info', 'Sayfa')} {recycleCurrentPage} / {totalPages} {t('global.recordsCount', { count: filteredDeletedItems.length })}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <button
                           className="btn"
                           disabled={recycleCurrentPage === 1}
                           onClick={() => setRecycleCurrentPage(prev => Math.max(prev - 1, 1))}
                           style={{
-                            padding: '6px 12px',
+                            padding: '0.4rem 1rem',
                             fontSize: '0.85rem',
-                            background: recycleCurrentPage === 1 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.08)',
-                            color: recycleCurrentPage === 1 ? 'var(--text-muted)' : '#fff',
+                            fontWeight: '600',
+                            background: 'rgba(255,255,255,0.03)',
                             border: '1px solid var(--glass-border)',
+                            borderRadius: '8px',
+                            color: 'var(--text-main)',
                             cursor: recycleCurrentPage === 1 ? 'not-allowed' : 'pointer',
-                            opacity: recycleCurrentPage === 1 ? 0.5 : 1
+                            opacity: recycleCurrentPage === 1 ? 0.5 : 1,
+                            transition: 'all 0.2s'
                           }}
+                          onMouseEnter={(e) => { if (recycleCurrentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                          onMouseLeave={(e) => { if (recycleCurrentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
                         >
-                          ← {t('common.prev', 'Önceki')}
+                          {t('common.prev', 'Önceki')}
                         </button>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          {t('common.page_info', 'Sayfa')} {recycleCurrentPage} / {totalPages}
+                        </span>
                         <button
                           className="btn"
                           disabled={recycleCurrentPage === totalPages}
                           onClick={() => setRecycleCurrentPage(prev => Math.min(prev + 1, totalPages))}
                           style={{
-                            padding: '6px 12px',
+                            padding: '0.4rem 1rem',
                             fontSize: '0.85rem',
-                            background: recycleCurrentPage === totalPages ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.08)',
-                            color: recycleCurrentPage === totalPages ? 'var(--text-muted)' : '#fff',
+                            fontWeight: '600',
+                            background: 'rgba(255,255,255,0.03)',
                             border: '1px solid var(--glass-border)',
+                            borderRadius: '8px',
+                            color: 'var(--text-main)',
                             cursor: recycleCurrentPage === totalPages ? 'not-allowed' : 'pointer',
-                            opacity: recycleCurrentPage === totalPages ? 0.5 : 1
+                            opacity: recycleCurrentPage === totalPages ? 0.5 : 1,
+                            transition: 'all 0.2s'
                           }}
+                          onMouseEnter={(e) => { if (recycleCurrentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                          onMouseLeave={(e) => { if (recycleCurrentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
                         >
-                          {t('common.next', 'Sonraki')} →
+                          {t('common.next', 'Sonraki')}
                         </button>
                       </div>
                     </div>
@@ -1462,14 +1495,20 @@ const Settings = ({ activeTab = 'genel' }) => {
       <GuideDrawer 
         isOpen={isGuideOpen && activeTab === 'recycle'} 
         onClose={() => setIsGuideOpen(false)} 
-        title={t('recycle_guide_title', 'Geri Dönüşüm Kutusu Rehberi')} 
+        title={t('guides.recycle.title', 'Geri Dönüşüm Kutusu Rehberi (5N1K)')} 
         desc="" 
-        h1={t('recycle_guide_h1', 'Nasıl Çalışır?')} 
-        p1={t('recycle_guide_p1', 'Silinen kayıtlar burada listelenir.')} 
-        h2={t('recycle_guide_h2', 'Veri Kurtarma')} 
-        p2={t('recycle_guide_p2', 'Kayıtları kurtarmak için geri yükle butonunu kullanın.')} 
-        h3={t('recycle_guide_h3', 'Proje Filtreleme')} 
-        p3={t('recycle_guide_p3', 'Geri dönüşüm kutunuzu projeye göre filtreleyebilirsiniz.')} 
+        h1={t('guides.recycle.q1.title')} 
+        p1={t('guides.recycle.q1.desc')} 
+        h2={t('guides.recycle.q2.title')} 
+        p2={t('guides.recycle.q2.desc')} 
+        h3={t('guides.recycle.q3.title')} 
+        p3={t('guides.recycle.q3.desc')} 
+        h4={t('guides.recycle.q4.title')} 
+        p4={t('guides.recycle.q4.desc')} 
+        h5={t('guides.recycle.q5.title')} 
+        p5={t('guides.recycle.q5.desc')} 
+        h6={t('guides.recycle.q6.title')} 
+        p6={t('guides.recycle.q6.desc')} 
       />
 
       <GuideDrawer 

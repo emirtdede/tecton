@@ -410,7 +410,9 @@
     "details": "Dettagli",
     "start_date": "Data di inizio",
     "end_date": "Data di fine",
-    "amount": "Importo"
+    "amount": "Importo",
+    "records": "Record",
+    "pagination_info": "Pagina {{page}} / {{total}} ({{records}} Record)"
   },
   "worker_modal": {
     "title_new": "Aggiungi",
@@ -586,7 +588,10 @@
     "help_p2": "Fai clic su una foto per vederla a schermo intero e visualizzare la nota di consegna o il rapporto sulla qualità associato.",
     "help_h3": "3. Filtri di categoria",
     "help_p3": "Filtra i media per tipo (foto della bolla di consegna rispetto a foto del controllo qualità) o cerca per note.",
-    "no_image": "Nessuna immagine"
+    "no_image": "Nessuna immagine",
+    "view_list": "Vista Elenco",
+    "view_grid": "Vista Galleria",
+    "item_type": "Tipo di contenuto"
   },
   "subcontractor": {
     "title": "🚜 Registri subappaltatori",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Guida alla gestione del cantiere",
-      "step1": {
-        "title": "1. Cantiere attivo",
-        "desc": "Seleziona un progetto da impostare come attivo."
+      "title": "Guida a Cantieri & Spazi di Lavoro (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la gestione dei cantieri e spazi di lavoro?)",
+        "desc": "Un pannello di controllo che consente di registrare le posizioni fisiche dei progetti e di separare i dati contabili in base al cantiere."
       },
-      "step2": {
-        "title": "2. Posizione e meteo",
-        "desc": "Specifica una posizione per ricevere automaticamente le previsioni meteo giornaliere."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati i dati dei cantieri?)",
+        "desc": "Tutti i cantieri aggiunti e i relativi movimenti contabili ad essi collegati sono archiviati nel database locale."
       },
-      "step3": {
-        "title": "3. Ricerca e cercapersone",
-        "desc": "Cerca istantaneamente nei cantieri."
+      "q3": {
+        "title": "3. QUANDO? (Quando registrare un nuovo cantiere?)",
+        "desc": "Va inserito nel sistema non appena viene aperto un nuovo cantiere fisico o prima di assegnare subappaltatori o personale."
+      },
+      "q4": {
+        "title": "4. COME? (Come selezionare, ordinare e gestire i cantieri?)",
+        "desc": "Aggiungi un cantiere dal modulo, trascina e rilascia gli elementi in elenco per ordinarli e clicca su 'Seleziona spazio di lavoro' per attivarlo."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché creare spazi di lavoro dedicati per cantiere?)",
+        "desc": "Per rendicontare giornali di bordo, presenze, cassa e materiali in modo autonomo, ordinato e senza sovrapposizioni."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire la lista dei cantieri?)",
+        "desc": "I titolari dell'azienda, i coordinatori generali e i responsabili della sede centrale possono registrare, modificare o rimuovere i cantieri."
       }
     },
     "personnel": {
-      "title": "Guida alla gestione del personale",
-      "step1": {
-        "title": "1. Aggiungi Staff ed Excel",
-        "desc": "Utilizza il modello Excel per caricare in blocco un elenco."
+      "title": "Guida alla Gestione del Personale (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la gestione del personale?)",
+        "desc": "Un sistema di controllo per monitorare le presenze, gli acconti, le retribuzioni e lo stato dei documenti di sicurezza (OHS) dei dipendenti in cantiere."
       },
-      "step2": {
-        "title": "2. Analisi di gruppo",
-        "desc": "Analizzare le spese per categoria di gruppo."
+      "q2": {
+        "title": "2. DOVE? (Dove sono salvati i dati del personale?)",
+        "desc": "Tutte le schede del personale, i gruppi e le transazioni contabili sono salvati nel database locale, filtrati in base al cantiere attivo."
       },
-      "step3": {
-        "title": "3. Scorecard ed estratto conto",
-        "desc": "Clicca sul nome per visualizzare il punteggio."
+      "q3": {
+        "title": "3. QUANDO? (Quando registrare il personale e le presenze?)",
+        "desc": "Registrare i dipendenti al momento dell'assunzione. Le presenze e gli acconti vanno inseriti giornalmente o settimanalmente senza ritardi."
       },
-      "step4": {
-        "title": "4. Gestione dei permessi",
-        "desc": "Registrare i giorni in cui il personale è in congedo per malattia o in congedo."
+      "q4": {
+        "title": "4. COME? (Come aggiungere personale e importare da Excel?)",
+        "desc": "Clicca su 'Aggiungi personale' in alto a destra; scarica il modello per inserimenti massivi per importare da Excel con un solo clic."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tracciare il personale in dettaglio?)",
+        "desc": "Per prevenire errori di calcolo delle retribuzioni, monitorare la scadenza dei documenti di sicurezza e determinare i costi del personale in tempo reale."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire la lista del personale?)",
+        "desc": "I project manager, i direttori di cantiere e i responsabili amministrativi possono creare schede personale, definire gruppi e inserire presenze/acconti."
       }
     },
     "quantity": {
-      "title": "Guida alla produzione",
-      "step1": {
-        "title": "1. Documenti di produzione",
-        "desc": "Registra la produzione giornaliera."
+      "title": "Guida a Computi & Avanzamenti (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è il tracciamento dei computi?)",
+        "desc": "Un sistema per misurare l'avanzamento fisico del progetto registrando quantità e unità (m², m³, tonnellate, ecc.) delle lavorazioni completate."
       },
-      "step2": {
-        "title": "2. Archivio e dettagli",
-        "desc": "Scrivere appunti per mantenere un archivio cronologico."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati i dati di avanzamento?)",
+        "desc": "I dati sono archiviati nel database locale. È possibile inserire posizioni specifiche come blocchi o piani nelle note."
       },
-      "step3": {
-        "title": "3. Ricerca e filtri",
-        "desc": "Filtra per intervallo di date o unità."
+      "q3": {
+        "title": "3. QUANDO? (Quando registrare gli avanzamenti?)",
+        "desc": "Man mano che le lavorazioni giornaliere vengono completate o vengono calcolati i computi, da inserire giornalmente senza ritardi."
+      },
+      "q4": {
+        "title": "4. COME? (Come consultare i dati di avanzamento?)",
+        "desc": "Usa la barra di ricerca per cercare per nome lavorazione o note; filtra la lista per intervallo di date e tipi di unità."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tracciare gli avanzamenti?)",
+        "desc": "Per calcolare le percentuali di completamento, verificare i pagamenti ai subappaltatori e controllare il rispetto del cronoprogramma."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può inserire gli avanzamenti?)",
+        "desc": "I direttori di cantiere, ingegneri addetti ai computi o responsabili di progetto possono inserire e modificare i record."
       }
     },
     "delivery": {
-      "title": "Guida alla bolla di consegna",
-      "step1": {
-        "title": "1. Fornitore e Materiale",
-        "desc": "Registrare i nomi dei fornitori e dei materiali."
+      "title": "Guida a Bolle & Materiali (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la registrazione dei materiali?)",
+        "desc": "Un sistema per registrare digitalmente quantità, unità (m³, tonnellata, kg, ecc.), fornitore e bolle di consegna fisiche dei materiali ricevuti in cantiere."
       },
-      "step2": {
-        "title": "2. Foto di documenti",
-        "desc": "Carica le foto delle bolle di consegna per l'archivio digitale."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati i record dei materiali?)",
+        "desc": "I record sono memorizzati nel database locale, mentre le foto delle fatture o delle bolle sono conservate in modo sicuro nella cartella del progetto."
       },
-      "step3": {
-        "title": "3. Ricerca intelligente",
-        "desc": "Cerca numeri di bolle di consegna o fornitori."
+      "q3": {
+        "title": "3. QUANDO? (Quando registrare le consegne?)",
+        "desc": "Immediatamente dopo che i veicoli del fornitore hanno consegnato i materiali in cantiere e la bolla fisica è stata firmata."
+      },
+      "q4": {
+        "title": "4. COME? (Come caricare le foto delle bolle?)",
+        "desc": "Selezionando i file dal PC o scansionando il codice QR con la fotocamera del cellulare per trasferirli in modalità wireless tramite rete locale (LAN)."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tenere un registro dei materiali?)",
+        "desc": "Per verificare le fatture dei fornitori, monitorare il consumo di materiali (calcestruzzo, acciaio, ecc.) e prevenire perdite o furti."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può inserire i materiali?)",
+        "desc": "I capocantiere, i responsabili di magazzino, gli ingegneri o il personale amministrativo possono aggiungere nuove bolle."
       }
     },
     "journal": {
-      "title": "Guida al giornale",
-      "step1": {
-        "title": "1. Meteo",
-        "desc": "Registra il meteo giornaliero e le condizioni generali."
+      "title": "Guida del Giornale di Cantiere (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è il giornale di cantiere?)",
+        "desc": "Il giornale di cantiere è un registro ufficiale in cui vengono registrate cronologicamente le condizioni meteo, il numero di operai e tutte le attività del cantiere."
       },
-      "step2": {
-        "title": "2. Registrazione cronologica",
-        "desc": "Registra eventi importanti in ordine."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati questi record?)",
+        "desc": "I record sono memorizzati nel database SQLite locale e filtrati in base al progetto attivo."
       },
-      "step3": {
-        "title": "3. Storia",
-        "desc": "Sfoglia facilmente i giorni precedenti."
+      "q3": {
+        "title": "3. QUANDO? (Quando deve essere compilato il giornale?)",
+        "desc": "Deve essere compilato alla fine di ogni giornata lavorativa o in tempo reale. I filtri di data consentono una facile ricerca storica."
+      },
+      "q4": {
+        "title": "4. COME? (Come vengono recuperati il meteo e il numero di operai?)",
+        "desc": "Il meteo viene recuperato automaticamente tramite OpenWeather in base alla posizione del cantiere. Il numero di operai viene calcolato in base ai fogli presenze."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tenere un giornale di cantiere?)",
+        "desc": "Per creare un archivio storico, ufficiale e verificabile in caso di controversie di lavoro, pagamenti di avanzamento o reclami dei subappaltatori."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire questi record?)",
+        "desc": "I direttori di cantiere o il personale autorizzato possono modificare i dati. Per garantire l'integrità dei dati, la modifica è consentita solo per il giorno corrente."
       }
     },
     "quality": {
-      "title": "Guida alla qualità",
-      "step1": {
-        "title": "1. Segnalazione degli stati",
-        "desc": "Aggiorna lo stato quando il problema viene risolto."
+      "title": "Guida del Controllo Qualità (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è il tracciamento del controllo qualità?)",
+        "desc": "Un sistema digitale per registrare difetti tecnici, lavorazioni errate o mancanti con prove fotografiche e seguirne la risoluzione."
       },
-      "step2": {
-        "title": "2. Prove visive",
-        "desc": "Includi foto di eventuali problemi rilevati."
+      "q2": {
+        "title": "2. DOVE? (Dove vengono conservati i record?)",
+        "desc": "I record sono memorizzati nel database locale per il progetto attivo. Luoghi specifici possono essere dettagliati nella descrizione."
       },
-      "step3": {
-        "title": "3. Filtraggio",
-        "desc": "Filtra per tenere traccia dei problemi aperti."
+      "q3": {
+        "title": "3. QUANDO? (Quando deve essere creato un rapporto?)",
+        "desc": "Immediatamente quando viene identificato un difetto nel cantiere. Una volta corretto, lo stato viene aggiornato a 'RISOLTO'."
+      },
+      "q4": {
+        "title": "4. COME? (Come si caricano le foto?)",
+        "desc": "Selezionando i file dal computer o in modalità wireless utilizzando il caricatore mobile locale (LAN) tramite codice QR."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché redigere rapporti di qualità?)",
+        "desc": "Per garantire la conformità alle specifiche costruttive, documentare la responsabilità di subappaltatori/operai per lavori errati e prevenire reclami futuri."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire questi rapporti?)",
+        "desc": "I direttori di cantiere, ingegneri o ispettori della qualità possono aprire e chiudere i rapporti. Le modifiche sono tracciate nei log di sistema."
       }
     },
     "subcontractor": {
-      "title": "Guida per i subappaltatori",
-      "step1": {
-        "title": "1. Salario giornaliero",
-        "desc": "Tieni traccia della retribuzione giornaliera dei subappaltatori."
+      "title": "Guida ai Subappaltatori (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la scheda subappaltatore?)",
+        "desc": "Un sistema di tracciamento del conto corrente che monitora nomi, contatti, tariffe giornaliere e saldi finanziari di subappaltatori (scavi, carpenteria, catering, ecc.) nel cantiere."
       },
-      "step2": {
-        "title": "2. Cerca e filtra",
-        "desc": "Cerca nell'elenco dei subappaltatori."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati i dati?)",
+        "desc": "Tutte le schede dei subappaltatori e i movimenti contabili sono memorizzati nel database locale, isolati e filtrati per singolo cantiere."
       },
-      "step3": {
-        "title": "3. Aggiorna e modifica",
-        "desc": "Aggiorna i diari giornalieri in qualsiasi momento."
+      "q3": {
+        "title": "3. QUANDO? (Quando inserire le transazioni?)",
+        "desc": "Le transazioni vanno registrate subito quando viene maturato uno stato di avanzamento o viene effettuato un pagamento/anticipo. Aggiornare anche i documenti di sicurezza alla scadenza."
+      },
+      "q4": {
+        "title": "4. COME? (Come gestire avanzamenti e pagamenti?)",
+        "desc": "Clicca sul pulsante dettagli accanto al subappaltatore per accedere al profilo; inserisci nuovi avanzamenti e pagamenti per calcolare automaticamente il saldo netto."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché gestire un conto subappaltatori?)",
+        "desc": "Per evitare errori manuali nei conti dei subappaltatori e dei noleggi di macchinari, visualizzare il saldo netto in tempo real e monitorare automaticamente le scadenze dei documenti."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire i conti dei subappaltatori?)",
+        "desc": "I direttori di cantiere, i responsabili contabili e i project manager possono registrare subappaltatori, inserire avanzamenti/pagamenti e condividere estratti conto via WhatsApp."
       }
     },
     "media": {
-      "title": "Guida multimediale",
-      "step1": {
-        "title": "1. Cronologia visiva",
-        "desc": "Esamina le immagini del cantiere in ordine cronologico."
+      "title": "Guida della Galleria Media (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la Galleria Media?)",
+        "desc": "Un centro di archiviazione visiva che raccoglie tutte le foto caricate durante le consegne di materiali (bolle) o i rapporti sulla qualità."
       },
-      "step2": {
-        "title": "2. Dettagli rapidi",
-        "desc": "Fare clic su qualsiasi foto per visualizzarla a schermo intero."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati i file multimediali?)",
+        "desc": "Le immagini sono memorizzate in modo sicuro sul disco locale nella cartella del progetto. Il database conserva solo i percorsi dei file."
       },
-      "step3": {
-        "title": "3. Filtri di categoria",
-        "desc": "Filtra per bolla di consegna o rapporti sulla qualità."
+      "q3": {
+        "title": "3. QUANDO? (Quando vengono aggiunte le immagini?)",
+        "desc": "Vengono aggiunte contemporaneamente alla stesura dei rapporti di avanzamento/qualità o al salvataggio delle ricevute dei materiali."
+      },
+      "q4": {
+        "title": "4. COME? (Come filtrare e cercare i file?)",
+        "desc": "Puoi cercare per titolo usando la barra di ricerca e filtrare per ordinamento (data), tipo di contenuto (bolla / rapporto) o stato foto."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tenere un archivio fotografico?)",
+        "desc": "Per dimostrare visivamente la qualità costruttiva in cantiere, eseguire il backup digitale delle bolle cartacee e risolvere rapidamente le controversie."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può usare la galleria multimediale?)",
+        "desc": "Tutti i membri del team di progetto autorizzati, inclusi direttori di cantiere, ingegneri, personale amministrativo e proprietari."
       }
     },
     "cash": {
-      "title": "Guida alla gestione del deposito",
-      "step1": {
-        "title": "1. Registrazioni entrate/spese",
-        "desc": "Registra entrate e uscite."
+      "title": "Guida della Cassa Economale (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la gestione della cassa?)",
+        "desc": "Un sistema di tracciamento finanziario per registrare tutte le entrate (incassi/anticipi) e le uscite (spese/pagamenti a subappaltatori) dei progetti."
       },
-      "step2": {
-        "title": "2. Situazione finanziaria mensile",
-        "desc": "Visualizza il flusso di cassa mensile e il saldo."
+      "q2": {
+        "title": "2. DOVE? (Dove sono memorizzati i record di cassa?)",
+        "desc": "I dati sono archiviati in modo sicuro nel database locale. Le transazioni sono filtrabili per la 'Sede' o per i singoli cantieri."
       },
-      "step3": {
-        "title": "3. Esporta",
-        "desc": "Scarica le transazioni in formato PDF o Excel."
+      "q3": {
+        "title": "3. QUANDO? (Quando vanno registrate le transazioni?)",
+        "desc": "Immediatamente dopo il pagamento di una spesa, l'erogazione di un acconto o l'incasso di uno stato d'avanzamento."
+      },
+      "q4": {
+        "title": "4. COME? (Come consultare ed esportare i dati?)",
+        "desc": "Filtra per intervallo di date, progetto, tipo o descrizione; esporta i report all'istante in formato Excel, CSV, JSON o PDF."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tenere un registro di cassa?)",
+        "desc": "Per monitorare il flusso di cassa in tempo reale, visualizzare il saldo netto, gestire con precisione i conti e prevenire sforamenti di budget."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire le operazioni di cassa?)",
+        "desc": "I project manager, gli addetti alla contabilità e i capocantiere possono inserire transazioni. Le eliminazioni richiedono conferma."
       }
     },
     "recycle": {
-      "title": "Guida ai rifiuti",
-      "step1": {
-        "title": "Come funziona?",
-        "desc": "I record eliminati vengono elencati qui con l'eliminazione temporanea."
+      "title": "Guida al Cestino (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è il Cestino?)",
+        "desc": "Un sistema di recupero che conserva temporaneamente cantieri, anagrafiche del personale, transazioni di cassa, bolle, giornali e rapporti qualità eliminati per errore."
       },
-      "step2": {
-        "title": "Recupero dati",
-        "desc": "Utilizzare il pulsante di ripristino per ripristinare i record."
+      "q2": {
+        "title": "2. DOVE? (Dove finiscono i dati eliminati?)",
+        "desc": "I dati non vengono cancellati permanentemente. Sono contrassegnati come eliminati logicamente (soft-deleted) nel database locale e mostrati in questa pagina."
       },
-      "step3": {
-        "title": "Separazione del progetto",
-        "desc": "Filtra il tuo cestino per progetti."
+      "q3": {
+        "title": "3. QUANDO? (Quando posso ripristinare i dati?)",
+        "desc": "Puoi ripristinare qualsiasi elemento in qualsiasi momento. Non c'è scadenza o svuotamento automatico del cestino."
+      },
+      "q4": {
+        "title": "4. COME? (Come ripristinare e cercare i dati?)",
+        "desc": "Clicca sul pulsante 'Ripristina' a destra dell'elemento per recuperarlo in pochi secondi. Puoi filtrare per data, tipo di record e cantiere."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché è stato progettato il cestino?)",
+        "desc": "Progettato per prevenire la perdita definitiva di dati dovuta a cancellazioni accidentali durante il lavoro frenetico in cantiere e mantenere la tracciabilità."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può ripristinare i dati?)",
+        "desc": "I direttori di cantiere, ingegneri o gestori dell'account autorizzati alle operazioni di ripristino possono avviare il recupero."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Guida alla produzione"
     },
     "subcontractor_profile": {
-      "title": "Guida all'estratto conto del subappaltatore",
-      "step1": {
-        "title": "1. Aggiunta dei pagamenti per avanzamento lavori",
-        "desc": "Inserisci qui il lavoro svolto dal subappaltatore in cantiere e i relativi importi. Questo aumenta i crediti del subappaltatore (debito dell'azienda) ma non causa un deflusso di cassa dal registro di cassa."
+      "title": "Guida a Dettagli & Estratto Conto Subappaltatore (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è il tracciamento dell'estratto conto?)",
+        "desc": "Un estratto conto dettagliato, ordinato per data e descrizione, delle lavorazioni eseguite (avanzamenti) e dei pagamenti/anticipi effettuati al subappaltatore."
       },
-      "step2": {
-        "title": "2. Pagamenti integrati nel registro di cassa",
-        "desc": "Registra qui i pagamenti in contanti e gli anticipi effettuati al subappaltatore. Questo riduce il saldo del subappaltatore e crea automaticamente un deflusso di cassa nel Registro di Cassa."
+      "q2": {
+        "title": "2. DOVE? (Dove vengono salvati i movimenti?)",
+        "desc": "I movimenti contabili sono archiviati nel database locale. I pagamenti inseriti vengono registrati in automatico anche nella Cassa."
       },
-      "step3": {
-        "title": "3. Saldo netto del conto",
-        "desc": "Mostra il tuo attuale debito netto verso il subappaltatore, calcolato sottraendo i pagamenti effettuati dal totale dei pagamenti per avanzamento lavori maturati."
+      "q3": {
+        "title": "3. QUAND? (Quando inserire avanzamenti e pagamenti?)",
+        "desc": "Registrare gli avanzamenti alla consegna delle lavorazioni da parte del subappaltatore e i pagamenti/anticipi contestualmente all'erogazione."
+      },
+      "q4": {
+        "title": "4. COME? (Come esportare e condividere via WhatsApp?)",
+        "desc": "Genera i report applicando i filtri temporali, scaricali in formato PDF/Excel con un clic o inviali direttamente tramite WhatsApp."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tenere un estratto conto dettagliato?)",
+        "desc": "Per prevenire contestazioni contabili e pagamenti duplicati con i subappaltatori, monitorando i debiti netti aziendali senza errori."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire questa pagina profilo?)",
+        "desc": "I direttori di cantiere, i coordinatori di progetto e i contabili autorizzati possono inserire o rimuovere avanzamenti e pagamenti."
+      }
+    },
+    "logs": {
+      "title": "Guida dei Log di Sistema (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cosa sono i log di sistema?)",
+        "desc": "Un sistema di registro digitale che registra in ordine cronologico le operazioni critiche del database (creazione, aggiornamento, cancellazione), eventi e possibili errori."
+      },
+      "q2": {
+        "title": "2. DOVE? (Dove vengono memorizzati i log?)",
+        "desc": "I log di sistema sono memorizzati localmente sul tuo disco. Sono offline e non vengono mai inviati a server esterni."
+      },
+      "q3": {
+        "title": "3. QUANDO? (Quando vengono scritti i log?)",
+        "desc": "Registrati autonomamente con precisione al millisecondo non appena un utente esegue un'azione o viene rilevato un errore dell'applicazione."
+      },
+      "q4": {
+        "title": "4. COME? (Come ispezionare i log?)",
+        "desc": "Usa la barra di ricerca o filtra per tipo per visualizzare Info (blu), DB Creazione (verde), DB Aggiornamento (giallo) o DB Cancellazione/Errore (rosso)."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché tenere i log di sistema?)",
+        "desc": "Per tracciare retroattivamente le modifiche degli utenti (registri di controllo), individuare la causa esatta degli errori e garantire la sicurezza."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può accedere ai log?)",
+        "desc": "Solo l'amministratore locale o i tecnici dell'assistenza autorizzati con accesso al PC locale possono leggere questi log."
+      }
+    },
+    "bulk": {
+      "title": "Guida alle Presenze Multiple (5W1H)",
+      "q1": {
+        "title": "1. COSA? (Cos'è la registrazione presenze multiple?)",
+        "desc": "Un sistema di inserimento rapido che consente di registrare i dettagli di presenza (ore, straordinari, note) per più operai che lavorano nello stesso cantiere lo stesso giorno."
+      },
+      "q2": {
+        "title": "2. DOVE? (Dove vengono salvate le presenze?)",
+        "desc": "I record di presenza di tutti gli operai selezionati vengono memorizzati come righe separate nel database, aggiornando direttamente i loro estratti conto."
+      },
+      "q3": {
+        "title": "3. QUANDO? (Quando registrare le presenze multiple?)",
+        "desc": "Alla fine della giornata, a fine turno o prima dei cicli di pagamento per un tracciamento tempestivo di tutta la forza lavoro attiva."
+      },
+      "q4": {
+        "title": "4. COME? (Come registrare le presenze multiple?)",
+        "desc": "Seleziona il personale a sinistra (con ricerca e 'Seleziona tutto'), specifica data, tipo e straordinari a destra e fai clic su 'Salva tutto'."
+      },
+      "q5": {
+        "title": "5. PERCHÉ? (Perché usare la registrazione multipla?)",
+        "desc": "Per eliminare il noioso compito di inserire le presenze individualmente per decine di operai, risparmiando tempo e minimizzando gli errori."
+      },
+      "q6": {
+        "title": "6. CHI? (Chi può gestire le presenze multiple?)",
+        "desc": "I capocantiere, gli addetti alle presenze, i responsabili amministrativi o i project manager possono effettuare inserimenti multipli."
+      }
+    },
+    "worker_profile": {
+      "title": "Personnel Profile & Statement Guide (5W1H)",
+      "q1": {
+        "title": "1. WHAT? (What is Personnel Statement Tracking?)",
+        "desc": "A current account statement containing the breakdown of the selected employee's worked days (attendance), earned wages, received advances, and leave history."
+      },
+      "q2": {
+        "title": "2. WHERE? (Where is Data Stored?)",
+        "desc": "All attendance, advance, and leave records are stored in the local database. Payments are automatically integrated into the Cash Register page."
+      },
+      "q3": {
+        "title": "3. WHEN? (When to Log Attendance and Advances?)",
+        "desc": "Attendance is logged daily when work is completed. Advances or weekly payments are recorded immediately when paid."
+      },
+      "q4": {
+        "title": "4. HOW? (How to Export and Share via WhatsApp?)",
+        "desc": "Use the date range filters to generate the statement, download it as PDF/Excel with one click, or share it directly with the employee via WhatsApp."
+      },
+      "q5": {
+        "title": "5. WHY? (Why Keep a Detailed Personnel Ledger?)",
+        "desc": "To definitively resolve salary or advance disputes at the end of the month and to prove the accuracy of historical progress payments."
+      },
+      "q6": {
+        "title": "6. WHO? (Who Can Manage the Personnel Profile Page?)",
+        "desc": "Authorized project managers, site chiefs, or accounting staff can add/delete attendance, advances, and leaves."
       }
     }
   },
@@ -1166,5 +1380,46 @@
     "Yıllık": "Annuale",
     "Mazeret": "Scusa",
     "Sağlık": "Medico"
+  },
+  "isg": {
+    "section_title": "SSL (Sicurezza e Salute sul Lavoro)",
+    "start_date": "Data Inizio SSL",
+    "expiry_date": "Data Scadenza SSL",
+    "badge_valid": "SSL Valido",
+    "badge_approaching": "SSL In Scadenza",
+    "badge_expired": "SSL Scaduto",
+    "badge_undefined": "SSL Non Definito",
+    "update_btn": "Aggiorna SSL",
+    "update_title": "Aggiorna Date SSL",
+    "update_success": "Date SSL aggiornate con successo.",
+    "days": "giorni"
+  },
+  "bulk_timesheet": {
+    "title": "Inserimento Foglio Ore Multiplo",
+    "nav_title": "Ore Multiple",
+    "select_workers": "Seleziona Lavoratori",
+    "select_all": "Seleziona Tutti",
+    "deselect_all": "Deseleziona Tutti",
+    "selected_count": "{{count}} lavoratori selezionati",
+    "form_title": "Dettagli Foglio Ore",
+    "save_btn": "Salva Tutti",
+    "save_success": "Foglio ore salvato con successo per {{count}} lavoratori.",
+    "save_error": "Alcuni record non sono riusciti. Successo: {{success}}, Errore: {{error}}",
+    "no_workers_selected": "Selezionare almeno un lavoratore.",
+    "no_workers": "Nessun lavoratore attivo trovato.",
+    "search_workers": "Cerca lavoratori...",
+    "preview_wage": "Salario Stimato",
+    "guide_step1_title": "1. Selezione Personale",
+    "guide_step1_desc": "Seleziona i lavoratori dal pannello sinistro. Usa 'Seleziona Tutti' per selezionare tutti.",
+    "guide_step2_title": "2. Dettagli Foglio Ore",
+    "guide_step2_desc": "Inserisci i dettagli come data, tipo di lavoro e straordinari. Questi saranno applicati a tutti i selezionati.",
+    "guide_step3_title": "3. Salvataggio Multiplo",
+    "guide_step3_desc": "Clicca 'Salva Tutti' per creare record foglio ore per tutti i lavoratori selezionati."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importa (Excel/CSV)",
+    "export_btn": "Esporta",
+    "download_template": "Scarica Modello",
+    "import_success": "{{count}} record subappaltatore importati con successo."
   }
 }

@@ -410,7 +410,9 @@
     "details": "Detaily",
     "start_date": "Počáteční datum",
     "end_date": "Koncové datum",
-    "amount": "Částka"
+    "amount": "Částka",
+    "records": "Záznamů",
+    "pagination_info": "Strana {{page}} / {{total}} ({{records}} Záznamů)"
   },
   "worker_modal": {
     "title_new": "Přidat",
@@ -586,7 +588,10 @@
     "help_p2": "Kliknutím na libovolnou fotografii ji zobrazíte v plné velikosti a zobrazíte související dodací list nebo zprávu o kvalitě.",
     "help_h3": "3. Filtry kategorií",
     "help_p3": "Filtrujte média podle typu (fotografie dodacího listu vs. fotografie kontroly kvality) nebo vyhledávejte podle poznámek.",
-    "no_image": "Žádný obrázek"
+    "no_image": "Žádný obrázek",
+    "view_list": "Zobrazení seznamu",
+    "view_grid": "Zobrazení galerie",
+    "item_type": "Typ obsahu"
   },
   "subcontractor": {
     "title": "🚜 Knihy subdodavatelů",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Průvodce správou staveniště",
-      "step1": {
-        "title": "1. Aktif Şantiye",
-        "desc": "Vyberte projekt, který chcete nastavit jako aktivní."
+      "title": "Průvodce staveništi a pracovními prostory (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je správa stavenišť a pracovních prostorů?)",
+        "desc": "Ovládací panel, který vám umožňuje definovat fyzická místa realizace vašich projektů a oddělit data podle jednotlivých stavenišť."
       },
-      "step2": {
-        "title": "2. Místo a počasí",
-        "desc": "Určete místo, kde se bude automaticky přijímat denní předpověď počasí."
+      "q2": {
+        "title": "2. KDE? (Kde jsou data stavenišť uložena?)",
+        "desc": "Všechna přidaná staveniště a transakce s nimi spojené jsou uloženy v místní databázi."
       },
-      "step3": {
-        "title": "3. Vyhledávání a stránkování",
-        "desc": "Okamžité vyhledávání na staveništích."
+      "q3": {
+        "title": "3. KDY? (Kdy by mělo být staveniště definováno?)",
+        "desc": "Mělo by být v systému založeno ihned při otevření nového fyzického staveniště nebo před přiřazením subdodavatelů a pracovníků."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak vybírat, řadit a spravovat staveniště?)",
+        "desc": "Přidejte nové staveniště pomocí formuláře, seřaďte seznam přetažením řádků a kliknutím na 'Vybrat pracovní prostor' jej aktivujte."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vytvářet pracovní prostory podle stavenišť?)",
+        "desc": "Abyste mohli nezávisle a bez míchání dat vykazovat stavební deníky, docházku, pokladní transakce a dodávky materiálu."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může seznam stavenišť spravovat?)",
+        "desc": "Vlastníci firmy, generální koordinátoři a vedení z centrály mohou staveniště zakládat, upravovat nebo mazat."
       }
     },
     "personnel": {
-      "title": "Průvodce pro zaměstnance",
-      "step1": {
-        "title": "1. Přidejte zaměstnance a Excel",
-        "desc": "K hromadnému nahrání seznamu použijte šablonu Excel."
+      "title": "Průvodce správou personálu (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je správa personálu?)",
+        "desc": "Sledovací systém, který monitoruje docházku (puantaj), zálohy, výdělek a platnost bezpečnostních dokumentů (BOZP) u dělníků i technických pracovníků na stavbě."
       },
-      "step2": {
-        "title": "2. Skupinová analýza",
-        "desc": "Analyzujte náklady podle kategorií skupiny."
+      "q2": {
+        "title": "2. KDE? (Kde jsou data personálu uložena?)",
+        "desc": "Všechny karty zaměstnanců, skupiny a transakce v deníku jsou uloženy v místní databázi, filtrovány podle aktivního staveniště."
       },
-      "step3": {
-        "title": "3. Scorecard a výpisy",
-        "desc": "Kliknutím na název zobrazíte výsledkovou tabulku."
+      "q3": {
+        "title": "3. KDY? (Kdy registrovat zaměstnance a zadávat docházku?)",
+        "desc": "Noví zaměstnanci jsou registrováni při nástupu. Docházka a zálohy by měly být zadávány v denních nebo týdenních intervalech bez zpoždění."
       },
-      "step4": {
-        "title": "4. Správa oprávnění",
-        "desc": "Zaznamenejte dny, kdy je personál omluven nebo na pracovní neschopnosti."
+      "q4": {
+        "title": "4. JAK? (Jak přidávat zaměstnance a importovat z Excelu?)",
+        "desc": "Kliknutím na 'Přidat zaměstnance' vpravo nahoře vytvoříte kartu; pro hromadný import si stáhněte šablonu a načtěte data z Excelu jedním kliknutím."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč sledovat personál podrobně?)",
+        "desc": "Abyste se vyhnuli chybám ve mzdách, nezmeškali platnost BOZP dokumentů a přesně spočítali aktuální mzdové náklady na stavbě."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může seznam personálu spravovat?)",
+        "desc": "Projektoví manažeři, stavbyvedoucí a administrativní pracovníci mohou zakládat zaměstnance, vytvářet skupiny a spravovat docházku/zálohy."
       }
     },
     "quantity": {
-      "title": "Průvodce výrobou",
-      "step1": {
-        "title": "1. Výrobní záznamy",
-        "desc": "Zaznamenávejte denní produkci."
+      "title": "Průvodce zaměřením a pokrokem (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je sledování výkazů výměr?)",
+        "desc": "Sledovací systém, který měří fyzický pokrok na projektu zaznamenáváním množství a jednotek (m², m³, tuna atd.) dokončených prací."
       },
-      "step2": {
-        "title": "2. Archiv a podrobnosti",
-        "desc": "Pište si poznámky do chronologického archivu."
+      "q2": {
+        "title": "2. KDE? (Kde jsou uložena data o pokroku?)",
+        "desc": "Data jsou uložena v místní databázi. V poznámkách můžete specifikovat konkrétní místa, jako jsou bloky nebo patra."
       },
-      "step3": {
-        "title": "3. Vyhledávání a filtry",
-        "desc": "Filtrujte podle období nebo jednotky."
+      "q3": {
+        "title": "3. KDY? (Kdy by měl být pokrok zaznamenán?)",
+        "desc": "Jakmile jsou dokončeny denní práce nebo když jsou provedeny výpočty pokroku, musí být zaznamenány denně bez zpoždění."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak dotazovat data o pokroku?)",
+        "desc": "Použijte vyhledávací panel k vyhledání podle názvu položky nebo poznámek; filtrujte seznam podle rozsahu dat a typů jednotek."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč sledovat výkazy výměr?)",
+        "desc": "Pro výpočet míry dokončení projektu, ověření platbách subdodavatelům a zajištění souladu s plánovaným harmonogramem."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může pokrok zadávat?)",
+        "desc": "Stavbyvedoucí, přípraváři nebo projektoví manažeři mohou přidávat nové záznamy o pokroku a upravovat stávající."
       }
     },
     "delivery": {
-      "title": "Průvodce dodacím listem",
-      "step1": {
-        "title": "1. Dodavatel a materiál",
-        "desc": "Zaznamenejte dodavatele a názvy materiálů."
+      "title": "Průvodce dodacími listy a materiálem (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je sledování dodávek materiálu?)",
+        "desc": "Sledovací systém, který digitálně zaznamenává množství, jednotku (m³, tuna, kg atd.), název dodavatele a fyzické dodací listy stavebních materiálů přijatých na staveništi."
       },
-      "step2": {
-        "title": "2. Dokumentujte fotografie",
-        "desc": "Nahrajte fotografie dodacího listu pro digitální archiv."
+      "q2": {
+        "title": "2. KDE? (Kde jsou uloženy záznamy o dodávkách?)",
+        "desc": "Materiálové záznamy jsou uloženy v místní databázi, zatímco nahrané fotografie faktur nebo účtenek jsou bezpečně uloženy ve složce vašeho projektu."
       },
-      "step3": {
-        "title": "3. Inteligentní vyhledávání",
-        "desc": "Vyhledejte čísla dodacích listů nebo dodavatele."
+      "q3": {
+        "title": "3. KDY? (Kdy by měly být dodávky zaznamenány?)",
+        "desc": "Okamžitě, jakmile vozidla dodavatele doručí materiály na staveniště a fyzický dodací list je podepsán."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak nahrát fotky účtenek?)",
+        "desc": "Výběrem souborů z PC nebo naskenováním QR kódu mobilním fotoaparátem pro jejich bezdrátový přenos přes místní síť (LAN)."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést evidenci materiálu?)",
+        "desc": "Pro ověření faktur dodavatelů, sledování okamžité spotřeby materiálu (beton, betonářská ocel atd.) a zamezení ztrátám či krádežím."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může zadávat dodací listy?)",
+        "desc": "Stavbyvedoucí, skladníci, projektoví inženýři nebo administrativní pracovníci mohou přidávat nové dodací listy a upravovat staré."
       }
     },
     "journal": {
-      "title": "Průvodce deníkem",
-      "step1": {
-        "title": "1. Počasí",
-        "desc": "Zaznamenávejte denní počasí a celkový stav."
+      "title": "Průvodce stavebním deníkem (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je stavební deník?)",
+        "desc": "Stavební deník je oficiální záznam, kam se chronologicky zaznamenávají denní povětrnostní podmínky, počty aktivních pracovníků a veškeré činnosti na staveništi."
       },
-      "step2": {
-        "title": "2. Chronologický záznam",
-        "desc": "Zaznamenávejte důležité události v pořadí."
+      "q2": {
+        "title": "2. KDE? (Kde jsou tyto záznamy uloženy?)",
+        "desc": "Záznamy deníku jsou uloženy v místní databázi SQLite a filtrovány na základě aktivního projektu."
       },
-      "step3": {
-        "title": "3. Historie",
-        "desc": "Snadno procházejte předchozí dny."
+      "q3": {
+        "title": "3. KDY? (Kdy by měl být deník zaznamenán?)",
+        "desc": "Měl by být zaznamenán na konci každého pracovního dne nebo průběžně. Datové filtry umožňují snadné vyhledávání v historii."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak se stahují údaje o počasí a počtu pracovníků?)",
+        "desc": "Počasí se automaticky stahuje přes OpenWeather na základě polohy projektu. Počty pracovníků se autonomně počítají z denních pracovních výkazů."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést stavební deník?)",
+        "desc": "Vytvořit historický, oficiální a ověřitelný archiv pro budoucí pracovní spory, průběžné platby nebo nároky subdodavatelů."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může tyto záznamy spravovat?)",
+        "desc": "Stavbyvedoucí nebo oprávnění pracovníci mohou záznamy upravovat. Kvůli integritě dat je úprava povolena pouze pro záznam z aktuálního dne."
       }
     },
     "quality": {
-      "title": "Průvodce kvalitou",
-      "step1": {
-        "title": "1. Stavy zpráv",
-        "desc": "Po vyřešení problému aktualizujte stav."
+      "title": "Průvodce kontrolou kvality (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je sledování kontroly kvality?)",
+        "desc": "Digitální systém hlášení, který zaznamenává technické závady, vadné nebo chybějící stavební práce s fotodokumentací a sleduje je až do jejich vyřešení."
       },
-      "step2": {
-        "title": "2. Vizuální důkaz",
-        "desc": "Zahrňte fotografie všech zjištěných problémů."
+      "q2": {
+        "title": "2. KDE? (Kde jsou tyto záznamy uchovávány?)",
+        "desc": "Záznamy jsou uloženy v místní databázi pod aktivním projektem. Konkrétní místa lze podrobně popsat v popisu."
       },
-      "step3": {
-        "title": "3. Filtrování",
-        "desc": "Filtr pro sledování otevřených problémů."
+      "q3": {
+        "title": "3. KDY? (Kdy by měl být protokol vytvořen?)",
+        "desc": "Okamžitě po zjištění závady nebo problému s kvalitou na staveništi. Po nápravě se stav změní na 'VYŘEŠENO'."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak nahrát fotky?)",
+        "desc": "Výběrem souborů z počítače nebo bezdrátově pomocí mobilního uploaderu v místní síti (LAN) prostřednictvím QR kódu."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést protokoly o kvalitě?)",
+        "desc": "Zaručit soulad se stavebními specifikacemi, zdokumentovat odpovědnost subdodavatele/pracovníka za vadnou práci a předejít budoucím nárokům."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může tyto protokoly spravovat?)",
+        "desc": "Stavbyvedoucí, inspekční inženýři nebo kontroloři kvality mohou protokoly otevírat a zavírat. Všechny změny jsou zaznamenány v systémových protokolech."
       }
     },
     "subcontractor": {
-      "title": "Průvodce pro subdodavatele",
-      "step1": {
-        "title": "1. Denní mzda",
-        "desc": "Sledujte denní mzdy subdodavatelů."
+      "title": "Průvodce subdodavateli (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je kniha subdodavatelů?)",
+        "desc": "Systém sledování běžných účtů, který monitoruje jména, kontakty, denní sazby a finanční zůstatky subdodavatelů (výkopy, armování, stravování atd.) na staveništi."
       },
-      "step2": {
-        "title": "2. Hledat a filtrovat",
-        "desc": "Prohledejte seznam subdodavatelů."
+      "q2": {
+        "title": "2. KDE? (Kde jsou data uložena?)",
+        "desc": "Všechny karty subdodavatelů a transakce v deníku jsou uloženy v místní databázi. Jsou izolovány a filtrovány na základě konkrétního projektu."
       },
-      "step3": {
-        "title": "3. Aktualizovat a upravit",
-        "desc": "Aktualizujte denní deníky kdykoli."
+      "q3": {
+        "title": "3. KDY? (Kdy zadávat transakce?)",
+        "desc": "Transakce by měly být zaznamenány okamžitě po schválení fakturace (prostředků) oder provedení platby/zálohy. Záznamy o bezpečnosti práce by měly být aktualizovány podle data vypršení platnosti."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak spravovat fakturace a platby?)",
+        "desc": "Kliknutím na tlačítko podrobností vedle karty subdodavatele přejdete do profilu; přidejte nové fakturace a platby pro automatický výpočet čistého zůstatku."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést účty subdodavatelů?)",
+        "desc": "Abyste předešli chybám při ručním počítání účtů subdodavatelů a pronájmu strojů, viděli čistý stav závazků a pohledávek v reálném čase a automaticky sledovali platnost bezpečnostních dokumentů."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může účty subdodavatelů spravovat?)",
+        "desc": "Stavbyvedoucí, účetní a projektoví manažeři mohou zakládat nové subdodavatele, zadávat fakturace/platby a sdílet výpisy z účtu přes WhatsApp."
       }
     },
     "media": {
-      "title": "Průvodce médii",
-      "step1": {
-        "title": "1. Vizuální časová osa",
-        "desc": "Prohlédněte si snímky staveniště chronologicky."
+      "title": "Průvodce galerii médií (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je galerie médií?)",
+        "desc": "Vizuální archivní centrum, které shromažďuje pod jednou střechou všechny fotografie nahrané během dodávek materiálu (dodací listy) nebo zpráv o kvalitě."
       },
-      "step2": {
-        "title": "2. Rychlé podrobnosti",
-        "desc": "Kliknutím na libovolnou fotografii zobrazíte plnou velikost."
+      "q2": {
+        "title": "2. KDE? (Kde jsou uloženy mediální soubory?)",
+        "desc": "Obrázky jsou bezpečně uloženy na místním disku ve složce vašeho projektu. Databáze uchovává pouze jejich relativní cesty k souborům."
       },
-      "step3": {
-        "title": "3. Filtry kategorií",
-        "desc": "Filtrujte podle dodacího listu nebo zpráv o kvalitě."
+      "q3": {
+        "title": "3. KDY? (Kdy se přidávají obrázky?)",
+        "desc": "Přidávají se současně při psaní zpráv o postupu/kvalitě nebo při ukládání příjemek materiálu."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak filtrovat a vyhledávat média?)",
+        "desc": "Můžete vyhledávat podle názvu pomocí vyhledávacího panelu a filtrovat podle řazení (datum), typu obsahu (dodací list / zpráva) nebo stavu fotografie."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést fotoarchiv?)",
+        "desc": "Vizuálně prokázat kvalitu výstavby na staveništi, digitálně zálohovat fyzické dodací listy a rychle vyřešit zpětné spory."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může galerii médií používat?)",
+        "desc": "Všichni oprávnění členové projektového týmu, včetně stavbyvedoucích, inspekčních inženýrů, administrativních pracovníků a vlastníků."
       }
     },
     "cash": {
-      "title": "Průvodce správou úschovny",
-      "step1": {
-        "title": "1. Evidence příjmů/výdajů",
-        "desc": "Evidujte příjmy a výdaje."
+      "title": "Průvodce pokladnou (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je správa pokladny?)",
+        "desc": "Finanční sledovací systém, který zaznamenává všechny peněžní příjmy (příjmy/zálohy) a peněžní výdaje (výdaje/platby subdodavatelům) projektů."
       },
-      "step2": {
-        "title": "2. Měsíční finanční situace",
-        "desc": "Zobrazit měsíční peněžní tok a zůstatek."
+      "q2": {
+        "title": "2. KDE? (Kde jsou uloženy záznamy pokladny?)",
+        "desc": "Data jsou bezpečně uložena v místní databázi. Transakce lze filtrovat a vykazovat pro 'Ústředí' nebo jednotlivá staveniště."
       },
-      "step3": {
-        "title": "3. Export",
-        "desc": "Stáhněte si transakce jako PDF nebo Excel."
+      "q3": {
+        "title": "3. KDY? (Kdy by měly být transakce zaznamenány?)",
+        "desc": "Okamžitě po provedení platby, poskytnutí zálohy nebo obdržení platby za provedené práce."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak dotazovat a vykazovat data z pokladny?)",
+        "desc": "Filtrujte podle rozsahu dat, projektu, typu transakce nebo popisu; exportujte zprávy okamžitě ve formátu Excel, CSV, JSON nebo PDF."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést pokladní knihu?)",
+        "desc": "Chcete-li sledovat peněžní toky v reálném čase, sledovat stav čistého zůstatku, přesně spravovat běžné účty personálu/subdodavatelů a předcházet překročení rozpočtu."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může spravovat pokladní operace?)",
+        "desc": "Projektoví manažeři, finanční pracovníci a stavbyvedoucí mohou vkládat transakce. Operace mazání jsou kontrolovány pomocí potvrzovacích modálů."
       }
     },
     "recycle": {
-      "title": "Průvodce odpadky",
-      "step1": {
-        "title": "Jak to funguje?",
-        "desc": "Smazané záznamy jsou zde uvedeny s měkkým mazáním."
+      "title": "Průvodce košem (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je koš?)",
+        "desc": "Systém obnovy, který dočasně uchovává omylem smazaná staveniště, záznamy o personálu, pokladní transakce, dodací listy, denní deníky a zprávy o kvalitě."
       },
-      "step2": {
-        "title": "Záchrana dat",
-        "desc": "K obnovení záznamů použijte tlačítko obnovení."
+      "q2": {
+        "title": "2. KDE? (Kde jsou smazaná data uložena?)",
+        "desc": "Smazaná data nejsou trvale vymazána. V místní databázi jsou označena příznakem logického smazání a jsou uvedena na této stránce."
       },
-      "step3": {
-        "title": "Oddělení projektu",
-        "desc": "Filtrujte svůj odpad podle projektů."
+      "q3": {
+        "title": "3. KDY? (Kdy mohu data obnovit?)",
+        "desc": "Jakoukoli smazanou položku můžete obnovit kdykoli po jejím smazání. Neexistuje žádné datum vypršení platnosti ani automatický cyklus čištění."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak obnovit a vyhledat data?)",
+        "desc": "Kliknutím na tlačítko 'Obnovit' na pravé straně seznamu obnovíte data během několika sekund. Můžete filtrovat podle data, typu záznamu a projektu."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč je koš potřeba?)",
+        "desc": "Navrženo tak, aby se zabránilo trvalé ztrátě dat v důsledku náhodného smazání v intenzivním tempu práce na staveništi a byla zachována sledovatelnost."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může data obnovit?)",
+        "desc": "Obnovu mohou zahájit oprávnění stavbyvedoucí, inženýři nebo vlastníci účtů, kteří mají v aplikaci oprávnění k mazání a obnově."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Průvodce výrobou"
     },
     "subcontractor_profile": {
-      "title": "Průvodce výpisem subdodavatele",
-      "step1": {
-        "title": "1. Přidání plateb za postup",
-        "desc": "Zde zadejte práci odvedenou subdodavatelem na staveništi a její částky. Tím se zvýší pohledávky subdodavatele (dluh společnosti), ale nedojde k odtoku hotovosti z pokladny."
+      "title": "Detaily & Výpis subdodavatele (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je sledování výpisu subdodavatele?)",
+        "desc": "Detailní přehled provedených prací (fakturací) a plateb/záloh poskytnutých subdodavateli, rozdělený podle dat a poznámek."
       },
-      "step2": {
-        "title": "2. Platby integrované s pokladnou",
-        "desc": "Zde zaznamenejte hotovostní platby a zálohy poskytnuté subdodavateli. Tím se sníží zůstatek subdodavatele a automaticky se vytvoří odtok hotovosti v pokladně."
+      "q2": {
+        "title": "2. KDE? (Kde jsou transakce uloženy?)",
+        "desc": "Transakce na běžném účtu jsou uloženy v místní databázi. Zadané platby jsou automaticky synchronizovány s Pokladnou."
       },
-      "step3": {
-        "title": "3. Čistý zůstatek účtu",
-        "desc": "Zobrazuje váš aktuální čistý dluh vůči subdodavateli, vypočtený odečtením provedených plateb od celkových získaných plateb za postup."
+      "q3": {
+        "title": "3. KDY? (Kdy přidávat fakturace a platby?)",
+        "desc": "Fakturace za odvedenou práci by měly být zadány při předání prací subdodavatelem, a platby/zálohy zaznamenány ihned při jejich vyplacení."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak exportovat a sdílet přes WhatsApp?)",
+        "desc": "Generujte přehledy s využitím filtrů dat, stáhněte je jako PDF/Excel jedním kliknutím nebo je sdílejte přímo přes WhatsApp."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést detailní výpis?)",
+        "desc": "Abyste předešli účetním nesrovnalostem a dvojitým platbám subdodavatelům a bezchybně vykazovali čisté závazky firmy."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může tuto stránku profilu spravovat?)",
+        "desc": "Oprávnění stavbyvedoucí, projektoví koordinátoři a účetní mohou přidávat nebo mazat fakturace a platby."
+      }
+    },
+    "logs": {
+      "title": "Průvodce systémovými logy (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co jsou systémové logy?)",
+        "desc": "Digitální systém protokolu, který chronologicky zaznamenává kritické operace databáze (vytvoření, aktualizace, smazání), události na pozadí a chyby."
+      },
+      "q2": {
+        "title": "2. KDE? (Kde jsou uloženy soubory logů?)",
+        "desc": "Systémové logy jsou uloženy místně na vašem disku. Jsou zcela offline a nikdy se neodesílají na žádný externí server."
+      },
+      "q3": {
+        "title": "3. KDY? (Kdy jsou logy zapisovány?)",
+        "desc": "Zapisují se automaticky s přesností na milisekundy v přesný okamžik, kdy uživatel provede akci nebo když je zachycena chyba aplikace."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak kontrolovat logy?)",
+        "desc": "Použijte vyhledávací panel nebo filtrujte podle typu pro zobrazení Info (modrá), DB Vytvoření (zelená), DB Aktualizace (žlutá) nebo DB Smazání/Chyba (červená)."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést systémové logy?)",
+        "desc": "Chcete-li zpětně sledovat změny uživatelů (auditní logy), lokalizovat přesnou příčinu chyb a zajistit bezpečnost."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo má k logům přístup?)",
+        "desc": "Tyto logy může číst pouze administrátor tohoto počítače nebo oprávnění technici s přístupem k místnímu PC."
+      }
+    },
+    "bulk": {
+      "title": "Průvodce hromadným výkazem (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je hromadné zadávání výkazů?)",
+        "desc": "Rychlý zadávací systém, který umožňuje zaznamenat detaily výkazu práce (mzdy, nadčasy, poznámky) pro více pracovníků na stejném staveništi ve stejný den najednou."
+      },
+      "q2": {
+        "title": "2. KDE? (Kde jsou výkazy uloženy?)",
+        "desc": "Záznamy výkazů všech vybraných pracovníků jsou uloženy jako samostatné řádky v databázi. Každý záznam přímo aktualizuje výkaz daného pracovníka."
+      },
+      "q3": {
+        "title": "3. KDY? (Kdy by měly být hromadné výkazy zadány?)",
+        "desc": "Na konci dne, po skončení směny nebo před platebními cykly pro rychlé sledování všech aktivních sil."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak zadat hromadné výkazy?)",
+        "desc": "Vyberte personál v levém panelu (s podporou vyhledávání a 'Vybrat vše'), v pravém panelu zadejte datum, typ práce a nadčasy a klikněte na 'Uložit vše'."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč používat hromadné výkazy?)",
+        "desc": "Chcete-li odstranit zdlouhavé zadávání výkazů jednotlivě pro desítky pracovníků na velkých stavbách, ušetřit čas a minimalizovat chyby."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může hromadné výkazy spravovat?)",
+        "desc": "Hromadné výkazy mohou zadávat pověření stavbyvedoucí, plánovači, administrativní pracovníci nebo projektoví manažeři."
+      }
+    },
+    "worker_profile": {
+      "title": "Detaily & Výpis zaměstnance (5W1H)",
+      "q1": {
+        "title": "1. CO? (Co je sledování výpisu zaměstnance?)",
+        "desc": "Výpis z běžného účtu obsahující rozpis odpracovaných dnů (docházky) vybraného pracovníka, vydělané mzdy, obdržených záloh a historie dovolených."
+      },
+      "q2": {
+        "title": "2. KDE? (Kde jsou data uložena?)",
+        "desc": "Všechny záznamy o docházce, zálohách a dovolených jsou uloženy v místní databázi. Výplaty se automaticky zapisují do Pokladny."
+      },
+      "q3": {
+        "title": "3. KDY? (Kdy zadávat docházku a zálohy?)",
+        "desc": "Docházka se zadává denně po ukončení práce. Zálohy nebo týdenní výplaty se zaznamenávají ihned při vyplacení."
+      },
+      "q4": {
+        "title": "4. JAK? (Jak exportovat a sdílet přes WhatsApp?)",
+        "desc": "Použijte filtry dat k vytvoření výpisu, stáhněte jej jako PDF/Excel jedním kliknutím nebo jej sdílejte se zaměstnancem přímo přes WhatsApp."
+      },
+      "q5": {
+        "title": "5. PROČ? (Proč vést detailní účet zaměstnance?)",
+        "desc": "Abyste na konci měsíce definitivně vyřešili případné spory o mzdy nebo zálohy a prokázali přesnost odpracovaných směn."
+      },
+      "q6": {
+        "title": "6. KDO? (Kdo může profilovou stránku zaměstnance spravovat?)",
+        "desc": "Oprávnění projektoví manažeři, stavbyvedoucí nebo účetní mohou přidávat/mazat docházku, zálohy a dovolené."
       }
     }
   },
@@ -1165,5 +1379,46 @@
     "Yıllık": "Výroční",
     "Mazeret": "Omluva",
     "Sağlık": "Lékařský"
+  },
+  "isg": {
+    "section_title": "BOZP (Bezpečnost a Ochrana Zdraví při Práci)",
+    "start_date": "Datum Zahájení BOZP",
+    "expiry_date": "Datum Expirace BOZP",
+    "badge_valid": "BOZP Platné",
+    "badge_approaching": "BOZP Blíží se",
+    "badge_expired": "BOZP Vypršelo",
+    "badge_undefined": "BOZP Nedefinováno",
+    "update_btn": "Aktualizovat BOZP",
+    "update_title": "Aktualizovat Data BOZP",
+    "update_success": "Data BOZP úspěšně aktualizována.",
+    "days": "dní"
+  },
+  "bulk_timesheet": {
+    "title": "Hromadný Zápis Docházky",
+    "nav_title": "Hromadná Docházka",
+    "select_workers": "Vyberte Pracovníky",
+    "select_all": "Vybrat Vše",
+    "deselect_all": "Zrušit Výběr",
+    "selected_count": "{{count}} pracovníků vybráno",
+    "form_title": "Detaily Docházky",
+    "save_btn": "Uložit Vše",
+    "save_success": "Docházka úspěšně uložena pro {{count}} pracovníků.",
+    "save_error": "Některé záznamy selhaly. Úspěch: {{success}}, Chyba: {{error}}",
+    "no_workers_selected": "Vyberte alespoň jednoho pracovníka.",
+    "no_workers": "Nebyli nalezeni žádní aktivní pracovníci.",
+    "search_workers": "Hledat pracovníky...",
+    "preview_wage": "Odhadovaná Mzda",
+    "guide_step1_title": "1. Výběr Pracovníků",
+    "guide_step1_desc": "Vyberte pracovníky z levého panelu. Použijte 'Vybrat Vše' pro výběr všech najednou.",
+    "guide_step2_title": "2. Detaily Docházky",
+    "guide_step2_desc": "Zadejte detaily jako datum, typ práce a přesčasové hodiny. Ty budou aplikovány na všechny vybrané pracovníky.",
+    "guide_step3_title": "3. Hromadné Uložení",
+    "guide_step3_desc": "Klikněte na 'Uložit Vše' pro vytvoření záznamů docházky pro všechny vybrané pracovníky."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importovat (Excel/CSV)",
+    "export_btn": "Exportovat",
+    "download_template": "Stáhnout Šablonu",
+    "import_success": "{{count}} záznamů subdodavatele úspěšně importováno."
   }
 }

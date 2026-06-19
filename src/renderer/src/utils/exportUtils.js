@@ -89,31 +89,68 @@ export const exportToMarkdown = (lines, filename) => {
   link.click();
 };
 
-export const generateExcelTemplate = (t) => {
+export const generateExcelTemplate = (t, lang) => {
+  const isTr = lang === 'tr';
   const headers = [
-    t('about.col_name'),
-    t('about.col_tc'),
-    t('about.col_phone'),
-    t('about.col_wage'),
-    t('about.col_start_date'),
-    t('about.col_group'),
-    t('about.col_status'),
-    t('about.col_tags')
+    isTr ? t('about.col_name') : 'Full Name',
+    isTr ? t('about.col_tc') : 'TC Identity No',
+    isTr ? t('about.col_phone') : 'Phone',
+    isTr ? t('about.col_wage') : 'Daily Wage',
+    isTr ? t('about.col_start_date') : 'Start Date',
+    isTr ? t('about.col_group') : 'Group',
+    isTr ? t('about.col_status') : 'Status (Active/Passive)',
+    isTr ? t('about.col_tags') : 'Tags',
+    isTr ? 'İSG Başlangıç' : 'ISG Start Date',
+    isTr ? 'İSG Bitiş' : 'ISG End Date'
   ];
   
   const tips = [
-    t('about.tip_name'),
-    t('about.tip_tc'),
-    t('about.tip_phone'),
-    t('about.tip_wage'),
-    t('about.tip_start_date'),
-    t('about.tip_group'),
-    t('about.tip_status'),
-    t('about.tip_tags')
+    isTr ? t('about.tip_name') : '(Required) Enter First and Last Name',
+    isTr ? t('about.tip_tc') : '(Optional) Enter valid 11-Digit TC',
+    isTr ? t('about.tip_phone') : '(Optional) Enter phone number',
+    isTr ? t('about.tip_wage') : '(Optional) Enter numerical value',
+    isTr ? t('about.tip_start_date') : '(Optional) Enter date in YYYY-MM-DD format',
+    isTr ? t('about.tip_group') : '(Optional) Enter group name',
+    isTr ? t('about.tip_status') : '(Optional) Enter Active or Passive',
+    isTr ? t('about.tip_tags') : '(Optional) Enter tags separated by commas',
+    isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format',
+    isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format'
   ];
 
   const worksheet = XLSX.utils.aoa_to_sheet([headers, tips]);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Personel Taslak');
-  XLSX.writeFile(workbook, 'Personel_İçe_Aktarma_Taslağı.xlsx');
+  const sheetName = isTr ? 'Personel Taslak' : 'Personnel Template';
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+  const fileName = isTr ? 'Personel_İçe_Aktarma_Taslağı.xlsx' : 'Personnel_Import_Template.xlsx';
+  XLSX.writeFile(workbook, fileName);
+};
+
+export const generateSubcontractorTemplate = (t, lang) => {
+  const isTr = lang === 'tr';
+  const headers = [
+    isTr ? 'Taşeron Adı' : 'Subcontractor Name',
+    isTr ? 'Hizmet Alanı' : 'Service Type',
+    isTr ? 'Telefon' : 'Phone',
+    isTr ? 'Günlük Bedel' : 'Daily Rate',
+    isTr ? 'Durum' : 'Status',
+    isTr ? 'İSG Başlangıç' : 'ISG Start Date',
+    isTr ? 'İSG Bitiş' : 'ISG End Date'
+  ];
+
+  const tips = [
+    isTr ? '(Zorunlu) Taşeron adı veya ünvanı' : '(Required) Enter subcontractor name',
+    isTr ? '(Zorunlu) Hizmet alanı giriniz' : '(Required) Enter service type',
+    isTr ? '(Opsiyonel) Telefon numarası' : '(Optional) Enter phone number',
+    isTr ? '(Zorunlu) Sayısal değer giriniz' : '(Required) Enter numerical value',
+    isTr ? '(Opsiyonel) Aktif veya Pasif' : '(Optional) Enter Active or Passive',
+    isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format',
+    isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format'
+  ];
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, tips]);
+  const workbook = XLSX.utils.book_new();
+  const sheetName = isTr ? 'Taşeron Taslak' : 'Subcontractor Template';
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+  const fileName = isTr ? 'Taseron_İçe_Aktarma_Taslağı.xlsx' : 'Subcontractor_Import_Template.xlsx';
+  XLSX.writeFile(workbook, fileName);
 };

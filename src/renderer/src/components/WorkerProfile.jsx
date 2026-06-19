@@ -15,6 +15,8 @@ const WorkerProfile = ({ worker, onBack }) => {
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [isgModalOpen, setIsgModalOpen] = useState(false);
+  const [isgForm, setIsgForm] = useState({ isg_start_date: '', isg_bitis_tarihi: '' });
   const [projectName, setProjectName] = useState('');
   const [groupName, setGroupName] = useState('');
   const [workTypes, setWorkTypes] = useState([]);
@@ -800,6 +802,42 @@ const WorkerProfile = ({ worker, onBack }) => {
                   🏷️ {tag}
                 </span>
               ))}
+              {(() => {
+                const expiryDate = worker.isg_bitis_tarihi;
+                if (!expiryDate) {
+                  return (
+                    <span 
+                      onClick={() => { setIsgForm({ isg_start_date: worker.isg_start_date || '', isg_bitis_tarihi: '' }); setIsgModalOpen(true); }}
+                      style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
+                      title={t('isg.update_btn', 'İSG Güncelle')}
+                    >
+                      🛡️ {t('isg.badge_undefined', 'İSG Tanımsız')}
+                    </span>
+                  );
+                }
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const expiry = new Date(expiryDate);
+                expiry.setHours(0, 0, 0, 0);
+                const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                let badgeBg, badgeColor, badgeText, badgeIcon;
+                if (diffDays < 0) {
+                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = '🔴'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                } else if (diffDays <= 30) {
+                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = '🟡'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                } else {
+                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = '🟢'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                }
+                return (
+                  <span 
+                    onClick={() => { setIsgForm({ isg_start_date: worker.isg_start_date || '', isg_bitis_tarihi: worker.isg_bitis_tarihi || '' }); setIsgModalOpen(true); }}
+                    style={{ fontSize: '0.8rem', background: badgeBg, color: badgeColor, padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
+                    title={t('isg.update_btn', 'İSG Güncelle')}
+                  >
+                    {badgeIcon} {badgeText}
+                  </span>
+                );
+              })()}
             </div>
             <p className="card-subtitle mb-4">{worker.tc_no ? `${t('worker.idLabel', 'ID')}: ${worker.tc_no}` : ''} | {worker.phone}</p>
             
@@ -1199,19 +1237,97 @@ const WorkerProfile = ({ worker, onBack }) => {
         confirmText={confirmModalState.confirmText}
       />
 
+      {/* ISG Update Modal */}
+      {isgModalOpen && (
+        <div className="drawer-overlay" onClick={() => setIsgModalOpen(false)}>
+          <div 
+            className="glass-card" 
+            onClick={e => e.stopPropagation()}
+            style={{ 
+              position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+              width: '420px', maxWidth: '90vw', zIndex: 1000, padding: '2rem',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)', border: '1px solid var(--glass-border)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                🛡️ {t('isg.update_title', 'İSG Tarihlerini Güncelle')}
+              </h3>
+              <button 
+                onClick={() => setIsgModalOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '1.2rem', cursor: 'pointer' }}
+              >✕</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label">{t('isg.start_date', 'İSG Başlangıç Tarihi')}</label>
+                <CustomDatePicker 
+                  name="isg_start_date" 
+                  className="form-input" 
+                  value={isgForm.isg_start_date} 
+                  onChange={e => setIsgForm(prev => {
+                    const val = e.target.value;
+                    if (val && prev.isg_bitis_tarihi && new Date(val) > new Date(prev.isg_bitis_tarihi)) {
+                      return { ...prev, isg_start_date: prev.isg_bitis_tarihi, isg_bitis_tarihi: val };
+                    }
+                    return { ...prev, isg_start_date: val };
+                  })} 
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label">{t('isg.expiry_date', 'İSG Bitiş Tarihi')}</label>
+                <CustomDatePicker 
+                  name="isg_bitis_tarihi" 
+                  className="form-input" 
+                  value={isgForm.isg_bitis_tarihi} 
+                  onChange={e => setIsgForm(prev => {
+                    const val = e.target.value;
+                    if (val && prev.isg_start_date && new Date(prev.isg_start_date) > new Date(val)) {
+                      return { ...prev, isg_bitis_tarihi: prev.isg_start_date, isg_start_date: val };
+                    }
+                    return { ...prev, isg_bitis_tarihi: val };
+                  })} 
+                />
+              </div>
+              <button 
+                className="btn btn-primary" 
+                style={{ marginTop: '0.5rem', fontWeight: 'bold' }}
+                onClick={async () => {
+                  if (window.api && window.api.db) {
+                    await window.api.db.update('workers', worker.id, {
+                      isg_start_date: isgForm.isg_start_date || null,
+                      isg_bitis_tarihi: isgForm.isg_bitis_tarihi || null
+                    });
+                    setIsgModalOpen(false);
+                    window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('isg.update_success', 'İSG tarihleri başarıyla güncellendi.'), type: 'success' } }));
+                    fetchProfileData();
+                  }
+                }}
+              >
+                {t('common.save', 'Kaydet')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <GuideDrawer 
         isOpen={helpOpen} 
         onClose={() => setHelpOpen(false)} 
-        title={t('guides.personnel.title')} 
+        title={t('guides.worker_profile.title', 'Personel Detay & Ekstre Rehberi (5N1K)')} 
         desc="" 
-        h1={t('guides.personnel.step1.title')} 
-        p1={t('guides.personnel.step1.desc')} 
-        h2={t('guides.personnel.step2.title')} 
-        p2={t('guides.personnel.step2.desc')} 
-        h3={t('guides.personnel.step3.title')} 
-        p3={t('guides.personnel.step3.desc')} 
-        h4={t('guides.personnel.step4.title')}
-        p4={t('guides.personnel.step4.desc')}
+        h1={t('guides.worker_profile.q1.title', '1. NE? (Personel Ekstre Takibi Nedir?)')} 
+        p1={t('guides.worker_profile.q1.desc', 'Seçilen personelin çalıştığı günlerin (puantaj), hak ettiği ücretlerin, aldığı avansların ve izin geçmişinin dökümünü içeren cari hesabıdır.')} 
+        h2={t('guides.worker_profile.q2.title', '2. NEREDE? (Veriler Nerede Görünür ve Saklanır?)')} 
+        p2={t('guides.worker_profile.q2.desc', 'Personelin tüm puantaj, avans ve izin hareketleri yerel veritabanında saklanır. Kasa entegrasyonu sayesinde yapılan ödemeler Kasa Yönetimi sayfasında da görünür.')} 
+        h3={t('guides.worker_profile.q3.title', '3. NE ZAMAN? (Puantaj ve Avans Ne Zaman Girilmelidir?)')} 
+        p3={t('guides.worker_profile.q3.desc', 'Çalışan sahada mesai yaptığında günlük olarak puantajı işlenir. Avans veya haftalık ödeme verildiğinde ise anında avans hareketi olarak kaydedilir.')} 
+        h4={t('guides.worker_profile.q4.title', '4. NASIL? (Raporlama ve WhatsApp Paylaşımı Nasıl Yapılır?)')} 
+        p4={t('guides.worker_profile.q4.desc', 'Tarih filtrelerini kullanarak personelin cari hesap ekstresini oluşturabilir, tek tıkla PDF/Excel formatında indirebilir veya WhatsApp üzerinden personelin kendisine gönderebilirsiniz.')} 
+        h5={t('guides.worker_profile.q5.title', '5. NEDEN? (Neden Detaylı Personel Cari Takibi Yapılmalıdır?)')} 
+        p5={t('guides.worker_profile.q5.desc', 'Personel ile ay sonunda yaşanabilecek maaş ve avans uyuşmazlıklarını kesin olarak çözmek ve geriye dönük hak ediş doğruluğunu ispatlamak için tutulur.')} 
+        h6={t('guides.worker_profile.q6.title', '6. KİM? (Personel Profil Sayfasını Kimler Yönetebilir?)')} 
+        p6={t('guides.worker_profile.q6.desc', 'Proje yöneticisi, şantiye şefi veya muhasebe yetkilisi personelin profil sayfasından puantaj, avans ve izin ekleme/silme işlemlerini yapabilir.')} 
       />
     </div>
   );

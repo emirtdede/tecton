@@ -12,7 +12,7 @@ Projede backend ve finansal iş kuralları kodlanırken **TDD** benimsenmiştir.
 ## Birim Testler
 | Modül                         | Durum         | Kapsam / Senaryolar                                      |
 |-------------------------------|---------------|---------------------------------------------------------|
-|✅ **Güncel Başarı Oranı:** %100 (19 / 19 Test Başarılı)
+|✅ **Güncel Başarı Oranı:** %100 (27 / 27 Test Başarılı)
 
 ## Kapsanan Senaryolar (Test Suites)
 
@@ -43,6 +43,9 @@ Projede backend ve finansal iş kuralları kodlanırken **TDD** benimsenmiştir.
 - [x] **CREATE Otonomisi:** Yeni kayıt eklendiğinde `audit_logs` tablosuna CREATE mührünün vurulması.
 - [x] **UPDATE Değişim Kaydı:** Bir kayıt güncellendiğinde, eski (old_values) ve yeni (new_values) verilerin loglanması.
 - [x] **SOFT-DELETE Kontrolü:** Fiziksel silme yerine `is_deleted = 1` ve `deleted_at` mührünün başarılı şekilde çalışması.
+- [x] **İSG Özel Log Mesajları:** `isg_start_date` ve `isg_bitis_tarihi` veya `isg_expiry_date` güncellendiğinde, İSG tarihlerini gösteren özel log mesajının atılması.
+- [x] **ERP ve Jurnal Logları:** `daily_journals`, `quality_reports`, `production_records` eklendiğinde ilgili parametrelere uygun (örn: hava durumu ve sıcaklık) özel log atılması.
+- [x] **İzin ve Taşeron Hareketleri Logları:** `worker_leaves` ve `subcontractor_transactions` eklendiğinde/güncellendiğinde işlemin Türkçe karşılığının loglara kaydedilmesi.
 
 ### 6. İki Katmanlı Gelişmiş Loglama (Advanced Logging)
 - [x] **Human-Readable Dönüşüm:** Veritabanı teknik işlemlerinin (Örn: CREATE transactions) "Yeni avans eklendi" gibi Türkçe ve insan odaklı loglara (string) dönüştürülmesi.
@@ -95,6 +98,11 @@ Projede backend ve finansal iş kuralları kodlanırken **TDD** benimsenmiştir.
 - [x] **Dikey Sekme Navigasyonu:** Sol dikey kategori butonları tıklandığında sağ tarafta ilgili panelin (Genel, Finans, Güvenlik, Loglar) gecikmesiz yüklendiği ve form verilerinin korunduğu doğrulandı.
 - [x] **Bağımsız Hakkında & SSS:** SSS sayfasının Ayarlar'dan tamamen ayrıştırıldığı, sol menü ve Spotlight (Ctrl+K) entegrasyonuyla bağımsız bir bileşen olarak başarıyla çalıştığı test edildi.
 - [x] **Güvenli Drag & Drop Bölgesi:** Güvenlik sekmesindeki Drag & Drop veritabanı geri yükleme alanının sürüklenen dosyayı doğru algılayıp `window.api.system.restoreDBFile` IPC'sine yönlendirdiği arayüz seviyesinde doğrulandı.
+### 17. İSG, Taşeron Bulk ve Çoklu Puantaj (Faz 7)
+- [x] **İSG Modülü (Personel & Taşeron):** Formlarda "İSG Başlangıç" ve "Bitiş" tarihlerinin seçilmesi, profil arayüzlerinde dinamik olarak rozet (Geçerli, Yaklaşıyor, Süresi Doldu) gösterimi ve modal ile güncellenebilmesi test edildi.
+- [x] **Çoklu Puantaj (Bulk Timesheet):** Birden fazla personelin seçilip tek formla (Aynı tarih ve çalışma tipi üzerinden) döngüye sokularak hatasız şekilde `timesheets` tablosuna ve eşzamanlı olarak `audit_logs` tablosuna eklendiği test edildi.
+- [x] **Taşeron Toplu Aktarım (Excel/CSV):** Taşeron kayıtlarının i18n başlıklarıyla (örn: Name, Service Type) içe aktarılması ve veri tabanına işlenmesi, öncesinde otonom snapshot (Geri Yükleme Noktası) alındığı doğrulandı.
+- [x] **19 Dil (i18n) Testleri:** Sistem dilinin anlık olarak 19 dil arasında geçiş yaptığı ve yeni eklenen İSG/Puantaj UI bileşenlerinin sorunsuz çevrildiği arayüz üzerinden doğrulandı.
 
 ## Entegrasyon Testleri
 | Akış              | Durum         | Notlar                |

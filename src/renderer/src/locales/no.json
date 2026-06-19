@@ -410,7 +410,9 @@
     "details": "Detaljer",
     "start_date": "Startdato",
     "end_date": "Sluttdato",
-    "amount": "Beløp"
+    "amount": "Beløp",
+    "records": "Poster",
+    "pagination_info": "Side {{page}} / {{total}} ({{records}} Poster)"
   },
   "worker_modal": {
     "title_new": "Legg til ansatt",
@@ -586,7 +588,10 @@
     "help_p2": "Klikk på et bilde for å se det i full størrelse og se den tilhørende følgeseddelen eller kvalitetsrapporten.",
     "help_h3": "3. Kategorifiltre",
     "help_p3": "Filtrer media etter type (Leveringsnotatbilder vs. Kvalitetskontrollbilder) eller søk etter notater.",
-    "no_image": "Ingen bilde"
+    "no_image": "Ingen bilde",
+    "view_list": "Listevisning",
+    "view_grid": "Gallerivisning",
+    "item_type": "Innholdstype"
   },
   "subcontractor": {
     "title": "🚜 Underleverandørreskriver",
@@ -796,157 +801,273 @@
   },
   "guides": {
     "site": {
-      "title": "Veiledning for byggeplassadministrasjon",
-      "step1": {
-        "title": "1. Aktiv byggeplass",
-        "desc": "Velg et prosjekt som skal angis som aktivt."
+      "title": "Byggeplass & Arbeidsområde Guide (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er plass- og arbeidsområdeadministrasjon?)",
+        "desc": "Et administrasjonspanel som lar deg definere fysiske steder for prosjektene dine og skille data på plasspesifikk basis."
       },
-      "step2": {
-        "title": "2. Beliggenhet og vær",
-        "desc": "Angi et sted for automatisk å motta daglig værmelding."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres byggeplassdata?)",
+        "desc": "Alle opprettede byggeplasser og alle transaksjoner knyttet til disse plassene lagres i den lokale databasen."
       },
-      "step3": {
-        "title": "3. Søk og personsøking",
-        "desc": "Søk umiddelbart på tvers av byggeplasser."
+      "q3": {
+        "title": "3. NÅR? (Når skal en ny byggeplass opprettes?)",
+        "desc": "Den bør defineres i systemet så snart en ny fysisk plass åpnes, eller før du tildeler underentreprenører/personell."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan velge, sortere og administrere plasser?)",
+        "desc": "Legg til en ny plass via skjemaet, endre rekkefølgen med dra-og-slipp i listen, og klikk på 'Velg arbeidsområde' for å aktivere den."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor opprette plasspesifikke arbeidsområder?)",
+        "desc": "For å kunne rapportere dagbøker, timelister, kassetransaksjoner and materialbevegelser uavhengig uten å blande sammen data."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere byggeplasslisten?)",
+        "desc": "Virksomhetseiere, generelle koordinatorer og hovedkontoransatte kan opprette, redigere eller slette byggeplasser."
       }
     },
     "personnel": {
-      "title": "Personalledelsesveiledning",
-      "step1": {
-        "title": "1. Legg til Staff og Excel",
-        "desc": "Bruk Excel-malen til å masseopplasting av en liste."
+      "title": "Personaladministrasjon Guide (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er personaladministrasjon?)",
+        "desc": "Et system som overvåker fremmøte (puantaj), forskudd, opptjent lønn og HMS-status for arbeidere og funksjonærer på byggeplassen."
       },
-      "step2": {
-        "title": "2. Gruppeanalyse",
-        "desc": "Analyser utgifter etter gruppekategori."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres personaldata?)",
+        "desc": "Alle medarbeiderkort, grupper og transaksjoner lagres i den lokale databasen, filtrert etter den aktive byggeplassen."
       },
-      "step3": {
-        "title": "3. Målkort og kontoutskrift",
-        "desc": "Klikk på navnet for å se partituret."
+      "q3": {
+        "title": "3. NÅR? (Når skal ansatte registreres og fremmøte føres?)",
+        "desc": "Nye ansatte registreres ved ansettelse. Fremmøte og forskudd bør registreres daglig eller ukentlig uten forsinkelse."
       },
-      "step4": {
-        "title": "4. Tillatelsesbehandling",
-        "desc": "Registrer dagene da personalet er sykemeldt eller i permisjon."
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan legge til ansatte og importere fra Excel?)",
+        "desc": "Klikk på 'Legg til ansatt' øverst til høyre; last ned malen for masseimport for å laste inn Excel-lister med ett klikk."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre detaljert oversikt over ansatte?)",
+        "desc": "For å unngå lønnsavvik, ikke gå glipp av utløpsdatoer for HMS-dokumenter og beregne prosjektets reelle lønnskostnader i sanntid."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere personallisten?)",
+        "desc": "Prosjektledere, byggeledere og administrative ledere kan definere ansatte, opprette grupper og administrere fremmøte/forskudd."
       }
     },
     "quantity": {
-      "title": "Produksjonsguide",
-      "step1": {
-        "title": "1. Produksjonsrekord",
-        "desc": "Rekord daglig produksjon."
+      "title": "Guide til mengdemåling og produksjon (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er mengdemåling?)",
+        "desc": "Et sporingssystem som måler den fysiske fremdriften i prosjektet ved å registrere mengder og enheter (m², m³, tonn osv.) for fullført arbeid."
       },
-      "step2": {
-        "title": "2. Arkiv og detaljer",
-        "desc": "Skriv notater for å holde et kronologisk arkiv."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres fremdriftsdata?)",
+        "desc": "Data lagres i den lokale databasen. Du kan spesifisere bestemte steder som blokker eller etasjer i merknadene."
       },
-      "step3": {
-        "title": "3. Søk og filtre",
-        "desc": "Filtrer etter datoperiode eller enhet."
+      "q3": {
+        "title": "3. NÅR? (Når skal fremdrift registreres?)",
+        "desc": "Etter hvert som det daglige arbeidet fullføres, eller når mengdeberegninger gjøres, må de registreres daglig uten forsinkelse."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan søke i fremdriftsdata?)",
+        "desc": "Bruk søkefeltet til å søke etter postnavn eller merknader; filtrer listen etter datointervall og enhetstyper."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre mengdemålinger?)",
+        "desc": "For å beregne prosjektets ferdigstillelsesgrad, verifisere underleverandørers avdragsbetalinger, og sikre overholdelse av tidsplanen."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan registrere fremdrift?)",
+        "desc": "Prosjektledere, kalkulatører eller prosjektingeniører kan registrere nye fremdriftsmålinger og redigere eksisterende."
       }
     },
     "delivery": {
-      "title": "Følgeseddelguide",
-      "step1": {
-        "title": "1. Leverandør og Materiale",
-        "desc": "Plateleverandør og materialnavn."
+      "title": "Guide til følgesedler og materialer (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er materialmottak?)",
+        "desc": "Et sporingssystem som registrerer mengde, enhet (m³, tonn, kg osv.), leverandørnavn og fysiske følgesedler for byggematerialer mottatt på plassen."
       },
-      "step2": {
-        "title": "2. Dokumentbilder",
-        "desc": "Last opp følgeseddelbilder til digitalt arkiv."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres mottaksdataene?)",
+        "desc": "Materialdata lagres i den lokale databasen, mens opplastede bilder av fakturaer eller følgesedler lagres sikkert under din lokale prosjektmappe."
       },
-      "step3": {
-        "title": "3. Smart søk",
-        "desc": "Søk etter følgeseddelnummer eller leverandører."
+      "q3": {
+        "title": "3. NÅR? (Når skal leveranser registreres?)",
+        "desc": "Umiddelbart når leverandørens kjøretøy leverer materialene til byggeplassen og den fysiske følgeseddelen er signert."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan laste opp bilder av følgesedler?)",
+        "desc": "Ved å velge filer fra PC-en eller skanne QR-koden med mobilkameraet for å overføre dem trådløst via det lokale nettverket (LAN)."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre materialregistre?)",
+        "desc": "For å verifisere leverandørfakturaer, spore det øyeblikkelige materialforbruket (betong, armeringsjern osv.) og forhindre tap eller tyveri."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan registrere følgesedler?)",
+        "desc": "Prosjektledere, lageransvarlige, prosjektingeniører eller administrativt personell kan registrere nye følgesedler og redigere historiske oppføringer."
       }
     },
     "journal": {
-      "title": "Journalguide",
-      "step1": {
-        "title": "1. Vær",
-        "desc": "Registrer daglig vær og generell tilstand."
+      "title": "Guide til dagbok (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er en dagbok?)",
+        "desc": "En dagbok er en offisiell protokoll der daglige værforhold, aktive arbeidere og alle aktiviteter på byggeplassen registreres kronologisk."
       },
-      "step2": {
-        "title": "2. Kronologisk registrering",
-        "desc": "Registrer viktige hendelser i rekkefølge."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres disse oppføringene?)",
+        "desc": "Dagbokoppføringer lagres i den lokale SQLite-databasen og filtreres baseret på det aktive prosjektet."
       },
-      "step3": {
-        "title": "3. Historie",
-        "desc": "Bla gjennom tidligere dager enkelt."
+      "q3": {
+        "title": "3. NÅR? (Når skal dagboken registreres?)",
+        "desc": "Den skal registreres ved slutten av hver arbeidsdag eller fortløpende. Datofiltre gir enkelt historisk søk."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan hentes vær og arbeiderantall?)",
+        "desc": "Været hentes automatisk via OpenWeather basert på prosjektets plassering. Arbeiderantall beregnes autonomt fra de daglige timelistene."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre dagbok?)",
+        "desc": "For å bygge et historisk, offisielt og verifiserbart arkiv for fremtidige arbeidstvister, avdragsbetalinger eller underentreprenørkrav."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere disse oppføringene?)",
+        "desc": "Prosjektledere eller autorisert personell kan redigere. Redigering er kun tillatt for den gjeldende dags oppføring."
       }
     },
     "quality": {
-      "title": "Kvalitetsguide",
-      "step1": {
-        "title": "1. Rapportstatuser",
-        "desc": "Oppdater statusen når problemet er løst."
+      "title": "Guide til kvalitetskontroll (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er kvalitetskontrollsporing?)",
+        "desc": "Et digitalt rapporteringssystem som registrerer tekniske feil, mangelfullt eller manglende byggearbeid med fotobevis, og sporer det frem til en løsning."
       },
-      "step2": {
-        "title": "2. Visuelle bevis",
-        "desc": "Inkluder bilder av eventuelle problemer som er oppdaget."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres disse rapportene?)",
+        "desc": "Rapporter lagres i den lokale databasen under det aktive prosjektet. Spesifikke steder kan beskrives i detalj i beskrivelsen."
       },
-      "step3": {
-        "title": "3. Filtrering",
-        "desc": "Filter for å holde styr på åpne problemer."
+      "q3": {
+        "title": "3. NÅR? (Når skal en rapport opprettes?)",
+        "desc": "Umiddelbart når en feil eller et kvalitetsproblem oppdages på byggeplassen. Når problemet er rettet, endres statusen til 'LØST'."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan laste opp bilder?)",
+        "desc": "Ved å velge filer fra datamaskinen eller trådløst ved hjelp av mobil bildeopplaster på lokalt nettverk (LAN) via QR-kode."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre kvalitetsrapporter?)",
+        "desc": "For å garantere samsvar med byggespesifikasjonene, dokumentere underentreprenørens/arbeiderens ansvar for mangelfullt arbeid, og forhindre fremtidige krav."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere disse rapportene?)",
+        "desc": "Prosjektledere, kontrollører eller kvalitetsinspektører kan åpne og lukke rapporter. Alle endringer registreres i systemloggene."
       }
     },
     "subcontractor": {
-      "title": "Underleverandørveiledning",
-      "step1": {
-        "title": "1. Daglønn",
-        "desc": "Hold oversikt over underleverandørers dagslønn."
+      "title": "Underentreprenør Guide (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er underentreprenørreskontro?)",
+        "desc": "Et system for sporing av løpende kontoer som overvåker navn, kontaktinformasjon, dagspriser og økonomiske saldoer for underentreprenører (gravearbeid, jernarbeid, catering osv.) på byggeplassen."
       },
-      "step2": {
-        "title": "2. Søk og filtrer",
-        "desc": "Søk i underleverandørlisten."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres dataene?)",
+        "desc": "Alle underentreprenørkort og kontotransaksjoner lagres i den lokale databasen, isolert og filtreret per prosjekt."
       },
-      "step3": {
-        "title": "3. Oppdater og rediger",
-        "desc": "Oppdater daglige journaler når som helst."
+      "q3": {
+        "title": "3. NÅR? (Når skal transaksjoner registreres?)",
+        "desc": "Transaksjoner skal registreres umiddelbart når et avdrag opptjenes eller en betaling/et forskudd gjøres. HMS-dokumenter skal også holdes oppdatert basert på utløbsdatoer."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan administrere avdrag og betalinger?)",
+        "desc": "Klikk på detaljknappen ved siden av underentreprenørkortet for å gå til profilen; legg til nye avdrag og betalinger for å beregne nettosaldoen automatisk."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre underentreprenørkonto?)",
+        "desc": "For å forhindre manuelle feil i underentreprenør- og maskinleiekontoer, se nettosaldoen i sanntid og automatisk spore utløpsdatoer for HMS-dokumenter."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere underentreprenørkontoene?)",
+        "desc": "Prosjektledere, regnskapsførere og byggeledere kan opprette nye underentreprenører, registrere avdrag/betalinger og dele kontoutdrag via WhatsApp."
       }
     },
     "media": {
-      "title": "Medieguide",
-      "step1": {
-        "title": "1. Visuell tidslinje",
-        "desc": "Undersøk byggeplassbilder kronologisk."
+      "title": "Guide til mediegalleri (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er mediegalleriet?)",
+        "desc": "Et visuelt arkivsenter som samler alle bilder lastet opp under materialleveranser (følgesedler) eller kvalitetsrapporter."
       },
-      "step2": {
-        "title": "2. Raske detaljer",
-        "desc": "Klikk på et bilde for å se full størrelse."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres mediefilene?)",
+        "desc": "Bildene lagres sikkert på den lokale disken under prosjektmappen din. Databasen lagrer kun relative filbaner."
       },
-      "step3": {
-        "title": "3. Kategorifiltre",
-        "desc": "Filtrer etter følgeseddel eller kvalitetsrapporter."
+      "q3": {
+        "title": "3. NÅR? (Når legges bilder til?)",
+        "desc": "De legges til samtidig som fremdrifts-/kvalitetsrapporter skrives eller materialmottak lagres."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan filtrere og søke?)",
+        "desc": "Du kan søke på tittel med søkelinjen og filtrere etter sortering (dato), innholdstype (følgeseddel / rapport) eller bildestatus."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor ha et bildearkiv?)",
+        "desc": "For å visuelt bevise byggekvaliteten på plassen, digitalt sikkerhetskopiere fysiske følgesedler og raskt løse tvister."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan bruke mediegalleriet?)",
+        "desc": "Alle autoriserte prosjektdeltakere, inkludert prosjektledere, kontrollører, administrativt personell og eiere."
       }
     },
     "cash": {
-      "title": "Vault Management Guide",
-      "step1": {
-        "title": "1. Inntekts-/utgiftsposter",
-        "desc": "Registrer inntekter og utgifter."
+      "title": "Guide til kassehåndtering (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er kassehåndtering?)",
+        "desc": "Et finansielt sporingssystem som registrerer alle kontantinnbetalinger (inntekter/forskudd) og kontantutbetalinger (utgifter/betalinger til underleverandører)."
       },
-      "step2": {
-        "title": "2. Månedlig økonomisk situasjon",
-        "desc": "Se månedlig kontantstrøm og balanse."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres kasseoppføringer?)",
+        "desc": "Data lagres sikkert i den lokale databasen. Transaksjoner kan filtreres og rapporteres for 'Hovedkontor' eller enkelte byggeplasser."
       },
-      "step3": {
-        "title": "3. Eksporter",
-        "desc": "Last ned transaksjoner som PDF eller Excel."
+      "q3": {
+        "title": "3. NÅR? (Når skal transaksjoner registreres?)",
+        "desc": "Umiddelbart når en betaling foretas, et forskudd utbetales, eller en avdragsbetaling mottas."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan søke og rapportere kassedata?)",
+        "desc": "Filtrer etter datointervall, prosjekt, transaksjonstype eller beskrivelse; eksporter rapporter umiddelbart i Excel, CSV, JSON eller PDF-format."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre kassebok?)",
+        "desc": "For å overvåke kontantstrøm i sanntid, se nettosaldostatus, administrere personell-/underleverandørkonti nøyaktig og forhindre budsjettoverskridelser."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere kasseoperasjoner?)",
+        "desc": "Prosjektledere, økonomipersonell og byggeledere kan registrere transaksjoner. Slettinger revideres via bekræftelsesmodaler."
       }
     },
     "recycle": {
-      "title": "Søppelguide",
-      "step1": {
-        "title": "Hvordan fungerer det?",
-        "desc": "Slettede poster er oppført her med myk sletting."
+      "title": "Guide til papirkurv (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er papirkurven?)",
+        "desc": "Et gjenopprettingssystem som midlertidig oppbevarer feilaktig slettede byggeplasser, personellposter, kassetransaksjoner, følgesedler, dagbøker og kvalitetsrapporter."
       },
-      "step2": {
-        "title": "Datagjenoppretting",
-        "desc": "Bruk gjenopprettingsknappen for å gjenopprette postene."
+      "q2": {
+        "title": "2. HVOR? (Hvor havner slettede data?)",
+        "desc": "Slettede data slettes ikke permanent. De markeres med et logisk sletteflagg i den lokale databasen og listes opp på denne siden."
       },
-      "step3": {
-        "title": "Prosjektseparasjon",
-        "desc": "Filtrer søppelet ditt etter prosjekter."
+      "q3": {
+        "title": "3. NÅR? (Når kan jeg gjenopprette data?)",
+        "desc": "Du kan gjenopprette ethvert slettet element når som helst etter sletting. Det er ingen utløpsdato eller automatisk tømmesyklus."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan gjenopprette og søke i data?)",
+        "desc": "Klikk på 'Gjenopprett'-knappen på høyre side av listen for å hente dataene på få sekunder. Du kan filtrere etter dato, posttype og prosjekt."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor er papirkurven nødvendig?)",
+        "desc": "Designet for å forhindre permanent datatap på grunn av utilsiktede slettinger i det høye arbeidstempoet på plassen, og bevare full sporbarhet."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan gjenopprette data?)",
+        "desc": "Autoriserte prosjektledere, ingeniører eller kontoeiere som har slette-/gjenopprettingsrettigheter i applikasjonen kan starte gjenopprettingen."
       }
     },
     "production": {
@@ -965,18 +1086,111 @@
       "title": "Produksjonsguide"
     },
     "subcontractor_profile": {
-      "title": "Veiledning for underentreprenørutskrift",
-      "step1": {
-        "title": "1. Legge til fremdriftsbetalinger",
-        "desc": "Legg inn arbeidet som er utført av underentreprenøren på byggeplassen og beløpene her. Dette øker underentreprenørens tilgodehavender (bedriftens gjeld), men forårsaker ikke en kontantstrøm ut av kassen."
+      "title": "Underentreprenør Detaljer & Kontoutskrift (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er underentreprenørutskriften?)",
+        "desc": "En detaljert dato- og merknadsbasert spesifikasjon av utførte arbeider (avdrag) og utbetalte beløp/forskud til underentreprenøren."
       },
-      "step2": {
-        "title": "2. Kasseintegrerte betalinger",
-        "desc": "Registrer kontantbetalinger og forskudd gitt til underentreprenøren her. Dette reduserer underentreprenørens saldo og oppretter automatisk en kontantstrøm ut i Kassen."
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres transaksjonene?)",
+        "desc": "Transaksjonene lagres i den lokale databasen. Registrerte utbetalinger integreres automatisk i Kasseboken."
       },
-      "step3": {
-        "title": "3. Netto kontosaldo",
-        "desc": "Viser din nåværende nettogjeld til underentreprenøren, beregnet ved å trekke de utførte betalingene fra de totale inntjente fremdriftsbetalingene."
+      "q3": {
+        "title": "3. NÅR? (Når skal avdrag og betalinger registreres?)",
+        "desc": "Avdrag registreres ved levering av arbeid fra underentreprenøren, og betalinger/forskud registreres samtidig som utbetalingen skjer."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan eksportere og dele via WhatsApp?)",
+        "desc": "Generer rapporter ved hjelp av datofiltrene, last ned som PDF/Excel med ett klikk, of del direkte via WhatsApp."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor føre en detaljert kontoutskrift?)",
+        "desc": "For å unngå avvik i regnskapet og dobbeltbetalinger til underentreprenører, og rapportere selskapets nettogjeld feilfrit."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere denne profilsiden?)",
+        "desc": "Autoriserte prosjektledere, prosjektkoordinatorer og regnskapsførere kan registrere eller slette avdrag og betalinger."
+      }
+    },
+    "logs": {
+      "title": "Guide til systemlogger (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er systemlogger?)",
+        "desc": "Et digitalt loggingssystem som registrerer kritiske databaseoperasjoner (opprett, oppdater, slett), bakgrunnshendelser og potensielle feil kronologisk."
+      },
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres loggfilene?)",
+        "desc": "Systemlogger lagres lokalt på disken din. De er helt offline og sendes aldri til noen ekstern server."
+      },
+      "q3": {
+        "title": "3. NÅR? (Når skrives loggene?)",
+        "desc": "Skrives autonomt med millisekunders presisjon i det nøyaktige øyeblikket en bruker utfører en handling, eller en feil oppstår."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan inspisere loggene?)",
+        "desc": "Bruk søkefeltet eller filtrer etter type for å se Info (blå), DB Opprett (grønn), DB Oppdater (gul) eller DB Slett/Feil (rød)."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor lagre systemlogger?)",
+        "desc": "For å spore brukerendringer (revisjonslogger) retrospektivt, finne den nøyaktige årsaken til feil, og opprettholde sikkerheten."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem har tilgang til loggene?)",
+        "desc": "Bare administratoren som kjører denne forekomsten, eller autoriserte teknikere med tilgang til den lokale PC-en kan lese disse loggene."
+      }
+    },
+    "bulk": {
+      "title": "Guide til kollektiv timeliste (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er kollektiv timelisteregistrering?)",
+        "desc": "Et hurtiginntastingssystem som gjør det mulig å registrere timelistedetaljer (lønn, overtid, noter) for flere medarbeidere på samme dag og byggeplass på én gang."
+      },
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres timelistene?)",
+        "desc": "Timelister for alle valgte arbeidere lagres som separate rader i databasen og oppdaterer direkte deres konti."
+      },
+      "q3": {
+        "title": "3. NÅR? (Når skal kollektive timelister registreres?)",
+        "desc": "Ved slutten av dagen, etter skiftets avslutning eller før betalingssykluser for rask sporing av hele arbeidsstyrken."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan føre kollektive timelister?)",
+        "desc": "Velg personell i det venstre panelet (med søk og 'Velg alle'), angi dato, arbeidstype og overtid i det høyre panelet, og klikk på 'Lagre alle'."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor bruke kollektive timelister?)",
+        "desc": "For å eliminere det tidkrevende arbeidet med å føre timelister individuelt for dusinvis av arbeidere på store plasser, spare tid og minimere feil."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere kollektive timelister?)",
+        "desc": "Autoriserte prosjektledere, tidsregistratorer, administrative medarbeidere eller prosjektingeniører kan foreta kollektive registreringer."
+      }
+    },
+    "worker_profile": {
+      "title": "Medarbeider Detaljer & Kontoutskrift (5W1H)",
+      "q1": {
+        "title": "1. HVA? (Hva er medarbeiderutskriften?)",
+        "desc": "En kontoutskrift som inneholder spesifikasjon av den valgte medarbeiderens arbeidsdager (fremmøte), opptjent lønn, mottatte forskudd og feriehistorikk."
+      },
+      "q2": {
+        "title": "2. HVOR? (Hvor lagres transaksjonene?)",
+        "desc": "Alle fremmøte-, forskudds- og ferieregistreringer lagres i den lokale databasen. Utbetalinger integreres automatisk i Kasseboken."
+      },
+      "q3": {
+        "title": "3. NÅR? (Når skal fremmøte og forskudd registreres?)",
+        "desc": "Fremmøte registreres daglig etter endt arbeidsdag. Forskudd eller ukentlige utbetalinger registreres samtidig som utbetalingen skjer."
+      },
+      "q4": {
+        "title": "4. HVORDAN? (Hvordan eksportere og dele via WhatsApp?)",
+        "desc": "Bruk datofiltrene til å generere utskriften, last ned som PDF/Excel med ett klikk, eller del direkte med medarbeideren via WhatsApp."
+      },
+      "q5": {
+        "title": "5. HVORFOR? (Hvorfor HMS-føre en detaljert kontoutskrift?)",
+        "desc": "For å løse lønns- eller forskuddsavvik ved månedsslutt og bevise nøyaktigheten av historiske lønnsutbetalinger."
+      },
+      "q6": {
+        "title": "6. HVEM? (Hvem kan administrere medarbeiderens profilside?)",
+        "desc": "Autoriserte prosjektledere, byggeledere eller regnskapsførere kan registrere/slette fremmøte, forskudd og ferie."
       }
     }
   },
@@ -1174,5 +1388,46 @@
     "Yıllık": "Årlig",
     "Mazeret": "Unnskyldning",
     "Sağlık": "Medisinsk"
+  },
+  "isg": {
+    "section_title": "HMS (Helse, Miljø og Sikkerhet)",
+    "start_date": "HMS Startdato",
+    "expiry_date": "HMS Utløpsdato",
+    "badge_valid": "HMS Gyldig",
+    "badge_approaching": "HMS Nærmer seg",
+    "badge_expired": "HMS Utløpt",
+    "badge_undefined": "HMS Ikke Definert",
+    "update_btn": "Oppdater HMS",
+    "update_title": "Oppdater HMS-datoer",
+    "update_success": "HMS-datoer oppdatert.",
+    "days": "dager"
+  },
+  "bulk_timesheet": {
+    "title": "Massetimeliste",
+    "nav_title": "Massetimeliste",
+    "select_workers": "Velg Arbeidere",
+    "select_all": "Velg Alle",
+    "deselect_all": "Fjern Valg",
+    "selected_count": "{{count}} arbeidere valgt",
+    "form_title": "Timelistedetaljer",
+    "save_btn": "Lagre Alle",
+    "save_success": "Timeliste lagret for {{count}} arbeidere.",
+    "save_error": "Noen poster mislyktes. Suksess: {{success}}, Feil: {{error}}",
+    "no_workers_selected": "Velg minst én arbeider.",
+    "no_workers": "Ingen aktive arbeidere funnet.",
+    "search_workers": "Søk arbeidere...",
+    "preview_wage": "Estimert Lønn",
+    "guide_step1_title": "1. Velg Arbeidere",
+    "guide_step1_desc": "Velg arbeidere fra venstre panel. Bruk 'Velg Alle' for å velge alle på en gang.",
+    "guide_step2_title": "2. Timelistedetaljer",
+    "guide_step2_desc": "Angi detaljer som dato, arbeidstype og overtidstimer. Disse gjelder for alle valgte arbeidere.",
+    "guide_step3_title": "3. Masselagring",
+    "guide_step3_desc": "Klikk på 'Lagre Alle' for å opprette timelister for alle valgte arbeidere."
+  },
+  "subcontractor_import": {
+    "import_btn": "Importer (Excel/CSV)",
+    "export_btn": "Eksporter",
+    "download_template": "Last ned Mal",
+    "import_success": "{{count}} underleverandørposter importert."
   }
 }

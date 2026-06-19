@@ -139,7 +139,9 @@ export const readWorkersFromExcel = (file, t) => {
             group_name: groupName || null,
             start_date: startDate,
             status: statusValue,
-            tags: JSON.stringify(tagsArray)
+            tags: JSON.stringify(tagsArray),
+            isg_start_date: parseFlexDate(normalizedRow, ['isg başlangıç', 'isg start date', 'isg start', 'isg başlangıc'], null),
+            isg_bitis_tarihi: parseFlexDate(normalizedRow, ['isg bitiş', 'isg end date', 'isg end', 'isg bitis', 'isg_bitis_tarihi'], null)
           });
         });
 
@@ -156,6 +158,136 @@ export const readWorkersFromExcel = (file, t) => {
 
     reader.onerror = () => {
       reject({ success: false, message: t('about.err_file_read') });
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+};
+
+/**
+ * Helper: parse a date from a normalized row using multiple possible column names.
+ */
+function parseFlexDate(normalizedRow, possibleKeys, fallback) {
+  let rawDate = null;
+  for (const key of possibleKeys) {
+    if (normalizedRow[key] !== undefined && normalizedRow[key] !== '') {
+      rawDate = normalizedRow[key];
+      break;
+    }
+  }
+  if (!rawDate) return fallback;
+  if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
+    const y = rawDate.getFullYear();
+    const m = String(rawDate.getMonth() + 1).padStart(2, '0');
+    const d = String(rawDate.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  const dateStr = String(rawDate).trim();
+  if (!dateStr) return fallback;
+  const serialNum = Number(dateStr);
+  if (!isNaN(serialNum) && serialNum > 10000) {
+    const utc_days = Math.floor(serialNum - 25569);
+    const utc_value = utc_days * 86400;
+    const dateInfo = new Date(utc_value * 1000);
+    return dateInfo.toISOString().split('T')[0];
+  }
+  const parts = dateStr.split(/[-./]/);
+  if (parts.length === 3) {
+    if (parts[0].length === 4) {
+      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    } else if (parts[2].length === 4) {
+      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+  }
+  return fallback;
+}
+
+/**
+ * Taşeron Excel dosyasını okur ve JSON olarak döndürür.
+ * TR ise Türkçe sütun başlıkları, diğer diller İngilizce fallback.
+ */
+export const readSubcontractorsFromExcel = (file, t, lang) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+        const parsed = [];
+        const errors = [];
+        const isTr = lang === 'tr';
+
+        json.forEach((row, index) => {
+          const normalizedRow = {};
+          for (let key in row) {
+            normalizedRow[key.trim().toLowerCase()] = row[key];
+          }
+
+          // Name (Required)
+          const name = normalizedRow[isTr ? 'taşeron adı' : 'subcontractor name'] || normalizedRow['taşeron adı'] || normalizedRow['subcontractor name'] || normalizedRow['ad'] || normalizedRow['name'] || '';
+          if (!name) {
+            errors.push(`Satır ${index + 2}: ${isTr ? 'Taşeron adı boş olamaz.' : 'Subcontractor name cannot be empty.'}`);
+            return;
+          }
+
+          // Service Type (Required)
+          const service_type = normalizedRow[isTr ? 'hizmet alanı' : 'service type'] || normalizedRow['hizmet alanı'] || normalizedRow['service type'] || normalizedRow['hizmet'] || '';
+          if (!service_type) {
+            errors.push(`Satır ${index + 2}: ${isTr ? 'Hizmet alanı boş olamaz.' : 'Service type cannot be empty.'}`);
+            return;
+          }
+
+          // Phone
+          const phone = String(normalizedRow[isTr ? 'telefon' : 'phone'] || normalizedRow['telefon'] || normalizedRow['phone'] || normalizedRow['tel'] || '').trim();
+
+          // Daily Rate (Required)
+          const rawWage = normalizedRow[isTr ? 'günlük bedel' : 'daily rate'] || normalizedRow['günlük bedel'] || normalizedRow['daily rate'] || normalizedRow['wage'] || normalizedRow['bedel'] || '';
+          let daily_wage = 0;
+          if (rawWage) {
+            const num = Number(String(rawWage).replace(',', '.'));
+            if (!isNaN(num)) daily_wage = num;
+          }
+
+          // Status
+          const rawStatus = String(normalizedRow[isTr ? 'durum' : 'status'] || normalizedRow['durum'] || normalizedRow['status'] || '').trim().toLowerCase();
+          let status = 'active';
+          if (rawStatus === 'pasif' || rawStatus === 'passive' || rawStatus === 'inactive' || rawStatus === '0') {
+            status = 'passive';
+          }
+
+          // ISG Dates
+          const isg_start_date = parseFlexDate(normalizedRow, ['isg başlangıç', 'isg start date', 'isg start', 'isg başlangıc'], null);
+          const isg_expiry_date = parseFlexDate(normalizedRow, ['isg bitiş', 'isg end date', 'isg end', 'isg bitis'], null);
+
+          parsed.push({
+            name: name.trim(),
+            service_type: service_type.trim(),
+            phone,
+            daily_wage,
+            status,
+            isg_start_date,
+            isg_expiry_date
+          });
+        });
+
+        if (errors.length > 0) {
+          reject({ success: false, message: errors.join('\n') });
+        } else {
+          resolve({ success: true, data: parsed });
+        }
+
+      } catch (err) {
+        reject({ success: false, message: err.message });
+      }
+    };
+
+    reader.onerror = () => {
+      reject({ success: false, message: 'File read error.' });
     };
 
     reader.readAsArrayBuffer(file);

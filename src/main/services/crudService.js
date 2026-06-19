@@ -59,6 +59,14 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
   if (action === 'UPDATE') {
     if (table_name === 'workers') {
       const name = new_values.full_name || (old_values && old_values.full_name) || (isTr ? 'Personel' : 'Personnel');
+      // ISG Date Update Detection
+      if (new_values.isg_bitis_tarihi !== undefined || new_values.isg_start_date !== undefined) {
+        const isgEnd = new_values.isg_bitis_tarihi || (old_values && old_values.isg_bitis_tarihi) || '-';
+        const isgStart = new_values.isg_start_date || (old_values && old_values.isg_start_date) || '-';
+        return isTr 
+          ? `${name} adlı personelin İSG tarihleri güncellendi. Başlangıç: ${isgStart}, Bitiş: ${isgEnd}` 
+          : `OHS dates updated for ${name}. Start: ${isgStart}, End: ${isgEnd}`;
+      }
       return isTr ? `${name} bilgileri güncellendi.` : `Personnel details updated: ${name}`;
     }
     if (table_name === 'app_settings') return isTr ? `Sistem ayarı güncellendi. Yeni Değer: ${new_values.setting_value}` : `System setting updated. New Value: ${new_values.setting_value}`;
@@ -102,6 +110,14 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     if (table_name === 'subcontractor_ledgers') {
       const name = new_values.name || (old_values && old_values.name) || '';
       const type = new_values.service_type || (old_values && old_values.service_type) || '';
+      // ISG Date Update Detection
+      if (new_values.isg_expiry_date !== undefined || new_values.isg_start_date !== undefined) {
+        const isgEnd = new_values.isg_expiry_date || (old_values && old_values.isg_expiry_date) || '-';
+        const isgStart = new_values.isg_start_date || (old_values && old_values.isg_start_date) || '-';
+        return isTr 
+          ? `${name} adlı taşeronun İSG tarihleri güncellendi. Başlangıç: ${isgStart}, Bitiş: ${isgEnd}` 
+          : `OHS dates updated for subcontractor ${name}. Start: ${isgStart}, End: ${isgEnd}`;
+      }
       return isTr
         ? `Taşeron bilgileri güncellendi: ${name} (${type})`
         : `Subcontractor details updated: ${name} (${type})`;
