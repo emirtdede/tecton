@@ -1,7 +1,8 @@
 {
   "name": "tecton",
   "version": "1.0.0",
-  "description": "Tecton - Offline-first Electron React SQLite Desktop App",
+  "description": "Tecton - Next Generation Construction Site Operating System",
+  "author": "Emir Tarık Dede",
   "main": "src/main/index.js",
   "scripts": {
     "dev:react": "vite",
@@ -12,6 +13,32 @@
     "build": "npm run build:react && npm run build:electron",
     "test": "vitest run",
     "seed": "node scripts/seedDatabase.js"
+  },
+  "build": {
+    "appId": "com.tecton.app",
+    "productName": "Tecton",
+    "icon": "tecton_assets/tecton_dark.ico",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "src/main/**/*",
+      "src/preload/**/*",
+      "tecton_assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "tecton_assets/tecton_dark.ico",
+      "target": "nsis"
+    },
+    "nsis": {
+      "shortcutName": "Tecton",
+      "uninstallDisplayName": "Tecton",
+      "installerIcon": "tecton_assets/tecton_dark.ico",
+      "uninstallerIcon": "tecton_assets/tecton_dark.ico",
+      "installerHeaderIcon": "tecton_assets/tecton_dark.ico"
+    }
   },
   "dependencies": {
     "adm-zip": "^0.5.17",
@@ -31,7 +58,7 @@
     "react-i18next": "^17.0.8",
     "react-router-dom": "^6.22.3",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
+    "sqlite3": "^6.0.1",
     "tailwind-merge": "^2.2.2",
     "xlsx": "^0.18.5"
   },

@@ -6,8 +6,10 @@ require('./ipcHandlers');
 
 let mainWindow;
 let splashWindow;
+let splashStartTime = 0;
 
 function createSplashWindow(theme) {
+  splashStartTime = Date.now();
   splashWindow = new BrowserWindow({
     width: 300,
     height: 300,
@@ -55,14 +57,20 @@ function createWindow(theme) {
   const showMainWindow = () => {
     if (isReadyShown) return;
     isReadyShown = true;
-    if (splashWindow && !splashWindow.isDestroyed()) {
-      splashWindow.close();
-      splashWindow = null;
-    }
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.show();
-      mainWindow.maximize();
-    }
+
+    const elapsed = Date.now() - splashStartTime;
+    const remainingDelay = Math.max(0, 2500 - elapsed);
+
+    setTimeout(() => {
+      if (splashWindow && !splashWindow.isDestroyed()) {
+        splashWindow.close();
+        splashWindow = null;
+      }
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.show();
+        mainWindow.maximize();
+      }
+    }, remainingDelay);
   };
 
   mainWindow.once('ready-to-show', () => {

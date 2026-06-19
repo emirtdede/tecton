@@ -689,40 +689,37 @@ async function setupHandlers() {
       const { exec } = require('child_process');
       const iconName = theme === 'dark' ? 'tecton_dark.ico' : 'tecton_light.ico';
       const isDev = process.env.NODE_ENV === 'development';
-      const iconPath = isDev 
+      const sourceIconPath = isDev 
         ? path.join(__dirname, '../../tecton_assets', iconName)
         : path.join(app.getAppPath(), 'tecton_assets', iconName);
       
-      if (!fs.existsSync(iconPath)) {
+      if (!fs.existsSync(sourceIconPath)) {
         return { success: false, message: 'İkon dosyası bulunamadı.' };
       }
 
-      const script = `
-        $wshell = New-Object -ComObject WScript.Shell
-        $desktop = [Environment]::GetFolderPath('Desktop')
-        $shortcutPath = "$desktop\\Tecton.lnk"
-        if (Test-Path $shortcutPath) {
-          $shortcut = $wshell.CreateShortcut($shortcutPath)
-          $shortcut.IconLocation = "${iconPath}"
-          $shortcut.Save()
-          Write-Output "Success"
-        } else {
-          Write-Output "ShortcutNotFound"
-        }
-      `;
+      const userDataPath = app.getPath('userData');
+      const realIconPath = path.join(userDataPath, iconName);
+      fs.copyFileSync(sourceIconPath, realIconPath);
 
-      return new Promise((resolve) => {
-        exec(`powershell.exe -NoProfile -Command "${script}"`, (error, stdout, stderr) => {
-          if (error) {
-            console.error('Change icon error:', error);
-            resolve({ success: false, message: error.message });
-          } else if (stdout.includes('ShortcutNotFound')) {
-            resolve({ success: false, message: 'Masaüstü kısayolu bulunamadı (Tecton.lnk).' });
-          } else {
-            resolve({ success: true });
-          }
+      const desktopPath = app.getPath('desktop');
+      const shortcutPath = path.join(desktopPath, 'Tecton.lnk');
+
+      if (fs.existsSync(shortcutPath)) {
+        const { shell } = require('electron');
+        const updateSuccess = shell.writeShortcutLink(shortcutPath, 'update', {
+          icon: realIconPath,
+          iconIndex: 0
         });
-      });
+        
+        if (updateSuccess) {
+          exec('ie4uinit.exe -show');
+          return { success: true };
+        } else {
+          return { success: false, message: 'Kısayol güncellenemedi.' };
+        }
+      } else {
+        return { success: false, message: 'Masaüstü kısayolu bulunamadı (Tecton.lnk).' };
+      }
     } catch (err) {
       return { success: false, message: err.message };
     }
