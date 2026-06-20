@@ -179,7 +179,16 @@ function App() {
             i18n.changeLanguage(sMap['language']);
             document.documentElement.lang = sMap['language'];
           } else {
-            const defaultLang = 'tr';
+            let defaultLang = 'tr';
+            try {
+              const navLang = navigator.language.split('-')[0];
+              const supportedLangs = ['tr', 'en', 'zh', 'es', 'fr', 'ar', 'hi', 'ru', 'pt', 'de', 'sv', 'no', 'da', 'pl', 'it', 'nl', 'cs', 'ja', 'ko'];
+              if (supportedLangs.includes(navLang)) {
+                defaultLang = navLang;
+              }
+            } catch (e) {
+              console.error('Failed to get navigator language:', e);
+            }
             i18n.changeLanguage(defaultLang);
             document.documentElement.lang = defaultLang;
             await window.api.db.create('app_settings', { setting_key: 'language', setting_value: defaultLang, description: 'Uygulama Dili' });

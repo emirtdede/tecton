@@ -424,13 +424,28 @@ async function getDB() {
     }
   }
 
+  function getSystemDefaultLanguage() {
+    try {
+      const locale = require('electron').app.getLocale().toLowerCase();
+      const systemLang = locale.split('-')[0];
+      const supportedLangs = ['tr', 'en', 'zh', 'es', 'fr', 'ar', 'hi', 'ru', 'pt', 'de', 'sv', 'no', 'da', 'pl', 'it', 'nl', 'cs', 'ja', 'ko'];
+      if (supportedLangs.includes(systemLang)) {
+        return systemLang;
+      }
+    } catch (err) {
+      console.error('Failed to get system locale:', err);
+    }
+    return 'tr';
+  }
+
   // Seeder logic for initial default values
   const settingsCount = await db.get('SELECT COUNT(*) as count FROM app_settings');
   if (settingsCount.count === 0) {
+    const systemLang = getSystemDefaultLanguage();
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['standard_daily_hours', '8', 'Standart günlük çalışma saati']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['overtime_multiplier', '1.5', 'Mesai saat ücreti çarpanı']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['theme', 'dark', 'Uygulama Teması (dark/light)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['language', 'tr', 'Uygulama Dili (tr/en)']);
+    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['language', systemLang, 'Uygulama Dili (tr/en)']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_name', '', 'Şirket/Kurum Adı']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_logo', '', 'Şirket Logosu (Base64)']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_currency', 'auto', 'Para Birimi Seçimi (auto, TRY, USD, EUR, GBP)']);
@@ -457,7 +472,8 @@ async function getDB() {
       await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_logo', '', 'Şirket Logosu (Base64)']);
     }
     if (!existingKeys.includes('language')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['language', 'tr', 'Uygulama Dili (tr/en)']);
+      const systemLang = getSystemDefaultLanguage();
+      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['language', systemLang, 'Uygulama Dili (tr/en)']);
     }
     if (!existingKeys.includes('custom_currency')) {
       await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_currency', 'auto', 'Para Birimi Seçimi (auto, TRY, USD, EUR, GBP)']);
