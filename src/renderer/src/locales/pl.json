@@ -174,7 +174,8 @@
     "desktop_icon": "Ikona skrótu",
     "desktop_icon_desc": "Uczyń ikonę skrótu aplikacji na pulpicie kompatybilną z jasnym lub ciemnym motywem.",
     "icon_dark": "Ciemna ikona",
-    "icon_light": "Jasna ikona"
+    "icon_light": "Jasna ikona",
+    "select_folder": "Wybierz folder"
   },
   "dashboard": {
     "title": "Zarządzanie personelem",

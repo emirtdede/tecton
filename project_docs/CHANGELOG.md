@@ -1,6 +1,9 @@
 # Değişiklik Geçmişi
 
 ## 2026-06-20
+- [Değişiklik] **İç Parametre Gizleme (clean_shutdown)**: Veritabanı bütünlük kontrolü için kullanılan iç parametre `clean_shutdown`, kullanıcı arayüzündeki parametreler listesinden gizlendi.
+- [Değişiklik] **Bulut Yedekleme Klasör Seçimi Taşınması**: "Bulut Yedekleme Klasörü" parametresi, "Finans & Operasyon" sekmesinden kaldırılıp "Güvenlik ve Yedekleme" altındaki "Sistem Bakımı" paneline taşındı. Burada seçili klasörün yolu ve yeni "Klasör Seç" butonu bir arada sunuldu.
+- [Eklenen Özellik] **Yerelleştirilmiş Klasör Seç Butonu**: Klasör seçme butonu hardcoded olmaktan çıkarılarak tüm 19 dil dosyasında (`select_folder` anahtarıyla) yerelleştirildi.
 - [Eklenen Özellik] **Güvenli Kapatma Arayüzü & Animasyonu**: Kapanış esnasında temaya (Light/Dark) duyarlı, lazer efektli animasyona sahip ve 2.5 saniyelik güvenli gecikmeli yeni kapatma ekranı eklendi. Light temadaki metin okunurluğu iyileştirildi.
 - [Eklenen Özellik] **Atomik Veritabanı Yedekleme & Bütünlük Denetimi**: Uygulama kapanırken veritabanı yedeğinin sıfır veri kaybı ile alınması amacıyla `VACUUM INTO` ve `PRAGMA integrity_check` entegrasyonu sağlandı.
 - [Eklenen Özellik] **Açılışta Otomatik Kurtarma (Auto-Recovery)**: Bir çökme durumunda açılışta bozulan veritabanını en son yedekten otonom olarak kurtaran mekanizma yazıldı.

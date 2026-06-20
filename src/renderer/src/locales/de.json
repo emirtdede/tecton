@@ -174,7 +174,8 @@
     "desktop_icon": "Desktop-Verknüpfungssymbol",
     "desktop_icon_desc": "Passen Sie das Verknüpfungssymbol der Anwendung auf dem Desktop an das helle oder dunkle Design an.",
     "icon_dark": "Dunkles Symbol",
-    "icon_light": "Helles Symbol"
+    "icon_light": "Helles Symbol",
+    "select_folder": "Ordner auswählen"
   },
   "dashboard": {
     "title": "Personalverwaltung",

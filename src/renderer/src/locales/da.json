@@ -174,7 +174,8 @@
     "desktop_icon": "Skrivebordsgenvejsikon",
     "desktop_icon_desc": "Gør applikationsgenvejsikonet på skrivebordet kompatibelt med lyst eller mørkt tema.",
     "icon_dark": "Mørkt ikon",
-    "icon_light": "Lyst ikon"
+    "icon_light": "Lyst ikon",
+    "select_folder": "Vælg mappe"
   },
   "dashboard": {
     "title": "Personalestyring",

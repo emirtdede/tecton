@@ -174,7 +174,8 @@
     "desktop_icon": "デスクトップショートカットアイコン",
     "desktop_icon_desc": "デスクトップ上のアプリケーションのショートカットアイコンをライトまたはダークテーマと互換性を持たせます。",
     "icon_dark": "ダークアイコン",
-    "icon_light": "ライトアイコン"
+    "icon_light": "ライトアイコン",
+    "select_folder": "フォルダを選択"
   },
   "dashboard": {
     "title": "人事管理",

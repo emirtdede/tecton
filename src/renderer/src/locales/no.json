@@ -174,7 +174,8 @@
     "desktop_icon": "Skrivebords snarvei ikon",
     "desktop_icon_desc": "Gjør programmets snarveisikon på skrivebordet kompatibelt med lyst eller mørkt tema.",
     "icon_dark": "Mørkt ikon",
-    "icon_light": "Lyst ikon"
+    "icon_light": "Lyst ikon",
+    "select_folder": "Velg mappe"
   },
   "dashboard": {
     "title": "Personaladministrasjon",

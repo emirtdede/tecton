@@ -15,6 +15,7 @@ Elektronik Yevmiye Defteri; internetsiz (offline) çalışan, işçi puantaj ve 
 V1.0.0 Stable (Production Ready). Projenin tüm fazları (Faz 1 - Faz 7) tamamlanmış, QA denetimlerinden geçmiş ve gereksiz kodlardan arındırılmıştır. Sistem hatasız (Zero Error, Zero Warning) çalışacak şekilde optimize edilmiştir.
 
 ## Son Yapılan İş
+- **İç Parametre Gizleme & Bulut Yedekleme Klasör Seçimi**: Sistem durum parametresi `clean_shutdown` kullanıcı parametreler listesinden gizlendi. "Bulut Yedekleme Klasörü" parametresi, "Finans & Operasyon" sekmesinden kaldırılıp "Güvenlik ve Yedekleme" altındaki "Sistem Bakımı" paneline yeni bir giriş alanı ve yerelleştirilmiş (19 dile çevrilmiş) "Klasör Seç" butonu ile taşındı.
 - **Güvenli Kapatma Ekranı ve Animasyonu**: Uygulamanın kapanışında veritabanı işlemlerinin yarıda kalmaması için 2.5 saniyelik güvenli gecikmeye sahip, temaya duyarlı ve lazer tarayıcı efektli özel bir kapatma arayüzü (shutdown overlay) eklendi.
 - **Atomik Veritabanı Yedekleme**: Veritabanının kapatılırken güvenli yedeğinin alınması amacıyla `VACUUM INTO` ve `PRAGMA integrity_check` entegrasyonu sağlandı.
 - **Hata Kurtarma (Auto-Recovery)**: Uygulama açılışında veritabanı dosyasının bozulmuş olması durumunda, en güncel yedek dosyasını otomatik bularak geri yükleyen hata kurtarma mekanizması kuruldu.

@@ -174,7 +174,8 @@
     "desktop_icon": "Icona di collegamento",
     "desktop_icon_desc": "Rendi l'icona di collegamento dell'applicazione sul desktop compatibile con il tema chiaro o scuro.",
     "icon_dark": "Icona scura",
-    "icon_light": "Icona chiara"
+    "icon_light": "Icona chiara",
+    "select_folder": "Seleziona cartella"
   },
   "dashboard": {
     "title": "Gestione del personale",

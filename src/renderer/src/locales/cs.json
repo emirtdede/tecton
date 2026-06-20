@@ -174,7 +174,8 @@
     "desktop_icon": "Ikona zástupce na ploše",
     "desktop_icon_desc": "Zkontrolujte, zda je ikona zástupce aplikace na ploše kompatibilní se světlým nebo tmavým motivem.",
     "icon_dark": "Tmavá ikona",
-    "icon_light": "Světlá ikona"
+    "icon_light": "Světlá ikona",
+    "select_folder": "Vybrat složku"
   },
   "dashboard": {
     "title": "Správa personálu",

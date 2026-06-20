@@ -174,7 +174,8 @@
     "desktop_icon": "Ícone de atalho",
     "desktop_icon_desc": "Torne o ícone de atalho do aplicativo na área de trabalho compatível com o tema claro ou escuro.",
     "icon_dark": "Ícone escuro",
-    "icon_light": "Ícone claro"
+    "icon_light": "Ícone claro",
+    "select_folder": "Selecionar pasta"
   },
   "dashboard": {
     "title": "Gestão de Pessoal",

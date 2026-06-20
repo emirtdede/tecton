@@ -729,7 +729,7 @@ const Settings = ({ activeTab = 'genel' }) => {
             <div className="glass-card">
               <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>{t('settings.parameters')}</h3>
               {appSettings.map(setting => {
-                if (['theme', 'language', 'company_name', 'company_logo', 'custom_currency', 'custom_date_format', 'custom_time_format'].includes(setting.setting_key) || setting.setting_key.endsWith('_order')) return null;
+                if (['theme', 'language', 'company_name', 'company_logo', 'custom_currency', 'custom_date_format', 'custom_time_format', 'cloud_sync_folder', 'clean_shutdown'].includes(setting.setting_key) || setting.setting_key.endsWith('_order')) return null;
                 return (
                   <div key={setting.id} className="form-group">
                     <label className="form-label">{t(`settings.keys.${setting.setting_key}`) || setting.description || setting.setting_key}</label>
@@ -1120,9 +1120,21 @@ const Settings = ({ activeTab = 'genel' }) => {
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem' }}>
-                  <button className="btn" onClick={handleCloudSyncFolder} style={{ width: '100%', marginBottom: '0.5rem', border: '1px solid #10B981', color: '#10B981', background: 'transparent' }}>
-                    ☁️ {t('settings.cloud_sync', 'Bulut Yedekleme Klasörü Ayarla')}
-                  </button>
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#10B981', fontWeight: '500' }}>
+                    ☁️ {t('settings.keys.cloud_sync_folder', 'Bulut Yedekleme Klasörü')}
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      readOnly 
+                      value={appSettings.find(s => s.setting_key === 'cloud_sync_folder')?.setting_value || ''} 
+                      style={{ flex: 1, marginBottom: 0 }}
+                    />
+                    <button className="btn" onClick={handleCloudSyncFolder} style={{ border: '1px solid #10B981', color: '#10B981', background: 'transparent', whiteSpace: 'nowrap' }}>
+                      {t('settings.select_folder', 'Klasör Seç')}
+                    </button>
+                  </div>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     {t('settings.cloud_sync_desc', 'Her uygulama kapandığında arkaplanda (sessizce) otomatik yedeklerin kaydedileceği bir Dropbox, Drive vb. bulut klasörü seçmenizi sağlar.')}
                   </p>

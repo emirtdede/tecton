@@ -174,7 +174,8 @@
     "desktop_icon": "桌面快捷方式图标",
     "desktop_icon_desc": "使桌面上的应用程序快捷方式图标与浅色或深色主题兼容。",
     "icon_dark": "深色图标",
-    "icon_light": "浅色图标"
+    "icon_light": "浅色图标",
+    "select_folder": "选择文件夹"
   },
   "dashboard": {
     "title": "人员管理",

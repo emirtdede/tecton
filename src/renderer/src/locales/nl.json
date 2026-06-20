@@ -174,7 +174,8 @@
     "desktop_icon": "Bureaublad Snelkoppeling Icoon",
     "desktop_icon_desc": "Maak het snelkoppelingspictogram van de applicatie op het bureaublad compatibel met een licht of donker thema.",
     "icon_dark": "Donker icoon",
-    "icon_light": "Licht icoon"
+    "icon_light": "Licht icoon",
+    "select_folder": "Map selecteren"
   },
   "dashboard": {
     "title": "Personeelsbeheer",
