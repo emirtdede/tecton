@@ -64,7 +64,7 @@ An autonomous, offline-first corporate desktop application designed to replace p
 ## 📁 Project Structure
 
 ```text
-Elektronik-Yevmiye-Defteri/
+Tecton-Yeni-Nesil-Santiye-Isletim-Sistemi/
 ├── project_docs/              # Architectural specs, DB schemas, and Vibe guidelines
 ├── scripts/                   # Database seeding and migration automation scripts
 ├── src/                       # Source code directory
@@ -86,8 +86,8 @@ Elektronik-Yevmiye-Defteri/
 ### 1. Install Dependencies
 Clone the repository and install the packages:
 ```bash
-git clone https://github.com/emirtdede/Elektronik-Yevmiye-Defteri.git
-cd Elektronik-Yevmiye-Defteri
+git clone https://github.com/emirtdede/Tecton-Yeni-Nesil-Santiye-Isletim-Sistemi.git
+cd Tecton-Yeni-Nesil-Santiye-Isletim-Sistemi
 npm install
 ```
 
@@ -108,7 +108,7 @@ Compile the application into a standalone Windows installer using `electron-buil
 ```bash
 npm run build
 ```
-The compiled installer will be saved inside the `dist/` directory.
+The compiled installer will be saved inside the `release/` directory.
 
 ---
 
@@ -163,7 +163,7 @@ Licensed under the MIT License. Developed for internal enterprise usage.
 ## 📁 Proje Yapısı
 
 ```text
-Elektronik-Yevmiye-Defteri/
+Tecton-Yeni-Nesil-Santiye-Isletim-Sistemi/
 ├── project_docs/              # Proje mimarisi, DB şeması ve Vibe Coding kılavuzları
 ├── scripts/                   # Veritabanı test verisi ekleme ve göç betikleri
 ├── src/                       # Kaynak kod dizini
@@ -185,8 +185,8 @@ Elektronik-Yevmiye-Defteri/
 ### 1. Bağımlılıkları Yükleyin
 Depoyu klonlayıp paketleri yükleyin:
 ```bash
-git clone https://github.com/emirtdede/Elektronik-Yevmiye-Defteri.git
-cd Elektronik-Yevmiye-Defteri
+git clone https://github.com/emirtdede/Tecton-Yeni-Nesil-Santiye-Isletim-Sistemi.git
+cd Tecton-Yeni-Nesil-Santiye-Isletim-Sistemi
 npm install
 ```
 
@@ -207,7 +207,7 @@ Uygulamayı nsis tabanlı bağımsız bir Windows kurulum dosyası haline getirm
 ```bash
 npm run build
 ```
-Derlenen kurulum setup dosyası `dist/` klasöründe yer alacaktır.
+Derlenen kurulum setup dosyası `release/` klasöründe yer alacaktır.
 
 ---
 
