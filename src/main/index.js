@@ -17,6 +17,7 @@ function createSplashWindow(theme) {
     transparent: true,
     alwaysOnTop: true,
     resizable: false,
+    icon: path.join(__dirname, '../../tecton_assets/tecton_dark.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -38,6 +39,7 @@ function createWindow(theme) {
     height: 800,
     frame: false,
     show: false,
+    icon: path.join(__dirname, '../../tecton_assets/tecton_dark.ico'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
@@ -91,6 +93,7 @@ function createWindow(theme) {
 }
 
 app.whenReady().then(async () => {
+  app.setAppUserModelId('com.tecton.app');
   let theme = 'dark';
   try {
     const { getDB } = require('./database/db');
