@@ -1,5 +1,8 @@
 # Değişiklik Geçmişi
 
+## 2026-06-20
+- [Düzeltme] **Sessiz Bulut Yedekleme Klasörü**: Uygulama kapanırken yedek alınamamasına yol açan hedef klasörün mevcut olmaması hatası giderildi. Yedek klasörü (`TectonBackups`) ilk çalıştırmada ve yedek kopyalama anında otomatik olarak (`fs.mkdirSync` ile recursive) oluşturulacak şekilde ayarlandı.
+
 ## 2026-06-19 - V1.0.0 STABLE (PRODUCTION READY) 🚀
 - [Yayın] Projenin tüm fazları (1-7) resmen tamamlandı, kod tabanında derin temizlik (Pre-flight check) yapılarak yayın ortamına (production) hazır hale getirildi. Sistem %100 "Zero Error, Zero Warning" ile optimize edildi.
 - [Eklenen Özellik] **Mobil LAN Yükleyici (QR Kod)**: Aynı yerel ağ (Wi-Fi) üzerinden cep telefonu kamerasıyla QR kod okutarak şantiye tutanak/fotoğraflarını direkt olarak sisteme yükleme özelliği eklendi (Express.js entegrasyonu).

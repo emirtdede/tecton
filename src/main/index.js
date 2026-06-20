@@ -203,19 +203,24 @@ app.on('window-all-closed', async () => {
       
       if (setting && setting.setting_value) {
         const fs = require('fs');
+        const backupFolder = setting.setting_value;
+        if (!fs.existsSync(backupFolder)) {
+          fs.mkdirSync(backupFolder, { recursive: true });
+        }
+
         const isDev = process.env.NODE_ENV === 'development';
         const dbPath = isDev 
           ? path.join(__dirname, '../../database.sqlite')
           : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
           
         const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-        const destPath = path.join(setting.setting_value, `elektronik-yevmiye-backup-${todayStr}.sqlite`);
+        const destPath = path.join(backupFolder, `elektronik-yevmiye-backup-${todayStr}.sqlite`);
         
         fs.copyFileSync(dbPath, destPath);
         console.log('Daily backup completed:', destPath);
 
         // Process archiving and sorting
-        processBackupArchiving(setting.setting_value);
+        processBackupArchiving(backupFolder);
       }
     } catch (err) {
       console.error('Backup system error:', err);

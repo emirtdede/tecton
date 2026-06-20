@@ -436,7 +436,15 @@ async function getDB() {
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_currency', 'auto', 'Para Birimi Seçimi (auto, TRY, USD, EUR, GBP)']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_date_format', 'auto', 'Tarih Formatı Seçimi (auto, DD.MM.YYYY, YYYY-MM-DD, MM/DD/YYYY)']);
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_time_format', 'auto', 'Saat Formatı Seçimi (auto, 24h, 12h)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', require('electron').app.getPath('documents') + '\\TectonBackups', 'Sessiz Bulut Yedekleme Klasörü']);
+    const defaultBackupDir = path.join(require('electron').app.getPath('documents'), 'TectonBackups');
+    if (!fs.existsSync(defaultBackupDir)) {
+      try {
+        fs.mkdirSync(defaultBackupDir, { recursive: true });
+      } catch (err) {
+        console.error('Failed to create default backup folder:', err);
+      }
+    }
+    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', defaultBackupDir, 'Sessiz Bulut Yedekleme Klasörü']);
   } else {
     // Migration for existing databases to ensure new settings exist
     const keys = await db.all('SELECT setting_key FROM app_settings');
@@ -461,7 +469,15 @@ async function getDB() {
       await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_time_format', 'auto', 'Saat Formatı Seçimi (auto, 24h, 12h)']);
     }
     if (!existingKeys.includes('cloud_sync_folder')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', require('electron').app.getPath('documents') + '\\TectonBackups', 'Sessiz Bulut Yedekleme Klasörü']);
+      const defaultBackupDir = path.join(require('electron').app.getPath('documents'), 'TectonBackups');
+      if (!fs.existsSync(defaultBackupDir)) {
+        try {
+          fs.mkdirSync(defaultBackupDir, { recursive: true });
+        } catch (err) {
+          console.error('Failed to create default backup folder:', err);
+        }
+      }
+      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', defaultBackupDir, 'Sessiz Bulut Yedekleme Klasörü']);
     }
   }
 
