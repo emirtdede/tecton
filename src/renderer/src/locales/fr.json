@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtrez par date, mot-clé ou type de journal. Téléchargez les journaux au format Excel, CSV, JSON, Markdown ou Texte."
     },
     "filter_project": "Chantier",
-    "project_all": "Tous les chantiers"
+    "project_all": "Tous les chantiers",
+    "open_folder": "Ouvrir le dossier des journaux archivés"
   },
   "common": {
     "cancel": "Annuler",

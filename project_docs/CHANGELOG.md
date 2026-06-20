@@ -1,6 +1,10 @@
 # Değişiklik Geçmişi
 
 ## 2026-06-20
+- [Eklenen Özellik] **Güvenli Kapatma Arayüzü & Animasyonu**: Kapanış esnasında temaya (Light/Dark) duyarlı, lazer efektli animasyona sahip ve 2.5 saniyelik güvenli gecikmeli yeni kapatma ekranı eklendi. Light temadaki metin okunurluğu iyileştirildi.
+- [Eklenen Özellik] **Atomik Veritabanı Yedekleme & Bütünlük Denetimi**: Uygulama kapanırken veritabanı yedeğinin sıfır veri kaybı ile alınması amacıyla `VACUUM INTO` ve `PRAGMA integrity_check` entegrasyonu sağlandı.
+- [Eklenen Özellik] **Açılışta Otomatik Kurtarma (Auto-Recovery)**: Bir çökme durumunda açılışta bozulan veritabanını en son yedekten otonom olarak kurtaran mekanizma yazıldı.
+- [Eklenen Özellik] **Yıl/Ay Klasör Yapısı ve Arşivleme**: Günlük loglar ve yedekler `YYYY/MM/` yapısında saklanacak şekilde güncellendi. Aylık ZIP arşivleme işlemlerinin açılışta arka planda çalışması sağlanarak kapanış performansı optimize edildi.
 - [Düzeltme] **Sessiz Bulut Yedekleme Klasörü**: Uygulama kapanırken yedek alınamamasına yol açan hedef klasörün mevcut olmaması hatası giderildi. Yedek klasörü (`TectonBackups`) ilk çalıştırmada ve yedek kopyalama anında otomatik olarak (`fs.mkdirSync` ile recursive) oluşturulacak şekilde ayarlandı.
 
 ## 2026-06-19 - V1.0.0 STABLE (PRODUCTION READY) 🚀

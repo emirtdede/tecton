@@ -382,7 +382,8 @@
       "filter_export_desc": "Filter op datum, trefwoord of logtype. Download logs als Excel, CSV, JSON, Markdown of Tekst."
     },
     "filter_project": "Bouwplaats",
-    "project_all": "Alle bouwplaatsen"
+    "project_all": "Alle bouwplaatsen",
+    "open_folder": "Gearchiveerde logmap openen"
   },
   "common": {
     "cancel": "Annuleren",

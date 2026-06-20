@@ -382,7 +382,8 @@
       "filter_export_desc": "날짜 범위, 키워드 또는 로그 유형별로 필터링할 수 있습니다. Excel, CSV, JSON, Markdown 또는 텍스트 파일로 다운로드도 지원합니다."
     },
     "filter_project": "건설 현장",
-    "project_all": "모든 건설 현장"
+    "project_all": "모든 건설 현장",
+    "open_folder": "보관된 로그 폴더 열기"
   },
   "common": {
     "cancel": "취소",

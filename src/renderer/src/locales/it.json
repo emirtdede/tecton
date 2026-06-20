@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtra per data, parola chiave o tipo. Scarica i log in formato Excel, CSV, JSON, Markdown o Testo."
     },
     "filter_project": "Cantiere",
-    "project_all": "Tutti i cantieri"
+    "project_all": "Tutti i cantieri",
+    "open_folder": "Apri cartella dei log archiviati"
   },
   "common": {
     "cancel": "Annulla",

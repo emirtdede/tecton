@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtruj według daty, słowa kluczowego lub typu logu. Pobierz logi jako Excel, CSV, JSON, Markdown lub Tekst."
     },
     "filter_project": "Plac budowy",
-    "project_all": "Wszystkie place budowy"
+    "project_all": "Wszystkie place budowy",
+    "open_folder": "Otwórz folder zarchiwizowanych logów"
   },
   "common": {
     "cancel": "Anuluj",

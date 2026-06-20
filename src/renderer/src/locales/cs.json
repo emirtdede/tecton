@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtrujte podle data, klíčového slova nebo typu. Stáhněte protokoly jako Excel, CSV, JSON, Markdown nebo Text."
     },
     "filter_project": "Staveniště",
-    "project_all": "Všechna staveniště"
+    "project_all": "Všechna staveniště",
+    "open_folder": "Otevřít složku archivovaných logů"
   },
   "common": {
     "cancel": "Zrušit",

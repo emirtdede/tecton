@@ -55,7 +55,7 @@
   --danger-bg: rgba(239, 68, 68, 0.1);
   --danger-border: rgba(239, 68, 68, 0.3);
   --danger-bg-light: rgba(239, 68, 68, 0.05);
-  --spotlight-bg: rgba(15, 23, 42, 0.85);
+  --spotlight-bg: #0f172a;
   --spotlight-border: rgba(255, 255, 255, 0.12);
   --spotlight-input-color: #ffffff;
   --spotlight-item-hover: rgba(255, 255, 255, 0.06);
@@ -120,7 +120,7 @@
   --danger-bg: rgba(220, 38, 38, 0.08);
   --danger-border: rgba(220, 38, 38, 0.2);
   --danger-bg-light: rgba(220, 38, 38, 0.04);
-  --spotlight-bg: rgba(255, 255, 255, 0.95);
+  --spotlight-bg: #ffffff;
   --spotlight-border: #ccdbfd;
   --spotlight-input-color: #0f172a;
   --spotlight-item-hover: #e2eafc;
@@ -1411,6 +1411,41 @@ body.dragging * {
 }
 :root[data-theme='light'] .project-drag-handle:hover {
   opacity: 1 !important;
+}
+
+/* Shutdown Loading Overlay Scanner Effect */
+.shutdown-logo-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.shutdown-laser-line {
+  height: 2px;
+  width: 100%;
+  background: #22d3ee;
+  box-shadow: 0 0 15px 3px #22d3ee;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  pointer-events: none;
+  animation: laser-scan-shutdown 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes laser-scan-shutdown {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(78px);
+  }
 }
 
 

@@ -1,5 +1,7 @@
 {
   "app.name": "Tecton",
+  "app.shutdown_title": "System Shutting Down Safely",
+  "app.shutdown_desc": "Database backup is being created and verified, please wait...",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Subcontractor Payment",
     "delete_title": "Delete Record",
@@ -382,7 +384,8 @@
       "large_data_desc": "When you update image files such as construction site logos, large Base64 text codes are saved to the database. In such cases, it is normal to see very long text blocks in the log lines; this data confirms that visual uploads have been successfully recorded in the system.",
       "filter_export_title": "3. Search, Filtering, and Export",
       "filter_export_desc": "You can instantly filter by a specific date range, keyword, or log type (Info, Error, etc.). You can also download all records as Excel, CSV, JSON, Markdown, or Plain Text (.txt) to your computer."
-    }
+    },
+    "open_folder": "Open Archive Logs Folder"
   },
   "common": {
     "cancel": "Cancel",

@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtre por fecha, palabra clave o tipo. Descargue registros como Excel, CSV, JSON, Markdown o Texto."
     },
     "filter_project": "Obra",
-    "project_all": "Todas las obras"
+    "project_all": "Todas las obras",
+    "open_folder": "Abrir carpeta de registros archivados"
   },
   "common": {
     "cancel": "Cancelar",

@@ -3,25 +3,103 @@ const { open } = require('sqlite');
 const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
+const AdmZip = require('adm-zip');
 
 let dbPromise;
+
+function findLatestBackup(backupFolder) {
+  try {
+    if (!fs.existsSync(backupFolder)) return null;
+    let sqliteFiles = [];
+    const traverse = (dir) => {
+      const list = fs.readdirSync(dir);
+      list.forEach(file => {
+        const fullPath = path.join(dir, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+          traverse(fullPath);
+        } else if (file.endsWith('.sqlite') && file.startsWith('elektronik-yevmiye-backup-')) {
+          sqliteFiles.push(fullPath);
+        }
+      });
+    };
+    traverse(backupFolder);
+    if (sqliteFiles.length === 0) return null;
+    sqliteFiles.sort((a, b) => b.localeCompare(a));
+    return sqliteFiles[0];
+  } catch (err) {
+    console.error('Error finding latest backup:', err);
+    return null;
+  }
+}
 
 async function getDB() {
   if (dbPromise) return dbPromise;
 
   const isDev = process.env.NODE_ENV === 'development';
-  // Use appData in production. In dev, project root.
-  // path.join(__dirname, '../../..') points to the project root
   const dbPath = isDev 
     ? path.join(__dirname, '../../../database.sqlite')
     : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 
-  dbPromise = open({
-    filename: dbPath,
-    driver: sqlite3.Database
-  });
+  let db;
+  try {
+    db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    });
+  } catch (err) {
+    console.error('Failed to open primary database. Attempting auto-recovery...', err);
+    const backupDir = app 
+      ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
+      : path.join(__dirname, '../../test_data/Database-Backups');
+    
+    const latestBackup = findLatestBackup(backupDir);
+    if (latestBackup && fs.existsSync(latestBackup)) {
+      console.log(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
+      fs.copyFileSync(latestBackup, dbPath);
+      db = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+      });
+    } else {
+      console.error('[Auto-Recovery] No valid backups found to recover from.');
+      throw err;
+    }
+  }
 
-  const db = await dbPromise;
+  dbPromise = Promise.resolve(db);
+
+  // Verify clean shutdown state and perform integrity check if it was unclean
+  try {
+    const settingTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='app_settings'");
+    if (settingTableExists) {
+      const cleanSetting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'clean_shutdown'");
+      if (cleanSetting) {
+        if (cleanSetting.setting_value === '0') {
+          console.warn('[Integrity Check] Unclean shutdown detected. Checking database integrity...');
+          const check = await db.get('PRAGMA integrity_check');
+          console.log('[Integrity Check] Result:', check);
+          if (check && check.integrity_check !== 'ok') {
+            console.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
+            await db.close();
+            const backupDir = app 
+              ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
+              : path.join(__dirname, '../../test_data/Database-Backups');
+            const latestBackup = findLatestBackup(backupDir);
+            if (latestBackup) {
+              fs.copyFileSync(latestBackup, dbPath);
+              db = await open({ filename: dbPath, driver: sqlite3.Database });
+              dbPromise = Promise.resolve(db);
+            }
+          }
+        }
+        await db.run("UPDATE app_settings SET setting_value = '0' WHERE setting_key = 'clean_shutdown'");
+      } else {
+        await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['clean_shutdown', '0', 'Clean Shutdown Status (0=no, 1=yes)']);
+      }
+    }
+  } catch (checkErr) {
+    console.error('[Integrity Check] Failed to run integrity verification:', checkErr);
+  }
 
   // Create tables (Zero-Code Change Architecture)
   await db.exec(`
@@ -121,6 +199,8 @@ async function getDB() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (project_id) REFERENCES projects (id)
     );
+
+    CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs (created_at);
 
     CREATE TABLE IF NOT EXISTS projects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -505,27 +585,171 @@ async function getDB() {
     await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['İzinli (Ücretsiz)', 0.0]);
   }
 
-  // Auto-Cleanup 30 days old deleted records
-  try {
-    const oldRecords = await db.all("SELECT id, table_name, record_id FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days') AND is_restored = 0");
-    for (const r of oldRecords) {
-      try {
-        await db.run(`DELETE FROM ${r.table_name} WHERE id = ? AND is_deleted = 1`, [r.record_id]);
-      } catch (e) {
-        console.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
-      }
-    }
-    await db.run("DELETE FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days')");
-    
-    if (oldRecords.length > 0) {
-      await db.run('VACUUM');
-    }
-  } catch (err) {
-    console.error('Auto cleanup error:', err);
-  }
+  // Run cleanup tasks asynchronously to optimize startup time
+  runDeferredCleanup(db);
 
   return db;
 }
+
+function getSystemLogsDir() {
+  const baseDir = app 
+    ? path.join(app.getPath('documents'), 'TectonBackups', 'SystemLogs-Backups') 
+    : path.join(__dirname, '../../test_data/SystemLogs-Backups');
+  if (!fs.existsSync(baseDir)) {
+    try {
+      fs.mkdirSync(baseDir, { recursive: true });
+    } catch (e) {
+      console.error('Failed to create SystemLogs-Backups directory:', e);
+    }
+  }
+  return baseDir;
+}
+
+function runDeferredCleanup(db) {
+  setTimeout(async () => {
+    let vacuumNeeded = false;
+    // Auto-Cleanup audit_logs (logs older than today local time)
+    try {
+      const oldDates = await db.all("SELECT DISTINCT date(created_at, 'localtime') as log_date FROM audit_logs WHERE date(created_at, 'localtime') < date('now', 'localtime')");
+      if (oldDates && oldDates.length > 0) {
+        const logsDir = getSystemLogsDir();
+        for (const d of oldDates) {
+          const logDate = d.log_date;
+          if (!logDate) continue;
+
+          const logs = await db.all(
+            "SELECT id, table_name, record_id, action, old_values, new_values, project_id, datetime(created_at, 'localtime') as local_created_at FROM audit_logs WHERE date(created_at, 'localtime') = ? ORDER BY created_at ASC",
+            [logDate]
+          );
+
+          if (logs && logs.length > 0) {
+            const [year, month] = logDate.split('-');
+            const logDir = path.join(logsDir, year, month);
+            if (!fs.existsSync(logDir)) {
+              fs.mkdirSync(logDir, { recursive: true });
+            }
+
+            const logFilePath = path.join(logDir, `audit-${logDate}.log`);
+            const logContent = logs.map(l => {
+              return `[${l.local_created_at}] [${l.action}] Table: ${l.table_name}, ID: ${l.record_id}, ProjectID: ${l.project_id || 'N/A'}\n` +
+                     `  Old: ${l.old_values || 'NULL'}\n` +
+                     `  New: ${l.new_values || 'NULL'}`;
+            }).join('\n\n') + '\n\n';
+
+            fs.appendFileSync(logFilePath, logContent, 'utf8');
+            await db.run("DELETE FROM audit_logs WHERE date(created_at, 'localtime') = ?", [logDate]);
+            vacuumNeeded = true;
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Audit logs cleanup/archiving error:', err);
+    }
+
+    // Auto-Cleanup 30 days old deleted records
+    try {
+      const oldRecords = await db.all("SELECT id, table_name, record_id FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days') AND is_restored = 0");
+      for (const r of oldRecords) {
+        try {
+          await db.run(`DELETE FROM ${r.table_name} WHERE id = ? AND is_deleted = 1`, [r.record_id]);
+        } catch (e) {
+          console.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
+        }
+      }
+      await db.run("DELETE FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days')");
+      
+      if (oldRecords && oldRecords.length > 0) {
+        vacuumNeeded = true;
+      }
+    } catch (err) {
+      console.error('Auto cleanup error:', err);
+    }
+
+    if (vacuumNeeded) {
+      try {
+        await db.run('VACUUM');
+        console.log('Database vacuum completed successfully.');
+      } catch (e) {
+        console.error('VACUUM error:', e);
+      }
+    }
+
+    // Archive old log folders
+    archiveOldLogs();
+  }, 1000);
+
+  // Archive old database backups 5 seconds after startup
+  setTimeout(async () => {
+    try {
+      const setting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'cloud_sync_folder'");
+      if (setting && setting.setting_value) {
+        const backupFolder = path.join(setting.setting_value, 'Database-Backups');
+        const { processBackupArchiving } = require('../utils/archiveUtils');
+        processBackupArchiving(backupFolder);
+      }
+    } catch (err) {
+      console.error('Database archiving error at startup:', err);
+    }
+  }, 5000);
+}
+
+function archiveOldLogs() {
+  try {
+    const logsDir = getSystemLogsDir();
+    if (!fs.existsSync(logsDir)) return;
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonthStr = String(today.getMonth() + 1).padStart(2, '0');
+    const currentYearMonth = `${currentYear}-${currentMonthStr}`;
+
+    const years = fs.readdirSync(logsDir);
+    for (const year of years) {
+      const yearPath = path.join(logsDir, year);
+      if (!fs.existsSync(yearPath) || !fs.statSync(yearPath).isDirectory()) continue;
+
+      const months = fs.readdirSync(yearPath);
+      for (const month of months) {
+        const monthPath = path.join(yearPath, month);
+        if (!fs.existsSync(monthPath) || !fs.statSync(monthPath).isDirectory()) continue;
+
+        const folderYearMonth = `${year}-${month}`;
+        if (folderYearMonth < currentYearMonth) {
+          const files = fs.readdirSync(monthPath);
+          if (files.length > 0) {
+            const zipPath = path.join(yearPath, `logs-${folderYearMonth}.zip`);
+            const zip = new AdmZip();
+
+            files.forEach(file => {
+              const filePath = path.join(monthPath, file);
+              if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+                zip.addLocalFile(filePath);
+              }
+            });
+
+            zip.writeZip(zipPath);
+            console.log(`Archived log folder ${folderYearMonth} to ${zipPath}`);
+          }
+
+          fs.rmSync(monthPath, { recursive: true, force: true });
+        }
+      }
+
+      // Cleanup year directory if empty
+      try {
+        const remaining = fs.readdirSync(yearPath);
+        if (remaining.length === 0) {
+          fs.rmdirSync(yearPath);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  } catch (err) {
+    console.error('Log archiving error:', err);
+  }
+}
+
 
 // Zaman Makinesi (Restore Point) Snapshot Fonksiyonları
 function getDBPath() {

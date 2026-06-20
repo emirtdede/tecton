@@ -39,12 +39,20 @@ contextBridge.exposeInMainWorld('api', {
     stopLANServer: () => ipcRenderer.invoke('system:stop-lan-server'),
     restoreDBFile: (params) => ipcRenderer.invoke('system:restore-db-file', params),
     openOldBackupsFolder: () => ipcRenderer.invoke('system:open-old-backups-folder'),
+    openLogsFolder: () => ipcRenderer.invoke('system:open-logs-folder'),
     changeDesktopIcon: (params) => ipcRenderer.invoke('system:change-desktop-icon', params),
     onPhotoUploaded: (callback) => {
       const subscription = (event, data) => callback(data);
       ipcRenderer.on('lan:photo-uploaded', subscription);
       return () => {
         ipcRenderer.removeListener('lan:photo-uploaded', subscription);
+      };
+    },
+    onShutdownStarting: (callback) => {
+      const subscription = () => callback();
+      ipcRenderer.on('system:shutdown-starting', subscription);
+      return () => {
+        ipcRenderer.removeListener('system:shutdown-starting', subscription);
       };
     }
   },

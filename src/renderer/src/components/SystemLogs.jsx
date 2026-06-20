@@ -136,6 +136,12 @@ const SystemLogs = () => {
     }
   };
 
+  const handleOpenLogsFolder = () => {
+    if (window.api && window.api.system && window.api.system.openLogsFolder) {
+      window.api.system.openLogsFolder();
+    }
+  };
+
   const formatLogLine = (line) => {
     const match = line.match(/^\[(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(?:\.\d+)?\] (.*)$/);
     if (match) {
@@ -182,18 +188,40 @@ const SystemLogs = () => {
           </span>
         </h3>
         
-        <select className="btn btn-primary" style={{ padding: '0.5rem', background: 'var(--accent)', color: 'var(--accent-text)', fontWeight: 'bold' }} onChange={e => {
-            const val = e.target.value;
-            if (val) handleExport(val);
-            e.target.value = "";
-          }} value="">
-          <option value="" disabled>{t('logs.export')}...</option>
-          <option value="txt">Metin (.txt)</option>
-          <option value="md">Markdown (.md)</option>
-          <option value="excel">Excel (.xlsx)</option>
-          <option value="csv">CSV (.csv)</option>
-          <option value="json">JSON (.json)</option>
-        </select>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={handleOpenLogsFolder}
+            style={{ 
+              padding: '0.5rem 1rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.4rem', 
+              fontWeight: 'bold',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--glass-border)',
+              borderRadius: '6px',
+              color: 'var(--text-main)',
+              cursor: 'pointer'
+            }}
+          >
+            📂 {t('logs.open_folder', 'Geçmiş Log Klasörünü Aç')}
+          </button>
+
+          <select className="btn btn-primary" style={{ padding: '0.5rem', background: 'var(--accent)', color: 'var(--accent-text)', fontWeight: 'bold' }} onChange={e => {
+              const val = e.target.value;
+              if (val) handleExport(val);
+              e.target.value = "";
+            }} value="">
+            <option value="" disabled>{t('logs.export')}...</option>
+            <option value="txt">Metin (.txt)</option>
+            <option value="md">Markdown (.md)</option>
+            <option value="excel">Excel (.xlsx)</option>
+            <option value="csv">CSV (.csv)</option>
+            <option value="json">JSON (.json)</option>
+          </select>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>

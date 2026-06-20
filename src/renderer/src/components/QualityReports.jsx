@@ -727,7 +727,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
               width: '90%', 
               padding: '2.5rem 2rem', 
               textAlign: 'center',
-              background: 'var(--glass-bg)',
+              background: 'var(--spotlight-bg)',
               border: '1px solid var(--glass-border)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
               borderRadius: '20px'

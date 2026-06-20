@@ -382,7 +382,8 @@
       "filter_export_desc": "日付範囲、キーワード、ログタイプでフィルターできます。Excel、CSV、JSON、Markdown、またはテキストとしてダウンロードも可能です。"
     },
     "filter_project": "現場",
-    "project_all": "すべての現場"
+    "project_all": "すべての現場",
+    "open_folder": "アーカイブされたログフォルダを開く"
   },
   "common": {
     "cancel": "キャンセル",

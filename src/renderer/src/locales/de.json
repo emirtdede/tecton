@@ -382,7 +382,8 @@
       "filter_export_desc": "Sie können sofort nach Datumsbereich, Schlüsselwort oder Protokolltyp filtern. Sie können Protokolle auch als Excel, CSV, JSON, Markdown oder Text herunterladen."
     },
     "filter_project": "Baustelle",
-    "project_all": "Alle Baustellen"
+    "project_all": "Alle Baustellen",
+    "open_folder": "Archivierten Log-Ordner öffnen"
   },
   "common": {
     "cancel": "Abbrechen",

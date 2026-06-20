@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtrer etter dato, søkeord eller loggtype. Last ned loggfiler som Excel, CSV, JSON, Markdown eller Tekst."
     },
     "filter_project": "Byggeplass",
-    "project_all": "Alle byggeplasser"
+    "project_all": "Alle byggeplasser",
+    "open_folder": "Åpne arkivert loggmappe"
   },
   "common": {
     "cancel": "Avbryt",

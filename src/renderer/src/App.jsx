@@ -60,6 +60,7 @@ function App() {
   }, [i18n.language]);
 
   const [view, setView] = useState('list'); // 'list' | 'profile' | 'settings' | 'kasa' | 'projects' | 'production' | 'materials' | 'journal' | 'quality' | 'subcontractor' | 'subcontractor_profile' | 'media'
+  const [isShuttingDown, setIsShuttingDown] = useState(false);
   const [selectedWorkerProfile, setSelectedWorkerProfile] = useState(null);
   const [selectedSubcontractorProfile, setSelectedSubcontractorProfile] = useState(null);
 
@@ -233,6 +234,16 @@ function App() {
     };
     window.addEventListener('keydown', handleGlobalKey);
     return () => window.removeEventListener('keydown', handleGlobalKey);
+  }, []);
+
+  // Listen for system shutdown events
+  useEffect(() => {
+    if (window.api && window.api.system && window.api.system.onShutdownStarting) {
+      const unsubscribe = window.api.system.onShutdownStarting(() => {
+        setIsShuttingDown(true);
+      });
+      return () => unsubscribe();
+    }
   }, []);
 
   const handleOpenDrawer = (worker = null) => {
@@ -1103,6 +1114,26 @@ function App() {
           }}>
             Geri Al (Undo)
           </button>
+        </div>
+      )}
+
+      {isShuttingDown && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'var(--bg-gradient, linear-gradient(135deg, #090d16 0%, #11102b 100%))',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+          zIndex: 999999, color: 'var(--text-main)', fontFamily: 'Inter, sans-serif'
+        }}>
+          <div className="shutdown-logo-wrapper">
+            <img src={document.documentElement.getAttribute('data-theme') === 'light' ? TectonDark : TectonLight} alt="Tecton" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <div className="shutdown-laser-line"></div>
+          </div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem', textAlign: 'center' }}>
+            {t('app.shutdown_title', 'Sistem Güvenli Bir Şekilde Kapatılıyor')}
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', textAlign: 'center' }}>
+            {t('app.shutdown_desc', 'Veritabanı yedeğiniz alınıyor ve bütünlük kontrolü yapılıyor, lütfen bekleyin...')}
+          </p>
         </div>
       )}
     </>

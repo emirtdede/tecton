@@ -382,7 +382,8 @@
       "filter_export_desc": "您可以按日期范围、关键字或日志类型进行过滤。还可以将日志下载为 Excel、CSV、JSON、Markdown 或纯文本。"
     },
     "filter_project": "施工现场",
-    "project_all": "所有施工现场"
+    "project_all": "所有施工现场",
+    "open_folder": "打开归档日志文件夹"
   },
   "common": {
     "cancel": "取消",

@@ -1246,7 +1246,8 @@ const WorkerProfile = ({ worker, onBack }) => {
             style={{ 
               position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
               width: '420px', maxWidth: '90vw', zIndex: 1000, padding: '2rem',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.5)', border: '1px solid var(--glass-border)'
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)', border: '1px solid var(--glass-border)',
+              background: 'var(--spotlight-bg)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>

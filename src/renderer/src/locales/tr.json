@@ -1,5 +1,7 @@
 {
   "app.name": "Tecton",
+  "app.shutdown_title": "Sistem Güvenli Bir Şekilde Kapatılıyor",
+  "app.shutdown_desc": "Veritabanı yedeğiniz alınıyor ve bütünlük kontrolü yapılıyor, lütfen bekleyin...",
   "subcontractor_profile": {
     "cash_desc": "[{{name}}] - Taşeron Ödemesi",
     "delete_title": "İşlemi Sil",
@@ -401,7 +403,8 @@
       "large_data_desc": "Şantiye logosu gibi resim dosyalarını güncellediğinizde veritabanına büyük boyutlu Base64 metin kodları kaydedilir. Bu tür durumlarda log satırlarında çok uzun metin blokları görmeniz normaldir; bu veriler sisteme görsel yüklemelerin başarıyla kaydedildiğini doğrular.",
       "filter_export_title": "3. Arama, Filtreleme ve Dışa Aktarım",
       "filter_export_desc": "Belirli bir tarih aralığı, kelime veya log türüne (Info, Error, vb.) göre anında filtreleme yapabilirsiniz. Ayrıca tüm kayıtları Excel, CSV, JSON, Markdown veya Düz Metin (.txt) olarak bilgisayarınıza indirebilirsiniz."
-    }
+    },
+    "open_folder": "Geçmiş Log Klasörünü Aç"
   },
   "common": {
     "cancel": "İptal",

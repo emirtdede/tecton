@@ -382,7 +382,8 @@
       "filter_export_desc": "Filtre por data, palavra-chave ou tipo de log. Baixe os logs nos formatos Excel, CSV, JSON, Markdown ou Texto."
     },
     "filter_project": "Obra",
-    "project_all": "Todos os Canteiros de Obras"
+    "project_all": "Todos os Canteiros de Obras",
+    "open_folder": "Abrir pasta de registros arquivados"
   },
   "common": {
     "cancel": "Cancelar",

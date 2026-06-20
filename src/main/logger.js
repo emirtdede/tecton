@@ -10,8 +10,10 @@ log.transports.file.resolvePathFn = () => {
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
 
-  const userDataPath = app ? app.getPath('userData') : path.join(__dirname, '../../test_data');
-  const logDir = path.join(userDataPath, 'logs', year, month);
+  const baseDir = app 
+    ? path.join(app.getPath('documents'), 'TectonBackups', 'SystemLogs-Backups') 
+    : path.join(__dirname, '../../test_data/SystemLogs-Backups');
+  const logDir = path.join(baseDir, year, month);
   
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });

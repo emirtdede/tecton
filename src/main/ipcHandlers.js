@@ -251,8 +251,7 @@ async function setupHandlers() {
   ipcMain.handle('system:read-logs', async (event, { startDate, endDate }) => {
     try {
       const logs = [];
-      const userDataPath = app.getPath('userData');
-      const logsDir = path.join(userDataPath, 'logs');
+      const logsDir = path.join(app.getPath('documents'), 'TectonBackups', 'SystemLogs-Backups');
 
       if (!startDate || !endDate) {
         // Read all logs recursively
@@ -684,6 +683,16 @@ async function setupHandlers() {
       fs.mkdirSync(oldBackupsDir, { recursive: true });
     }
     shell.showItemInFolder(oldBackupsDir);
+    return { success: true };
+  });
+
+  ipcMain.handle('system:open-logs-folder', () => {
+    const { shell } = require('electron');
+    const logsDir = path.join(app.getPath('documents'), 'TectonBackups', 'SystemLogs-Backups');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+    shell.openPath(logsDir);
     return { success: true };
   });
 

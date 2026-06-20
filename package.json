@@ -1,6 +1,6 @@
 {
   "name": "tecton",
-  "version": "1.0.0",
+  "version": "v1.0.0-beta.1",
   "description": "Tecton - Next Generation Construction Site Operating System",
   "author": "Emir Tarık Dede",
   "main": "src/main/index.js",
