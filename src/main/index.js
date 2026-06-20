@@ -51,7 +51,8 @@ function createWindow(theme) {
   // Geliştirme ortamında Vite dev server'a bağlan, üretimde dosyayı yükle
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:5173');
-    mainWindow.webContents.openDevTools();
+    // Developer tools will not open automatically anymore. Use keyboard shortcuts or menu if needed.
+    // mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
   }

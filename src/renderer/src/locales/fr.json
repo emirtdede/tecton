@@ -1447,5 +1447,13 @@
     "export_btn": "Exporter",
     "download_template": "Télécharger le Modèle",
     "import_success": "{{count}} enregistrements de sous-traitant importés avec succès."
-  }
+  },
+  "welcome.modal_title": "Bienvenue sur Tecton",
+  "welcome.modal_desc": "Votre système d'exploitation de chantier de nouvelle génération. Gérez le suivi du personnel, les rapports journaliers et le contrôle qualité avec une expérience premium.",
+  "welcome.features": "🚀 Infrastructure puissante | 📊 Finances intelligentes | 🔒 Base de données locale sécurisée",
+  "welcome.dont_show_again": "Ne plus afficher",
+  "welcome.get_started": "Commencer",
+  "welcome.infra_feature": "Infrastructure puissante & rapide",
+  "welcome.finance_feature": "Finances et caisse intelligentes",
+  "welcome.database_feature": "Base de données locale sécurisée"
 }

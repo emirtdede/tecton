@@ -1447,5 +1447,13 @@
     "export_btn": "Esporta",
     "download_template": "Scarica Modello",
     "import_success": "{{count}} record subappaltatore importati con successo."
-  }
+  },
+  "welcome.modal_title": "Benvenuto in Tecton",
+  "welcome.modal_desc": "Il tuo sistema operativo per cantieri di nuova generazione. Gestisci la tracciabilità del personale, i giornali quotidiani e il controllo qualità su una piattaforma premium.",
+  "welcome.features": "🚀 Infrastruttura potente | 📊 Finanza intelligente | 🔒 Database locale sicuro",
+  "welcome.dont_show_again": "Non mostrare di nuovo",
+  "welcome.get_started": "Inizia",
+  "welcome.infra_feature": "Infrastruttura potente e veloce",
+  "welcome.finance_feature": "Finanza e cassa intelligenti",
+  "welcome.database_feature": "Database locale sicuro"
 }

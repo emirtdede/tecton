@@ -1447,5 +1447,13 @@
     "export_btn": "Exporteren",
     "download_template": "Sjabloon Downloaden",
     "import_success": "{{count}} onderaannemer-records succesvol geïmporteerd."
-  }
+  },
+  "welcome.modal_title": "Welkom bij Tecton",
+  "welcome.modal_desc": "Uw volgende generatie bouwplaatsbesturingssysteem. Beheer personeelsregistratie, dagrapporten en kwaliteitscontrole vanuit één premium platform.",
+  "welcome.features": "🚀 Krachtige infrastructuur | 📊 Slimme financiën | 🔒 Veilige lokale database",
+  "welcome.dont_show_again": "Niet meer tonen",
+  "welcome.get_started": "Aan de slag",
+  "welcome.infra_feature": "Krachtige & snelle infrastructuur",
+  "welcome.finance_feature": "Slimme financiën & kassa",
+  "welcome.database_feature": "Veilige lokale database"
 }

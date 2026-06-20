@@ -1447,5 +1447,13 @@
     "export_btn": "Exportar",
     "download_template": "Baixar Modelo",
     "import_success": "{{count}} registros de subempreiteiro importados com sucesso."
-  }
+  },
+  "welcome.modal_title": "Bem-vindo ao Tecton",
+  "welcome.modal_desc": "O seu sistema operativo de estaleiro de próxima geração. Gerencie pessoal, folhas de pagamento, medições e controlo de qualidade numa plataforma premium.",
+  "welcome.features": "🚀 Infraestrutura robusta | 📊 Finanças inteligentes | 🔒 Base de dados local segura",
+  "welcome.dont_show_again": "Não mostrar novamente",
+  "welcome.get_started": "Iniciar",
+  "welcome.infra_feature": "Infraestrutura poderosa e rápida",
+  "welcome.finance_feature": "Finanças e caixa inteligentes",
+  "welcome.database_feature": "Base de dados local segura"
 }

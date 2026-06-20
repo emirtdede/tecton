@@ -1446,5 +1446,13 @@
     "export_btn": "Exportovat",
     "download_template": "Stáhnout Šablonu",
     "import_success": "{{count}} záznamů subdodavatele úspěšně importováno."
-  }
+  },
+  "welcome.modal_title": "Vítejte v Tecton",
+  "welcome.modal_desc": "Váš operační systém stavební firmy nové generace. Spravujte docházku, deníky a kontrolu kvality v jednom prémiovém rozhraní.",
+  "welcome.features": "🚀 Výkonná infrastruktura | 📊 Chytré finance | 🔒 Bezpečná lokální databáze",
+  "welcome.dont_show_again": "Příště nezobrazovat",
+  "welcome.get_started": "Začít",
+  "welcome.infra_feature": "Výkonná a rychlá infrastruktura",
+  "welcome.finance_feature": "Chytré finance a pokladna",
+  "welcome.database_feature": "Bezpečná lokální databáze"
 }

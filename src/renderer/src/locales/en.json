@@ -1434,5 +1434,13 @@
     "export_btn": "Export",
     "download_template": "Download Template",
     "import_success": "{{count}} subcontractor records imported successfully."
-  }
+  },
+  "welcome.modal_title": "Welcome to Tecton",
+  "welcome.modal_desc": "Your next-generation construction site operating system. Manage personnel tracking, timesheets, production, delivery, daily journals, and quality control from a single platform with a premium experience.",
+  "welcome.features": "🚀 Powerful & Fast Infrastructure | 📊 Smart Finance & Cashier | 🔒 Secure Local Database",
+  "welcome.dont_show_again": "Do not show again",
+  "welcome.get_started": "Get Started",
+  "welcome.infra_feature": "Powerful & Fast Infrastructure",
+  "welcome.finance_feature": "Smart Finance & Cashier",
+  "welcome.database_feature": "Secure Local Database"
 }

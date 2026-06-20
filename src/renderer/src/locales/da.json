@@ -1419,5 +1419,13 @@
     "export_btn": "Eksporter",
     "download_template": "Hent Skabelon",
     "import_success": "{{count}} underentreprenørposter importeret."
-  }
+  },
+  "welcome.modal_title": "Velkommen til Tecton",
+  "welcome.modal_desc": "Dit næste generations byggeplads-operativsystem. Administrer medarbejdere, dagrapporter og kvalitetskontrol fra én platform.",
+  "welcome.features": "🚀 Kraftig infrastruktur | 📊 Smart økonomi | 🔒 Sikker lokal database",
+  "welcome.dont_show_again": "Vis ikke igen",
+  "welcome.get_started": "Kom i gang",
+  "welcome.infra_feature": "Kraftig & hurtig infrastruktur",
+  "welcome.finance_feature": "Smart økonomi & kasse",
+  "welcome.database_feature": "Sikker lokal database"
 }

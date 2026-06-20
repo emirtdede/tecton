@@ -1447,5 +1447,13 @@
     "export_btn": "エクスポート",
     "download_template": "テンプレートダウンロード",
     "import_success": "{{count}}件の下請業者レコードが正常にインポートされました。"
-  }
+  },
+  "welcome.modal_title": "Tecton へようこそ",
+  "welcome.modal_desc": "次世代の建設現場オペレーティングシステム。人員追跡、出来高管理、日報、品質管理をプレミアムな体験で一元管理します。",
+  "welcome.features": "🚀 強力かつ高速なインフラ | 📊 スマートな財務・金庫 | 🔒 安全なローカルDB",
+  "welcome.dont_show_again": "次回から表示しない",
+  "welcome.get_started": "今すぐ始める",
+  "welcome.infra_feature": "強力かつ高速なインフラ",
+  "welcome.finance_feature": "スマートな財務・金庫",
+  "welcome.database_feature": "安全なローカルデータベース"
 }

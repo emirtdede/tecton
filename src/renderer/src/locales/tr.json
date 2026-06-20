@@ -1420,5 +1420,13 @@
     "export_btn": "Dışa Aktar",
     "download_template": "Taslak İndir",
     "import_success": "{{count}} taşeron kaydı başarıyla içe aktarıldı."
-  }
+  },
+  "welcome.modal_title": "Tecton'a Hoş Geldiniz",
+  "welcome.modal_desc": "Yeni nesil şantiye ve inşaat işletim sisteminiz. Personel takibi, puantaj, metraj, imalat, irsaliye, günlük jurnaller ve kalite kontrol süreçlerinizi tek bir merkezden premium bir deneyimle yönetin.",
+  "welcome.features": "🚀 Güçlü & Hızlı Altyapı | 📊 Akıllı Finans & Kasa | 🔒 Güvenli Yerel Veritabanı",
+  "welcome.dont_show_again": "Bir daha gösterme",
+  "welcome.get_started": "Hemen Başlayın",
+  "welcome.infra_feature": "Güçlü & Hızlı Altyapı",
+  "welcome.finance_feature": "Akıllı Finans & Kasa",
+  "welcome.database_feature": "Güvenli Yerel Veritabanı"
 }

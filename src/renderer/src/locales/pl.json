@@ -1447,5 +1447,13 @@
     "export_btn": "Eksportuj",
     "download_template": "Pobierz Szablon",
     "import_success": "{{count}} rekordów podwykonawcy zaimportowanych pomyślnie."
-  }
+  },
+  "welcome.modal_title": "Witaj w Tecton",
+  "welcome.modal_desc": "Twój system operacyjny placu budowy nowej generacji. Zarządzaj kadrą, raportami i kontrolą jakości w jednym systemie.",
+  "welcome.features": "🚀 Wydajna infrastruktura | 📊 Inteligentne finanse | 🔒 Bezpieczna lokalna baza danych",
+  "welcome.dont_show_again": "Nie pokazuj ponownie",
+  "welcome.get_started": "Rozpocznij",
+  "welcome.infra_feature": "Wydajna i szybka infrastruktura",
+  "welcome.finance_feature": "Inteligentne finanse i kasa",
+  "welcome.database_feature": "Bezpieczna lokalna baza danych"
 }

@@ -1446,5 +1446,13 @@
     "export_btn": "Exportieren",
     "download_template": "Vorlage herunterladen",
     "import_success": "{{count}} Subunternehmer-Datensätze erfolgreich importiert."
-  }
+  },
+  "welcome.modal_title": "Willkommen bei Tecton",
+  "welcome.modal_desc": "Ihr Baustellen-Betriebssystem der nächsten Generation. Verwalten Sie Personalzeiterfassung, Aufmaße, Tagesberichte und Qualitätskontrolle auf einer Premium-Plattform.",
+  "welcome.features": "🚀 Leistungsstarke Infrastruktur | 📊 Intelligente Finanzen | 🔒 Sichere lokale Datenbank",
+  "welcome.dont_show_again": "Nicht mehr anzeigen",
+  "welcome.get_started": "Loslegen",
+  "welcome.infra_feature": "Leistungsstarke & schnelle Infrastruktur",
+  "welcome.finance_feature": "Intelligente Finanzen & Kasse",
+  "welcome.database_feature": "Sichere lokale Datenbank"
 }

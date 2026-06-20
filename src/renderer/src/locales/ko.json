@@ -1451,5 +1451,13 @@
     "export_btn": "내보내기",
     "download_template": "템플릿 다운로드",
     "import_success": "{{count}}개의 하도급 레코드를 성공적으로 가져왔습니다."
-  }
+  },
+  "welcome.modal_title": "Tecton에 오신 것을 환영합니다",
+  "welcome.modal_desc": "차세대 건설 현장 운영 체제입니다. 인력 관리, 작업 일보, 기성, 일일 저널 및 품질 관리를 하나의 프리미엄 플랫폼에서 관리하세요.",
+  "welcome.features": "🚀 강력하고 빠른 인프라 | 📊 스마트한 재무 및 금고 | 🔒 안전한 로컬 DB",
+  "welcome.dont_show_again": "다시 표시하지 않음",
+  "welcome.get_started": "시작하기",
+  "welcome.infra_feature": "강력하고 빠른 인프라",
+  "welcome.finance_feature": "스마트한 재무 및 금고",
+  "welcome.database_feature": "안전한 로컬 데이터베이스"
 }

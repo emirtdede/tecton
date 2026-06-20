@@ -1447,5 +1447,13 @@
     "export_btn": "تصدير",
     "download_template": "تنزيل القالب",
     "import_success": "تم استيراد {{count}} سجل مقاول من الباطن بنجاح."
-  }
+  },
+  "welcome.modal_title": "مرحبًا بك في Tecton",
+  "welcome.modal_desc": "نظام تشغيل مواقع البناء والتشييد من الجيل الجديد. قم بإدارة شؤون الموظفين واليوميات والتقارير في منصة واحدة متميزة.",
+  "welcome.features": "🚀 بنية تحتية قوية | 📊 إدارة مالية ذكية | 🔒 قاعدة بيانات محلية آمنة",
+  "welcome.dont_show_again": "لا تُظهرها مرة أخرى",
+  "welcome.get_started": "ابدأ الآن",
+  "welcome.infra_feature": "بنية تحتية قوية وسريعة",
+  "welcome.finance_feature": "إدارة مالية وصندوق ذكي",
+  "welcome.database_feature": "قاعدة بيانات محلية آمنة"
 }

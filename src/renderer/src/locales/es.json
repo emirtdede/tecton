@@ -1446,5 +1446,13 @@
     "export_btn": "Exportar",
     "download_template": "Descargar Plantilla",
     "import_success": "{{count}} registros de subcontratista importados exitosamente."
-  }
+  },
+  "welcome.modal_title": "Bienvenido a Tecton",
+  "welcome.modal_desc": "Su sistema operativo de obra de próxima generación. Gestione el control de personal, partes de trabajo, mediciones y control de calidad desde una única plataforma premium.",
+  "welcome.features": "🚀 Infraestructura potente | 📊 Finanzas inteligentes | 🔒 Base de datos local segura",
+  "welcome.dont_show_again": "No volver a mostrar",
+  "welcome.get_started": "Empezar",
+  "welcome.infra_feature": "Infraestructura potente y rápida",
+  "welcome.finance_feature": "Finanzas y caja inteligentes",
+  "welcome.database_feature": "Base de datos local segura"
 }

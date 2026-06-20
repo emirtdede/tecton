@@ -1447,5 +1447,13 @@
     "export_btn": "导出",
     "download_template": "下载模板",
     "import_success": "{{count}} 条分包商记录导入成功。"
-  }
+  },
+  "welcome.modal_title": "欢迎使用 Tecton",
+  "welcome.modal_desc": "您的下一代工地管理系统。在单一的高端体验平台中管理人员跟踪、考勤、工程量统计、施工日志和质量控制。",
+  "welcome.features": "🚀 高效且快速的架构 | 📊 智能财务记账 | 🔒 安全的本地数据库",
+  "welcome.dont_show_again": "不再显示",
+  "welcome.get_started": "立即开始",
+  "welcome.infra_feature": "高效且快速的底层架构",
+  "welcome.finance_feature": "智能财务与记账金库",
+  "welcome.database_feature": "安全可靠的本地数据库"
 }

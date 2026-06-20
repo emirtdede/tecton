@@ -1446,5 +1446,13 @@
     "export_btn": "Exportera",
     "download_template": "Ladda ner Mall",
     "import_success": "{{count}} underentreprenörsposter importerade framgångsrikt."
-  }
+  },
+  "welcome.modal_title": "Välkommen till Tecton",
+  "welcome.modal_desc": "Ditt nästa generations byggeplatsbyggsystem. Hantera personal, dagböcker och kvalitetskontroll från en premiumplattform.",
+  "welcome.features": "🚀 Kraftfull infrastruktur | 📊 Smart ekonomi | 🔒 Säker lokal databas",
+  "welcome.dont_show_again": "Visa inte igen",
+  "welcome.get_started": "Kom igång",
+  "welcome.infra_feature": "Kraftfull & snabb infrastruktur",
+  "welcome.finance_feature": "Smart ekonomi & kassa",
+  "welcome.database_feature": "Säker lokal databas"
 }
