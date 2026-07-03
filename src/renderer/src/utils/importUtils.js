@@ -32,24 +32,47 @@ export const readWorkersFromExcel = (file, t) => {
           }
 
           // Ad Soyad (Zorunlu)
-          const fullName = normalizedRow[String(t('about.col_name')).toLowerCase()] || normalizedRow['ad soyad'] || normalizedRow['ad'] || normalizedRow['isim'] || '';
+          const fullName = normalizedRow[String(t('about.col_name')).toLowerCase()] || 
+                           normalizedRow['ad soyad'] || 
+                           normalizedRow['full name'] || 
+                           normalizedRow['ad'] || 
+                           normalizedRow['isim'] || '';
           if (!fullName) {
             errors.push(t('about.err_name_empty').replace('{line}', index + 2));
             return;
           }
 
           // TC No (Opsiyonel ama varsa geçerli olmalı)
-          const tcNo = String(normalizedRow[String(t('about.col_tc')).toLowerCase()] || normalizedRow['tc kimlik no'] || normalizedRow['tc no'] || normalizedRow['tc'] || '').trim();
+          const tcNo = String(
+            normalizedRow[String(t('about.col_tc')).toLowerCase()] || 
+            normalizedRow['tc kimlik no'] || 
+            normalizedRow['tc kimlik no (11 haneli - opsiyonel)'] || 
+            normalizedRow['national id number (11 digits - optional)'] || 
+            normalizedRow['tc no'] || 
+            normalizedRow['tc'] || ''
+          ).trim();
           if (tcNo && !isValidTCKN(tcNo)) {
             errors.push(t('about.err_tc_invalid').replace('{line}', index + 2).replace('{tc}', tcNo));
             return;
           }
 
           // Telefon
-          const phone = String(normalizedRow[String(t('about.col_phone')).toLowerCase()] || normalizedRow['telefon'] || normalizedRow['tel'] || '').trim();
+          const phone = String(
+            normalizedRow[String(t('about.col_phone')).toLowerCase()] || 
+            normalizedRow['telefon'] || 
+            normalizedRow['telefon (opsiyonel)'] || 
+            normalizedRow['phone (optional)'] || 
+            normalizedRow['phone'] || 
+            normalizedRow['tel'] || ''
+          ).trim();
 
           // Günlük Yevmiye
-          const rawWage = normalizedRow[String(t('about.col_wage')).toLowerCase()] || normalizedRow['günlük yevmiye (tl)'] || normalizedRow['günlük yevmiye'] || normalizedRow['yevmiye'] || normalizedRow['wage'] || '';
+          const rawWage = normalizedRow[String(t('about.col_wage')).toLowerCase()] || 
+                          normalizedRow['günlük yevmiye (tl)'] || 
+                          normalizedRow['daily wage (tl)'] || 
+                          normalizedRow['günlük yevmiye'] || 
+                          normalizedRow['yevmiye'] || 
+                          normalizedRow['wage'] || '';
           let dailyWage = 0;
           if (rawWage) {
             const num = Number(String(rawWage).replace(',', '.'));
@@ -57,7 +80,13 @@ export const readWorkersFromExcel = (file, t) => {
           }
 
           // İşe Başlama Tarihi
-          const rawDate = normalizedRow[String(t('about.col_start_date')).toLowerCase()] || normalizedRow['işe başlama tarihi'] || normalizedRow['işe başlama'] || normalizedRow['başlama tarihi'] || normalizedRow['start date'] || '';
+          const rawDate = normalizedRow[String(t('about.col_start_date')).toLowerCase()] || 
+                          normalizedRow['işe başlama tarihi (yyyy-mm-dd)'] || 
+                          normalizedRow['start date (yyyy-mm-dd)'] || 
+                          normalizedRow['işe başlama tarihi'] || 
+                          normalizedRow['işe başlama'] || 
+                          normalizedRow['başlama tarihi'] || 
+                          normalizedRow['start date'] || '';
           let startDate = new Date().toISOString().split('T')[0]; // default to today
           if (rawDate) {
             if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
@@ -118,14 +147,27 @@ export const readWorkersFromExcel = (file, t) => {
           const groupName = String(normalizedRow[String(t('about.col_group')).toLowerCase()] || normalizedRow['bağlı olduğu grup'] || normalizedRow['grup'] || normalizedRow['group'] || '').trim();
 
           // Durum (aktif/pasif)
-          const rawStatus = String(normalizedRow[String(t('about.col_status')).toLowerCase()] || normalizedRow['durum'] || normalizedRow['status'] || '').trim().toLowerCase();
+          const rawStatus = String(
+            normalizedRow[String(t('about.col_status')).toLowerCase()] || 
+            normalizedRow['durum (aktif/pasif)'] || 
+            normalizedRow['status (active/passive)'] || 
+            normalizedRow['durum'] || 
+            normalizedRow['status'] || ''
+          ).trim().toLowerCase();
           let statusValue = 'active';
           if (rawStatus === 'pasif' || rawStatus === 'passive' || rawStatus === 'inactive' || rawStatus === '0') {
             statusValue = 'passive';
           }
 
           // Etiketler
-          const rawTags = String(normalizedRow[String(t('about.col_tags')).toLowerCase()] || normalizedRow['etiketler'] || normalizedRow['etiket'] || normalizedRow['tags'] || '').trim();
+          const rawTags = String(
+            normalizedRow[String(t('about.col_tags')).toLowerCase()] || 
+            normalizedRow['etiketler (virgülle ayırın, opsiyonel)'] || 
+            normalizedRow['tags (comma separated, optional)'] || 
+            normalizedRow['etiketler'] || 
+            normalizedRow['etiket'] || 
+            normalizedRow['tags'] || ''
+          ).trim();
           let tagsArray = [];
           if (rawTags) {
             tagsArray = rawTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
@@ -140,8 +182,8 @@ export const readWorkersFromExcel = (file, t) => {
             start_date: startDate,
             status: statusValue,
             tags: JSON.stringify(tagsArray),
-            isg_start_date: parseFlexDate(normalizedRow, ['isg başlangıç', 'isg start date', 'isg start', 'isg başlangıc'], null),
-            isg_bitis_tarihi: parseFlexDate(normalizedRow, ['isg bitiş', 'isg end date', 'isg end', 'isg bitis', 'isg_bitis_tarihi'], null)
+            isg_start_date: parseFlexDate(normalizedRow, ['isg başlangıç (yyyy-mm-dd)', 'ohs start date (yyyy-mm-dd)', 'isg başlangıç', 'isg start date', 'isg start', 'isg başlangıc'], null),
+            isg_bitis_tarihi: parseFlexDate(normalizedRow, ['isg bitiş (yyyy-mm-dd)', 'ohs end date (yyyy-mm-dd)', 'isg bitiş', 'isg end date', 'isg end', 'isg bitis', 'isg_bitis_tarihi'], null)
           });
         });
 

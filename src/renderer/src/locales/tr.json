@@ -173,7 +173,9 @@
     "desktop_icon_desc": "Masaüstündeki uygulamanın kısayol ikonunu açık veya koyu tema ile uyumlu hale getirin.",
     "icon_dark": "Koyu İkon",
     "icon_light": "Açık İkon",
-    "select_folder": "Klasör Seç"
+    "select_folder": "Klasör Seç",
+    "company_info_save_btn": "Kaydet",
+    "company_info_saved": "Şirket bilgileri başarıyla kaydedildi."
   },
   "projects": {
     "title": "Şantiye (Lokasyon) Yönetimi",

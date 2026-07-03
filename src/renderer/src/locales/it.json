@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Rendi l'icona di collegamento dell'applicazione sul desktop compatibile con il tema chiaro o scuro.",
     "icon_dark": "Icona scura",
     "icon_light": "Icona chiara",
-    "select_folder": "Seleziona cartella"
+    "select_folder": "Seleziona cartella",
+    "company_info_save_btn": "Salva",
+    "company_info_saved": "Informazioni aziendali salvate con successo."
   },
   "dashboard": {
     "title": "Gestione del personale",

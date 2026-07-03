@@ -4,7 +4,7 @@ import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
 import { useTranslation } from 'react-i18next';
-import { GripVertical, Edit2, Check, X, Trash2, RotateCcw } from 'lucide-react';
+import { GripVertical, Edit2, Check, X, Trash2, RotateCcw, Save } from 'lucide-react';
 import TectonDark from '../assets/tecton_dark.svg';
 import TectonLight from '../assets/tecton_light.svg';
 
@@ -14,6 +14,8 @@ const Settings = ({ activeTab = 'genel' }) => {
   const [workTypes, setWorkTypes] = useState([]);
   const [workerGroups, setWorkerGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tempCompanyName, setTempCompanyName] = useState('');
+  const [tempCompanyLogo, setTempCompanyLogo] = useState('');
 
   // Form State for new items
   const [newWorkType, setNewWorkType] = useState({ name: '', multiplier: 1.0 });
@@ -153,6 +155,12 @@ const Settings = ({ activeTab = 'genel' }) => {
       const groupsData = await window.api.db.read('worker_groups');
       
       setAppSettings(settingsData);
+      
+      const nameSetting = settingsData.find(s => s.setting_key === 'company_name');
+      const logoSetting = settingsData.find(s => s.setting_key === 'company_logo');
+      if (nameSetting) setTempCompanyName(nameSetting.setting_value || '');
+      if (logoSetting) setTempCompanyLogo(logoSetting.setting_value || '');
+      
       setWorkTypes(typesData);
       setWorkerGroups(groupsData);
       setLoading(false);
@@ -237,14 +245,41 @@ const Settings = ({ activeTab = 'genel' }) => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
         const resizedBase64 = canvas.toDataURL('image/png');
-        await handleSettingChange(id, 'company_logo', resizedBase64);
+        setTempCompanyLogo(resizedBase64);
       };
     };
     reader.readAsDataURL(file);
   };
 
   const handleRemoveLogo = async (id) => {
-    await handleSettingChange(id, 'company_logo', '');
+    setTempCompanyLogo('');
+  };
+
+  const handleSaveCompanyInfo = async () => {
+    if (window.api) {
+      const nameSetting = appSettings.find(s => s.setting_key === 'company_name');
+      const logoSetting = appSettings.find(s => s.setting_key === 'company_logo');
+      
+      if (nameSetting) {
+        await window.api.db.update('app_settings', nameSetting.id, { setting_value: tempCompanyName });
+      }
+      if (logoSetting) {
+        await window.api.db.update('app_settings', logoSetting.id, { setting_value: tempCompanyLogo });
+      }
+      
+      setAppSettings(prev => prev.map(s => {
+        if (s.setting_key === 'company_name') return { ...s, setting_value: tempCompanyName };
+        if (s.setting_key === 'company_logo') return { ...s, setting_value: tempCompanyLogo };
+        return s;
+      }));
+
+      window.dispatchEvent(new CustomEvent('show-toast', { 
+        detail: { 
+          message: t('settings.company_info_saved', 'Şirket bilgileri başarıyla kaydedildi.'), 
+          type: 'success' 
+        } 
+      }));
+    }
   };
 
   // Add new Work Type
@@ -655,32 +690,32 @@ const Settings = ({ activeTab = 'genel' }) => {
             </div>
 
             {/* Şirket Kimliği ve PDF Anteti */}
-            <div className="glass-card">
-              <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>{t('settings.company_info', 'Şirket Kimliği & PDF Anteti')}</h3>
+            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <h3 className="card-title" style={{ margin: 0 }}>{t('settings.company_info', 'Şirket Kimliği & PDF Anteti')}</h3>
               
               {appSettings.map(setting => {
                 if (setting.setting_key === 'company_name') {
                   return (
-                    <div key={setting.id} className="form-group">
-                      <label className="form-label">{t('settings.company_name', 'Şirket Adı')}</label>
+                    <div key={setting.id} className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label">{t('settings.company_name', 'Şirket / Kurum Adı')}</label>
                       <input 
                         type="text" 
                         className="form-input" 
                         placeholder={t('settings.company_name_placeholder', 'Örn: ABC İnşaat A.Ş.')}
-                        value={setting.setting_value}
-                        onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
+                        value={tempCompanyName}
+                        onChange={(e) => setTempCompanyName(e.target.value)}
                       />
                     </div>
                   );
                 }
                 if (setting.setting_key === 'company_logo') {
                   return (
-                    <div key={setting.id} className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div key={setting.id} className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: 0 }}>
                       <label className="form-label">{t('settings.company_logo', 'Şirket Logosu')}</label>
-                      {setting.setting_value && (
+                      {tempCompanyLogo && (
                         <div style={{ position: 'relative', display: 'inline-block', alignSelf: 'flex-start' }}>
                           <img 
-                            src={setting.setting_value} 
+                            src={tempCompanyLogo} 
                             alt="Company Logo" 
                             style={{ maxWidth: '150px', maxHeight: '100px', objectFit: 'contain', background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }} 
                           />
@@ -704,7 +739,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                           📁 {t('settings.file_select_button')}
                         </label>
                         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                          {setting.setting_value ? t('settings.logo_uploaded', 'Logo yüklendi') : t('settings.file_not_selected')}
+                          {tempCompanyLogo ? t('settings.logo_uploaded', 'Logo yüklendi') : t('settings.file_not_selected')}
                         </span>
                         <input 
                           id={`logo-upload-input-${setting.id}`}
@@ -719,6 +754,17 @@ const Settings = ({ activeTab = 'genel' }) => {
                 }
                 return null;
               })}
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  onClick={handleSaveCompanyInfo}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem' }}
+                >
+                  <Save size={16} /> {t('settings.company_info_save_btn', 'Kaydet')}
+                </button>
+              </div>
             </div>
           </div>
         )}

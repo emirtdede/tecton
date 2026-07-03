@@ -91,33 +91,31 @@ export const exportToMarkdown = (lines, filename) => {
 
 export const generateExcelTemplate = (t, lang) => {
   const isTr = lang === 'tr';
-  const headers = [
-    isTr ? t('about.col_name') : 'Full Name',
-    isTr ? t('about.col_tc') : 'TC Identity No',
-    isTr ? t('about.col_phone') : 'Phone',
-    isTr ? t('about.col_wage') : 'Daily Wage',
-    isTr ? t('about.col_start_date') : 'Start Date',
-    isTr ? t('about.col_group') : 'Group',
-    isTr ? t('about.col_status') : 'Status (Active/Passive)',
-    isTr ? t('about.col_tags') : 'Tags',
-    isTr ? 'İSG Başlangıç' : 'ISG Start Date',
-    isTr ? 'İSG Bitiş' : 'ISG End Date'
-  ];
-  
-  const tips = [
-    isTr ? t('about.tip_name') : '(Required) Enter First and Last Name',
-    isTr ? t('about.tip_tc') : '(Optional) Enter valid 11-Digit TC',
-    isTr ? t('about.tip_phone') : '(Optional) Enter phone number',
-    isTr ? t('about.tip_wage') : '(Optional) Enter numerical value',
-    isTr ? t('about.tip_start_date') : '(Optional) Enter date in YYYY-MM-DD format',
-    isTr ? t('about.tip_group') : '(Optional) Enter group name',
-    isTr ? t('about.tip_status') : '(Optional) Enter Active or Passive',
-    isTr ? t('about.tip_tags') : '(Optional) Enter tags separated by commas',
-    isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format',
-    isTr ? '(Opsiyonel) YYYY-MM-DD formatında' : '(Optional) Enter date in YYYY-MM-DD format'
+  const headers = isTr ? [
+    'Ad Soyad',
+    'TC Kimlik No (11 Haneli - Opsiyonel)',
+    'Telefon (Opsiyonel)',
+    'Günlük Yevmiye (TL)',
+    'İşe Başlama Tarihi (YYYY-MM-DD)',
+    'Bağlı Olduğu Grup',
+    'Durum (Aktif/Pasif)',
+    'Etiketler (Virgülle ayırın, Opsiyonel)',
+    'İSG Başlangıç (YYYY-MM-DD)',
+    'İSG Bitiş (YYYY-MM-DD)'
+  ] : [
+    'Full Name',
+    'National ID Number (11 Digits - Optional)',
+    'Phone (Optional)',
+    'Daily Wage (TL)',
+    'Start Date (YYYY-MM-DD)',
+    'Group',
+    'Status (Active/Passive)',
+    'Tags (Comma separated, Optional)',
+    'OHS Start Date (YYYY-MM-DD)',
+    'OHS End Date (YYYY-MM-DD)'
   ];
 
-  const worksheet = XLSX.utils.aoa_to_sheet([headers, tips]);
+  const worksheet = XLSX.utils.aoa_to_sheet([headers]);
   const workbook = XLSX.utils.book_new();
   const sheetName = isTr ? 'Personel Taslak' : 'Personnel Template';
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);

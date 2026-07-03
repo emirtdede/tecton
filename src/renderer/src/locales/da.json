@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Gør applikationsgenvejsikonet på skrivebordet kompatibelt med lyst eller mørkt tema.",
     "icon_dark": "Mørkt ikon",
     "icon_light": "Lyst ikon",
-    "select_folder": "Vælg mappe"
+    "select_folder": "Vælg mappe",
+    "company_info_save_btn": "Gem",
+    "company_info_saved": "Virksomhedsoplysninger blev gemt."
   },
   "dashboard": {
     "title": "Personalestyring",

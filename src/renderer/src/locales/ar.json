@@ -175,7 +175,9 @@
     "desktop_icon_desc": "اجعل رمز اختصار التطبيق على سطح المكتب متوافقًا مع المظهر الفاتح أو الداكن.",
     "icon_dark": "رمز داكن",
     "icon_light": "رمز فاتح",
-    "select_folder": "اختر المجلد"
+    "select_folder": "اختر المجلد",
+    "company_info_save_btn": "حفظ",
+    "company_info_saved": "تم حفظ معلومات الشركة بنجاح."
   },
   "dashboard": {
     "title": "إدارة شؤون الموظفين",

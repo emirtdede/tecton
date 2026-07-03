@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Torne o ícone de atalho do aplicativo na área de trabalho compatível com o tema claro ou escuro.",
     "icon_dark": "Ícone escuro",
     "icon_light": "Ícone claro",
-    "select_folder": "Selecionar pasta"
+    "select_folder": "Selecionar pasta",
+    "company_info_save_btn": "Salvar",
+    "company_info_saved": "Informações da empresa salvas com sucesso."
   },
   "dashboard": {
     "title": "Gestão de Pessoal",

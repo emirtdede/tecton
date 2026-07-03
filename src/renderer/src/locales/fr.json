@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Rendez l'icône de raccourci de l'application sur le bureau compatible avec le thème clair ou sombre.",
     "icon_dark": "Icône sombre",
     "icon_light": "Icône claire",
-    "select_folder": "Sélectionner le dossier"
+    "select_folder": "Sélectionner le dossier",
+    "company_info_save_btn": "Enregistrer",
+    "company_info_saved": "Informations sur l'entreprise enregistrées avec succès."
   },
   "dashboard": {
     "title": "Gestion du Personnel",

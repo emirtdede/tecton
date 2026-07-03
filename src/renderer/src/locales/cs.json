@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Zkontrolujte, zda je ikona zástupce aplikace na ploše kompatibilní se světlým nebo tmavým motivem.",
     "icon_dark": "Tmavá ikona",
     "icon_light": "Světlá ikona",
-    "select_folder": "Vybrat složku"
+    "select_folder": "Vybrat složku",
+    "company_info_save_btn": "Uložit",
+    "company_info_saved": "Informace o společnosti byly úspěšně uloženy."
   },
   "dashboard": {
     "title": "Správa personálu",

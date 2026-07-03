@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Maak het snelkoppelingspictogram van de applicatie op het bureaublad compatibel met een licht of donker thema.",
     "icon_dark": "Donker icoon",
     "icon_light": "Licht icoon",
-    "select_folder": "Map selecteren"
+    "select_folder": "Map selecteren",
+    "company_info_save_btn": "Opslaan",
+    "company_info_saved": "Bedrijfsinformatie succesvol opgeslagen."
   },
   "dashboard": {
     "title": "Personeelsbeheer",

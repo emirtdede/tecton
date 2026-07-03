@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Haga que el icono de acceso directo de la aplicación en el escritorio sea compatible con el tema claro u oscuro.",
     "icon_dark": "Icono oscuro",
     "icon_light": "Icono claro",
-    "select_folder": "Seleccionar carpeta"
+    "select_folder": "Seleccionar carpeta",
+    "company_info_save_btn": "Guardar",
+    "company_info_saved": "Información de la empresa guardada con éxito."
   },
   "dashboard": {
     "title": "Gestión de Personal",

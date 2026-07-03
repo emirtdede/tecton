@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Gjør programmets snarveisikon på skrivebordet kompatibelt med lyst eller mørkt tema.",
     "icon_dark": "Mørkt ikon",
     "icon_light": "Lyst ikon",
-    "select_folder": "Velg mappe"
+    "select_folder": "Velg mappe",
+    "company_info_save_btn": "Lagre",
+    "company_info_saved": "Firmainformasjon ble lagret."
   },
   "dashboard": {
     "title": "Personaladministrasjon",

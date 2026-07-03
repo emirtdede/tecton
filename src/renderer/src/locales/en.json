@@ -177,7 +177,9 @@
     "desktop_icon_desc": "Make the application shortcut icon on the desktop compatible with light or dark theme.",
     "icon_dark": "Dark Icon",
     "icon_light": "Light Icon",
-    "select_folder": "Select Folder"
+    "select_folder": "Select Folder",
+    "company_info_save_btn": "Save",
+    "company_info_saved": "Company information saved successfully."
   },
   "dashboard": {
     "title": "Personnel Management",

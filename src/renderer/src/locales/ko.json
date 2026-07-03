@@ -175,7 +175,9 @@
     "desktop_icon_desc": "바탕화면의 애플리케이션 바로가기 아이콘을 밝거나 어두운 테마와 호환되도록 만듭니다.",
     "icon_dark": "어두운 아이콘",
     "icon_light": "밝은 아이콘",
-    "select_folder": "폴더 선택"
+    "select_folder": "폴더 선택",
+    "company_info_save_btn": "저장",
+    "company_info_saved": "회사 정보가 성공적으로 저장되었습니다."
   },
   "dashboard": {
     "title": "인사 관리",

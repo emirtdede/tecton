@@ -175,7 +175,9 @@
     "desktop_icon_desc": "डेस्कटॉप पर एप्लिकेशन शॉर्टकट आइकन को हल्के या गहरे विषय के साथ संगत बनाएं।",
     "icon_dark": "गहरा आइकन",
     "icon_light": "हल्का आइकन",
-    "select_folder": "फ़ोल्डर चुनें"
+    "select_folder": "फ़ोल्डर चुनें",
+    "company_info_save_btn": "सहेजें",
+    "company_info_saved": "कंपनी की जानकारी सफलतापूर्वक सहेजी गई।"
   },
   "dashboard": {
     "title": "कार्मिक प्रबंधन",

@@ -175,7 +175,9 @@
     "desktop_icon_desc": "Gör applikationens genvägsikon på skrivbordet kompatibel med ljust eller mörkt tema.",
     "icon_dark": "Mörk ikon",
     "icon_light": "Ljus ikon",
-    "select_folder": "Välj mapp"
+    "select_folder": "Välj mapp",
+    "company_info_save_btn": "Spara",
+    "company_info_saved": "Företagsinformation sparad."
   },
   "dashboard": {
     "title": "Personalhantering",
