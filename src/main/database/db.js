@@ -32,8 +32,13 @@ function findLatestBackup(backupFolder) {
   }
 }
 
+let initPromise = null;
+
 async function getDB() {
   if (dbPromise) return dbPromise;
+  if (initPromise) return initPromise;
+
+  initPromise = (async () => {
 
   const isDev = process.env.NODE_ENV === 'development';
   const dbPath = isDev 
@@ -66,7 +71,7 @@ async function getDB() {
     }
   }
 
-  dbPromise = Promise.resolve(db);
+  // dbPromise set deferred
 
   // Verify clean shutdown state and perform integrity check if it was unclean
   try {
@@ -88,7 +93,7 @@ async function getDB() {
             if (latestBackup) {
               fs.copyFileSync(latestBackup, dbPath);
               db = await open({ filename: dbPath, driver: sqlite3.Database });
-              dbPromise = Promise.resolve(db);
+              // dbPromise set deferred
             }
           }
         }
@@ -588,7 +593,13 @@ async function getDB() {
   // Run cleanup tasks asynchronously to optimize startup time
   runDeferredCleanup(db);
 
-  return db;
+    dbPromise = db;
+    return db;
+  })();
+
+  const resultDb = await initPromise;
+  initPromise = null;
+  return resultDb;
 }
 
 function getSystemLogsDir() {
