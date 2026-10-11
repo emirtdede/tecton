@@ -117,3 +117,9 @@ Projede backend ve finansal iş kuralları kodlanırken **TDD** benimsenmiştir.
 - **Node.js v24 ve SQLite3 Uyuşmazlığı:** `sqlite3` paketinin yayınlanan ön-derlemeli (prebuilt) native modülleri Node v24 (N-API v36) ile uyumsuz olabilmektedir. Geliştirici ortamında C++ Build Tools (Visual Studio) veya Python kurulu değilse, `npm run build` komutunda `node-gyp` hataları alınabilir. 
 - **Çözüm:** Production derlemesi alınırken, Node v20 veya v22 (LTS) kullanılması veya hedef sisteme Visual Studio C++ Build Tools'un kurulması tavsiye edilir. Kod seviyesinde bu durumun uygulamaya bir zararı yoktur.
 ```
+## Guncelleme 2026-10-11 (v1.0.0)
+- sqlite/sqlite3 KALDIRILDI; better-sqlite3-multiple-ciphers@13.0.3 (N-API prebuild). Node 24 + Electron 29.4.6 rebuild + release exe dogrulandi. Yukaridaki Node v24/sqlite3 notu gecersizdir.
+- Gereken Node: 22 LTS (.nvmrc).
+- npx vitest run: 12 dosya, 57/57 pass.
+- Coverage (v8): lines %7.43 / functions %3.18 / branches %6; esikler (80/80/70) bilerek fail (CI kapisi).
+- E2E: e2e/ 3 spec + playwright.config.js; CI: unit her push, e2e nightly(main).

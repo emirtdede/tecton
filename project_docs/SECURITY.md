@@ -26,5 +26,12 @@ Bu alanlara dokunurken ekstra dikkatli ol:
 - Yüklenen dosyalar, sunucu tarafında işlenirken boyut sınırlamasına ve format doğrulama (`.webp` sıkıştırma) süreçlerine tabi tutularak zararlı dosya (RCE vb.) enjeksiyonları önlenmelidir.
 
 ## Güvenlik Kontrol Listesi (Canlıya Geçmeden / Build Almadan)
-- [ ] `nodeIntegration` kapalı mı?
-- [ ] Tüm DB sorguları parametrik mi?
+- [x] `nodeIntegration` kapalı mı? (`src/main/index.js` splash+main: false)
+- [x] `contextIsolation` + `sandbox:true` + `webSecurity:true` açık mı?
+- [x] CSP header + `will-navigate` deny + `setWindowOpenHandler:deny` aktif mi?
+- [x] Tüm DB sorguları parametrik mi? (değerler `?`, tanımlayıcılar `allowlist.js`)
+- [x] CRUD tablo/kolon allowlist (`src/main/services/allowlist.js`) bağlı mı?
+- [x] Hardcoded secret yok mu? (`Select-String 'c635dd87' src/` → 0; weather key `safeStorage`’da)
+- [x] LAN: `multer@2.3.0` + senkron fileFilter + `limits{10MB,1 dosya}` + magic-byte + projectId allowlist + HTML escape + rate-limit (15/dk) + LAN IP bind (0.0.0.0 yok) mu?
+- [ ] Fuse `runAsNode:false` build sonrası `npm run flip-fuses` ile doğrulandı mı?
+- [ ] `release/*.exe` HEAD sonrası üretildi mi?

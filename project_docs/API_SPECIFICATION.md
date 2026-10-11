@@ -100,3 +100,38 @@ Dönen Değer: `{ success: boolean, filePath: string }`
 Açıklama: Mobil cihazdan girilen form verilerini (İrsaliye, Kalite Kontrol, İmalat, Günlük Jurnal) Electron veritabanına yazar.
 Parametreler: `JSON Object` (tableName, data)
 Dönen Değer: `{ success: boolean, message: string }`
+
+---
+
+## Gerçek Kanal Listesi (v1.0.0 — koddan doğrulandı, 2026-10-11)
+
+> Üstteki bölümler erken tasarım taslağıdır; aşağıdaki liste `src/main/ipcHandlers.js` + `src/preload/index.js` ile birebir eşleşir.
+
+### DB (allowlist korumalı — `src/main/services/allowlist.js`, 17 tablo)
+- `db:read {table, conditions}` → `Array` (bilinmeyen tablo/kolon: `forbidden_table`, boş dizi/`throw`)
+- `db:create {table, data}` → `{success, id, message}` + audit
+- `db:create-bulk {table, dataList, logMessage}` → `{success, message}`
+- `db:update {table, id, data}` → `{success, message}` + audit (old/new)
+- `db:delete {table, id}` → soft-delete + recycle_bin
+- `db:transaction:delete {id}` → işlem+kasa cascade silme
+- `db:read-deleted` → recycle listesi; `db:restore {table, id}` → geri yükleme (allowlist kontrollü); `db:read-all-projects`
+
+### Finance
+- `finance:get-balance {worker_id}` → `{success, balance}`; `finance:get-balances {worker_ids}` → `{success, balances}` (tek sorgu, N+1 fix)
+- `finance:calculate-wage {daily_wage, multiplier, overtime_hours}` → `{success, wage}` (saf `wageService`, `standard_hours<=0` reddi)
+- `finance:delete-transaction {id}`, `finance:create-advance {data}`, `finance:worker-report {worker_id,year,month}`, `finance:worker-statement`, `finance:company-report {year,month,projectId}`, `finance:group-statement`
+
+### System
+- `system:backup-db`, `system:read-logs {startDate,endDate}`, `system:vacuum-db`, `system:set-cloud-folder`
+- `system:get-weather {location,lang,date}` → key yoksa `{success:false, errorType:'missing_key'}` (hardcoded fallback YOK)
+- `system:set-weather-key {apiKey}` (safeStorage) / `system:is-weather-configured` → `{configured}`
+- `system:start-lan-server {projectId,projectName,lang}` / `system:stop-lan-server`; event `lan:photo-uploaded`; `system:shutdown-starting`
+- `system:restore-db-file {filePath}` (key-aware verify + rollback); `system:open-old-backups-folder`, `system:open-logs-folder`, `system:change-desktop-icon {theme}`
+
+### Media / Window
+- `media:select-photo`, `media:save-photo {projectId,filePath}`, `media:save-photo-base64`, `media:read-photo` (traversal guard)
+- `window:minimize/maximize/close`, `window:app-ready`
+
+### LAN (gerçek endpointler — `src/main/services/lanServer.js`)
+- `GET /?projectId=&projectName=` → HTML form (CSP `default-src 'self'`, `projectName` escape'li)
+- `POST /upload?projectId=` → `multer@2.3.0`, `limits{10MB,1 dosya}`, senkron image-only fileFilter, magic-byte doğrulama, rate-limit 15/dk, LAN IP bind

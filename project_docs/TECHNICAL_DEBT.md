@@ -1,8 +1,9 @@
 # Teknik Borç
 
 ## Yüksek Öncelik
-- [ ] **Otomatik Veritabanı Yedekleme (Auto-Backup)** — Proje lokal çalıştığı için kullanıcının bilgisayarı bozulursa tüm veriler gidebilir. İlk sürümlerde manuel yedekleme yapılacak ancak en kısa sürede uygulamanın çıkışında veya belirli periyotlarda otomatik `.sqlite` kopyası alma özelliği eklenmeli.
-- [ ] **Veritabanı Geri Yükleme (Restore) Riski** — Sürükle-bırak ile .sqlite yüklemesi anında mevcut veriyi eziyor. Yüklemeden hemen önce geçici otomatik backup (örn: `backup_before_restore.sqlite`) oluşturulması sağlanmalı.
+- [x] **Otomatik Veritabanı Yedekleme (Auto-Backup)** — ÖDENDİ: kapanışta `VACUUM INTO` + `integrity_check` (`src/main/index.js`), `YYYY/MM` klasörleme.
+- [x] **Veritabanı Geri Yükleme (Restore) Riski** — ÖDENDİ: restore öncesi `backup_before_restore_*.sqlite` + auto-recovery (`src/main/database/db.js`).
+- [ ] **Disk şifreleme (TDE)** — Kalan: `better-sqlite3-multiple-ciphers@13.0.3` migrasyonu (Faz 2: `keystore.js` hazır, `db-compat` shim + `VACUUM INTO` key’li taşıma bekliyor).
 
 ## Orta Öncelik
 - [ ] **Dinamik Excel Sütun Eşleştirme** — İlk versiyonda içeri aktarılacak Excel/CSV dosyalarının sabit bir şablonda (Örn: A sütunu İsim, B sütunu Yevmiye vb.) olması istenecek. İlerleyen süreçte kullanıcının sürükle-bırak ile "Bu sütun şu anlama geliyor" diyebileceği dinamik bir eşleştirme arayüzü yazılmalı.
@@ -14,3 +15,5 @@
 
 ## Ödenen Borçlar
 - Henüz ödenen bir borç yok.
+## Olcum 2026-10-11 (jscpd@4.0.5, --min-lines 30, src/main + src/renderer/src)
+- 30 exact clone, 1853 satir (%7.79) duplikasyon. Kaynak: locale disi tekrarlar (export-to-excel kopyalari, unit option bloklari). Hedef: ortak exportUtils + sabit listelerle <%4.

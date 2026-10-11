@@ -40,3 +40,6 @@ Modüler Yapı (Electron + React): Projenin kullanıcı arayüzü (frontend) ile
 
 ### Sütun 5: Yerel Ağ (LAN) Otonomisi ve Cihazlar Arası İletişim
 - **Mobil Fotoğraf Yükleyici:** Şantiye ortamında bilgisayara kabloyla fotoğraf aktarma derdini çözen entegre Express.js sunucusu. Sadece yerel ağda (offline) yayın yapar, QR kod ile mobil cihazı bağlar ve fotoğrafları sıkıştırıp (WebP) doğrudan IPC üzerinden Electron'a gönderir.
+## Duzeltme 2026-10-11 (v1.0.0, koddan dogrulandi)
+- Electron 29.4.6 (pin: ^29.1.5) + Vite 5.2 + Tailwind 3.4 + i18next (19 dil) + Express 5.2 + multer 2.3.0 + file-type 22.1.1 + express-rate-limit 6.11.2 + electron-log + better-sqlite3-multiple-ciphers 13.0.3 (TDE). Yukaridaki 28.x tablosu guncel degildir.
+- Offline-First gecerli; tek istisna opsiyonel hava durumu (opt-in key, safeStorage). Klasor mimarisi icin FILE_STRUCTURE.md v1.0.0 agaci gecerlidir.

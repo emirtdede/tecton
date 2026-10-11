@@ -1,5 +1,16 @@
 # Değişiklik Geçmişi
 
+## 2026-10-11 — v1.0.0 güvenlik+kalite sprinti (65→100 programı)
+- [Güvenlik] Hardcoded OpenWeather anahtarı silindi; `secret.js` (safeStorage) + `missing_key` akışı. Revoke-only, history rewrite yok.
+- [Güvenlik] CRUD identifier injection kapatıldı; `allowlist.js` (17 tablo) tüm jenerik kanallara bağlandı.
+- [Güvenlik] LAN hardening: `multer@2.3.0`, senkron fileFilter, 10MB limit, magic-byte, projectId allowlist, HTML escape, rate-limit 15/dk, LAN IP bind.
+- [Güvenlik] Electron: `sandbox:true`, CSP header, `will-navigate` deny, `setWindowOpenHandler:deny`.
+- [Veritabanı] `better-sqlite3-multiple-ciphers@13.0.3` geçişi (`dbCompat.js` async wrapper); `keystore.js`; legacy plaintext otomatik şifreleme; `sqlite/sqlite3` kaldırıldı.
+- [Kod] `Settings.jsx` 1689→343 satır (4 sekme dosyası); `finance:get-balances` toplu IPC; `ErrorBoundary`; main log birleşimi (0 `console.*`); `wageService` validasyon.
+- [Test] 27→57 test (allowlist, secret, lan-validate, dbCompat-encryption, bulk, wage-guard, TC, format); E2E 3 spec + `ci.yml`; coverage v8 eşikleri (baz: lines %7.43).
+- [Sürüm] `1.0.0` (semver), MIT LICENSE, `.nvmrc`=22, `release/Tecton Setup 1.0.0.exe` üretildi, tag `v1.0.0`.
+- [Doküman] API_SPEC gerçek kanal listesi, DATABASE_SCHEMA project_id/tags, FILE_STRUCTURE v1.0.0 ağacı, GLOSSARY 9→25 terim, MEMORY tazelendi.
+
 ## 2026-06-20
 - [Değişiklik] **İç Parametre Gizleme (clean_shutdown)**: Veritabanı bütünlük kontrolü için kullanılan iç parametre `clean_shutdown`, kullanıcı arayüzündeki parametreler listesinden gizlendi.
 - [Değişiklik] **Bulut Yedekleme Klasör Seçimi Taşınması**: "Bulut Yedekleme Klasörü" parametresi, "Finans & Operasyon" sekmesinden kaldırılıp "Güvenlik ve Yedekleme" altındaki "Sistem Bakımı" paneline taşındı. Burada seçili klasörün yolu ve yeni "Klasör Seç" butonu bir arada sunuldu.

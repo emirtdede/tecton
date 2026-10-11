@@ -46,6 +46,8 @@
 | isg_bitis_tarihi| DATE       | İSG Bitiş        |
 | status       | TEXT          | DEFAULT 'active' |
 | extra_data   | TEXT          | JSON (Esnek Metadatalar) |
+| project_id   | INTEGER       | FK → projects.id (migrasyonla eklendi) |
+| tags         | TEXT          | JSON etiketler (migrasyonla eklendi) |
 | is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
 | deleted_at   | TIMESTAMP     |                  |
 | created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
@@ -62,6 +64,8 @@
 | overtime_hours     | REAL          | DEFAULT 0              |
 | earned_amount      | REAL          | NOT NULL (Hesaplanan)  |
 | notes              | TEXT          |                        |
+| project_id         | INTEGER       | FK → projects.id (migrasyonla eklendi) |
+| tags               | TEXT          | JSON etiketler (migrasyonla eklendi) |
 | is_deleted         | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
 | deleted_at         | TIMESTAMP     |                        |
 | created_at         | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
@@ -76,6 +80,8 @@
 | amount         | REAL          | NOT NULL               |
 | notes          | TEXT          |                        |
 | linked_cash_id | INTEGER       | FK → cash_register.id (Otonomi) |
+| project_id     | INTEGER       | FK → projects.id (migrasyonla eklendi) |
+| tags           | TEXT          | JSON etiketler (migrasyonla eklendi) |
 | is_deleted     | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
 | deleted_at     | TIMESTAMP     |                        |
 | created_at     | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
@@ -88,6 +94,8 @@
 | type         | TEXT          | 'giris', 'cikis'       |
 | amount       | REAL          | NOT NULL               |
 | description  | TEXT          |                        |
+| project_id   | INTEGER       | FK → projects.id (migrasyonla eklendi) |
+| tags         | TEXT          | JSON etiketler (migrasyonla eklendi) |
 | is_deleted   | BOOLEAN       | DEFAULT 0 (Çöp Kutusu) |
 | deleted_at   | TIMESTAMP     |                        |
 | created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
@@ -101,6 +109,7 @@
 | action       | TEXT          | 'CREATE', 'UPDATE', 'DELETE' |
 | old_values   | TEXT          | JSON (Eski değerler)   |
 | new_values   | TEXT          | JSON (Yeni değerler)   |
+| project_id   | INTEGER       | FK → projects.id (migrasyonla eklendi) |
 | created_at   | TIMESTAMP     | DEFAULT CURRENT_TIMESTAMP |
 
 ### subcontractor_ledgers (Taşeron ve Alt Yüklenici Cari)
