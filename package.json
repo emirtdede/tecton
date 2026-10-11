@@ -1,9 +1,12 @@
 {
   "name": "tecton",
-  "version": "v1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "Tecton - Next Generation Construction Site Operating System",
   "author": "Emir Tarık Dede",
   "main": "src/main/index.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev:react": "vite",
     "dev:electron": "wait-on tcp:5173 && cross-env NODE_ENV=development electron .",
@@ -12,6 +15,7 @@
     "build:electron": "electron-builder",
     "build": "npm run build:react && npm run build:electron",
     "test": "vitest run",
+    "flip-fuses": "npx @electron/fuses@2.0.0 read --app ./release/win-unpacked/Tecton.exe",
     "seed": "node scripts/seedDatabase.js"
   },
   "build": {
@@ -21,6 +25,9 @@
     "directories": {
       "output": "release"
     },
+    "asarUnpack": [
+      "**/*.node"
+    ],
     "files": [
       "dist/**/*",
       "src/main/**/*",
@@ -30,7 +37,8 @@
     ],
     "win": {
       "icon": "tecton_assets/tecton_dark.ico",
-      "target": "nsis"
+      "target": "nsis",
+      "signAndEditExecutable": false
     },
     "nsis": {
       "shortcutName": "Tecton",
@@ -42,29 +50,31 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.17",
+    "better-sqlite3-multiple-ciphers": "^13.0.3",
     "clsx": "^2.1.0",
     "date-fns": "^4.4.0",
     "electron-log": "^5.4.4",
     "express": "^5.2.1",
+    "express-rate-limit": "6.11.2",
+    "file-type": "22.1.1",
     "i18next": "^26.3.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "lucide-react": "^0.368.0",
-    "multer": "^2.1.1",
+    "multer": "2.3.0",
     "qrcode": "^1.5.4",
     "react": "^18.2.0",
     "react-datepicker": "^9.1.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^17.0.8",
     "react-router-dom": "^6.22.3",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^6.0.1",
     "tailwind-merge": "^2.2.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^4.1.8",
     "autoprefixer": "^10.4.19",
     "chalk": "^4.1.2",
     "concurrently": "^8.2.2",
