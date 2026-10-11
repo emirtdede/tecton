@@ -310,6 +310,7 @@ function App() {
           setView={setView}
           setSelectedWorkerProfile={setSelectedWorkerProfile}
           sidebarState={sidebarState}
+          isResizing={isResizing}
           onSidebarStateChange={handleSidebarStateChange}
           onMouseDown={handleMouseDown}
           activeProjectObj={activeProjectObj}

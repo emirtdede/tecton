@@ -2,7 +2,7 @@ import React from 'react';
 import TectonDark from '../assets/tecton_dark.svg';
 import TectonLight from '../assets/tecton_light.svg';
 
-const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, onSidebarStateChange, onMouseDown, activeProjectObj, isSettingsOpen, setIsSettingsOpen }) => {
+const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, isResizing, onSidebarStateChange, onMouseDown, activeProjectObj, isSettingsOpen, setIsSettingsOpen }) => {
   return (
     <>
       {sidebarState === 'hidden' && (

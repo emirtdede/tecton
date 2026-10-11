@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['src/main/services/**/*.test.js', 'src/renderer/src/utils/*.test.js', 'src/renderer/src/components/**/*.test.jsx'],
+    include: ['src/main/services/**/*.test.js', 'src/renderer/src/utils/*.test.js', 'src/renderer/src/components/**/*.test.jsx', 'src/renderer/src/*.test.jsx'],
     setupFiles: ['src/renderer/src/testSetup.js'],
     coverage: {
       provider: 'v8',
