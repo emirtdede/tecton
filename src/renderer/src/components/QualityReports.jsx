@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
-import CustomDatePicker from './ui/CustomDatePicker';
 import LightboxModal from './ui/LightboxModal';
 import { compressImage } from '../utils/imageCompressor';
 import GuideDrawer from './ui/GuideDrawer';
 import { formatDate, trLower } from '../utils/formatUtils';
+import QualityForm from './QualityForm';
+import QualityFilters from './QualityFilters';
+import QualityList from './QualityList';
 
 const QualityReports = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -14,7 +16,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const [editingId, setEditingId] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const containerRef = useRef(null);
-  
+
   const getLocalDateString = () => {
     const d = new Date();
     const offset = d.getTimezoneOffset();
@@ -119,6 +121,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
 
   useEffect(() => {
     fetchReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId]);
 
   useEffect(() => {
@@ -140,6 +143,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
       });
       return () => unsubscribe();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId]);
 
   const loadPhotoPreview = async (relativePath) => {
@@ -160,9 +164,9 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
       try {
         const compressedBase64 = await compressImage(e.target.files[0]);
         if (window.api && window.api.media.savePhotoBase64) {
-          const saveRes = await window.api.media.savePhotoBase64({ 
-            projectId: activeProjectId, 
-            base64Data: compressedBase64 
+          const saveRes = await window.api.media.savePhotoBase64({
+            projectId: activeProjectId,
+            base64Data: compressedBase64
           });
           if (saveRes.success) {
             setFormData(prev => ({ ...prev, photo_path: saveRes.relativePath }));
@@ -257,15 +261,22 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
     }
   };
 
+  const handleViewPhoto = async (relativePath) => {
+    const res = await window.api.media.readPhoto({ relativePath });
+    if (res.success) {
+      setLightboxImage(res.base64);
+    }
+  };
+
   // Filter and paginated reports
   const filteredReports = reports.filter(r => {
     const q = trLower(searchQuery);
-    const matchesSearch = !searchQuery || 
-                          trLower(r.title).includes(q) || 
+    const matchesSearch = !searchQuery ||
+                          trLower(r.title).includes(q) ||
                           (r.description && trLower(r.description).includes(q)) ||
                           trLower(formatDate(r.report_date, i18n.language)).includes(q);
-    const matchesPhoto = !filterPhoto || 
-                         (filterPhoto === 'yes' && !!r.photo_path) || 
+    const matchesPhoto = !filterPhoto ||
+                         (filterPhoto === 'yes' && !!r.photo_path) ||
                          (filterPhoto === 'no' && !r.photo_path);
     const matchesStatus = !filterStatus || r.status === filterStatus;
 
@@ -289,6 +300,8 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
   const paginatedReports = filteredReports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  void showToast;
+
   if (!activeProjectId) {
     return (
       <div className="glass-card text-center" style={{ padding: '3rem' }}>
@@ -304,12 +317,12 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
       <div className="glass-card" style={{ width: '100%', padding: '1rem 1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
           <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('quality.title', '🛡️ Kalite Kontrol & Şantiye Tutanakları')}</h2>
-          <span 
+          <span
             onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
+            style={{
+              cursor: 'pointer',
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)',
+              transition: 'opacity 0.25s ease-in-out',
               fontSize: '1.6rem',
               userSelect: 'none',
               padding: '0.25rem'
@@ -323,415 +336,84 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
         </div>
         <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
-        {/* Add Record Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.75rem', alignItems: 'flex-end' }}>
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 3' }}>
-            <label className="form-label">{t('quality.report_title', 'Tutanak / Tespit Başlığı')}</label>
-            <input 
-              type="text" 
-              className="form-input" 
-              placeholder={t('quality.report_title_ph', 'Örn: 3. Kat Aks Kayması / Hatalı Kalıp Kurulumu')} 
-              value={formData.title}
-              onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              required
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 1' }}>
-            <label className="form-label">{t('common.date', 'Tarih')}</label>
-            <CustomDatePicker 
-              className="form-input"
-              value={formData.report_date} 
-              onChange={e => setFormData(prev => ({ ...prev, report_date: e.target.value }))} 
-              required 
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 2' }}>
-            <label className="form-label">{t('quality.initial_status', 'Başlangıç Durumu')}</label>
-            <select 
-              className="form-input" 
-              value={formData.status}
-              onChange={e => setFormData(prev => ({ ...prev, status: e.target.value }))}
-            >
-              <option value="open">{t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}</option>
-              <option value="resolved">{t('filters.status_resolved', 'ÇÖZÜLDÜ (Kapatıldı)')}</option>
-            </select>
-          </div>
-          
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 2' }}>
-            <label className="form-label">{t('quality.photo_label', 'Görsel / Tutanak Fotoğrafı')}</label>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button type="button" className="btn" onClick={handleSelectLocalPhoto} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.select_pc', '📂 PC\'den Seç')}
-              </button>
-              <button type="button" className="btn btn-primary" onClick={handleOpenQRModal} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.upload_mobile', '📲 Mobilden Yükle (QR)')}
-              </button>
-              {photoPreview && (
-                <div 
-                  style={{ 
-                    position: 'relative', 
-                    width: '45px', 
-                    height: '38px', 
-                    flexShrink: 0, 
-                    borderRadius: '6px', 
-                    overflow: 'hidden', 
-                    border: '1px solid var(--glass-border)', 
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
-                  }} 
-                  onClick={() => setLightboxImage(photoPreview)}
-                >
-                  <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <button 
-                    type="button"
-                    style={{ 
-                      position: 'absolute', 
-                      top: 0, 
-                      right: 0, 
-                      background: 'rgba(239, 68, 68, 0.9)', 
-                      color: 'white', 
-                      border: 'none', 
-                      width: '14px', 
-                      height: '14px', 
-                      borderRadius: '50%', 
-                      fontSize: '9px', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
-                      cursor: 'pointer', 
-                      padding: 0 
-                    }}
-                    onClick={(e) => { 
-                      e.stopPropagation(); 
-                      setPhotoPreview(''); 
-                      setFormData(prev => ({ ...prev, photo_path: '' })); 
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
-            </div>
-            <input 
-              type="file" 
-              id="local-quality-photo-input" 
-              accept="image/*" 
-              style={{ display: 'none' }} 
-              onChange={handleLocalFileChange} 
-            />
-          </div>
- 
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 6' }}>
-            <label className="form-label">{t('quality.detailed_description', 'Detaylı Açıklama')}</label>
-            <input 
-              type="text" 
-              className="form-input" 
-              placeholder={t('quality.description_ph', 'Tespit edilen aksaklığın ayrıntıları...')} 
-              value={formData.description}
-              onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%', gridColumn: 'span 2' }}>
-            <button type="submit" className="btn btn-primary" style={{ flex: 1, height: '42px' }}>
-              {editingId ? t('common.save', 'Tutanak Güncelle') : t('quality.add_report', 'Tutanak Ekle')}
-            </button>
-            {editingId && (
-              <button 
-                type="button" 
-                className="btn" 
-                onClick={() => {
-                  setEditingId(null);
-                  setFormData({
-                    title: '',
-                    description: '',
-                    status: 'open',
-                    photo_path: '',
-                    report_date: todayStr
-                  });
-                  setPhotoPreview('');
-                }}
-                style={{ height: '42px' }}
-              >
-                {t('common.cancel', 'Vazgeç')}
-              </button>
-            )}
-          </div>
-        </form>
+        <QualityForm
+          t={t}
+          formData={formData}
+          setFormData={setFormData}
+          photoPreview={photoPreview}
+          setPhotoPreview={setPhotoPreview}
+          setLightboxImage={setLightboxImage}
+          editingId={editingId}
+          setEditingId={setEditingId}
+          todayStr={todayStr}
+          onSubmit={handleSubmit}
+          onSelectLocalPhoto={handleSelectLocalPhoto}
+          onLocalFileChange={handleLocalFileChange}
+          onOpenQr={handleOpenQRModal}
+        />
 
-        {/* Filters & Search Bar */}
-        {reports.length > 0 && (
-          <div style={{ 
-            background: 'rgba(255, 255, 255, 0.02)', 
-            border: '1px solid var(--glass-border)', 
-            borderRadius: '12px', 
-            padding: '0.75rem 1rem', 
-            marginBottom: '0.25rem',
-            display: 'flex', 
-            gap: '1rem', 
-            alignItems: 'flex-end', 
-            flexWrap: 'wrap' 
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
-                <input 
-                  type="text"
-                  className="form-input"
-                  placeholder={t('filters.search_reports', 'Tutanak başlıklarında, açıklamalarda veya tarihte ara...')}
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    style={{
-                      position: 'absolute',
-                      right: '12px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      fontSize: '1rem',
-                      padding: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 10
-                    }}
-                    title={t('common.clear', 'Temizle')}
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            </div>
+        <QualityFilters
+          t={t}
+          hasReports={reports.length > 0}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          filterStartDate={filterStartDate}
+          onStartDateChange={handleStartDateChange}
+          filterEndDate={filterEndDate}
+          onEndDateChange={handleEndDateChange}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          filterPhoto={filterPhoto}
+          setFilterPhoto={setFilterPhoto}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+        />
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
-              <CustomDatePicker
-                value={filterStartDate}
-                onChange={e => handleStartDateChange(e.target.value)}
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
-              <CustomDatePicker
-                value={filterEndDate}
-                onChange={e => handleEndDateChange(e.target.value)}
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 130px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.sort', 'Sıralama')}</label>
-              <select 
-                className="form-input" 
-                value={sortBy} 
-                onChange={e => setSortBy(e.target.value)}
-                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
-              >
-                <option value="date_desc">{t('filters.newest', 'Yeniden Eskiye')}</option>
-                <option value="date_asc">{t('filters.oldest', 'Eskiden Yeniye')}</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.photo_status', 'Görsel Durumu')}</label>
-              <select 
-                className="form-input" 
-                value={filterPhoto} 
-                onChange={e => setFilterPhoto(e.target.value)}
-                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
-              >
-                <option value="">{t('filters.photo_all', 'Tümü')}</option>
-                <option value="yes">{t('filters.with_photo', 'Fotoğraflı')}</option>
-                <option value="no">{t('filters.without_photo', 'Fotoğrafsız')}</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.status', 'Durum')}</label>
-              <select 
-                className="form-input" 
-                value={filterStatus} 
-                onChange={e => setFilterStatus(e.target.value)}
-                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
-              >
-                <option value="">{t('filters.status_all', 'Tümü')}</option>
-                <option value="open">{t('quality.status_open', 'Açık')}</option>
-                <option value="resolved">{t('filters.status_resolved', 'Çözüldü')}</option>
-              </select>
-            </div>
-          </div>
-        )}
-
-        {/* Tutanak List */}
-        {loading ? (
-          <div className="skeleton" style={{ height: '200px', width: '100%' }}></div>
-        ) : filteredReports.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-            {searchQuery ? t('quality.no_results', 'Arama kriterlerine uygun tutanak kaydı bulunamadı.') : t('empty.quality', 'Bu şantiye için henüz kalite kontrol raporu bulunmuyor.')}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.1rem' }}>
-            {paginatedReports.map(rep => (
-              <div 
-                key={rep.id} 
-                className="glass-card" 
-                style={{ 
-                  padding: '0.5rem 0.85rem',
-                  borderLeft: rep.status === 'resolved' ? '4px solid var(--success)' : '4px solid var(--danger)'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                  <div>
-                    <h3 className="card-title" style={{ fontSize: '1.05rem' }}>{rep.title}</h3>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>📅 {formatDate(rep.report_date, i18n.language)}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span 
-                      onClick={() => handleToggleStatus(rep)}
-                      style={{ 
-                        fontSize: '0.8rem', 
-                        fontWeight: '700', 
-                        cursor: 'pointer',
-                        padding: '3px 10px', 
-                        borderRadius: '12px',
-                        background: rep.status === 'resolved' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                        color: rep.status === 'resolved' ? 'var(--success)' : 'var(--danger)',
-                        border: rep.status === 'resolved' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
-                      }}
-                    >
-                      {rep.status === 'resolved' ? `✓ ${t('filters.status_resolved', 'ÇÖZÜLDÜ')}` : `⚠️ ${t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}`}
-                    </span>
-                    {rep.photo_path && (
-                      <button 
-                        className="btn btn-primary" 
-                        onClick={async () => {
-                          const res = await window.api.media.readPhoto({ relativePath: rep.photo_path });
-                          if (res.success) {
-                            setLightboxImage(res.base64);
-                          }
-                        }}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        title={t('quality.open_photo', 'Tutanak Görselini Aç')}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                          <circle cx="12" cy="12" r="3" />
-                        </svg>
-                      </button>
-                    )}
-                    <button 
-                      className="btn" 
-                      onClick={() => handleStartEdit(rep)}
-                      style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)' }}
-                      title={t('dashboard.edit', 'Düzenle')}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                    </button>
-                    <button 
-                      className="btn btn-danger" 
-                      onClick={() => handleDelete(rep.id)}
-                      style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      title={t('common.delete', 'Sil')}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                {rep.description && <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{rep.description}</p>}
-
-              </div>
-            ))}
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{
-                position: 'sticky',
-                bottom: 0,
-                background: 'var(--option-bg, #0f172a)',
-                borderTop: '1px solid var(--glass-border)',
-                zIndex: 10,
-                padding: '0.6rem 1rem',
-                marginTop: '0.5rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '0 0 12px 12px'
-              }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                  {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} ({filteredReports.length} {t('common.records', 'Kayıt')})
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
-                  </span>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        <QualityList
+          t={t}
+          i18n={i18n}
+          loading={loading}
+          filteredReports={filteredReports}
+          paginatedReports={paginatedReports}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          searchQuery={searchQuery}
+          onToggle={handleToggleStatus}
+          onEdit={handleStartEdit}
+          onDelete={handleDelete}
+          onViewPhoto={handleViewPhoto}
+        />
       </div>
 
       {/* QR Code Pop-up Modal (Centered, Glassmorphism Backdrop Blur) */}
       {qrModal.isOpen && (
-        <div 
-          className="drawer-overlay" 
-          style={{ 
+        <div
+          className="drawer-overlay"
+          style={{
             position: 'fixed',
             top: 0, left: 0, right: 0, bottom: 0,
             zIndex: 9999,
-            display: 'flex', 
-            justifyContent: 'center', 
+            display: 'flex',
+            justifyContent: 'center',
             alignItems: 'center',
             backdropFilter: 'blur(16px)',
             backgroundColor: 'rgba(15, 23, 42, 0.75)'
-          }} 
+          }}
           onClick={handleCloseQRModal}
         >
-          <div 
-            className="glass-card" 
-            style={{ 
-              maxWidth: '400px', 
-              width: '90%', 
-              padding: '2.5rem 2rem', 
+          <div
+            className="glass-card"
+            style={{
+              maxWidth: '400px',
+              width: '90%',
+              padding: '2.5rem 2rem',
               textAlign: 'center',
               background: 'var(--spotlight-bg)',
               border: '1px solid var(--glass-border)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
               borderRadius: '20px'
-            }} 
+            }}
             onClick={e => e.stopPropagation()}
           >
             <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--accent)' }}>📲 {t('quality.upload_mobile_title', 'Tutanak Fotoğrafı Yükle')}</h3>
@@ -752,13 +434,13 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
       )}
 
       {/* Lightbox / Fullscreen Image Viewer Modal */}
-      <LightboxModal 
-        isOpen={!!lightboxImage} 
-        imageSrc={lightboxImage} 
-        onClose={() => setLightboxImage(null)} 
+      <LightboxModal
+        isOpen={!!lightboxImage}
+        imageSrc={lightboxImage}
+        onClose={() => setLightboxImage(null)}
       />
 
-      <ConfirmationModal 
+      <ConfirmationModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
@@ -766,23 +448,23 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
         message={t('quality.delete_confirm', 'Bu kalite kontrol tutanağını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
       />
 
-      <GuideDrawer 
-        isOpen={helpOpen} 
-        onClose={() => setHelpOpen(false)} 
-        title={t('guides.quality.title')} 
-        desc="" 
-        h1={t('guides.quality.q1.title')} 
-        p1={t('guides.quality.q1.desc')} 
-        h2={t('guides.quality.q2.title')} 
-        p2={t('guides.quality.q2.desc')} 
-        h3={t('guides.quality.q3.title')} 
-        p3={t('guides.quality.q3.desc')} 
-        h4={t('guides.quality.q4.title')} 
-        p4={t('guides.quality.q4.desc')} 
-        h5={t('guides.quality.q5.title')} 
-        p5={t('guides.quality.q5.desc')} 
-        h6={t('guides.quality.q6.title')} 
-        p6={t('guides.quality.q6.desc')} 
+      <GuideDrawer
+        isOpen={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        title={t('guides.quality.title')}
+        desc=""
+        h1={t('guides.quality.q1.title')}
+        p1={t('guides.quality.q1.desc')}
+        h2={t('guides.quality.q2.title')}
+        p2={t('guides.quality.q2.desc')}
+        h3={t('guides.quality.q3.title')}
+        p3={t('guides.quality.q3.desc')}
+        h4={t('guides.quality.q4.title')}
+        p4={t('guides.quality.q4.desc')}
+        h5={t('guides.quality.q5.title')}
+        p5={t('guides.quality.q5.desc')}
+        h6={t('guides.quality.q6.title')}
+        p6={t('guides.quality.q6.desc')}
       />
 
       {toastMessage && (
