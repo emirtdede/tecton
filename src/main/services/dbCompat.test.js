@@ -48,8 +48,30 @@ describe('dbCompat (encrypted sqlite)', () => {
     expect(r.changes).toBe(1);
   });
 
-  it('verifyDbFile accepts valid and rejects garbage', async () => {
-    const p = tmp('tecton_t_enc3.sqlite');
+  it('transparently encrypts a legacy plaintext DB (first-open migration)', async () => {
+    const p = tmp('tecton_t_enc4.sqlite');
+    // legacy plaintext seed (as db.js would find it)
+    const Native = require('better-sqlite3-multiple-ciphers');
+    const seed = Native(p);
+    seed.exec('CREATE TABLE workers(id INTEGER PRIMARY KEY, full_name TEXT)');
+    seed.prepare('INSERT INTO workers(full_name) VALUES (?)').run('Ali');
+    seed.prepare('INSERT INTO workers(full_name) VALUES (?)').run('Veli');
+    seed.close();
+    expect(isPlaintextHeader(p)).toBe(true);
+
+    // db.js migration path: openCompat with key
+    const db = openCompat({ filename: p, key: 'prod-key' });
+    expect(isPlaintextHeader(p)).toBe(false);
+    expect(await db.all('SELECT full_name FROM workers ORDER BY id')).toEqual([
+      { full_name: 'Ali' },
+      { full_name: 'Veli' },
+    ]);
+    await db.close();
+    expect(verifyDbFile(p, 'prod-key')).toBe(true);
+    fs.unlinkSync(p);
+  });
+
+  it('verifyDbFile accepts valid and rejects garbage', async () => {    const p = tmp('tecton_t_enc3.sqlite');
     const db = openCompat({ filename: p, key: 'k' });
     await db.exec('CREATE TABLE t(a TEXT)');
     await db.close();

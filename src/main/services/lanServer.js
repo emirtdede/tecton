@@ -3,7 +3,21 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const { app } = require('electron');
+
+function getApp() {
+  try {
+    const m = require('electron');
+    if (m && m.app && typeof m.app.getPath === 'function') return m.app;
+  } catch (_) { /* plain-node or mocked contexts */ }
+  return null;
+}
+
+function getUserDataDir() {
+  if (process.env.TECTON_USERDATA) return process.env.TECTON_USERDATA;
+  const app = getApp();
+  if (app) return app.getPath('userData');
+  return path.join(os.tmpdir(), 'tecton-lan');
+}
 
 let serverInstance = null;
 let currentPort = 5001;
@@ -53,12 +67,9 @@ function inMemoryRateLimit(req, res, next) {
 }
 
 function getUploadRateLimiter() {
-  try {
-    const { rateLimit } = require('express-rate-limit');
-    return rateLimit({ windowMs: 60000, limit: 15, standardHeaders: false, legacyHeaders: false });
-  } catch (_) {
-    return inMemoryRateLimit;
-  }
+  // Single-process LAN server: in-memory bucket is sufficient (no shared store needed).
+  // express-rate-limit is intentionally not used (v6 is Express-4-only, v8 is ESM-only).
+  return inMemoryRateLimit;
 }
 
 async function verifyImageMagic(filePath) {
@@ -95,7 +106,7 @@ function startLANServer(mainWindow, lang) {
       const isDev = process.env.NODE_ENV === 'development';
       const baseDir = path.resolve(isDev
         ? path.join(__dirname, '../../../media')
-        : path.join(app.getPath('userData'), 'media'));
+        : path.join(getUserDataDir(), 'media'));
 
       const projectDir = path.resolve(baseDir, `project_${projectId}`);
       if (!projectDir.startsWith(baseDir)) {
