@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   finance: {
     getBalance: (worker_id) => ipcRenderer.invoke('finance:get-balance', { worker_id }),
+    getBalances: (worker_ids) => ipcRenderer.invoke('finance:get-balances', { worker_ids }),
     calculateWage: (params) => ipcRenderer.invoke('finance:calculate-wage', params),
     deleteTransaction: (id) => ipcRenderer.invoke('finance:delete-transaction', { id }),
     createAdvance: (data) => ipcRenderer.invoke('finance:create-advance', { data }),
@@ -35,6 +36,8 @@ contextBridge.exposeInMainWorld('api', {
     vacuumDB: () => ipcRenderer.invoke('system:vacuum-db'),
     setCloudFolder: () => ipcRenderer.invoke('system:set-cloud-folder'),
     getWeather: (params) => ipcRenderer.invoke('system:get-weather', params),
+    setWeatherKey: (apiKey) => ipcRenderer.invoke('system:set-weather-key', { apiKey }),
+    isWeatherConfigured: () => ipcRenderer.invoke('system:is-weather-configured'),
     startLANServer: (params) => ipcRenderer.invoke('system:start-lan-server', params),
     stopLANServer: () => ipcRenderer.invoke('system:stop-lan-server'),
     restoreDBFile: (params) => ipcRenderer.invoke('system:restore-db-file', params),

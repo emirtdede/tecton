@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, session, shell } = require('electron');
 const path = require('path');
+const logger = require('./logger');
 
 // IPC Handlers'ı dahil et
 require('./ipcHandlers');
@@ -22,6 +23,10 @@ function createSplashWindow(theme) {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
     },
   });
 
@@ -45,8 +50,29 @@ function createWindow(theme) {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
     },
   });
+
+  // Security: CSP + navigation lockdown (Electron checklist #7, #13, #14)
+  try {
+    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': ["default-src 'self'; script-src 'self'; object-src 'none'"]
+        }
+      });
+    });
+  } catch (_) { /* session not ready yet in some flows */ }
+
+  mainWindow.webContents.on('will-navigate', (event) => {
+    event.preventDefault();
+  });
+  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 
   // Geliştirme ortamında Vite dev server'a bağlan, üretimde dosyayı yükle
   if (process.env.NODE_ENV === 'development') {
@@ -99,7 +125,7 @@ function createWindow(theme) {
         mainWindow.webContents.send('system:shutdown-starting');
       }
     } catch (e) {
-      console.error('Failed to send shutdown event to renderer:', e);
+      logger.error('Failed to send shutdown event to renderer:', e);
     }
     
     try {
@@ -124,26 +150,24 @@ function createWindow(theme) {
           fs.unlinkSync(destPath);
         }
         await db.run(`VACUUM INTO ?`, [destPath]);
-        console.log('Daily safe backup completed via VACUUM INTO:', destPath);
+        logger.info('Daily safe backup completed via VACUUM INTO:', destPath);
 
-        const { open } = require('sqlite');
-        const sqlite3 = require('sqlite3').verbose();
-        const tempDb = await open({
-          filename: destPath,
-          driver: sqlite3.Database
-        });
-        const checkResult = await tempDb.get('PRAGMA integrity_check');
-        await tempDb.close();
+        const { verifyDbFile } = require('./database/dbCompat');
+        const { loadOrCreateDbKey } = require('./services/keystore');
+        let backupKey = null;
+        try { backupKey = await loadOrCreateDbKey(); } catch (_) { /* plaintext fallback */ }
+        const tempDbOk = verifyDbFile(destPath, backupKey);
+        const checkResult = tempDbOk ? { integrity_check: 'ok' } : { integrity_check: 'failed' };
 
         if (checkResult && checkResult.integrity_check === 'ok') {
-          console.log('[Safe Backup] Backup integrity check passed.');
+          logger.info('[Safe Backup] Backup integrity check passed.');
           await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
         } else {
-          console.error('[Safe Backup] Backup integrity check failed:', checkResult);
+          logger.error('[Safe Backup] Backup integrity check failed:', checkResult);
         }
       }
     } catch (err) {
-      console.error('Backup system error during shutdown:', err);
+      logger.error('Backup system error during shutdown:', err);
     }
     
     // Enforce conscious delay of 2.5 seconds (matching startup splash)
@@ -176,7 +200,7 @@ app.whenReady().then(async () => {
       theme = setting.setting_value;
     }
   } catch (err) {
-    console.error('Failed to load theme from DB:', err);
+    logger.error('Failed to load theme from DB:', err);
   }
 
   createWindow(theme);

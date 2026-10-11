@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const AdmZip = require('adm-zip');
+const logger = require('../logger');
 
 function processBackupArchiving(backupFolder) {
   try {
@@ -24,7 +25,7 @@ function processBackupArchiving(backupFolder) {
           fs.mkdirSync(destDir, { recursive: true });
         }
         fs.renameSync(filePath, path.join(destDir, file));
-        console.log(`Migrated daily backup file ${file} to ${destDir}`);
+        logger.info(`Migrated daily backup file ${file} to ${destDir}`);
       }
 
       const zipMatch = file.match(zipArchiveRegex);
@@ -35,7 +36,7 @@ function processBackupArchiving(backupFolder) {
           fs.mkdirSync(destDir, { recursive: true });
         }
         fs.renameSync(filePath, path.join(destDir, file));
-        console.log(`Migrated zip archive ${file} to ${destDir}`);
+        logger.info(`Migrated zip archive ${file} to ${destDir}`);
       }
     });
 
@@ -72,7 +73,7 @@ function processBackupArchiving(backupFolder) {
             });
 
             zip.writeZip(zipPath);
-            console.log(`Archived daily backups for ${folderYearMonth} to ${zipPath}`);
+            logger.info(`Archived daily backups for ${folderYearMonth} to ${zipPath}`);
           }
 
           fs.rmSync(monthPath, { recursive: true, force: true });
@@ -90,7 +91,7 @@ function processBackupArchiving(backupFolder) {
       }
     }
   } catch (err) {
-    console.error('Backup archiving error:', err);
+    logger.error('Backup archiving error:', err);
   }
 }
 

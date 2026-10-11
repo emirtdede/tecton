@@ -1,11 +1,7 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const { openCompat } = require('../database/dbCompat');
 
 async function setupTestDB() {
-  const db = await open({
-    filename: ':memory:',
-    driver: sqlite3.Database
-  });
+  const db = openCompat({ filename: ':memory:' });
 
   // Zero-Code Change Schema
   await db.exec(`

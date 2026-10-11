@@ -2,6 +2,7 @@ const { ipcMain, dialog, app, BrowserWindow } = require('electron');
 const { getDB } = require('./database/db');
 const fs = require('fs');
 const path = require('path');
+const logger = require('./logger');
 
 // Initialize Handlers
 async function setupHandlers() {
@@ -21,7 +22,7 @@ async function setupHandlers() {
         ]
       );
     } catch (e) {
-      console.error('Audit log error:', e);
+      logger.error('Audit log error:', e);
     }
   }
 
@@ -33,7 +34,7 @@ async function setupHandlers() {
     try {
       return await readRecord(db, table, conditions);
     } catch (error) {
-      console.error(`Error reading from ${table}:`, error);
+      logger.error(`Error reading from ${table}:`, error);
       return [];
     }
   });
@@ -43,7 +44,7 @@ async function setupHandlers() {
     try {
       return await createRecord(db, table, data);
     } catch (error) {
-      console.error(`Error creating record in ${table}:`, error);
+      logger.error(`Error creating record in ${table}:`, error);
       return { success: false, message: error.message };
     }
   });
@@ -53,7 +54,7 @@ async function setupHandlers() {
     try {
       return await createBulkRecord(db, table, dataList, logMessage);
     } catch (error) {
-      console.error(`Error creating bulk records in ${table}:`, error);
+      logger.error(`Error creating bulk records in ${table}:`, error);
       return { success: false, message: error.message };
     }
   });
@@ -63,7 +64,7 @@ async function setupHandlers() {
     try {
       return await updateRecord(db, table, id, data);
     } catch (error) {
-      console.error(`Error updating record in ${table}:`, error);
+      logger.error(`Error updating record in ${table}:`, error);
       return { success: false, message: error.message };
     }
   });
@@ -73,7 +74,7 @@ async function setupHandlers() {
     try {
       return await deleteRecord(db, table, id);
     } catch (error) {
-      console.error(`Error deleting record in ${table}:`, error);
+      logger.error(`Error deleting record in ${table}:`, error);
       return { success: false, message: error.message };
     }
   });
@@ -98,7 +99,7 @@ async function setupHandlers() {
         project_name: r.project_name
       }));
     } catch (error) {
-      console.error('Error in db:read-deleted:', error);
+      logger.error('Error in db:read-deleted:', error);
       return [];
     }
   });
@@ -107,7 +108,7 @@ async function setupHandlers() {
     try {
       return await db.all("SELECT * FROM projects ORDER BY sort_order ASC, name ASC");
     } catch (error) {
-      console.error('Error in db:read-all-projects:', error);
+      logger.error('Error in db:read-all-projects:', error);
       return [];
     }
   });
@@ -123,7 +124,9 @@ async function setupHandlers() {
       // 1. Mark as restored in recycle_bin table
       await db.run("UPDATE recycle_bin SET is_restored = 1, restored_at = datetime('now', 'localtime') WHERE id = ?", [id]);
 
-      // 2. Set is_deleted = 0 in the original table
+      // 2. Set is_deleted = 0 in the original table (allowlist-guarded: recycle_bin content is DB-driven)
+      const { assertAllowedTable } = require('./services/allowlist');
+      assertAllowedTable(binItem.table_name);
       await db.run(`UPDATE ${binItem.table_name} SET is_deleted = 0 WHERE id = ?`, [binItem.record_id]);
       
       // Cascade restore if transaction has linked cash
@@ -144,7 +147,7 @@ async function setupHandlers() {
       
       return { success: true, message: 'Kayıt başarıyla geri yüklendi.' };
     } catch (error) {
-      console.error(`Error restoring record via recycle bin item ${id}:`, error);
+      logger.error(`Error restoring record via recycle bin item ${id}:`, error);
       return { success: false, message: error.message };
     }
   });
@@ -162,14 +165,24 @@ async function setupHandlers() {
 
   // --- FINANCE API ---
   const { calculateWage } = require('./services/wageService');
-  const { calculateWorkerBalance } = require('./services/balanceService');
+  const { calculateWorkerBalance, calculateBulkBalances } = require('./services/balanceService');
 
   ipcMain.handle('finance:get-balance', async (_, { worker_id }) => {
     try {
       const balance = await calculateWorkerBalance(worker_id, db);
       return { success: true, balance };
     } catch (error) {
-      console.error('Error getting balance:', error);
+      logger.error('Error getting balance:', error);
+      return { success: false, message: error.message };
+    }
+  });
+
+  ipcMain.handle('finance:get-balances', async (_, { worker_ids }) => {
+    try {
+      const balances = await calculateBulkBalances(worker_ids, db);
+      return { success: true, balances };
+    } catch (error) {
+      logger.error('Error getting bulk balances:', error);
       return { success: false, message: error.message };
     }
   });
@@ -198,7 +211,7 @@ async function setupHandlers() {
 
       return { success: true, wage };
     } catch (error) {
-      console.error('Error calculating wage:', error);
+      logger.error('Error calculating wage:', error);
       return { success: false, message: error.message };
     }
   });
@@ -243,7 +256,7 @@ async function setupHandlers() {
       fs.copyFileSync(dbPath, filePath);
       return { success: true, message: 'Yedekleme başarıyla tamamlandı!' };
     } catch (error) {
-      console.error('Backup error:', error);
+      logger.error('Backup error:', error);
       return { success: false, message: error.message };
     }
   });
@@ -302,7 +315,7 @@ async function setupHandlers() {
       }
       return { success: true, logs };
     } catch (error) {
-      console.error('Read logs error:', error);
+      logger.error('Read logs error:', error);
       return { success: false, message: error.message, logs: [] };
     }
   });
@@ -312,7 +325,7 @@ async function setupHandlers() {
       await db.run('VACUUM');
       return { success: true };
     } catch (error) {
-      console.error('Vacuum error:', error);
+      logger.error('Vacuum error:', error);
       return { success: false, message: error.message };
     }
   });
@@ -344,7 +357,7 @@ async function setupHandlers() {
 
       return { success: true, folderPath };
     } catch (error) {
-      console.error('Set cloud folder error:', error);
+      logger.error('Set cloud folder error:', error);
       return { success: false, message: error.message };
     }
   });
@@ -356,8 +369,17 @@ async function setupHandlers() {
         return { success: false, message: 'Lokasyon belirtilmedi.' };
       }
       
-      const apiKeySetting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'weather_api_key'");
-      const apiKey = apiKeySetting ? apiKeySetting.setting_value : 'c635dd8744d78dfe67964e3fac55137f'; 
+      const { getWeatherKey } = require('./services/secret');
+      const apiKey = await getWeatherKey(db);
+      if (!apiKey) {
+        return {
+          success: false,
+          errorType: 'missing_key',
+          message: lang === 'tr'
+            ? 'Hava durumu API anahtarı tanımlı değil. Lütfen Ayarlar sayfasından ekleyin.'
+            : 'Weather API key is not configured. Please add it in Settings.'
+        };
+      }
       
       const openWeatherLangMap = {
         ar: 'ar',
@@ -450,8 +472,26 @@ async function setupHandlers() {
         simulated: false
       };
     } catch (error) {
-      console.error('Weather fetching error:', error);
+      logger.error('Weather fetching error:', error);
       return { success: false, message: error.message };
+    }
+  });
+
+  ipcMain.handle('system:set-weather-key', async (_, { apiKey }) => {
+    try {
+      const { setWeatherKey } = require('./services/secret');
+      return await setWeatherKey(db, apiKey);
+    } catch (error) {
+      return { success: false, errorType: error.message, message: error.message };
+    }
+  });
+
+  ipcMain.handle('system:is-weather-configured', async () => {
+    try {
+      const { isWeatherKeyConfigured } = require('./services/secret');
+      return { success: true, configured: await isWeatherKeyConfigured(db) };
+    } catch (error) {
+      return { success: false, configured: false, message: error.message };
     }
   });
 
@@ -521,7 +561,7 @@ async function setupHandlers() {
 
       return { success: true, relativePath: `project_${projectId}/${uniqueName}` };
     } catch (error) {
-      console.error('Save photo base64 error:', error);
+      logger.error('Save photo base64 error:', error);
       return { success: false, message: error.message };
     }
   });
@@ -570,7 +610,7 @@ async function setupHandlers() {
       }
       return { success: false, message: 'Sunucu başlatılamadı.' };
     } catch (error) {
-      console.error('Start LAN server error:', error);
+      logger.error('Start LAN server error:', error);
       return { success: false, message: error.message };
     }
   });
@@ -591,20 +631,12 @@ async function setupHandlers() {
         ? path.join(__dirname, '../../database.sqlite')
         : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 
-      // Verify new backup integrity BEFORE touching current DB
-      const sqlite3 = require('sqlite3');
-      const checkDB = new Promise((resolve) => {
-        const tempDb = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY, (err) => {
-          if (err) return resolve(false);
-          tempDb.get('PRAGMA integrity_check', (err, row) => {
-            tempDb.close();
-            if (err || row.integrity_check !== 'ok') resolve(false);
-            else resolve(true);
-          });
-        });
-      });
-
-      const isValid = await checkDB;
+      // Verify new backup integrity BEFORE touching current DB (key-aware: tries key, then legacy plaintext)
+      const { verifyDbFile } = require('./database/dbCompat');
+      const { loadOrCreateDbKey } = require('./services/keystore');
+      let restoreKey = null;
+      try { restoreKey = await loadOrCreateDbKey(); } catch (_) { /* plaintext fallback */ }
+      const isValid = verifyDbFile(filePath, restoreKey);
       if (!isValid) {
         return { success: false, message: 'RESTORE_CORRUPTED' };
       }
@@ -636,7 +668,7 @@ async function setupHandlers() {
 
       return { success: true };
     } catch (error) {
-      console.error('DB Restore error:', error);
+      logger.error('DB Restore error:', error);
       return { success: false, message: error.message };
     }
   });
@@ -647,7 +679,7 @@ async function setupHandlers() {
       const window = BrowserWindow.fromWebContents(event.sender);
       if (window) window.minimize();
     } catch (err) {
-      console.error('window:minimize error:', err);
+      logger.error('window:minimize error:', err);
     }
   });
 
@@ -662,7 +694,7 @@ async function setupHandlers() {
         }
       }
     } catch (err) {
-      console.error('window:maximize error:', err);
+      logger.error('window:maximize error:', err);
     }
   });
 
@@ -671,7 +703,7 @@ async function setupHandlers() {
       const window = BrowserWindow.fromWebContents(event.sender);
       if (window) window.close();
     } catch (err) {
-      console.error('window:close error:', err);
+      logger.error('window:close error:', err);
     }
   });
 

@@ -22,6 +22,62 @@ function getLocalIP() {
   return 'localhost';
 }
 
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function sanitizeProjectId(raw) {
+  const v = String(raw == null ? 'default' : raw);
+  return /^[a-z0-9_-]{1,32}$/i.test(v) ? v : 'default';
+}
+
+// In-memory fallback rate limiter (used if express-rate-limit is unavailable).
+// 15 requests / 60s per IP.
+const _rateBuckets = new Map();
+function inMemoryRateLimit(req, res, next) {
+  try {
+    const ip = (req.ip || req.connection?.remoteAddress || 'unknown').toString();
+    const now = Date.now();
+    const arr = (_rateBuckets.get(ip) || []).filter((t) => now - t < 60000);
+    if (arr.length >= 15) {
+      return res.status(429).json({ success: false, message: 'Too many requests.' });
+    }
+    arr.push(now);
+    _rateBuckets.set(ip, arr);
+    next();
+  } catch (_) {
+    next();
+  }
+}
+
+function getUploadRateLimiter() {
+  try {
+    const { rateLimit } = require('express-rate-limit');
+    return rateLimit({ windowMs: 60000, limit: 15, standardHeaders: false, legacyHeaders: false });
+  } catch (_) {
+    return inMemoryRateLimit;
+  }
+}
+
+async function verifyImageMagic(filePath) {
+  // allowlist: jpg, png, webp by magic bytes. ESM-only file-type -> dynamic import.
+  try {
+    const mod = await import('file-type');
+    const fn = mod.fileTypeFromFile || (mod.default && mod.default.fileTypeFromFile);
+    if (!fn) return { verified: false, reason: 'UNVERIFIED' };
+    const t = await fn(filePath);
+    if (!t) return { verified: false, reason: 'INVALID_CONTENT' };
+    if (['image/jpeg', 'image/png', 'image/webp'].includes(t.mime)) {
+      return { verified: true, mime: t.mime };
+    }
+    return { verified: false, reason: 'INVALID_CONTENT', detected: t.mime };
+  } catch (_) {
+    return { verified: false, reason: 'UNVERIFIED' };
+  }
+}
+
 function startLANServer(mainWindow, lang) {
   if (lang) {
     currentLang = lang;
@@ -35,30 +91,50 @@ function startLANServer(mainWindow, lang) {
   
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      const projectId = req.query.projectId || 'default';
+      const projectId = sanitizeProjectId(req.query.projectId || 'default');
       const isDev = process.env.NODE_ENV === 'development';
-      const baseDir = isDev 
+      const baseDir = path.resolve(isDev
         ? path.join(__dirname, '../../../media')
-        : path.join(app.getPath('userData'), 'media');
+        : path.join(app.getPath('userData'), 'media'));
 
-      const projectDir = path.join(baseDir, `project_${projectId}`);
+      const projectDir = path.resolve(baseDir, `project_${projectId}`);
+      if (!projectDir.startsWith(baseDir)) {
+        return cb(new Error('INVALID_PROJECT'));
+      }
       if (!fs.existsSync(projectDir)) {
         fs.mkdirSync(projectDir, { recursive: true });
       }
       cb(null, projectDir);
     },
     filename: function (req, file, cb) {
-      const ext = path.extname(file.originalname);
-      const uniqueName = `${Date.now()}_${Math.floor(Math.random() * 10000)}${ext}`;
+      const uniqueName = `${Date.now()}_${Math.floor(Math.random() * 10000)}.webp`;
       cb(null, uniqueName);
     }
   });
 
-  const upload = multer({ storage: storage });
+  // Sync fileFilter (CVE-2026-77063: async fileFilter bypasses limits.fileSize).
+  const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp'];
+  const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.webp'];
+  function syncFileFilter(req, file, cb) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!ALLOWED_MIME.includes(file.mimetype) || !ALLOWED_EXT.includes(ext)) {
+      return cb(new Error('INVALID_TYPE'), false);
+    }
+    cb(null, true);
+  }
+
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024, files: 1, fields: 5, parts: 10 },
+    fileFilter: syncFileFilter
+  });
+
+  expressApp.use('/upload', getUploadRateLimiter());
 
   expressApp.get('/', (req, res) => {
-    const projectId = req.query.projectId || '';
-    const projectName = req.query.projectName || 'Genel';
+    res.setHeader('Content-Security-Policy', "default-src 'self'");
+    const projectId = sanitizeProjectId(req.query.projectId || '');
+    const projectName = escapeHtml(req.query.projectName || 'Genel');
     const isTr = currentLang === 'tr';
 
     // Localized strings
@@ -268,14 +344,21 @@ function startLANServer(mainWindow, lang) {
     `);
   });
 
-  expressApp.post('/upload', upload.single('photo'), (req, res) => {
+  expressApp.post('/upload', upload.single('photo'), async (req, res) => {
     try {
       const isTr = currentLang === 'tr';
       if (!req.file) {
         return res.status(400).json({ success: false, message: isTr ? 'Fotoğraf dosyası bulunamadı.' : 'Photo file not found.' });
       }
 
-      const projectId = req.query.projectId || 'default';
+      const projectId = sanitizeProjectId(req.query.projectId || 'default');
+      // Magic-byte verification (defense-in-depth; UNVERIFIED still accepted for compat)
+      const check = await verifyImageMagic(req.file.path);
+      if (check.reason === 'INVALID_CONTENT') {
+        try { fs.unlinkSync(req.file.path); } catch (_) { /* ignore */ }
+        return res.status(400).json({ success: false, message: isTr ? 'Geçersiz dosya içeriği.' : 'Invalid file content.' });
+      }
+
       const relativePath = `project_${projectId}/${req.file.filename}`;
       
       if (mainWindow && !mainWindow.isDestroyed()) {
@@ -292,8 +375,9 @@ function startLANServer(mainWindow, lang) {
     }
   });
 
-  serverInstance = expressApp.listen(currentPort, '0.0.0.0', () => {
-    // LAN server started
+  const bindIp = getLocalIP();
+  serverInstance = expressApp.listen(currentPort, bindIp, () => {
+    // LAN server started on LAN IP (not 0.0.0.0)
   });
 
   return { success: true, port: currentPort, ip: getLocalIP() };
@@ -306,4 +390,4 @@ function stopLANServer() {
   }
 }
 
-module.exports = { startLANServer, stopLANServer, getLocalIP };
+module.exports = { startLANServer, stopLANServer, getLocalIP, sanitizeProjectId, escapeHtml, verifyImageMagic };

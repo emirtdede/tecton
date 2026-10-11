@@ -1,9 +1,10 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
 const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
 const AdmZip = require('adm-zip');
+const { openCompat, isPlaintextHeader } = require('./dbCompat');
+const { loadOrCreateDbKey } = require('../services/keystore');
+const logger = require('../logger');
 
 let dbPromise;
 
@@ -27,7 +28,7 @@ function findLatestBackup(backupFolder) {
     sqliteFiles.sort((a, b) => b.localeCompare(a));
     return sqliteFiles[0];
   } catch (err) {
-    console.error('Error finding latest backup:', err);
+    logger.error('Error finding latest backup:', err);
     return null;
   }
 }
@@ -46,27 +47,38 @@ async function getDB() {
     : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 
   let db;
+  let dbKey = null;
   try {
-    db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    });
+    dbKey = await loadOrCreateDbKey();
+  } catch (keyErr) {
+    logger.error('Keystore unavailable, opening database without encryption:', keyErr.message);
+  }
+  // One-time transparent encryption: legacy plaintext DBs are encrypted in place
+  // after a safety copy (backup_before_enc_*.sqlite). Trigger: R2 fallback path.
+  try {
+    if (fs.existsSync(dbPath) && dbKey && isPlaintextHeader(dbPath)) {
+      const encDir = path.join(path.dirname(dbPath), 'old_backups');
+      if (!fs.existsSync(encDir)) fs.mkdirSync(encDir, { recursive: true });
+      fs.copyFileSync(dbPath, path.join(encDir, `backup_before_enc_${Date.now()}.sqlite`));
+    }
+  } catch (migErr) {
+    logger.error('Pre-encryption safety copy failed:', migErr.message);
+  }
+  try {
+    db = openCompat({ filename: dbPath, key: dbKey });
   } catch (err) {
-    console.error('Failed to open primary database. Attempting auto-recovery...', err);
+    logger.error('Failed to open primary database. Attempting auto-recovery...', err);
     const backupDir = app 
       ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
       : path.join(__dirname, '../../test_data/Database-Backups');
     
     const latestBackup = findLatestBackup(backupDir);
     if (latestBackup && fs.existsSync(latestBackup)) {
-      console.log(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
+      logger.info(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
       fs.copyFileSync(latestBackup, dbPath);
-      db = await open({
-        filename: dbPath,
-        driver: sqlite3.Database
-      });
+      db = openCompat({ filename: dbPath, key: dbKey });
     } else {
-      console.error('[Auto-Recovery] No valid backups found to recover from.');
+      logger.error('[Auto-Recovery] No valid backups found to recover from.');
       throw err;
     }
   }
@@ -80,11 +92,11 @@ async function getDB() {
       const cleanSetting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'clean_shutdown'");
       if (cleanSetting) {
         if (cleanSetting.setting_value === '0') {
-          console.warn('[Integrity Check] Unclean shutdown detected. Checking database integrity...');
+          logger.warn('[Integrity Check] Unclean shutdown detected. Checking database integrity...');
           const check = await db.get('PRAGMA integrity_check');
-          console.log('[Integrity Check] Result:', check);
+          logger.info('[Integrity Check] Result:', check);
           if (check && check.integrity_check !== 'ok') {
-            console.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
+            logger.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
             await db.close();
             const backupDir = app 
               ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
@@ -92,7 +104,7 @@ async function getDB() {
             const latestBackup = findLatestBackup(backupDir);
             if (latestBackup) {
               fs.copyFileSync(latestBackup, dbPath);
-              db = await open({ filename: dbPath, driver: sqlite3.Database });
+              db = openCompat({ filename: dbPath, key: dbKey });
               // dbPromise set deferred
             }
           }
@@ -103,7 +115,7 @@ async function getDB() {
       }
     }
   } catch (checkErr) {
-    console.error('[Integrity Check] Failed to run integrity verification:', checkErr);
+    logger.error('[Integrity Check] Failed to run integrity verification:', checkErr);
   }
 
   // Create tables (Zero-Code Change Architecture)
@@ -505,7 +517,7 @@ async function getDB() {
         END;
       `);
     } catch (err) {
-      console.error(`Error creating trigger ${trg.name}:`, err);
+      logger.error(`Error creating trigger ${trg.name}:`, err);
     }
   }
 
@@ -518,7 +530,7 @@ async function getDB() {
         return systemLang;
       }
     } catch (err) {
-      console.error('Failed to get system locale:', err);
+      logger.error('Failed to get system locale:', err);
     }
     return 'tr';
   }
@@ -541,7 +553,7 @@ async function getDB() {
       try {
         fs.mkdirSync(defaultBackupDir, { recursive: true });
       } catch (err) {
-        console.error('Failed to create default backup folder:', err);
+        logger.error('Failed to create default backup folder:', err);
       }
     }
     await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', defaultBackupDir, 'Sessiz Bulut Yedekleme Klasörü']);
@@ -575,7 +587,7 @@ async function getDB() {
         try {
           fs.mkdirSync(defaultBackupDir, { recursive: true });
         } catch (err) {
-          console.error('Failed to create default backup folder:', err);
+          logger.error('Failed to create default backup folder:', err);
         }
       }
       await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', defaultBackupDir, 'Sessiz Bulut Yedekleme Klasörü']);
@@ -610,7 +622,7 @@ function getSystemLogsDir() {
     try {
       fs.mkdirSync(baseDir, { recursive: true });
     } catch (e) {
-      console.error('Failed to create SystemLogs-Backups directory:', e);
+      logger.error('Failed to create SystemLogs-Backups directory:', e);
     }
   }
   return baseDir;
@@ -654,7 +666,7 @@ function runDeferredCleanup(db) {
         }
       }
     } catch (err) {
-      console.error('Audit logs cleanup/archiving error:', err);
+      logger.error('Audit logs cleanup/archiving error:', err);
     }
 
     // Auto-Cleanup 30 days old deleted records
@@ -662,9 +674,14 @@ function runDeferredCleanup(db) {
       const oldRecords = await db.all("SELECT id, table_name, record_id FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days') AND is_restored = 0");
       for (const r of oldRecords) {
         try {
+          const { isAllowedTable } = require('../services/allowlist');
+          if (!isAllowedTable(r.table_name)) {
+            logger.error(`Skipping hard-delete: forbidden table ${r.table_name}`);
+            continue;
+          }
           await db.run(`DELETE FROM ${r.table_name} WHERE id = ? AND is_deleted = 1`, [r.record_id]);
         } catch (e) {
-          console.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
+          logger.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
         }
       }
       await db.run("DELETE FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days')");
@@ -673,15 +690,15 @@ function runDeferredCleanup(db) {
         vacuumNeeded = true;
       }
     } catch (err) {
-      console.error('Auto cleanup error:', err);
+      logger.error('Auto cleanup error:', err);
     }
 
     if (vacuumNeeded) {
       try {
         await db.run('VACUUM');
-        console.log('Database vacuum completed successfully.');
+        logger.info('Database vacuum completed successfully.');
       } catch (e) {
-        console.error('VACUUM error:', e);
+        logger.error('VACUUM error:', e);
       }
     }
 
@@ -699,7 +716,7 @@ function runDeferredCleanup(db) {
         processBackupArchiving(backupFolder);
       }
     } catch (err) {
-      console.error('Database archiving error at startup:', err);
+      logger.error('Database archiving error at startup:', err);
     }
   }, 5000);
 }
@@ -739,7 +756,7 @@ function archiveOldLogs() {
             });
 
             zip.writeZip(zipPath);
-            console.log(`Archived log folder ${folderYearMonth} to ${zipPath}`);
+            logger.info(`Archived log folder ${folderYearMonth} to ${zipPath}`);
           }
 
           fs.rmSync(monthPath, { recursive: true, force: true });
@@ -757,7 +774,7 @@ function archiveOldLogs() {
       }
     }
   } catch (err) {
-    console.error('Log archiving error:', err);
+    logger.error('Log archiving error:', err);
   }
 }
 
@@ -777,7 +794,7 @@ function createSnapshot(suffix = 'restore-point') {
     fs.copyFileSync(dbPath, backupPath);
     return { success: true, backupPath };
   } catch (err) {
-    console.error('Snapshot creation failed:', err);
+    logger.error('Snapshot creation failed:', err);
     return { success: false, message: err.message };
   }
 }
@@ -792,7 +809,7 @@ function restoreSnapshot(suffix = 'restore-point') {
     }
     return { success: false, message: 'Restore point bulunamadı.' };
   } catch (err) {
-    console.error('Restore failed:', err);
+    logger.error('Restore failed:', err);
     return { success: false, message: err.message };
   }
 }

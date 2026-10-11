@@ -1,4 +1,5 @@
 const logger = require('../logger');
+const { assertAllowedTable, assertAllowedColumns } = require('./allowlist');
 
 function generateHumanMessage(table_name, action, old_values, new_values, lang = 'tr') {
   const isTr = lang === 'tr';
@@ -215,7 +216,7 @@ async function logAudit(db, table_name, record_id, action, old_values = null, ne
         lang = langSetting.setting_value;
       }
     } catch (dbErr) {
-      console.error('Failed to get language setting from DB:', dbErr);
+      logger.error('Failed to get language setting from DB:', dbErr);
     }
 
     let projectNameStr = '';
@@ -237,12 +238,14 @@ async function logAudit(db, table_name, record_id, action, old_values = null, ne
     logger.info(`[DB ${action}] [${table_name}]${projPart} ${humanMsg}`);
 
   } catch (e) {
-    console.error('Audit log error:', e);
+    logger.error('Audit log error:', e);
     logger.error(`[DB ERROR] Audit log failed: ${e.message}`);
   }
 }
 
 async function readRecord(db, table, conditions = {}) {
+  assertAllowedTable(table);
+  assertAllowedColumns(table, conditions);
   // Tables that do NOT have is_deleted column
   const tablesWithoutSoftDelete = ['app_settings', 'audit_logs'];
   const hasSoftDelete = !tablesWithoutSoftDelete.includes(table);
@@ -270,6 +273,7 @@ async function readRecord(db, table, conditions = {}) {
 }
 
 async function createRecord(db, table, data) {
+  assertAllowedColumns(table, data);
   const keys = Object.keys(data);
   const values = Object.values(data);
   const placeholders = keys.map(() => '?').join(', ');
@@ -283,6 +287,7 @@ async function createRecord(db, table, data) {
 }
 
 async function updateRecord(db, table, id, data) {
+  assertAllowedColumns(table, data);
   // Get old record for audit
   const oldRecord = await db.get(`SELECT * FROM ${table} WHERE id = ?`, [id]);
   
@@ -299,6 +304,7 @@ async function updateRecord(db, table, id, data) {
 }
 
 async function deleteRecord(db, table, id) {
+  assertAllowedTable(table);
   // Get old record for audit
   const oldRecord = await db.get(`SELECT * FROM ${table} WHERE id = ?`, [id]);
   
@@ -329,6 +335,7 @@ async function deleteRecord(db, table, id) {
 }
 
 async function createBulkRecord(db, table, dataList, logMessage) {
+  assertAllowedTable(table);
   if (!Array.isArray(dataList) || dataList.length === 0) {
     return { success: false, message: 'Veri listesi boş.' };
   }
@@ -337,6 +344,7 @@ async function createBulkRecord(db, table, dataList, logMessage) {
     await db.run('BEGIN TRANSACTION');
 
     const firstItem = dataList[0];
+    assertAllowedColumns(table, firstItem);
     const keys = Object.keys(firstItem);
     const placeholders = keys.map(() => '?').join(', ');
     const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`;
@@ -363,7 +371,7 @@ async function createBulkRecord(db, table, dataList, logMessage) {
     } catch (rbErr) {
       // ignore
     }
-    console.error(`Bulk create error in ${table}:`, error);
+    logger.error(`Bulk create error in ${table}:`, error);
     throw error;
   }
 }
