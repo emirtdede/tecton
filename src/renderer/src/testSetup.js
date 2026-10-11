@@ -24,6 +24,13 @@ if (typeof window !== 'undefined') {
     window.HTMLElement.prototype.scrollIntoView = () => {};
   }
 
+  if (typeof window.Element !== 'undefined' && !window.Element.prototype.scrollTo) {
+    window.Element.prototype.scrollTo = () => {};
+  }
+  if (typeof window.Element !== 'undefined' && !window.Element.prototype.scrollIntoView) {
+    window.Element.prototype.scrollIntoView = () => {};
+  }
+
   if (typeof window.ResizeObserver === 'undefined') {
     window.ResizeObserver = class ResizeObserver {
       observe() {}
