@@ -1,5 +1,5 @@
 const { setupTestDB } = require('./testDb');
-const { calculateWorkerBalance } = require('./balanceService');
+const { calculateWorkerBalance, calculateBulkBalances } = require('./balanceService');
 
 describe('Balance Service (Dinamik Bakiye - SUM Hesaplaması)', () => {
   let db;
@@ -42,5 +42,22 @@ describe('Balance Service (Dinamik Bakiye - SUM Hesaplaması)', () => {
   it('should return 0 if no records exist', async () => {
     const balance = await calculateWorkerBalance(99, db);
     expect(balance).toBe(0);
+  });
+
+  it('bulk balances must equal per-worker balances', async () => {
+    await db.run("INSERT INTO workers (id, full_name, daily_wage) VALUES (2, 'Ikinci Isci', 2000)");
+    await db.run(
+      "INSERT INTO timesheets (worker_id, work_date, applied_wage, applied_multiplier, earned_amount) VALUES (2, '2026-06-11', 2000, 1.0, 2000)"
+    );
+    const bulk = await calculateBulkBalances([1, 2, 99], db);
+    expect(bulk[1]).toBe(await calculateWorkerBalance(1, db));
+    expect(bulk[2]).toBe(await calculateWorkerBalance(2, db));
+    expect(bulk[2]).toBe(2000);
+    expect(bulk[99]).toBe(0);
+  });
+
+  it('bulk with empty/invalid input returns {}', async () => {
+    expect(await calculateBulkBalances([], db)).toEqual({});
+    expect(await calculateBulkBalances(['x'], db)).toEqual({});
   });
 });

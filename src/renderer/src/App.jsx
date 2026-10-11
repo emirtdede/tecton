@@ -233,11 +233,23 @@ function App() {
           }
         }
 
-        // Fetch balances for each worker
-        const newBalances = {};
-        for (const w of data) {
-          const res = await window.api.finance.getBalance(w.id);
-          if (res.success) newBalances[w.id] = res.balance;
+        // Fetch balances in one IPC round-trip (bulk), with per-worker fallback
+        let newBalances = {};
+        if (data.length > 0) {
+          try {
+            if (window.api.finance.getBalances) {
+              const bulk = await window.api.finance.getBalances(data.map((w) => w.id));
+              if (bulk && bulk.success && bulk.balances) {
+                newBalances = bulk.balances;
+              }
+            }
+          } catch (_) { /* fall through to per-worker */ }
+          if (Object.keys(newBalances).length === 0) {
+            for (const w of data) {
+              const res = await window.api.finance.getBalance(w.id);
+              if (res.success) newBalances[w.id] = res.balance;
+            }
+          }
         }
         setBalances(newBalances);
       }
