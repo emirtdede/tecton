@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
-import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
 import { formatDate, trLower } from '../utils/formatUtils';
+import ProductionForm from './ProductionForm';
+import ProductionFilters from './ProductionFilters';
+import ProductionTable from './ProductionTable';
 
 const ProductionManagement = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Edit mode state
   const [editingId, setEditingId] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -58,6 +60,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
 
   useEffect(() => {
     fetchRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProjectId]);
 
   useEffect(() => {
@@ -139,7 +142,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
     const qtyCommaWithUnitNoSpace = `${qtyCommaStr}${unitStr}`;
 
     const matchesSearch = !searchQuery ||
-                          trLower(r.item_name).includes(q) || 
+                          trLower(r.item_name).includes(q) ||
                           (r.notes && trLower(r.notes).includes(q)) ||
                           trLower(formattedDate).includes(q) ||
                           trLower(r.record_date).includes(q) ||
@@ -174,12 +177,12 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
       <div className="glass-card" style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
           <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('production.title', '📐 Metraj ve İmalat Takibi')}</h2>
-          <span 
+          <span
             onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
+            style={{
+              cursor: 'pointer',
+              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)',
+              transition: 'opacity 0.25s ease-in-out',
               fontSize: '1.6rem',
               userSelect: 'none',
               padding: '0.25rem'
@@ -193,292 +196,44 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
         </div>
         <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
-        {/* Add Record Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.5rem', alignItems: 'flex-end' }}>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('production.item_name', 'İmalat Kalemi')}</label>
-            <input 
-              type="text" 
-              className="form-input" 
-              placeholder={t('production.item_name_ph', 'Örn: Tuğla Duvar Örme')} 
-              value={formData.item_name}
-              onChange={e => setFormData(prev => ({ ...prev, item_name: e.target.value }))}
-              required
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('common.quantity', 'Miktar')}</label>
-            <input 
-              type="number" 
-              className="form-input" 
-              placeholder="0.00" 
-              min="0.01" 
-              step="0.01"
-              value={formData.quantity}
-              onChange={e => setFormData(prev => ({ ...prev, quantity: e.target.value }))}
-              required
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('common.unit', 'Birim')}</label>
-            <select 
-              className="form-input" 
-              value={formData.unit}
-              onChange={e => setFormData(prev => ({ ...prev, unit: e.target.value }))}
-            >
-              <option value="m²">m² (Metrekare)</option>
-              <option value="m³">m³ (Metreküp)</option>
-              <option value="mt">mt (Metretül)</option>
-              <option value="ton">ton</option>
-              <option value="kg">kg</option>
-              <option value="adet">adet</option>
-            </select>
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">{t('common.date', 'Tarih')}</label>
-            <CustomDatePicker 
-              className="form-input" 
-              value={formData.record_date}
-              onChange={e => setFormData(prev => ({ ...prev, record_date: e.target.value }))}
-              required
-            />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 2' }}>
-            <label className="form-label">{t('common.notes', 'Açıklama / Not')}</label>
-            <input 
-              type="text" 
-              className="form-input" 
-              placeholder={t('common.notes_placeholder', 'Ek notlar...')} 
-              value={formData.notes}
-              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%', gridColumn: 'span 2' }}>
-            <button type="submit" className="btn btn-primary" style={{ flex: 1, height: '42px' }}>
-              {editingId ? t('common.save', 'Güncelle') : t('common.save', 'Kaydet')}
-            </button>
-            {editingId && (
-              <button 
-                type="button" 
-                className="btn" 
-                onClick={() => {
-                  setEditingId(null);
-                  setFormData({
-                    item_name: '',
-                    quantity: '',
-                    unit: 'm²',
-                    record_date: new Date().toISOString().split('T')[0],
-                    notes: ''
-                  });
-                }} 
-                style={{ height: '42px' }}
-              >
-                {t('common.cancel', 'Vazgeç')}
-              </button>
-            )}
-          </div>
-        </form>
+        <ProductionForm
+          t={t}
+          formData={formData}
+          setFormData={setFormData}
+          editingId={editingId}
+          setEditingId={setEditingId}
+          onSubmit={handleSubmit}
+        />
 
-        {/* Filters & Search Bar */}
-        {records.length > 0 && (
-          <div style={{ 
-            background: 'rgba(255, 255, 255, 0.02)', 
-            border: '1px solid var(--glass-border)', 
-            borderRadius: '12px', 
-            padding: '0.75rem 1rem', 
-            marginBottom: '0.25rem',
-            display: 'flex', 
-            gap: '1rem', 
-            alignItems: 'flex-end', 
-            flexWrap: 'wrap' 
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '2 1 200px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.search', 'Arama')}</label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
-                <input 
-                  type="text"
-                  className="form-input"
-                  placeholder={t('filters.search_production', 'İmalat, tarih, miktar veya notlarda ara...')}
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  style={{ paddingRight: '2.5rem', width: '100%', marginBottom: 0 }}
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    style={{
-                      position: 'absolute',
-                      right: '12px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      fontSize: '1rem',
-                      padding: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 10
-                    }}
-                    title={t('common.clear', 'Temizle')}
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            </div>
+        <ProductionFilters
+          t={t}
+          hasRecords={records.length > 0}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          filterStartDate={filterStartDate}
+          onStartDateChange={handleStartDateChange}
+          filterEndDate={filterEndDate}
+          onEndDateChange={handleEndDateChange}
+          filterUnit={filterUnit}
+          setFilterUnit={setFilterUnit}
+        />
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.start_date', 'Başlangıç Tarihi')}</label>
-              <CustomDatePicker 
-                className="form-input" 
-                value={filterStartDate} 
-                onChange={e => handleStartDateChange(e.target.value)} 
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('common.end_date', 'Bitiş Tarihi')}</label>
-              <CustomDatePicker 
-                className="form-input" 
-                value={filterEndDate} 
-                onChange={e => handleEndDateChange(e.target.value)} 
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: '1 1 120px' }}>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('filters.unit', 'Birim')}</label>
-              <select 
-                className="form-input" 
-                value={filterUnit} 
-                onChange={e => setFilterUnit(e.target.value)}
-                style={{ width: '100%', marginBottom: 0, padding: '6px 12px', flexShrink: 0 }}
-              >
-                <option value="">{t('filters.all_units', 'Tümü')}</option>
-                <option value="m²">m²</option>
-                <option value="m³">m³</option>
-                <option value="mt">mt</option>
-                <option value="Adet">Adet</option>
-                <option value="Kg">Kg</option>
-                <option value="Ton">Ton</option>
-              </select>
-            </div>
-          </div>
-        )}
-
-        {/* Records Table */}
-        {loading ? (
-          <div className="skeleton" style={{ height: '200px', width: '100%' }}></div>
-        ) : filteredRecords.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-            {searchQuery ? t('production.no_results', 'Arama kriterlerine uygun imalat kaydı bulunamadı.') : t('empty.production', 'Bu şantiye için henüz bir imalat kaydı girilmemiş.')}
-          </div>
-        ) : (
-          <div className="fin-table-container" style={{ marginTop: '0.1rem' }}>
-            <table className="fin-table">
-              <thead>
-                <tr>
-                  <th>{t('common.date', 'Tarih')}</th>
-                  <th>{t('production.item_name', 'İmalat Kalemi')}</th>
-                  <th style={{ textAlign: 'right' }}>{t('common.quantity', 'Miktar')}</th>
-                  <th>{t('common.unit', 'Birim')}</th>
-                  <th>{t('common.description', 'Açıklama')}</th>
-                  <th style={{ textAlign: 'right' }}>{t('subcontractor.table_action', 'İşlem')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedRecords.map(r => (
-                  <tr key={r.id}>
-                    <td>{formatDate(r.record_date, i18n.language)}</td>
-                    <td style={{ fontWeight: '600' }}>{r.item_name}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--secondary)' }}>{r.quantity}</td>
-                    <td>{r.unit}</td>
-                    <td style={{ color: 'var(--text-muted)' }}>{r.notes || '-'}</td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
-                        <button 
-                          className="btn" 
-                          onClick={() => handleStartEdit(r)}
-                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                          title={t('dashboard.edit', 'Düzenle')}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                          </svg>
-                        </button>
-                        <button 
-                          className="btn btn-danger" 
-                          onClick={() => handleDelete(r.id)}
-                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                          title={t('common.delete', 'Sil')}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            <line x1="10" y1="11" x2="10" y2="17" />
-                            <line x1="14" y1="11" x2="14" y2="17" />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{
-                position: 'sticky',
-                bottom: 0,
-                background: 'var(--option-bg, #0f172a)',
-                borderTop: '1px solid var(--glass-border)',
-                zIndex: 10,
-                padding: '1rem 1.5rem',
-                marginTop: '0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: '1rem',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '0 0 12px 12px'
-              }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {t('common.pagination_info', 'Sayfa {{page}} / {{total}} ({{records}} Kayıt)', { page: currentPage, total: totalPages, records: filteredRecords.length })}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {t('common.page', 'Sayfa')} {currentPage} / {totalPages}
-                  </span>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        <ProductionTable
+          t={t}
+          i18n={i18n}
+          loading={loading}
+          filteredRecords={filteredRecords}
+          paginatedRecords={paginatedRecords}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          searchQuery={searchQuery}
+          onEdit={handleStartEdit}
+          onDelete={handleDelete}
+        />
       </div>
 
-      <ConfirmationModal 
+      <ConfirmationModal
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
@@ -486,23 +241,23 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
         message={t('production.delete_confirm', 'Bu imalat kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')}
       />
 
-      <GuideDrawer 
-        isOpen={helpOpen} 
-        onClose={() => setHelpOpen(false)} 
-        title={t('guides.quantity.title')} 
-        desc="" 
-        h1={t('guides.quantity.q1.title')} 
-        p1={t('guides.quantity.q1.desc')} 
-        h2={t('guides.quantity.q2.title')} 
-        p2={t('guides.quantity.q2.desc')} 
-        h3={t('guides.quantity.q3.title')} 
-        p3={t('guides.quantity.q3.desc')} 
-        h4={t('guides.quantity.q4.title')} 
-        p4={t('guides.quantity.q4.desc')} 
-        h5={t('guides.quantity.q5.title')} 
-        p5={t('guides.quantity.q5.desc')} 
-        h6={t('guides.quantity.q6.title')} 
-        p6={t('guides.quantity.q6.desc')} 
+      <GuideDrawer
+        isOpen={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        title={t('guides.quantity.title')}
+        desc=""
+        h1={t('guides.quantity.q1.title')}
+        p1={t('guides.quantity.q1.desc')}
+        h2={t('guides.quantity.q2.title')}
+        p2={t('guides.quantity.q2.desc')}
+        h3={t('guides.quantity.q3.title')}
+        p3={t('guides.quantity.q3.desc')}
+        h4={t('guides.quantity.q4.title')}
+        p4={t('guides.quantity.q4.desc')}
+        h5={t('guides.quantity.q5.title')}
+        p5={t('guides.quantity.q5.desc')}
+        h6={t('guides.quantity.q6.title')}
+        p6={t('guides.quantity.q6.desc')}
       />
     </div>
   );
