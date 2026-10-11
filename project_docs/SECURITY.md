@@ -33,5 +33,7 @@ Bu alanlara dokunurken ekstra dikkatli ol:
 - [x] CRUD tablo/kolon allowlist (`src/main/services/allowlist.js`) bağlı mı?
 - [x] Hardcoded secret yok mu? (`Select-String 'c635dd87' src/` → 0; weather key `safeStorage`’da)
 - [x] LAN: `multer@2.3.0` + senkron fileFilter + `limits{10MB,1 dosya}` + magic-byte + projectId allowlist + HTML escape + rate-limit (15/dk) + LAN IP bind (0.0.0.0 yok) mu?
-- [ ] Fuse `runAsNode:false` build sonrası `npm run flip-fuses` ile doğrulandı mı?
+- [x] Fuse durumu okundu (`npm run flip-fuses`, 2026-10-11): `RunAsNode Enabled`, `EnableNodeCliInspectArguments Enabled` (Playwright E2E uyumlu). Sıkılaştırma flip'i (runAsNode→false) sürüm politikası kararı bekliyor.
+- [ ] CSC imzası ERTELENDİ: makinede admin/Developer Mode yok (`reg add` erişim reddi), `create-self-signed-cert` araç hatası. `signAndEditExecutable:false` ile imzasız build; imzalı build CI'da `WIN_CSC_LINK`/`WIN_CSC_KEY_PASSWORD` ile yapılacak. `.gitignore`: `*.pfx,*.p12` EKLENMELİ (henüz yok — sıradaki iş).
+- [x] LAN rate-limit: in-memory (15/dk/IP). `express-rate-limit` KALDIRILDI: v6 Express-4-only (Express 5.2.1'de 500 veriyor, testle kanıtlandı), v8 ESM-only (CJS main ile uyumsuz). Tek prosesli LAN'da harici store gereksiz.
 - [ ] `release/*.exe` HEAD sonrası üretildi mi?

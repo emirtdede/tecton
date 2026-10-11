@@ -123,3 +123,10 @@ Projede backend ve finansal iş kuralları kodlanırken **TDD** benimsenmiştir.
 - npx vitest run: 12 dosya, 57/57 pass.
 - Coverage (v8): lines %7.43 / functions %3.18 / branches %6; esikler (80/80/70) bilerek fail (CI kapisi).
 - E2E: e2e/ 3 spec + playwright.config.js; CI: unit her push, e2e nightly(main).
+
+## Guncelleme 2026-10-11/gece (v1.1.0-wip)
+- npx vitest run: 43 dosya, 171/171 pass (onceki 57).
+- Coverage (v8): lines %38.29 / functions %26.10 / branches %28.67. Esik 50/50/45 HALA KIRMIZI (bilerek; CI kapisi calisiyor).
+- Yeni: LAN HTTP testleri (XSS/CSP/upload/traversal/bind 5 test), transparent-migration testi, 13 bolunmus dosya icin render/form testleri, App router suite (isResizing bug yakaladi, duzeltildi).
+- E2E: 7 spec yukleniyor (list OK); local headed calisma bu makinede GUI kisitindan bloklu (surec aninda cikiyor), CI nightly kosar.
+- express-rate-limit kaldirildi (v6 Express5 uyumsuzlugu testle kanitlandi); in-memory limiter gecerli.

@@ -9,6 +9,8 @@ local_database.sqlite-journal
 *.sqlite-journal
 .env*
 *.key
+*.pfx
+*.p12
 *.log
 coverage/
 e2e/artifacts/
