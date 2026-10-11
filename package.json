@@ -37,8 +37,7 @@
     ],
     "win": {
       "icon": "tecton_assets/tecton_dark.ico",
-      "target": "nsis",
-      "signAndEditExecutable": false
+      "target": "nsis"
     },
     "nsis": {
       "shortcutName": "Tecton",

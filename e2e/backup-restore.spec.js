@@ -5,7 +5,11 @@ let app = null;
 let window = null;
 
 test.beforeAll(async () => {
-  app = await electron.launch({ args: ['.'], env: { ...process.env, NODE_ENV: 'test' } });
+  app = await electron.launch({
+    args: ['.', ...(process.env.CI ? ['--no-sandbox'] : [])],
+    env: { ...process.env, NODE_ENV: 'test' },
+    timeout: 60000,
+  });
   window = await app.firstWindow();
   await window.waitForLoadState('domcontentloaded');
   await app.evaluate(({ dialog }) => {

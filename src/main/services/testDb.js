@@ -8,7 +8,8 @@ async function setupTestDB() {
     CREATE TABLE IF NOT EXISTS app_settings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       setting_key TEXT UNIQUE NOT NULL,
-      setting_value TEXT NOT NULL
+      setting_value TEXT NOT NULL,
+      description TEXT
     );
 
     CREATE TABLE IF NOT EXISTS work_types (
@@ -32,6 +33,7 @@ async function setupTestDB() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       full_name TEXT NOT NULL,
       daily_wage REAL NOT NULL,
+      group_id INTEGER,
       project_id INTEGER,
       isg_start_date DATE,
       isg_bitis_tarihi DATE,
@@ -91,6 +93,7 @@ async function setupTestDB() {
       name TEXT NOT NULL,
       location TEXT,
       status TEXT DEFAULT 'active',
+      sort_order INTEGER DEFAULT 0,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -193,6 +196,18 @@ async function setupTestDB() {
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS recycle_bin (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      table_name TEXT NOT NULL,
+      record_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      deleted_at TIMESTAMP DEFAULT (datetime('now', 'localtime')),
+      is_restored BOOLEAN DEFAULT 0,
+      restored_at TIMESTAMP DEFAULT (datetime('now', 'localtime')),
+      original_data TEXT,
+      project_id INTEGER
     );
   `);
 

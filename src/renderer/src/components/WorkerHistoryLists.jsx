@@ -71,9 +71,10 @@ const WorkerHistoryLists = ({ t, i18n, activeTab, onBottomTabClick, filterStartD
 
   const handleBottomTabClickLocal = (tab) => {
     onBottomTabClick(tab);
-    if (tabsRef.current) {
+    const el = tabsRef.current;
+    if (el) {
       setTimeout(() => {
-        tabsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
       }, 50);
     }
   };

@@ -4,7 +4,12 @@ const { _electron: electron } = require('playwright');
 let app = null;
 
 test.beforeAll(async () => {
-  app = await electron.launch({ args: ['.'], env: { ...process.env, NODE_ENV: 'test' } });
+  // CI windows runners need --no-sandbox; headed local runs keep the sandbox.
+  app = await electron.launch({
+    args: ['.', ...(process.env.CI ? ['--no-sandbox'] : [])],
+    env: { ...process.env, NODE_ENV: 'test' },
+    timeout: 60000,
+  });
 });
 
 test.afterAll(async () => {
