@@ -20,7 +20,7 @@
 
 <div align="center">
 
-[![CI](https://img.shields.io/github/actions/workflow/status/emirtdede/tecton/ci.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white&label=CI&color=000000)](https://github.com/emirtdede/tecton/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/emirtdede/tecton/ci.yml?branch=development&style=flat-square&logo=githubactions&logoColor=white&label=CI&color=000000)](https://github.com/emirtdede/tecton/actions/workflows/ci.yml)
 ![Release](https://img.shields.io/badge/Release-v1.0.0-000000?style=flat-square)
 ![Electron](https://img.shields.io/badge/Electron-29.4-000000?style=flat-square&logo=electron&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.3-000000?style=flat-square&logo=react&logoColor=white)
