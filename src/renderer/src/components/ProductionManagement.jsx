@@ -1,9 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate, trLower } from '../utils/formatUtils';
+import { formatDate, trLower, localToday } from '../utils/formatUtils';
+import apiWrite from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
+import NoProjectNotice from './ui/NoProjectNotice';
+import { parsePositiveNumber } from '../utils/validation';
+import { logError } from '../utils/logger';
 
 const ProductionManagement = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -19,7 +26,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
     item_name: '',
     quantity: '',
     unit: 'm²',
-    record_date: new Date().toISOString().split('T')[0],
+    record_date: localToday(),
     notes: ''
   });
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
@@ -30,28 +37,46 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const handleStartDateChange = (val) => {
-    setFilterStartDate(val);
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterEndDate(val);
-    }
+    const [start, end] = clampRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
   const handleEndDateChange = (val) => {
-    setFilterEndDate(val);
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterStartDate(val);
-    }
+    const [start, end] = clampRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
+  // Guards against stale responses overwriting newer data after a project switch.
+  const requestIdRef = useRef(0);
+
   const fetchRecords = async () => {
-    if (!activeProjectId) return;
+    if (!activeProjectId) {
+      setRecords([]);
+      setLoading(false);
+      return;
+    }
+    const requestId = ++requestIdRef.current;
     if (window.api && window.api.db) {
       setLoading(true);
-      const data = await window.api.db.read('production_records', { project_id: activeProjectId });
-      setRecords(data);
+      try {
+        const data = await window.api.db.read('production_records', { project_id: activeProjectId });
+        if (requestId !== requestIdRef.current) return;
+        setRecords(data || []);
+      } catch (err) {
+        if (requestId !== requestIdRef.current) return;
+        logError('Production records fetch failed:', err);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('production.load_error', 'İmalat kayıtları yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
@@ -85,23 +110,30 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!activeProjectId || !formData.item_name || !formData.quantity) return;
+    // '-5' passes the truthiness check above; quantity has no CHECK constraint.
+    const quantity = parsePositiveNumber(formData.quantity);
+    if (quantity === null) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.invalid_positive_number', 'Lütfen sıfırdan büyük geçerli bir miktar girin.'), type: 'warning' }
+      }));
+      return;
+    }
 
     if (window.api && window.api.db) {
       const payload = {
         project_id: activeProjectId,
         item_name: formData.item_name,
-        quantity: Number(formData.quantity),
+        quantity,
         unit: formData.unit,
         record_date: formData.record_date,
         notes: formData.notes
       };
 
-      if (editingId) {
-        await window.api.db.update('production_records', editingId, payload);
-        setEditingId(null);
-      } else {
-        await window.api.db.create('production_records', payload);
-      }
+      const res = editingId
+        ? await apiWrite(window.api.db.update('production_records', editingId, payload))
+        : await apiWrite(window.api.db.create('production_records', payload));
+      if (res && res.success === false) return;
+      if (editingId) setEditingId(null);
 
       setFormData(prev => ({
         ...prev,
@@ -119,53 +151,54 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
 
   const confirmDelete = async () => {
     if (window.api && window.api.db && confirmModal.id) {
-      await window.api.db.delete('production_records', confirmModal.id);
+      const res = await apiWrite(window.api.db.delete('production_records', confirmModal.id));
+      // Keep the dialog open on failure so the user can retry; apiWrite has
+      // already surfaced the reason in a toast.
+      if (res && res.success === false) return;
       setConfirmModal({ isOpen: false, id: null });
       fetchRecords();
     }
   };
 
-  // Filter and paginated records
-  const filteredRecords = records.filter(r => {
+  // Filter and paginate records.
+  // Memoized: search + per-row date formatting previously ran on every render.
+  const filteredRecords = useMemo(() => {
     const q = trLower(searchQuery);
-    const formattedDate = formatDate(r.record_date, i18n.language);
+    return records.filter(r => {
+      const formattedDate = formatDate(r.record_date, i18n.language);
 
-    const qtyStr = String(r.quantity);
-    const qtyCommaStr = qtyStr.replace('.', ',');
-    const unitStr = r.unit ? trLower(r.unit) : '';
-    const qtyWithUnit = `${qtyStr} ${unitStr}`;
-    const qtyWithUnitNoSpace = `${qtyStr}${unitStr}`;
-    const qtyCommaWithUnit = `${qtyCommaStr} ${unitStr}`;
-    const qtyCommaWithUnitNoSpace = `${qtyCommaStr}${unitStr}`;
+      const qtyStr = String(r.quantity);
+      const qtyCommaStr = qtyStr.replace('.', ',');
+      const unitStr = r.unit ? trLower(r.unit) : '';
+      const qtyWithUnit = `${qtyStr} ${unitStr}`;
+      const qtyWithUnitNoSpace = `${qtyStr}${unitStr}`;
+      const qtyCommaWithUnit = `${qtyCommaStr} ${unitStr}`;
+      const qtyCommaWithUnitNoSpace = `${qtyCommaStr}${unitStr}`;
 
-    const matchesSearch = !searchQuery ||
-                          trLower(r.item_name).includes(q) || 
-                          (r.notes && trLower(r.notes).includes(q)) ||
-                          trLower(formattedDate).includes(q) ||
-                          trLower(r.record_date).includes(q) ||
-                          qtyStr.includes(q) ||
-                          qtyCommaStr.includes(q) ||
-                          qtyWithUnit.includes(q) ||
-                          qtyWithUnitNoSpace.includes(q) ||
-                          qtyCommaWithUnit.includes(q) ||
-                          qtyCommaWithUnitNoSpace.includes(q);
-    const matchesUnit = !filterUnit || r.unit === filterUnit;
-    let matchesDate = true;
-    if (filterStartDate) matchesDate = matchesDate && r.record_date >= filterStartDate;
-    if (filterEndDate) matchesDate = matchesDate && r.record_date <= filterEndDate;
-    return matchesSearch && matchesUnit && matchesDate;
-  });
+      const matchesSearch = !searchQuery ||
+                            trLower(r.item_name).includes(q) ||
+                            (r.notes && trLower(r.notes).includes(q)) ||
+                            trLower(formattedDate).includes(q) ||
+                            trLower(r.record_date).includes(q) ||
+                            qtyStr.includes(q) ||
+                            qtyCommaStr.includes(q) ||
+                            qtyWithUnit.includes(q) ||
+                            qtyWithUnitNoSpace.includes(q) ||
+                            qtyCommaWithUnit.includes(q) ||
+                            qtyCommaWithUnitNoSpace.includes(q);
+      const matchesUnit = !filterUnit || r.unit === filterUnit;
+      let matchesDate = true;
+      if (filterStartDate) matchesDate = matchesDate && r.record_date >= filterStartDate;
+      if (filterEndDate) matchesDate = matchesDate && r.record_date <= filterEndDate;
+      return matchesSearch && matchesUnit && matchesDate;
+    });
+  }, [records, searchQuery, filterUnit, filterStartDate, filterEndDate, i18n.language]);
 
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage);
   const paginatedRecords = filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>📐 {t('nav.production', 'İmalat & Metraj Takibi')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="nav.production" titleFallback="Production and quantities" />;
   }
 
   return (
@@ -173,23 +206,8 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
       {/* Main List and Form */}
       <div className="glass-card" style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('production.title', '📐 Metraj ve İmalat Takibi')}</h2>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('production.title', ' Metraj ve İmalat Takibi')}</h2>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
@@ -226,12 +244,12 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
               value={formData.unit}
               onChange={e => setFormData(prev => ({ ...prev, unit: e.target.value }))}
             >
-              <option value="m²">m² (Metrekare)</option>
-              <option value="m³">m³ (Metreküp)</option>
-              <option value="mt">mt (Metretül)</option>
-              <option value="ton">ton</option>
-              <option value="kg">kg</option>
-              <option value="adet">adet</option>
+              <option value="m²">m² ({t('units.sqm', 'Metrekare')})</option>
+              <option value="m³">m³ ({t('units.cbm', 'Metreküp')})</option>
+              <option value="mt">mt ({t('units.linear_m', 'Metretül')})</option>
+              <option value="ton">{t('units.ton', 'Ton')}</option>
+              <option value="kg">{t('units.kg', 'Kg')}</option>
+              <option value="adet">{t('units.adet', 'Adet')}</option>
             </select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
@@ -268,7 +286,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                     item_name: '',
                     quantity: '',
                     unit: 'm²',
-                    record_date: new Date().toISOString().split('T')[0],
+                    record_date: localToday(),
                     notes: ''
                   });
                 }} 
@@ -324,7 +342,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                     }}
                     title={t('common.clear', 'Temizle')}
                   >
-                    ✕
+                    
                   </button>
                 )}
               </div>
@@ -362,9 +380,9 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                 <option value="m²">m²</option>
                 <option value="m³">m³</option>
                 <option value="mt">mt</option>
-                <option value="Adet">Adet</option>
-                <option value="Kg">Kg</option>
-                <option value="Ton">Ton</option>
+                <option value="adet">{t('units.adet', 'Adet')}</option>
+                <option value="kg">{t('units.kg', 'Kg')}</option>
+                <option value="ton">{t('units.ton', 'Ton')}</option>
               </select>
             </div>
           </div>
@@ -431,49 +449,8 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
               </tbody>
             </table>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{
-                position: 'sticky',
-                bottom: 0,
-                background: 'var(--option-bg, #0f172a)',
-                borderTop: '1px solid var(--glass-border)',
-                zIndex: 10,
-                padding: '1rem 1.5rem',
-                marginTop: '0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: '1rem',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '0 0 12px 12px'
-              }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {t('common.pagination_info', 'Sayfa {{page}} / {{total}} ({{records}} Kayıt)', { page: currentPage, total: totalPages, records: filteredRecords.length })}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {t('common.page', 'Sayfa')} {currentPage} / {totalPages}
-                  </span>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Pagination - shared component (ui/Pagination) */}
+            <Pagination variant="sticky" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredRecords.length} />
           </div>
         )}
       </div>

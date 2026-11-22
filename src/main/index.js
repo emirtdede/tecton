@@ -1,13 +1,81 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
+const { fileURLToPath } = require('url');
+const logger = require('./logger');
+const platform = require('./services/platform');
+const cloudRuntime = require('./services/cloudRuntime');
+const updater = require('./services/updater');
+const integrationRuntime = require('./services/integrationRuntime');
 
-// IPC Handlers'ı dahil et
+// Global safety net: without these, a single unhandled rejection inside any
+// async IPC handler or background task terminates the main process with no
+// trace. We log instead, so the window stays alive and the failure is visible
+// in the system logs.
+process.on('uncaughtException', (error) => {
+  logger.error('[uncaughtException]', error);
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error('[unhandledRejection]', reason);
+});
+
+// IPC Handlers
 require('./ipcHandlers');
 
 let mainWindow;
 let splashWindow;
 let splashStartTime = 0;
 let isQuitting = false;
+let launchHidden = false;
+
+// Only one Tecton instance may run: two instances would write the same SQLite
+// file and the same cloud snapshot. A second launch focuses the existing window.
+const hasInstanceLock = app.requestSingleInstanceLock();
+if (!hasInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => platform.showWindow());
+
+  app.whenReady().then(bootstrap).catch((error) => {
+    logger.error('App ready handler failed:', error);
+  });
+
+  app.on('window-all-closed', () => {
+    // With "close to tray" the window is hidden, not destroyed, so this only
+    // fires on a real quit.
+    if (process.platform !== 'darwin') app.quit();
+  });
+
+  app.on('before-quit', () => {
+    isQuitting = true;
+  });
+
+  app.on('will-quit', () => {
+    platform.destroy();
+    // Stop accepting local API calls and cancel pending webhook retries so a
+    // quit is not held open by an unreachable endpoint.
+    integrationRuntime.shutdown().catch(() => {});
+  });
+}
+
+// Theme-aware app icon. The badge that contrasts with the surface is the one
+// that stays legible: a dark badge on the light taskbar and the light badge on
+// the dark one. Same mapping as `splash.html` and `index.css` (`.logo-*`).
+function themeIconPath(theme) {
+  const iconFile = theme === 'light' ? 'tecton-tray-dark.ico' : 'tecton-tray-light.ico';
+  return path.join(__dirname, '../../tecton_assets', iconFile);
+}
+
+async function readSetting(key, fallback) {
+  try {
+    const { getDB } = require('./database/db');
+    const db = await getDB();
+    const row = await db.get('SELECT setting_value FROM app_settings WHERE setting_key = ?', [key]);
+    return row && row.setting_value !== undefined && row.setting_value !== null ? row.setting_value : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 function createSplashWindow(theme) {
   splashStartTime = Date.now();
@@ -18,7 +86,7 @@ function createSplashWindow(theme) {
     transparent: true,
     alwaysOnTop: true,
     resizable: false,
-    icon: path.join(__dirname, '../../tecton_assets/tecton_dark.ico'),
+    icon: themeIconPath(theme),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -32,15 +100,15 @@ function createSplashWindow(theme) {
   });
 }
 
-function createWindow(theme) {
-  createSplashWindow(theme);
+function createWindow(theme, { hidden = false } = {}) {
+  if (!hidden) createSplashWindow(theme);
 
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     frame: false,
     show: false,
-    icon: path.join(__dirname, '../../tecton_assets/tecton_dark.ico'),
+    icon: themeIconPath(theme),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
@@ -48,11 +116,62 @@ function createWindow(theme) {
     },
   });
 
-  // Geliştirme ortamında Vite dev server'a bağlan, üretimde dosyayı yükle
+  // Security hardening.
+  //
+  // Without these guards a compromised renderer (for example a stored XSS in a
+  // user-supplied field) could navigate the whole app to an attacker-controlled
+  // page, or spawn new Electron windows with preload access. Any external URL is
+  // rejected and, when it is a real http(s) link, opened in the system browser
+  // instead.
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:\/\//i.test(url)) {
+      shell.openExternal(url).catch((err) => logger.error('Failed to open external URL:', err));
+    }
+    return { action: 'deny' };
+  });
+
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    const devServer = 'http://localhost:5173';
+    // In development Vite navigates within its own origin (HMR full reloads).
+    if (process.env.NODE_ENV === 'development' && url.startsWith(devServer)) return;
+
+    // Production is a file:// bundle. Allow only files inside the app's own
+    // dist directory - a blanket `file://` prefix check also allowed navigating
+    // to any local file (e.g. file:///C:/Users/.../secrets.txt).
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === 'file:') {
+        const distDir = path.resolve(__dirname, '../../dist');
+        const target = path.resolve(fileURLToPath(parsed));
+        const relative = path.relative(distDir, target);
+        if (relative && !relative.startsWith('..') && !path.isAbsolute(relative)) return;
+      }
+    } catch (err) {
+      // Malformed URL: fall through and block it.
+    }
+
+    event.preventDefault();
+    logger.warn(`Blocked in-app navigation to: ${url}`);
+  });
+
+  // The renderer has no reason to request new windows or embed web content.
+  mainWindow.webContents.on('will-attach-webview', (event) => {
+    event.preventDefault();
+  });
+
+  // Deny every permission request (camera, microphone, geolocation, notifications,
+  // clipboard-read, MIDI, ...). The renderer only uses localStorage and IPC; it
+  // never calls getUserMedia/mediaDevices, so anything asking for a permission is
+  // either a compromised renderer or a hijacked navigation. Electron defaults to
+  // allowing some of these, so leaving them unset is not the safe default.
+  mainWindow.webContents.session.setPermissionRequestHandler((_wc, _permission, callback) => {
+    callback(false);
+  });
+  mainWindow.webContents.session.setPermissionCheckHandler(() => false);
+
+  // Gelistirme ortaminda Vite dev server'a baglan, uretimde dosyayi yukle
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:5173');
-    // Developer tools will not open automatically anymore. Use keyboard shortcuts or menu if needed.
-    // mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
   }
@@ -63,14 +182,14 @@ function createWindow(theme) {
     isReadyShown = true;
 
     const elapsed = Date.now() - splashStartTime;
-    const remainingDelay = Math.max(0, 2500 - elapsed);
+    const remainingDelay = hidden ? 0 : Math.max(0, 2500 - elapsed);
 
     setTimeout(() => {
       if (splashWindow && !splashWindow.isDestroyed()) {
         splashWindow.close();
         splashWindow = null;
       }
-      if (mainWindow && !mainWindow.isDestroyed()) {
+      if (mainWindow && !mainWindow.isDestroyed() && !hidden) {
         mainWindow.show();
         mainWindow.maximize();
       }
@@ -88,29 +207,67 @@ function createWindow(theme) {
 
   ipcMain.on('window:app-ready', handleAppReady);
 
+  // `close` is async (it awaits a DB backup before quitting). `isQuitting` is
+  // only set at the very end, so a second close request during that window -
+  // double-clicking the titlebar X, Alt+F4 twice, or an OS quit event - used to
+  // start a *second* concurrent shutdown: two `VACUUM INTO` writes to the same
+  // destPath (after one had already unlink()ed it) and a doubled 2.5 s delay.
+  // `isShuttingDown` closes that window synchronously, before the first await.
+  let isShuttingDown = false;
+
   mainWindow.on('close', async (e) => {
+    if (isShuttingDown) {
+      // A shutdown is already in progress: keep blocking the close, the
+      // in-flight handler will close the window once it is done.
+      e.preventDefault();
+      return;
+    }
     if (isQuitting) return;
+
     e.preventDefault();
-    
+
+    // "Close to tray": the window disappears but the app (and its background
+    // sync) keeps running. The tray menu is the only way to really quit.
+    const closeToTray = (await readSetting('close_to_tray', 'true')) === 'true';
+    if (closeToTray) {
+      try {
+        await cloudRuntime.flush();
+      } catch (err) {
+        logger.error('Cloud flush on hide failed:', err);
+      }
+      mainWindow.hide();
+      if (typeof platform.refreshTrayMenu === 'function') platform.refreshTrayMenu();
+      return;
+    }
+
+    isShuttingDown = true;
+
     const shutdownStartTime = Date.now();
-    
+
     try {
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('system:shutdown-starting');
       }
-    } catch (e) {
-      console.error('Failed to send shutdown event to renderer:', e);
+    } catch (err) {
+      logger.error('Failed to send shutdown event to renderer:', err);
     }
-    
+
+    try {
+      // Push the last debounced cloud snapshot before the DB is vacuumed.
+      await cloudRuntime.flush();
+    } catch (err) {
+      logger.error('Cloud flush during shutdown failed:', err);
+    }
+
     try {
       const { getDB } = require('./database/db');
       const db = await getDB();
       const setting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'cloud_sync_folder'");
-      
+
       if (setting && setting.setting_value) {
         const fs = require('fs');
         const backupFolder = path.join(setting.setting_value, 'Database-Backups');
-        
+
         const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
         const [year, month] = todayStr.split('-');
         const targetDir = path.join(backupFolder, year, month);
@@ -119,40 +276,41 @@ function createWindow(theme) {
         }
 
         const destPath = path.join(targetDir, `elektronik-yevmiye-backup-${todayStr}.sqlite`);
-        
+
         if (fs.existsSync(destPath)) {
           fs.unlinkSync(destPath);
         }
-        await db.run(`VACUUM INTO ?`, [destPath]);
-        console.log('Daily safe backup completed via VACUUM INTO:', destPath);
+        const escapedPath = destPath.replace(/'/g, "''");
+        await db.run(`VACUUM INTO '${escapedPath}'`);
+        logger.info('Daily safe backup completed via VACUUM INTO:', destPath);
 
         const { open } = require('sqlite');
         const sqlite3 = require('sqlite3').verbose();
         const tempDb = await open({
           filename: destPath,
-          driver: sqlite3.Database
+          driver: sqlite3.Database,
         });
         const checkResult = await tempDb.get('PRAGMA integrity_check');
         await tempDb.close();
 
         if (checkResult && checkResult.integrity_check === 'ok') {
-          console.log('[Safe Backup] Backup integrity check passed.');
+          logger.info('[Safe Backup] Backup integrity check passed.');
           await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
         } else {
-          console.error('[Safe Backup] Backup integrity check failed:', checkResult);
+          logger.error('[Safe Backup] Backup integrity check failed:', checkResult);
         }
       }
     } catch (err) {
-      console.error('Backup system error during shutdown:', err);
+      logger.error('Backup system error during shutdown:', err);
     }
-    
+
     // Enforce conscious delay of 2.5 seconds (matching startup splash)
     const elapsed = Date.now() - shutdownStartTime;
     const remainingDelay = Math.max(0, 2500 - elapsed);
     if (remainingDelay > 0) {
-      await new Promise(resolve => setTimeout(resolve, remainingDelay));
+      await new Promise((resolve) => setTimeout(resolve, remainingDelay));
     }
-    
+
     isQuitting = true;
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.close();
@@ -163,33 +321,57 @@ function createWindow(theme) {
     mainWindow = null;
     ipcMain.off('window:app-ready', handleAppReady);
   });
+
+  return mainWindow;
 }
 
-app.whenReady().then(async () => {
+async function bootstrap() {
   app.setAppUserModelId('com.tecton.app');
-  let theme = 'dark';
-  try {
-    const { getDB } = require('./database/db');
-    const db = await getDB();
-    const setting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'theme'");
-    if (setting && setting.setting_value) {
-      theme = setting.setting_value;
-    }
-  } catch (err) {
-    console.error('Failed to load theme from DB:', err);
-  }
 
-  createWindow(theme);
+  const theme = await readSetting('theme', 'dark');
+  const surface = theme === 'light' ? 'light' : 'dark';
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow(theme);
-    }
+  platform.configure({
+    database: () => require('./database/db').getDB(),
+    window: () => mainWindow,
+    onQuit: () => {
+      isQuitting = true;
+      if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+      else app.quit();
+    },
   });
-});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
+  cloudRuntime.configure({ database: () => require('./database/db').getDB() });
+
+  // Starts the loopback API (MCP/CLI/webhooks) unless the user disabled it.
+  // Failure here is logged, never fatal: the desktop app must open regardless.
+  integrationRuntime.init().catch((error) => {
+    logger.error('Integration runtime failed to start:', error);
+  });
+
+  updater.init();
+
+  try {
+    platform.setSurface(surface);
+    platform.setJumpList();
+    platform.registerHotkey();
+    launchHidden = await platform.applyStartupLaunchState();
+    await platform.createTray();
+  } catch (error) {
+    logger.error('Platform integration failed:', error);
+  }
+
+  createWindow(theme, { hidden: launchHidden });
+}
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    readSetting('theme', 'dark')
+      .then((theme) => createWindow(theme, { hidden: false }))
+      .catch((error) => logger.error('Failed to recreate window:', error));
+  } else {
+    platform.showWindow();
   }
 });
+
+module.exports = { themeIconPath };

@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ELECTRON_BUILDER_CACHE: '${{ github.workspace }}/.cache/electron-builder'
+
+jobs:
+  verify:
+    name: Verify and package
+    runs-on: windows-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Cache electron-builder binaries
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/electron-builder
+          key: electron-builder-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typography gate
+        run: npm run style:check
+
+      - name: Translation gate
+        run: npm run i18n:check
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build renderer
+        run: npm run build:react
+
+      - name: Generate installer languages
+        run: npm run installer:langs
+
+      - name: Package installer
+        run: npx electron-builder --config electron-builder.config.cjs --publish never
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: tecton-setup
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            release/Tecton-Setup-*.exe
+            release/Tecton-Setup-*.exe.blockmap
+            release/latest.yml

@@ -1,19 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import html2canvas from 'html2canvas';
+import { escapeHtml } from '../utils/htmlUtils';
+import { createPdfContainer, renderContainerToPdfPage } from '../utils/pdfRenderUtils';
 import { exportToExcel, exportToCSV, exportToJSON } from '../utils/exportUtils';
 import TagInput from './ui/TagInput';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
-import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe } from '../utils/formatUtils';
+import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe, localToday, toLocalDateString } from '../utils/formatUtils';
 import GuideDrawer from './ui/GuideDrawer';
-
+import apiWrite, { apiMessage } from '../utils/apiWrite';
+import { WORKER_ADVANCE } from '../utils/transactionTypes';
+
+import { toAsciiFilename } from '../utils/pdfUtils';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
+import pdfStyles from '../utils/pdfStyles';
+import { parseTags } from '../utils/tagUtils';
 const WorkerProfile = ({ worker, onBack }) => {
   const { t, i18n } = useTranslation();
   const [balance, setBalance] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
   const [isgModalOpen, setIsgModalOpen] = useState(false);
   const [isgForm, setIsgForm] = useState({ isg_start_date: '', isg_bitis_tarihi: '' });
@@ -26,24 +33,24 @@ const WorkerProfile = ({ worker, onBack }) => {
   const [activeTab, setActiveTab] = useState('puantaj'); // 'puantaj' | 'avans' | 'rapor'
   
   // Dinamik Filtre State (Cari Hesap Ekstresi)
-  const [filterStartDate, setFilterStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
-  const [filterEndDate, setFilterEndDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0]);
+  const [filterStartDate, setFilterStartDate] = useState(() => {
+    const now = new Date();
+    return toLocalDateString(new Date(now.getFullYear(), now.getMonth(), 1));
+  });
+  const [filterEndDate, setFilterEndDate] = useState(() => {
+    const now = new Date();
+    return toLocalDateString(new Date(now.getFullYear(), now.getMonth() + 1, 0));
+  });
   const handleStartDateChange = (val) => {
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterStartDate(filterEndDate);
-      setFilterEndDate(val);
-    } else {
-      setFilterStartDate(val);
-    }
+    const [start, end] = reorderRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
     setPagePuantaj(1); setPageAvans(1); setPageRapor(1); setPageIzin(1);
   };
   const handleEndDateChange = (val) => {
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterEndDate(filterStartDate);
-      setFilterStartDate(val);
-    } else {
-      setFilterEndDate(val);
-    }
+    const [start, end] = reorderRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
     setPagePuantaj(1); setPageAvans(1); setPageRapor(1); setPageIzin(1);
   };
   const [filterText, setFilterText] = useState('');
@@ -60,11 +67,12 @@ const WorkerProfile = ({ worker, onBack }) => {
 
   const handleBottomTabClick = (tab) => {
     setActiveTab(tab);
-    if (tabsRef.current) {
-      setTimeout(() => {
-        tabsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
-    }
+    // Deferred so the target section is laid out first. Reading the ref inside
+    // the callback (instead of capturing it) is null-safe if the drawer closes
+    // before the timer fires.
+    setTimeout(() => {
+      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   };
 
   
@@ -82,51 +90,13 @@ const WorkerProfile = ({ worker, onBack }) => {
     };
     
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
-        <button 
-          type="button" 
-          disabled={currentPage === 1} 
-          onClick={() => handlePageChange(Math.max(1, currentPage - 1))} 
-          style={{ 
-            padding: '0.4rem 1rem', 
-            fontSize: '0.9rem', 
-            fontWeight: '600', 
-            background: 'rgba(255,255,255,0.03)', 
-            border: '1px solid var(--glass-border)', 
-            borderRadius: '8px', 
-            color: 'var(--text-main)',
-            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-            opacity: currentPage === 1 ? 0.5 : 1,
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-          onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-        >
-          {t('common.prev', 'Önceki')}
-        </button>
-        <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>{t('common.page', 'Sayfa')} {currentPage} / {totalPages}</span>
-        <button 
-          type="button" 
-          disabled={currentPage === totalPages} 
-          onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} 
-          style={{ 
-            padding: '0.4rem 1rem', 
-            fontSize: '0.9rem', 
-            fontWeight: '600', 
-            background: 'rgba(255,255,255,0.03)', 
-            border: '1px solid var(--glass-border)', 
-            borderRadius: '8px', 
-            color: 'var(--text-main)',
-            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-            opacity: currentPage === totalPages ? 0.5 : 1,
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-          onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-        >
-          {t('common.next_short', 'Sonraki')}
-        </button>
-      </div>
+      <Pagination
+        variant="bordered"
+        align="center"
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     );
   };
   
@@ -135,7 +105,7 @@ const WorkerProfile = ({ worker, onBack }) => {
   
   // Form State for Puantaj
   const [formData, setFormData] = useState({
-    work_date: new Date().toISOString().split('T')[0],
+    work_date: localToday(),
     work_type_id: '',
     overtime_hours: 0,
     notes: ''
@@ -145,7 +115,7 @@ const WorkerProfile = ({ worker, onBack }) => {
 
   // Form State for Avans
   const [avansData, setAvansData] = useState({
-    trans_date: new Date().toISOString().split('T')[0],
+    trans_date: localToday(),
     amount: '',
     notes: ''
   });
@@ -154,8 +124,8 @@ const WorkerProfile = ({ worker, onBack }) => {
   // Form State for Leaves
   const [workerLeaves, setWorkerLeaves] = useState([]);
   const [leaveData, setLeaveData] = useState({
-    start_date: new Date().toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0],
+    start_date: localToday(),
+    end_date: localToday(),
     type: 'Ücretli',
     description: ''
   });
@@ -168,56 +138,74 @@ const WorkerProfile = ({ worker, onBack }) => {
     onConfirm: () => {}
   });
 
+  // Guards against stale responses overwriting newer data when the date range or
+  // worker changes rapidly (or when the component unmounts mid-fetch).
+  const profileRequestIdRef = useRef(0);
+
   const fetchProfileData = async () => {
-    if (window.api && worker) {
-      setLoading(true);
-      const res = await window.api.finance.getBalance(worker.id);
-      if (res.success) setBalance(res.balance);
-      
-      const wTypes = await window.api.db.read('work_types');
-      setWorkTypes(wTypes);
-      
+    if (!(window.api && worker)) return;
+    const requestId = ++profileRequestIdRef.current;
+
+    try {
+      // All seven reads/calculations are independent of each other; issuing
+      // them together turns seven serial IPC round-trips into one wait.
+      const [balanceRes, wTypes, settings, allProjects, allGroups, stmtRes, leaves] = await Promise.all([
+        window.api.finance.getBalance(worker.id).catch(() => ({ success: false })),
+        window.api.db.read('work_types'),
+        window.api.db.read('app_settings'),
+        window.api.db.read('projects'),
+        window.api.db.read('worker_groups'),
+        window.api.finance.workerStatement({
+          worker_id: worker.id,
+          start_date: filterStartDate,
+          end_date: filterEndDate
+        }).catch(() => ({ success: false })),
+        window.api.db.read('worker_leaves')
+      ]);
+
+      if (requestId !== profileRequestIdRef.current) return;
+
+      if (balanceRes && balanceRes.success) setBalance(balanceRes.balance);
+
+      const types = Array.isArray(wTypes) ? wTypes : [];
+      setWorkTypes(types);
+
       // Select 'Tam Gün' or the one with multiplier 1.0 by default
-      if (wTypes && wTypes.length > 0 && !formData.work_type_id) {
-        const defaultType = wTypes.find(wt => wt.name === 'Tam Gün') || wTypes.find(wt => wt.multiplier === 1.0) || wTypes[0];
+      if (types.length > 0 && !formData.work_type_id) {
+        const defaultType = types.find(wt => wt.name === 'Tam Gün') || types.find(wt => wt.multiplier === 1.0) || types[0];
         if (defaultType) {
           setFormData(prev => ({ ...prev, work_type_id: defaultType.id }));
         }
       }
 
-      const settings = await window.api.db.read('app_settings');
-      const cName = settings.find(s => s.setting_key === 'company_name')?.setting_value;
-      const cLogo = settings.find(s => s.setting_key === 'company_logo')?.setting_value;
+      const settingsRows = Array.isArray(settings) ? settings : [];
+      const cName = settingsRows.find(s => s.setting_key === 'company_name')?.setting_value;
+      const cLogo = settingsRows.find(s => s.setting_key === 'company_logo')?.setting_value;
       if (cName) setCompanyName(cName);
       if (cLogo) setCompanyLogo(cLogo);
-      
-      const allProjects = await window.api.db.read('projects');
-      const allGroups = await window.api.db.read('worker_groups');
-      const matchedProj = allProjects.find(p => p.id == worker.project_id);
-      const matchedGroup = allGroups.find(g => g.id == worker.group_id);
+
+      const matchedProj = (allProjects || []).find(p => p.id == worker.project_id);
+      const matchedGroup = (allGroups || []).find(g => g.id == worker.group_id);
       setProjectName(matchedProj ? matchedProj.name : '');
       setGroupName(matchedGroup ? matchedGroup.name : '');
-      
-      // Perform backend statement calculation
-      const stmtRes = await window.api.finance.workerStatement({
-        worker_id: worker.id,
-        start_date: filterStartDate,
-        end_date: filterEndDate
-      });
 
-      if (stmtRes.success) {
+      if (stmtRes && stmtRes.success) {
         setTimesheets(stmtRes.timesheets);
         setTransactions(stmtRes.transactions);
         // We will store the summary for the report tab
         setReportSummary(stmtRes.summary);
       }
-      
-      const leaves = await window.api.db.read('worker_leaves');
+
       if (leaves) {
         setWorkerLeaves(leaves.filter(l => l.worker_id === worker.id && l.is_deleted !== 1));
       }
-      
-      setLoading(false);
+    } catch (err) {
+      // Previously a rejection left the profile on a skeleton with no feedback.
+      if (requestId !== profileRequestIdRef.current) return;
+      logError('Worker profile fetch failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('worker.profile_load_error', 'Personel bilgileri yüklenemedi.'), type: 'error' }
+      }));
     }
   };
 
@@ -225,17 +213,24 @@ const WorkerProfile = ({ worker, onBack }) => {
     fetchProfileData();
   }, [worker.id, filterStartDate, filterEndDate]);
 
+  // Wage recalculation is async and fires on every work-type/overtime change;
+  // without a guard an older reply could overwrite the newest amount.
+  const wageRequestIdRef = useRef(0);
+
   // Live calculation of wage
   useEffect(() => {
     const calculateLive = async () => {
       if (formData.work_type_id && window.api) {
         const selectedType = workTypes.find(wt => wt.id == formData.work_type_id);
         if (selectedType) {
+          const requestId = ++wageRequestIdRef.current;
           const res = await window.api.finance.calculateWage({
             daily_wage: worker.daily_wage,
             multiplier: selectedType.multiplier,
             overtime_hours: formData.overtime_hours
           });
+          // Drop stale replies from a superseded change.
+          if (requestId !== wageRequestIdRef.current) return;
           if (res.success) {
             setCalculatedWage(res.wage);
           }
@@ -249,7 +244,9 @@ const WorkerProfile = ({ worker, onBack }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'overtime_hours' ? Number(value) : value
+      [name]: name === 'overtime_hours'
+        ? (value === '' ? '' : (Number.isNaN(Number(value)) ? prev.overtime_hours : Number(value)))
+        : value
     }));
   };
 
@@ -257,15 +254,34 @@ const WorkerProfile = ({ worker, onBack }) => {
     const { name, value } = e.target;
     setAvansData(prev => ({
       ...prev,
-      [name]: name === 'amount' ? Number(value) : value
+      [name]: name === 'amount'
+        ? (value === '' ? '' : (Number.isNaN(Number(value)) ? prev.amount : Number(value)))
+        : value
     }));
   };
 
   const handleSubmitTimesheet = async (e) => {
     e.preventDefault();
     const selectedType = workTypes.find(wt => wt.id == formData.work_type_id);
-    
-    if (window.api && selectedType) {
+
+    // CustomDatePicker renders a <div>, so its `required` prop never triggers
+    // native validation. Without these guards an empty or unparseable date
+    // reached the DB and then silently broke every report that filters by
+    // date (the row was neither before nor after any range).
+    if (!formData.work_date || Number.isNaN(new Date(formData.work_date).getTime())) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.required_fields', 'Lütfen zorunlu alanları doldurun.'), type: 'error' }
+      }));
+      return;
+    }
+    if (!selectedType) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.required_fields', 'Lütfen zorunlu alanları doldurun.'), type: 'error' }
+      }));
+      return;
+    }
+
+    if (window.api) {
       const dataToSave = {
         worker_id: worker.id,
         work_date: formData.work_date,
@@ -280,7 +296,8 @@ const WorkerProfile = ({ worker, onBack }) => {
       };
 
       const doSave = async () => {
-        await window.api.db.create('timesheets', dataToSave);
+        const res = await apiWrite(window.api.db.create('timesheets', dataToSave));
+        if (res && res.success === false) return;
         setFormData(prev => ({ ...prev, overtime_hours: 0, notes: '' }));
         setPuantajTags([]);
         
@@ -336,11 +353,27 @@ const WorkerProfile = ({ worker, onBack }) => {
 
   const handleSubmitAvans = async (e) => {
     e.preventDefault();
-    if (window.api && avansData.amount > 0) {
+
+    // Same CustomDatePicker caveat as the timesheet form: `required` is inert,
+    // so an empty date would be stored as "" and vanish from period reports.
+    if (!avansData.trans_date || Number.isNaN(new Date(avansData.trans_date).getTime())) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.required_fields', 'Lütfen zorunlu alanları doldurun.'), type: 'error' }
+      }));
+      return;
+    }
+    if (!(Number(avansData.amount) > 0)) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.required_fields', 'Lütfen zorunlu alanları doldurun.'), type: 'error' }
+      }));
+      return;
+    }
+
+    if (window.api) {
       const dataToSave = {
         worker_id: worker.id,
         trans_date: avansData.trans_date,
-        trans_type: 'Avans',
+        trans_type: WORKER_ADVANCE,
         amount: avansData.amount,
         notes: avansData.notes,
         tags: JSON.stringify(avansTags),
@@ -366,7 +399,7 @@ const WorkerProfile = ({ worker, onBack }) => {
           fetchProfileData();
         }
       } else {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + res.message, type: 'error' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + apiMessage(res), type: 'error' } }));
       }
     }
   };
@@ -379,7 +412,7 @@ const WorkerProfile = ({ worker, onBack }) => {
       confirmText: t('common.yes', 'Evet'),
       cancelText: t('common.no', 'Hayır'),
       onConfirm: async () => {
-        await window.api.db.delete('timesheets', id);
+        await apiWrite(window.api.db.delete('timesheets', id));
         fetchProfileData();
       }
     });
@@ -393,7 +426,7 @@ const WorkerProfile = ({ worker, onBack }) => {
       confirmText: t('common.yes', 'Evet'),
       cancelText: t('common.no', 'Hayır'),
       onConfirm: async () => {
-        await window.api.finance.deleteTransaction(id);
+        await apiWrite(window.api.finance.deleteTransaction(id));
         fetchProfileData();
       }
     });
@@ -414,6 +447,21 @@ const WorkerProfile = ({ worker, onBack }) => {
 
   const handleSubmitLeave = async (e) => {
     e.preventDefault();
+    // CustomDatePicker renders a div, so the `required` prop on it never
+    // triggers native validation - an empty date reached the DB. Validate the
+    // same contract the main process enforces before sending.
+    if (!leaveData.start_date || !leaveData.end_date) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.required_fields', 'Lütfen zorunlu alanları doldurun.'), type: 'error' }
+      }));
+      return;
+    }
+    if (new Date(leaveData.start_date) > new Date(leaveData.end_date)) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('worker_profile.leave_form.invalid_range', 'Başlangıç tarihi bitiş tarihinden sonra olamaz.'), type: 'error' }
+      }));
+      return;
+    }
     if (window.api) {
       const dataToSave = {
         worker_id: worker.id,
@@ -423,7 +471,8 @@ const WorkerProfile = ({ worker, onBack }) => {
         description: leaveData.description,
         project_id: worker.project_id
       };
-      await window.api.db.create('worker_leaves', dataToSave);
+      const res = await apiWrite(window.api.db.create('worker_leaves', dataToSave));
+      if (res && res.success === false) return;
       setLeaveData(prev => ({ ...prev, description: '' }));
       fetchProfileData();
     }
@@ -435,14 +484,16 @@ const WorkerProfile = ({ worker, onBack }) => {
       title: t('worker_profile.leave_form.delete_title', 'İzni Sil'),
       message: t('worker_profile.leave_form.delete_message', 'Bu izin kaydını silmek istediğinize emin misiniz?'),
       onConfirm: async () => {
-        await window.api.db.delete('worker_leaves', id);
+        await apiWrite(window.api.db.delete('worker_leaves', id));
         fetchProfileData();
       }
     });
   };
 
   // Dinamik Bakiye Hesaplama (Frontend Filtreleri + Backend Özeti)
-  const calculateReport = () => {
+  // Memoized: this rebuilt and re-sorted the full movement list on every render
+  // (typing in the advance form, opening the PDF modal, switching tabs...).
+  const cReport = useMemo(() => {
     const donemIslemleri = [];
 
     timesheets.forEach(ts => {
@@ -483,25 +534,32 @@ const WorkerProfile = ({ worker, onBack }) => {
     const yeniBakiye = reportSummary ? reportSummary.new_balance : 0;
 
     return { devredenBakiye, donemHakEdis, donemAvans, yeniBakiye, islemler: finalIslemler };
-  };
+  }, [timesheets, workTypes, transactions, filterText, filterType, reportSummary]);
 
-  const cReport = calculateReport();
+  // Leave list for the "izinler" tab (filtered + sorted by start date desc).
+  const filteredLeaves = useMemo(
+    () => workerLeaves
+      .filter(l => l.start_date <= filterEndDate && l.end_date >= filterStartDate)
+      .sort((a, b) => new Date(b.start_date) - new Date(a.start_date)),
+    [workerLeaves, filterStartDate, filterEndDate]
+  );
 
   const handleExport = (format) => {
     const dataToExport = [];
     dataToExport.push({
       [t('worker_profile.table.date')]: filterStartDate || '-',
       [t('worker_profile.table.type')]: t('worker_profile.summary.previous_balance'),
-      [t('worker_profile.table.desc')]: 'Önceki dönemlerden aktarılan net bakiye',
+      [t('worker_profile.table.desc')]: t('export.carried_note', 'Önceki dönemlerden aktarılan net bakiye'),
       [t('worker_profile.table.amount')]: cReport.devredenBakiye
     });
 
+    // Column names were hardcoded Turkish, so every locale exported a Turkish file.
     cReport.islemler.forEach(item => {
       dataToExport.push({
-        'Tarih': item.date,
-        'İşlem Türü': item.type,
-        'Açıklama': item.desc,
-        'Tutar (TL)': (item.isIncome ? '+' : '-') + item.amount
+        [t('worker_profile.table.date')]: item.date,
+        [t('worker_profile.table.type')]: item.type,
+        [t('worker_profile.table.desc')]: item.desc,
+        [t('export.amount_currency', 'Tutar (TL)')]: (item.isIncome ? '+' : '-') + item.amount
       });
     });
 
@@ -560,52 +618,41 @@ const WorkerProfile = ({ worker, onBack }) => {
     }
 
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 190;
-    const position = 15;
 
     for (let index = 0; index < chunks.length; index++) {
       const chunk = chunks[index];
       
-      // Create a temporary container styled as a clean A4 sheet
-      const container = document.createElement('div');
-      container.style.position = 'fixed';
-      container.style.left = '-9999px';
-      container.style.top = '0';
-      container.style.width = '800px';
-      container.style.background = '#ffffff';
-      container.style.color = '#1e293b';
-      container.style.fontFamily = "'Inter', 'Noto Sans', 'Arial', sans-serif";
-      container.style.padding = '40px';
+      const container = createPdfContainer();
       
       const isFirstPage = index === 0;
       const isLastPage = index === chunks.length - 1;
       
       // Build top header HTML
       let headerHtml = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div style="${pdfStyles.reportHeader}">
           <div>
-            ${companyLogo && isFirstPage ? `<img src="${companyLogo}" style="max-width: 150px; max-height: 50px; margin-bottom: 10px; display: block;" />` : ''}
-            <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${companyName || ''}</div>
+            ${companyLogo && isFirstPage ? `<img src="${escapeHtml(companyLogo)}" style="${pdfStyles.companyLogo}" />` : ''}
+            <div style="${pdfStyles.companyName}">${escapeHtml(companyName || '')}</div>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 18px; font-weight: bold; color: #6389b9; margin-bottom: 8px; font-family: inherit;">${t('worker.statementTitle', 'Cari Hesap Ekstresi').toUpperCase()}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.filter', 'Filtre')}:</strong> ${projectName ? projectName : t('global.unspecified', 'Belirtilmemiş')}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${filterStartDate || 'Tümü'} / ${filterEndDate || 'Tümü'}</div>
-            <div style="font-size: 11px; color: #64748b; font-family: inherit;"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${reportDateStr}</div>
+            <div style="${pdfStyles.reportTitle}">${t('worker.statementTitle', 'Cari Hesap Ekstresi').toUpperCase()}</div>
+            <div style="${pdfStyles.metaLine}"><strong>${t('global.filter', 'Filtre')}:</strong> ${escapeHtml(projectName ? projectName : t('global.unspecified', 'Belirtilmemiş'))}</div>
+            <div style="${pdfStyles.metaLine}"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${escapeHtml(filterStartDate || 'Tümü')} / ${escapeHtml(filterEndDate || 'Tümü')}</div>
+            <div style="${pdfStyles.metaLineTight}"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${escapeHtml(reportDateStr)}</div>
           </div>
         </div>
-        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;" />
+        <hr style="${pdfStyles.headerDivider}" />
       `;
       
       // Build worker info header HTML
       let workerInfoHtml = `
         <div style="margin-bottom: 20px; font-family: inherit;">
-          <div style="font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; font-family: inherit;">${worker.full_name}</div>
+          <div style="font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; font-family: inherit;">${escapeHtml(worker.full_name)}</div>
           <div style="font-size: 11px; color: #64748b; display: flex; gap: 15px; flex-wrap: wrap; font-family: inherit;">
-            ${worker.tc_no ? `<span><strong>${t('worker.id_tc', 'ID/TC')}:</strong> ${worker.tc_no}</span>` : ''}
-            <span><strong>${t('recycle.tableProject', 'Şantiye')}:</strong> ${projectName ? projectName : t('global.unspecified', 'Belirtilmemiş')}</span>
-            <span><strong>${t('worker.group', 'Grup')}:</strong> ${groupName ? groupName : t('global.unspecified', 'Belirtilmemiş')}</span>
-            <span><strong>${t('worker.phone', 'Telefon')}:</strong> ${worker.phone || '-'}</span>
+            ${worker.tc_no ? `<span><strong>${t('worker.id_tc', 'ID/TC')}:</strong> ${escapeHtml(worker.tc_no)}</span>` : ''}
+            <span><strong>${t('recycle.tableProject', 'Şantiye')}:</strong> ${escapeHtml(projectName ? projectName : t('global.unspecified', 'Belirtilmemiş'))}</span>
+            <span><strong>${t('worker.group', 'Grup')}:</strong> ${escapeHtml(groupName ? groupName : t('global.unspecified', 'Belirtilmemiş'))}</span>
+            <span><strong>${t('worker.phone', 'Telefon')}:</strong> ${escapeHtml(worker.phone || '-')}</span>
           </div>
         </div>
       `;
@@ -615,20 +662,20 @@ const WorkerProfile = ({ worker, onBack }) => {
       if (isFirstPage) {
         summaryCardsHtml = `
           <div style="display: flex; gap: 10px; margin-bottom: 25px; font-family: inherit;">
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.forwardBalance', 'Devreden Bakiye')}</div>
-              <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${formatCurrencySafe(cReport.devredenBakiye, i18n.language)}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('worker.forwardBalance', 'Devreden Bakiye')}</div>
+              <div style="${pdfStyles.companyName}">${formatCurrencySafe(cReport.devredenBakiye, i18n.language)}</div>
             </div>
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.periodEarned', 'Dönem Hak Edişi')}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('worker.periodEarned', 'Dönem Hak Edişi')}</div>
               <div style="font-size: 14px; font-weight: bold; color: #16a34a; font-family: inherit;">+${formatCurrencySafe(cReport.donemHakEdis, i18n.language)}</div>
             </div>
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.periodAdvance', 'Dönem Avansı')}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('worker.periodAdvance', 'Dönem Avansı')}</div>
               <div style="font-size: 14px; font-weight: bold; color: #dc2626; font-family: inherit;">-${formatCurrencySafe(cReport.donemAvans, i18n.language)}</div>
             </div>
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('worker.netBalance', 'Net Bakiye')}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('worker.netBalance', 'Net Bakiye')}</div>
               <div style="font-size: 14px; font-weight: bold; color: ${cReport.yeniBakiye >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">${formatCurrencySafe(cReport.yeniBakiye, i18n.language)}</div>
             </div>
           </div>
@@ -640,7 +687,7 @@ const WorkerProfile = ({ worker, onBack }) => {
       if (chunk.length === 0) {
         tableRowsHtml = `
           <tr>
-            <td colspan="4" style="padding: 20px; text-align: center; color: #64748b; font-family: inherit;">
+            <td colspan="4" style="${pdfStyles.emptyCell}">
               ${t('worker_profile.no_period_data', 'Bu dönemde herhangi bir işlem bulunamadı.')}
             </td>
           </tr>
@@ -653,10 +700,10 @@ const WorkerProfile = ({ worker, onBack }) => {
           const amountSign = item.isIncome ? '+' : '-';
           const amountColor = item.isIncome ? '#16a34a' : '#dc2626';
           return `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${formatDate(item.date, i18n.language)}</td>
-              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${typeText}</td>
-              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${item.desc || '-'}</td>
+            <tr style="${pdfStyles.tableRow}">
+              <td style="${pdfStyles.tableCell}">${escapeHtml(formatDate(item.date, i18n.language))}</td>
+              <td style="${pdfStyles.tableCell}">${escapeHtml(typeText)}</td>
+              <td style="${pdfStyles.tableCell}">${escapeHtml(item.desc || '-')}</td>
               <td style="padding: 8px 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: 500; color: ${amountColor}; font-family: inherit;">${amountSign}${formatCurrencySafe(item.amount, i18n.language)}</td>
             </tr>
           `;
@@ -665,13 +712,13 @@ const WorkerProfile = ({ worker, onBack }) => {
 
       // Build table HTML
       let tableHtml = `
-        <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #334155; font-family: inherit;">
+        <table style="${pdfStyles.table}">
           <thead>
-            <tr style="background: #1e3a8a; color: #ffffff;">
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.date', 'Tarih')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.actionType', 'İşlem Türü')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.description', 'Açıklama')}</th>
-              <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.amount', 'Tutar')}</th>
+            <tr style="${pdfStyles.tableHeadRow}">
+              <th style="${pdfStyles.tableHeadCell}">${t('global.date', 'Tarih')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('global.actionType', 'İşlem Türü')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('global.description', 'Açıklama')}</th>
+              <th style="${pdfStyles.tableHeadCellRight}">${t('global.amount', 'Tutar')}</th>
             </tr>
           </thead>
           <tbody>
@@ -685,13 +732,13 @@ const WorkerProfile = ({ worker, onBack }) => {
       if (isLastPage) {
         signatureHtml = `
           <div style="margin-top: 60px; display: flex; justify-content: space-between; font-family: inherit;">
-            <div style="width: 250px; text-align: center; font-family: inherit;">
-              <hr style="border: 0; border-top: 1px solid #94a3b8; margin-bottom: 8px;" />
-              <div style="font-size: 11px; font-weight: 500; color: #334155; font-family: inherit;">${t('pdf.signatureWorker', 'Personel (Ad/Soyad - İmza)')}</div>
+            <div style="${pdfStyles.signatureCell}">
+              <hr style="${pdfStyles.signatureLine}" />
+              <div style="${pdfStyles.signatureLabel}">${t('pdf.signatureWorker', 'Personel (Ad/Soyad - İmza)')}</div>
             </div>
-            <div style="width: 250px; text-align: center; font-family: inherit;">
-              <hr style="border: 0; border-top: 1px solid #94a3b8; margin-bottom: 8px;" />
-              <div style="font-size: 11px; font-weight: 500; color: #334155; font-family: inherit;">${t('pdf.signatureCompany', 'Firma Yetkilisi (Kaşe/İmza)')}</div>
+            <div style="${pdfStyles.signatureCell}">
+              <hr style="${pdfStyles.signatureLine}" />
+              <div style="${pdfStyles.signatureLabel}">${t('pdf.signatureCompany', 'Firma Yetkilisi (Kaşe/İmza)')}</div>
             </div>
           </div>
         `;
@@ -705,79 +752,25 @@ const WorkerProfile = ({ worker, onBack }) => {
         ${signatureHtml}
       `;
 
-      document.body.appendChild(container);
-      
-      // Wait for fonts to load
-      await document.fonts.ready;
-      
-      const canvas = await html2canvas(container, {
-        scale: 2.5,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
+      await renderContainerToPdfPage(pdf, container, {
+        addPage: index < chunks.length - 1
       });
-      
-      document.body.removeChild(container);
-      
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      
-      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-      
-      if (index < chunks.length - 1) {
-        pdf.addPage();
-      }
     }
 
-    const trMap = { 'ç':'c', 'ğ':'g', 'ş':'s', 'ö':'o', 'ü':'u', 'ı':'i', 'Ç':'C', 'Ğ':'G', 'Ş':'S', 'Ö':'O', 'Ü':'U', 'İ':'I' };
-    const toEn = (str) => {
-      if (!str) return '';
-      let s = String(str);
-      s = s.replace(/[çğşöüıÇĞŞÖÜİ]/g, letter => trMap[letter]);
-      s = s.replace(/₺/g, 'TL');
-      return s;
-    };
 
-    pdf.save(`${toEn(worker.full_name)}_Hesap_Ekstresi.pdf`);
+    pdf.save(`${toAsciiFilename(worker.full_name)}_Hesap_Ekstresi.pdf`);
   };
 
   const isPositive = balance >= 0;
 
-  let parsedTags = [];
-  if (worker.tags) {
-    try {
-      parsedTags = JSON.parse(worker.tags);
-    } catch (e) {
-      if (typeof worker.tags === 'string') {
-        parsedTags = worker.tags.split(',').map(t => t.trim()).filter(Boolean);
-      }
-    }
-  }
-  if (!Array.isArray(parsedTags)) {
-    parsedTags = [];
-  }
+  const parsedTags = parseTags(worker.tags);
 
   return (
     <div className="worker-profile" style={{ fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
       <div style={{ padding: '0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
           <button className="btn" style={{ marginBottom: 0, padding: '0.5rem 1rem' }} onClick={onBack}>← {t('worker_profile.back')}</button>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         
         <div className="profile-grid" style={{ marginTop: '0.5rem' }}>
@@ -789,17 +782,17 @@ const WorkerProfile = ({ worker, onBack }) => {
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', margin: '0.5rem 0 1rem 0' }}>
               {projectName && (
                 <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                  🏗️ {projectName}
+                   {projectName}
                 </span>
               )}
               {groupName && (
                 <span style={{ fontSize: '0.8rem', background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                  👥 {groupName}
+                   {groupName}
                 </span>
               )}
               {parsedTags.map((tag, idx) => (
                 <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                  🏷️ {tag}
+                   {tag}
                 </span>
               ))}
               {(() => {
@@ -811,7 +804,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                       style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
                       title={t('isg.update_btn', 'İSG Güncelle')}
                     >
-                      🛡️ {t('isg.badge_undefined', 'İSG Tanımsız')}
+                       {t('isg.badge_undefined', 'İSG Tanımsız')}
                     </span>
                   );
                 }
@@ -822,11 +815,11 @@ const WorkerProfile = ({ worker, onBack }) => {
                 const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
                 let badgeBg, badgeColor, badgeText, badgeIcon;
                 if (diffDays < 0) {
-                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = '🔴'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = ''; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
                 } else if (diffDays <= 30) {
-                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = '🟡'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = ''; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
                 } else {
-                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = '🟢'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = ''; badgeText = t('isg.badge_valid', 'İSG Geçerli');
                 }
                 return (
                   <span 
@@ -839,7 +832,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                 );
               })()}
             </div>
-            <p className="card-subtitle mb-4">{worker.tc_no ? `${t('worker.idLabel', 'ID')}: ${worker.tc_no}` : ''} | {worker.phone}</p>
+            <p className="card-subtitle" style={{ marginBottom: '1rem' }}>{worker.tc_no ? `${t('worker.idLabel', 'ID')}: ${worker.tc_no}` : ''} | {worker.phone}</p>
             
             <h3 className="card-subtitle">{t('worker_profile.current_balance')}</h3>
             <div style={{ 
@@ -851,7 +844,7 @@ const WorkerProfile = ({ worker, onBack }) => {
             }}>
               {formatCurrency(balance, i18n.language)}
             </div>
-            <p className="card-subtitle mt-4">{t('worker_profile.daily_wage')}: {formatCurrency(worker.daily_wage, i18n.language)}</p>
+            <p className="card-subtitle" style={{ marginTop: '1rem' }}>{t('worker_profile.daily_wage')}: {formatCurrency(worker.daily_wage, i18n.language)}</p>
           </div>
 
           <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -966,7 +959,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                 </form>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                  <h3 className="card-title mb-4">{t('worker_profile.account_statement')}</h3>
+                  <h3 className="card-title" style={{ marginBottom: '1rem' }}>{t('worker_profile.account_statement')}</h3>
                   
                   <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
                     <div style={{ flex: 2 }}>
@@ -1000,7 +993,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                             }}
                             title={t('common.clear', 'Temizle')}
                           >
-                            ✕
+                            
                           </button>
                         )}
                       </div>
@@ -1055,7 +1048,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                       style={{ padding: '0.5rem', flex: 1, background: '#25D366', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', border: 'none' }}
                       onClick={handleWhatsAppSend}
                     >
-                      🟢 WhatsApp
+                       WhatsApp
                     </button>
                   </div>
                 </div>
@@ -1132,7 +1125,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                     <div key={ts.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <div style={{ fontWeight: '600' }}>{formatDate(ts.work_date, i18n.language)} <span className="wage-badge" style={{ marginLeft: '10px' }}>{typeName}</span>{leaveBadge}</div>
-                        <div className="card-subtitle mt-4" style={{ marginTop: '0.5rem' }}>
+                        <div className="card-subtitle" style={{ marginTop: '0.5rem' }}>
                           {t('worker_profile.wage_history_label')}: {formatCurrency(ts.applied_wage, i18n.language)} (x{ts.applied_multiplier})
                           {ts.overtime_hours > 0 && ` | +${ts.overtime_hours} ${t('worker_profile.overtime_hours_suffix')}`}
                         </div>
@@ -1199,7 +1192,7 @@ const WorkerProfile = ({ worker, onBack }) => {
             </div>
           )}
           {activeTab === 'izinler' && (() => {
-            const fLeaves = workerLeaves.filter(l => l.start_date <= filterEndDate && l.end_date >= filterStartDate).sort((a,b) => new Date(b.start_date) - new Date(a.start_date));
+            const fLeaves = filteredLeaves;
             return fLeaves.length === 0 ? (
               <p className="text-muted text-center" style={{ marginTop: '2rem' }}>{t('worker_profile.no_leave', 'Henüz izin kaydı bulunmamaktadır.')}</p>
             ) : (
@@ -1252,12 +1245,12 @@ const WorkerProfile = ({ worker, onBack }) => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                🛡️ {t('isg.update_title', 'İSG Tarihlerini Güncelle')}
+                 {t('isg.update_title', 'İSG Tarihlerini Güncelle')}
               </h3>
               <button 
                 onClick={() => setIsgModalOpen(false)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '1.2rem', cursor: 'pointer' }}
-              >✕</button>
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'inline-flex' }}
+              ><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
@@ -1295,10 +1288,15 @@ const WorkerProfile = ({ worker, onBack }) => {
                 style={{ marginTop: '0.5rem', fontWeight: 'bold' }}
                 onClick={async () => {
                   if (window.api && window.api.db) {
-                    await window.api.db.update('workers', worker.id, {
+                    // apiWrite already toasts the failure; only close the modal and
+                    // report success when the write actually committed. Before this
+                    // the modal closed and a green toast fired even on a rejected
+                    // write, so the user saw both an error and a success toast.
+                    const res = await apiWrite(window.api.db.update('workers', worker.id, {
                       isg_start_date: isgForm.isg_start_date || null,
                       isg_bitis_tarihi: isgForm.isg_bitis_tarihi || null
-                    });
+                    }));
+                    if (res && res.success === false) return;
                     setIsgModalOpen(false);
                     window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('isg.update_success', 'İSG tarihleri başarıyla güncellendi.'), type: 'success' } }));
                     fetchProfileData();

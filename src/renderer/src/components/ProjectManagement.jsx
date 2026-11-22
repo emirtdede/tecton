@@ -1,7 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
 import GuideDrawer from './ui/GuideDrawer';
+import apiWrite from '../utils/apiWrite';
+import { logError } from '../utils/logger';
+import PageGuideIcon from './ui/PageGuideIcon';
+import Pagination from './ui/Pagination';
+import { MapPin, Plus } from 'lucide-react';
 
 const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
   const { t } = useTranslation();
@@ -31,24 +36,52 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
     }
   }, [currentPage]);
 
+  // Guards against stale responses overwriting newer data after rapid re-fetches.
+  const requestIdRef = useRef(0);
+
   const fetchProjects = async () => {
     if (window.api && window.api.db) {
+      const requestId = ++requestIdRef.current;
       setLoading(true);
-      const data = await window.api.db.read('projects');
-      setProjects(data);
+      try {
+        const data = await window.api.db.read('projects');
+        if (requestId !== requestIdRef.current) return;
+        setProjects(data || []);
+      } catch (err) {
+        if (requestId !== requestIdRef.current) return;
+        logError('Project list fetch failed:', err);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('projects.load_error', 'Şantiye listesi yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
 
   const fetchProjectsSilent = async () => {
     if (window.api && window.api.db) {
-      const data = await window.api.db.read('projects');
-      setProjects(data);
+      const requestId = ++requestIdRef.current;
+      try {
+        const data = await window.api.db.read('projects');
+        if (requestId !== requestIdRef.current) return;
+        setProjects(data || []);
+      } catch (err) {
+        // Silent refresh: a failure is reported by the next visible fetch.
+        logError('Silent project refresh failed:', err);
+      }
     }
   };
 
   useEffect(() => {
     fetchProjects();
+  }, []);
+
+  // A drag interrupted by navigation could leave the global cursor class behind.
+  useEffect(() => () => {
+    document.body.classList.remove('dragging');
   }, []);
 
   useEffect(() => {
@@ -59,11 +92,12 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
     e.preventDefault();
     if (!formData.name) return;
     if (window.api && window.api.db) {
-      await window.api.db.create('projects', {
+      const res = await apiWrite(window.api.db.create('projects', {
         name: formData.name,
         location: formData.location,
         status: 'active'
-      });
+      }));
+      if (res && res.success === false) return;
       setFormData({ name: '', location: '' });
       fetchProjects();
     }
@@ -78,7 +112,8 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
 
   const confirmDelete = async () => {
     if (window.api && window.api.db && confirmModal.id) {
-      await window.api.db.delete('projects', confirmModal.id);
+      const res = await apiWrite(window.api.db.delete('projects', confirmModal.id));
+      if (res && res.success === false) return;
       if (confirmModal.id === activeProjectId) {
         onSelectProject(null);
       }
@@ -132,10 +167,17 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
     setDragOverIndex(null);
 
     if (window.api && window.api.db) {
-      // Save order silently to avoid page jumping and skeleton loader flashes
-      for (let i = 0; i < updated.length; i++) {
-        await window.api.db.update('projects', updated[i].id, { sort_order: i });
-      }
+      // Save order silently to avoid page jumping and skeleton loader flashes.
+      // One toast per row would be noise; the optimistic order is re-fetched
+      // afterwards, so any rejected row is corrected from the DB below.
+      // The writes are independent, so they run together instead of one
+      // round-trip per project (a 40-project reorder took 40 IPC trips).
+      await Promise.all(updated.map((proj, i) =>
+        apiWrite(
+          window.api.db.update('projects', proj.id, { sort_order: i }),
+          { silent: true }
+        )
+      ));
       await fetchProjectsSilent();
     }
   };
@@ -155,74 +197,70 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
     if (!editFormData.name.trim()) return;
 
     if (window.api && window.api.db) {
-      await window.api.db.update('projects', projId, {
+      const res = await apiWrite(window.api.db.update('projects', projId, {
         name: editFormData.name.trim(),
         location: editFormData.location.trim()
-      });
+      }));
+      if (res && res.success === false) return;
       setEditingProjectId(null);
       setEditFormData({ name: '', location: '' });
       await fetchProjectsSilent();
     }
   };
 
-  // Filter and paginated projects
-  const filteredProjects = projects.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (p.location && p.location.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Filter and paginate projects (memoized - ran on every render before).
+  const filteredProjects = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return projects.filter(p =>
+      p.name.toLowerCase().includes(query) ||
+      (p.location && p.location.toLowerCase().includes(query))
+    );
+  }, [projects, searchQuery]);
 
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
   const paginatedProjects = filteredProjects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <>
-    <div ref={containerRef} className="glass-card" style={{ maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
-      <header style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🏗️ {t('projects.title', 'Şantiye (Lokasyon) Yönetimi')}
-        </h2>
-        <span 
-          onClick={() => setHelpOpen(true)}
-          style={{ 
-            cursor: 'pointer', 
-            opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-            transition: 'opacity 0.25s ease-in-out', 
-            fontSize: '1.6rem',
-            userSelect: 'none',
-            padding: '0.25rem'
-          }}
-          onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-          onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-          title={t('common.page_guide', 'Sayfa Kılavuzu')}
-        >
-          💡
-        </span>
+    <div ref={containerRef} className="glass-card project-panel" style={{ maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
+      <header className="project-panel-head">
+        <div>
+          <h2 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.2rem' }}>
+            {t('projects.title', 'Construction sites')}
+          </h2>
+          <p className="project-panel-sub">
+            {t('projects.subtitle', 'Every site keeps its own people, materials, payroll and cash record.')}
+          </p>
+        </div>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
       </header>
 
       {/* Add Project Form */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+      <form onSubmit={handleSubmit} className="project-form">
         <div className="form-group" style={{ flex: 2, marginBottom: 0, minWidth: '200px' }}>
-          <label className="form-label">{t('projects.name_label', 'Şantiye / Proje Adı')}</label>
-          <input 
-            type="text" 
-            className="form-input" 
-            placeholder={t('projects.name_ph', 'Örn: Kuzey Otoyolu Viyadük İnşaatı')} 
+          <label className="form-label">{t('projects.name_label', 'Site or project name')}</label>
+          <input
+            type="text"
+            className="form-input"
+            placeholder={t('projects.name_ph', 'Ex: Northern motorway viaduct')}
             value={formData.name}
             onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
             required
           />
         </div>
         <div className="form-group" style={{ flex: 1.5, marginBottom: 0, minWidth: '150px' }}>
-          <label className="form-label">{t('projects.location_label', 'Lokasyon / Adres')}</label>
-          <input 
-            type="text" 
-            className="form-input" 
-            placeholder={t('projects.location_ph', 'Örn: İstanbul / Çatalca')} 
+          <label className="form-label">{t('projects.location_label', 'Location or address')}</label>
+          <input
+            type="text"
+            className="form-input"
+            placeholder={t('projects.location_ph', 'Ex: Istanbul / Catalca')}
             value={formData.location}
             onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))}
           />
         </div>
-        <button type="submit" className="btn btn-primary" style={{ height: '42px' }}>{t('projects.add_btn', 'Proje Ekle')}</button>
+        <button type="submit" className="btn btn-primary" style={{ height: '42px' }}>
+          <Plus size={16} /> {t('projects.add_btn', 'Add site')}
+        </button>
       </form>
 
       {/* Search Bar */}
@@ -256,7 +294,7 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              
             </button>
           )}
         </div>
@@ -266,8 +304,14 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
       {loading ? (
         <div className="skeleton" style={{ height: '150px', width: '100%' }}></div>
       ) : filteredProjects.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-          {searchQuery ? t('common.no_results', 'Sonuç bulunamadı.') : t('projects.empty_state', 'Kayıtlı şantiye bulunamadı. Yukarıdaki formdan ilk şantiyenizi ekleyebilirsiniz.')}
+        <div className="empty-state">
+          <span className="empty-state-icon"><MapPin size={22} /></span>
+          <strong>{searchQuery ? t('common.no_results', 'No results') : t('projects.empty_title', 'No sites yet')}</strong>
+          <span>
+            {searchQuery
+              ? t('projects.empty_search', 'No site matches that search.')
+              : t('projects.empty_state', 'Add your first site with the form above, then start recording people, materials and cash against it.')}
+          </span>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -359,7 +403,7 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
                       <h3 className="card-title" style={{ color: isActive ? 'var(--accent)' : 'var(--text-main)', marginBottom: '0.25rem' }}>
                         {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: 'var(--accent-text)' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
                       </h3>
-                      <p className="card-subtitle" style={{ margin: 0 }}>📍 {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
+                      <p className="card-subtitle" style={{ margin: 0 }}> {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
                     </div>
                   )}
                 </div>
@@ -455,44 +499,8 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
             );
           })}
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div style={{
-              position: 'sticky',
-              bottom: 0,
-              background: 'var(--option-bg, #0f172a)',
-              borderTop: '1px solid var(--glass-border)',
-              zIndex: 10,
-              padding: '1rem',
-              marginTop: '1rem',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '1rem',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '0 0 12px 12px'
-            }}>
-              <button 
-                className="btn" 
-                disabled={currentPage === 1} 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-              >
-                {t('common.prev', 'Önceki')}
-              </button>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
-              </span>
-              <button 
-                className="btn" 
-                disabled={currentPage === totalPages} 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-              >
-                {t('common.next', 'Sonraki')}
-              </button>
-            </div>
-          )}
+          {/* Pagination - shared component (ui/Pagination) */}
+          <Pagination variant="sticky" align="center" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       )}
     </div>

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-const TagInput = ({ tags, setTags, placeholder = "Etiket ekle (Enter veya virgül ile ayırın)" }) => {
+const TagInput = ({ tags, setTags, placeholder }) => {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
 
   const handleKeyDown = (e) => {
@@ -64,7 +66,9 @@ const TagInput = ({ tags, setTags, placeholder = "Etiket ekle (Enter veya virgü
           const color = getColor(tag);
           return (
             <span 
-              key={index} 
+              // Tag values can repeat, so combine value + index for a stable,
+              // still-unique key (index alone reuses DOM nodes on removal).
+              key={`${tag}-${index}`} 
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -81,6 +85,8 @@ const TagInput = ({ tags, setTags, placeholder = "Etiket ekle (Enter veya virgü
               #{tag}
               <button
                 type="button"
+                aria-label={t('common.remove_tag', 'Etiketi kaldır')}
+                title={t('common.remove_tag', 'Etiketi kaldır')}
                 onClick={() => removeTag(index)}
                 style={{
                   background: 'transparent',
@@ -109,7 +115,7 @@ const TagInput = ({ tags, setTags, placeholder = "Etiket ekle (Enter veya virgü
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          placeholder={tags.length === 0 ? placeholder : "Yeni etiket..."}
+          placeholder={tags.length === 0 ? (placeholder || t('common.tag_placeholder', 'Etiket ekle (Enter veya virgül ile ayırın)')) : t('common.tag_placeholder_new', 'Yeni etiket...')}
           style={{
             flex: 1,
             minWidth: '120px',

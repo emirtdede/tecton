@@ -1,5 +1,7 @@
-import * as XLSX from 'xlsx';
 import { isValidTCKN } from './validation.js';
+import { logError } from './logger';
+import { loadXlsx } from './lazyLibraries';
+import { localToday } from '../utils/formatUtils';
 
 /**
  * Excel dosyasını okur ve JSON olarak döndürür
@@ -9,8 +11,12 @@ export const readWorkersFromExcel = (file, t) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
+        // `xlsx` is ~415 kB and only needed when the user actually imports a
+        // workbook, so it is loaded on demand instead of shipping in the
+        // initial bundle.
+        const XLSX = await loadXlsx();
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array', cellDates: true });
         
@@ -87,7 +93,7 @@ export const readWorkersFromExcel = (file, t) => {
                           normalizedRow['işe başlama'] || 
                           normalizedRow['başlama tarihi'] || 
                           normalizedRow['start date'] || '';
-          let startDate = new Date().toISOString().split('T')[0]; // default to today
+          let startDate = localToday(); // default to today
           if (rawDate) {
             if (rawDate instanceof Date && !isNaN(rawDate.getTime())) {
               const y = rawDate.getFullYear();
@@ -194,7 +200,8 @@ export const readWorkersFromExcel = (file, t) => {
         }
 
       } catch (err) {
-        reject({ success: false, message: t('about.err_excel_read').replace('{err}', err.message) });
+        logError('Excel read failed:', err);
+        reject({ success: false, message: t('about.err_excel_read').replace('{err}', '') });
       }
     };
 
@@ -252,8 +259,10 @@ export const readSubcontractorsFromExcel = (file, t, lang) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
+        // Loaded on demand - see the note in readWorkersFromExcel.
+        const XLSX = await loadXlsx();
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array', cellDates: true });
         const firstSheetName = workbook.SheetNames[0];
@@ -332,7 +341,8 @@ export const readSubcontractorsFromExcel = (file, t, lang) => {
         }
 
       } catch (err) {
-        reject({ success: false, message: err.message });
+        logError('Excel read failed:', err);
+        reject({ success: false, message: t('about.err_excel_read').replace('{err}', '') });
       }
     };
 

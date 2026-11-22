@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { logError } from '../utils/logger';
 import ConfirmationModal from './ui/ConfirmationModal';
+import NoProjectNotice from './ui/NoProjectNotice';
 import GuideDrawer from './ui/GuideDrawer';
 import CustomDatePicker from './ui/CustomDatePicker';
 import { formatCurrency, getCurrencySymbol, trLower } from '../utils/formatUtils';
 import { exportToExcel, exportToCSV, exportToJSON, generateSubcontractorTemplate } from '../utils/exportUtils';
 import { readSubcontractorsFromExcel } from '../utils/importUtils';
 import TagInput from './ui/TagInput';
+import apiWrite from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { daysUntil } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
+import useModalA11y from '../hooks/useModalA11y';
+import { parsePositiveNumber } from '../utils/validation';
+import { parseTags } from '../utils/tagUtils';
+import { isLedgerPayment, isLedgerProgress } from '../utils/ledgerTypes';
 
 const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) => {
   const { t, i18n } = useTranslation();
@@ -45,30 +55,54 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
+  // Guards against stale responses overwriting newer data after a project switch.
+  const requestIdRef = useRef(0);
+
   const fetchContractors = async () => {
-    if (!activeProjectId) return;
+    if (!activeProjectId) {
+      setContractors([]);
+      setLoading(false);
+      return;
+    }
     if (window.api && window.api.db) {
+      const requestId = ++requestIdRef.current;
       setLoading(true);
-      // Read subcontractors
-      const data = await window.api.db.read('subcontractor_ledgers', { project_id: activeProjectId });
-      
-      // Read subcontractor transactions to compute net balances
-      const transactions = await window.api.db.read('subcontractor_transactions', { project_id: activeProjectId });
-      
-      const balancesMap = {};
-      transactions.forEach(t => {
-        const subId = t.subcontractor_id;
-        if (!balancesMap[subId]) balancesMap[subId] = 0;
-        if (t.type === 'Hakediş') balancesMap[subId] += t.amount;
-        else if (t.type === 'Ödeme') balancesMap[subId] -= t.amount;
-      });
+      try {
+        // Two independent reads: one wait instead of two serial round-trips.
+        const [data, transactions] = await Promise.all([
+          window.api.db.read('subcontractor_ledgers', { project_id: activeProjectId }),
+          window.api.db.read('subcontractor_transactions', { project_id: activeProjectId })
+        ]);
 
-      const contractorsWithBalance = data.map(c => ({
-        ...c,
-        balance: balancesMap[c.id] || 0
-      }));
+        // Drop stale responses caused by a quick project switch.
+        if (requestId !== requestIdRef.current) return;
 
-      setContractors(contractorsWithBalance);
+        const balancesMap = {};
+        (transactions || []).forEach(t => {
+          const subId = t.subcontractor_id;
+          if (!balancesMap[subId]) balancesMap[subId] = 0;
+          if (isLedgerProgress(t.type)) balancesMap[subId] += t.amount;
+          else if (isLedgerPayment(t.type)) balancesMap[subId] -= t.amount;
+        });
+
+        const contractorsWithBalance = (data || []).map(c => ({
+          ...c,
+          balance: balancesMap[c.id] || 0
+        }));
+
+        setContractors(contractorsWithBalance);
+      } catch (err) {
+        // Unguarded reads left the ledger on a permanent spinner.
+        if (requestId !== requestIdRef.current) return;
+        logError('Subcontractor ledger fetch failed:', err);
+        setContractors([]);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('subcontractor.load_error', 'Taşeron kayıtları yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
@@ -93,16 +127,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
         isg_start_date: c.isg_start_date || '',
         isg_expiry_date: c.isg_expiry_date || ''
       });
-      try {
-        if (c.tags) {
-          const parsed = typeof c.tags === 'string' ? JSON.parse(c.tags) : c.tags;
-          setTags(Array.isArray(parsed) ? parsed : []);
-        } else {
-          setTags([]);
-        }
-      } catch (e) {
-        setTags([]);
-      }
+      setTags(parseTags(c.tags));
     } else {
       setEditingId(null);
       setFormData({
@@ -125,9 +150,27 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
     setTags([]);
   };
 
+  // The add/edit drawer is a dialog: before this it had no role, no focus
+  // trap and no Escape handling, so keyboard and screen-reader users could not
+  // dismiss it and Tab walked into the page behind the overlay.
+  const { dialogProps, containerRef: drawerRef } = useModalA11y({
+    isOpen: isDrawerOpen,
+    onClose: handleCloseDrawer,
+    label: editingId ? t('subcontractor.edit_title', 'Taşeronu Düzenle') : t('subcontractor.new_title', 'Yeni Taşeron Ekle')
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!activeProjectId || !formData.name || !formData.service_type || !formData.daily_wage) return;
+    // '-5' passes the truthiness check; daily_wage has no CHECK constraint, and a
+    // negative wage silently reduces every ledger total that depends on it.
+    const dailyWage = parsePositiveNumber(formData.daily_wage);
+    if (dailyWage === null) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.invalid_positive_number', 'Lütfen sıfırdan büyük geçerli bir miktar girin.'), type: 'warning' }
+      }));
+      return;
+    }
 
     if (window.api && window.api.db) {
       const payload = {
@@ -135,18 +178,18 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
         name: formData.name,
         service_type: formData.service_type,
         phone: formData.phone,
-        daily_wage: Number(formData.daily_wage),
+        daily_wage: dailyWage,
         status: formData.status,
         isg_start_date: formData.isg_start_date || null,
         isg_expiry_date: formData.isg_expiry_date || null,
         tags: JSON.stringify(tags)
       };
 
-      if (editingId) {
-        await window.api.db.update('subcontractor_ledgers', editingId, payload);
-      } else {
-        await window.api.db.create('subcontractor_ledgers', payload);
-      }
+      const res = editingId
+        ? await apiWrite(window.api.db.update('subcontractor_ledgers', editingId, payload))
+        : await apiWrite(window.api.db.create('subcontractor_ledgers', payload));
+      // Do not close the drawer and show "saved" when the write was rejected.
+      if (res && res.success === false) return;
 
       handleCloseDrawer();
       fetchContractors();
@@ -165,7 +208,8 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
   const confirmDelete = async () => {
     if (window.api && window.api.db && confirmModal.id) {
-      await window.api.db.delete('subcontractor_ledgers', confirmModal.id);
+      const res = await apiWrite(window.api.db.delete('subcontractor_ledgers', confirmModal.id));
+      if (res && res.success === false) return;
       setConfirmModal({ isOpen: false, id: null });
       fetchContractors();
       window.dispatchEvent(new CustomEvent('show-toast', { 
@@ -177,93 +221,103 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
     }
   };
 
-  // Filter subcontractor list
-  const filteredContractors = contractors.filter(c => {
+  // Filter subcontractor list.
+  // Memoized: this chain (search over every field + currency formatting per row)
+  // previously ran on every render, including keystrokes in unrelated inputs.
+  const filteredContractors = useMemo(() => {
     const q = trLower(searchQuery);
-    const tagsStr = c.tags ? trLower(c.tags) : '';
-    
-    const statusText = c.status === 'passive' 
-      ? trLower(t('filters.passive', 'Pasif')) 
-      : trLower(t('filters.active', 'Aktif'));
-    const statusTextEn = c.status === 'passive' ? 'passive' : 'active';
-    
-    const wageStr = String(c.daily_wage);
-    const wageCommaStr = wageStr.replace('.', ',');
-    const formattedWage = formatCurrency(c.daily_wage, i18n.language);
+    const statusText = trLower(t('filters.passive', 'Pasif'));
+    const statusTextActive = trLower(t('filters.active', 'Aktif'));
 
-    const balanceStr = String(c.balance || 0);
-    const balanceCommaStr = balanceStr.replace('.', ',');
-    const formattedBalance = formatCurrency(c.balance || 0, i18n.language);
+    return contractors.filter(c => {
+      const tagsStr = c.tags ? trLower(c.tags) : '';
 
-    const matchesSearch = !searchQuery ||
-                          trLower(c.name).includes(q) || 
-                          trLower(c.service_type).includes(q) ||
-                          tagsStr.includes(q) ||
-                          (c.phone && c.phone.includes(searchQuery)) ||
-                          statusText.includes(q) ||
-                          statusTextEn.includes(q) ||
-                          wageStr.includes(q) ||
-                          wageCommaStr.includes(q) ||
-                          trLower(formattedWage).includes(q) ||
-                          balanceStr.includes(q) ||
-                          balanceCommaStr.includes(q) ||
-                          trLower(formattedBalance).includes(q);
-    const matchesService = !filterServiceType || c.service_type === filterServiceType;
-    const matchesStatus = !filterStatus || c.status === filterStatus;
-    return matchesSearch && matchesService && matchesStatus;
-  });
+      const rowStatusText = c.status === 'passive' ? statusText : statusTextActive;
+      const statusTextEn = c.status === 'passive' ? 'passive' : 'active';
+
+      const wageStr = String(c.daily_wage);
+      const wageCommaStr = wageStr.replace('.', ',');
+      const formattedWage = formatCurrency(c.daily_wage, i18n.language);
+
+      const balanceStr = String(c.balance || 0);
+      const balanceCommaStr = balanceStr.replace('.', ',');
+      const formattedBalance = formatCurrency(c.balance || 0, i18n.language);
+
+      const matchesSearch = !searchQuery ||
+                            trLower(c.name).includes(q) ||
+                            trLower(c.service_type).includes(q) ||
+                            tagsStr.includes(q) ||
+                            (c.phone && c.phone.includes(searchQuery)) ||
+                            rowStatusText.includes(q) ||
+                            statusTextEn.includes(q) ||
+                            wageStr.includes(q) ||
+                            wageCommaStr.includes(q) ||
+                            trLower(formattedWage).includes(q) ||
+                            balanceStr.includes(q) ||
+                            balanceCommaStr.includes(q) ||
+                            trLower(formattedBalance).includes(q);
+      const matchesService = !filterServiceType || c.service_type === filterServiceType;
+      const matchesStatus = !filterStatus || c.status === filterStatus;
+      return matchesSearch && matchesService && matchesStatus;
+    });
+  }, [contractors, searchQuery, filterServiceType, filterStatus, i18n.language, t]);
 
   const totalPages = Math.ceil(filteredContractors.length / itemsPerPage);
   const paginatedContractors = filteredContractors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // Extract unique service types for dropdown
-  const uniqueServiceTypes = [...new Set(contractors.map(c => c.service_type))].sort();
+  const uniqueServiceTypes = useMemo(
+    () => [...new Set(contractors.map(c => c.service_type))].sort(),
+    [contractors]
+  );
 
   // Group by service type
-  const groupedContractors = filteredContractors.reduce((acc, c) => {
-    const service = c.service_type || t('subcontractor.no_service', 'Diğer');
-    if (!acc[service]) acc[service] = [];
-    acc[service].push(c);
-    return acc;
-  }, {});
-
-  const sortedServiceNames = Object.keys(groupedContractors).sort((a, b) => a.localeCompare(b, i18n.language || 'tr'));
+  const { groupedContractors, sortedServiceNames } = useMemo(() => {
+    const grouped = filteredContractors.reduce((acc, c) => {
+      const service = c.service_type || t('subcontractor.no_service', 'Diğer');
+      if (!acc[service]) acc[service] = [];
+      acc[service].push(c);
+      return acc;
+    }, {});
+    return {
+      groupedContractors: grouped,
+      sortedServiceNames: Object.keys(grouped).sort((a, b) => a.localeCompare(b, i18n.language || 'tr'))
+    };
+  }, [filteredContractors, i18n.language, t]);
 
   // Calculate subcontractor anomalies
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const { negativeBalanceContractors, isgExpiredContractors, isgApproachingContractors } = useMemo(() => {
+    const negative = contractors.filter(c => (c.balance || 0) < 0);
 
-  const negativeBalanceContractors = contractors.filter(c => {
-    const bal = c.balance || 0;
-    return bal < 0;
-  });
+    // `daysUntil` returns null for a missing/unparseable date. Previously a
+    // corrupt date produced NaN, and NaN compares false to both `<= 0` and
+    // `> 0`, so the record silently disappeared from both lists.
+    const isgMapped = contractors
+      .map(c => ({ c, remainingDays: daysUntil(c.isg_expiry_date) }))
+      .filter(x => x.remainingDays !== null)
+      .map(x => ({ ...x.c, remainingDays: x.remainingDays }));
 
-  const isgMapped = contractors.filter(c => !!c.isg_expiry_date).map(c => {
-    const endDate = new Date(c.isg_expiry_date);
-    endDate.setHours(0, 0, 0, 0);
-    const timeDiff = endDate.getTime() - today.getTime();
-    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    return { ...c, remainingDays: dayDiff };
-  });
+    return {
+      negativeBalanceContractors: negative,
+      isgExpiredContractors: isgMapped.filter(c => c.remainingDays <= 0),
+      isgApproachingContractors: isgMapped
+        .filter(c => c.remainingDays > 0 && c.remainingDays <= 15)
+        .sort((a, b) => a.remainingDays - b.remainingDays)
+    };
+  }, [contractors]);
 
-  const isgExpiredContractors = isgMapped.filter(c => c.remainingDays <= 0);
-  const isgApproachingContractors = isgMapped
-    .filter(c => c.remainingDays > 0 && c.remainingDays <= 15)
-    .sort((a, b) => a.remainingDays - b.remainingDays);
-
-  const filterAnomalyByName = (c) => trLower(c.name).includes(trLower(anomalySearch));
-
-  const filteredNegativeBalance = negativeBalanceContractors.filter(filterAnomalyByName);
-  const filteredIsgExpired = isgExpiredContractors.filter(filterAnomalyByName);
-  const filteredIsgApproaching = isgApproachingContractors.filter(filterAnomalyByName);
+  const { filteredNegativeBalance, filteredIsgExpired, filteredIsgApproaching } = useMemo(() => {
+    const q = trLower(anomalySearch);
+    const filterAnomalyByName = (c) => trLower(c.name).includes(q);
+    return {
+      filteredNegativeBalance: negativeBalanceContractors.filter(filterAnomalyByName),
+      filteredIsgExpired: isgExpiredContractors.filter(filterAnomalyByName),
+      filteredIsgApproaching: isgApproachingContractors.filter(filterAnomalyByName)
+    };
+  }, [negativeBalanceContractors, isgExpiredContractors, isgApproachingContractors, anomalySearch]);
 
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>🚜 {t('nav.subcontractors', 'Taşeron Cari Takibi')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="nav.subcontractors" titleFallback="Subcontractor ledger" />;
   }
 
   return (
@@ -271,23 +325,8 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
       {/* Header section identical to Personnel page */}
       <header className="header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <h1 style={{ margin: 0 }}>{t('subcontractor.title', '🚜 Taşeron ve Alt Yüklenici Carileri')}</h1>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.4rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <h1 style={{ margin: 0 }}>{t('subcontractor.title', ' Taşeron ve Alt Yüklenici Carileri')}</h1>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} fontSize="1.4rem" />
         </div>
         
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -302,25 +341,27 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
               try {
                 const result = await readSubcontractorsFromExcel(file, t, i18n.language);
                 if (result.success) {
-                  for (const sub of result.data) {
+                  // Rows are independent (matching uses the snapshot taken
+                  // before the import), so the writes run together instead of
+                  // one IPC round-trip per row.
+                  await Promise.all(result.data.map((sub) => {
                     const existing = contractors.find(c => trLower(c.name.trim()) === trLower(sub.name.trim()));
-                    if (existing) {
-                      await window.api.db.update('subcontractor_ledgers', existing.id, {
+                    return existing
+                      ? apiWrite(window.api.db.update('subcontractor_ledgers', existing.id, {
                         ...sub, project_id: activeProjectId
-                      });
-                    } else {
-                      await window.api.db.create('subcontractor_ledgers', {
+                      }))
+                      : apiWrite(window.api.db.create('subcontractor_ledgers', {
                         ...sub, project_id: activeProjectId
-                      });
-                    }
-                  }
+                      }));
+                  }));
                   window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('subcontractor_import.import_success', '{{count}} taşeron kaydı başarıyla içe aktarıldı.').replace('{{count}}', result.data.length), type: 'success' } }));
                   fetchContractors();
                 }
               } catch (err) {
-                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + (err.message || JSON.stringify(err)), type: 'error' } }));
+                logError('Subcontractor import failed:', err);
+                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + t('common.import_failed', 'İçe aktarma başarısız oldu. Lütfen dosya biçimini kontrol edin.'), type: 'error' } }));
               }
-              e.target.value = null;
+              e.target.value = '';
             }}
           />
           <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
@@ -334,14 +375,19 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
             if (!format) return;
             const lang = i18n.language;
             const isTr = lang === 'tr';
+            // `isTr ? ... : ...` only covered Turkish and English; the other
+            // 17 locales got English headers regardless of the active language.
             const dataToExport = contractors.map(c => ({
-              [isTr ? 'Taşeron Adı' : 'Subcontractor Name']: c.name,
-              [isTr ? 'Hizmet Alanı' : 'Service Type']: c.service_type,
-              [isTr ? 'Telefon' : 'Phone']: c.phone || '-',
-              [isTr ? 'Günlük Bedel' : 'Daily Rate']: c.daily_wage,
-              [isTr ? 'Durum' : 'Status']: c.status === 'active' ? (isTr ? 'Aktif' : 'Active') : (isTr ? 'Pasif' : 'Passive'),
-              [isTr ? 'İSG Başlangıç' : 'ISG Start Date']: c.isg_start_date || '-',
-              [isTr ? 'İSG Bitiş' : 'ISG End Date']: c.isg_expiry_date || '-'
+              [t('export.subcontractor_name', 'Taşeron Adı')]: c.name,
+              [t('export.service_type', 'Hizmet Alanı')]: c.service_type,
+              [t('common.phone', 'Telefon')]: c.phone || '-',
+              [t('export.daily_rate', 'Günlük Bedel')]: c.daily_wage,
+              [t('export.status', 'Durum')]:
+                c.status === 'active'
+                  ? t('export.active', 'Aktif')
+                  : t('export.passive', 'Pasif'),
+              [t('export.isg_start', 'İSG Başlangıç')]: c.isg_start_date || '-',
+              [t('export.isg_end', 'İSG Bitiş')]: c.isg_expiry_date || '-'
             }));
             const fName = isTr ? 'Taseron_Listesi' : 'Subcontractor_List';
             if (format === 'excel') exportToExcel(dataToExport, fName);
@@ -396,7 +442,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                   }}
                   title={t('common.clear', 'Temizle')}
                 >
-                  ✕
+                  
                 </button>
               )}
             </div>
@@ -526,48 +572,8 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                 </tbody>
               </table>
 
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div style={{
-                  position: 'sticky',
-                  bottom: 0,
-                  background: 'var(--option-bg, #0f172a)',
-                  borderTop: '1px solid var(--glass-border)',
-                  zIndex: 10,
-                  padding: '1rem 1.5rem',
-                  marginTop: '0',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  borderRadius: '0 0 12px 12px'
-                }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {t('common.pagination_info', 'Sayfa {{page}} / {{total}} ({{records}} Kayıt)', { page: currentPage, total: totalPages, records: filteredContractors.length })}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button 
-                      className="btn" 
-                      disabled={currentPage === 1} 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                    >
-                      {t('common.prev', 'Önceki')}
-                    </button>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                      {t('common.page', 'Sayfa')} {currentPage} / {totalPages}
-                    </span>
-                    <button 
-                      className="btn" 
-                      disabled={currentPage === totalPages} 
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                    >
-                      {t('common.next', 'Sonraki')}
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Pagination - shared component (ui/Pagination) */}
+              <Pagination variant="sticky" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredContractors.length} />
             </div>
           )}
         </div>
@@ -578,7 +584,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
           {/* Subcontractor Anomaly Panel */}
           <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🛡️ {t('subcontractor.anomalies', 'Taşeron Uyarıları')}
+               {t('subcontractor.anomalies', 'Taşeron Uyarıları')}
             </h3>
 
             {/* Search Input */}
@@ -641,7 +647,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '250px', overflowY: 'auto', paddingRight: '4px' }}>
               {(filteredNegativeBalance.length === 0 && filteredIsgExpired.length === 0 && filteredIsgApproaching.length === 0) ? (
                 <div style={{ padding: '1.5rem', textAlign: 'center', color: '#34d399', background: 'rgba(52, 211, 153, 0.05)', borderRadius: '12px', border: '1px solid rgba(52, 211, 153, 0.15)', fontSize: '0.8rem' }}>
-                  🟢 {t('subcontractor.all_isg_valid', 'Tüm durumlar ve İSG belgeleri güncel.')}
+                   {t('subcontractor.all_isg_valid', 'Tüm durumlar ve İSG belgeleri güncel.')}
                 </div>
               ) : (
                 <>
@@ -649,7 +655,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                   {(anomalyActiveTab === 'all' || anomalyActiveTab === 'balance') && filteredNegativeBalance.length > 0 && (
                     <div style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                       <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                        ⚠️ {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({filteredNegativeBalance.length})
+                         {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({filteredNegativeBalance.length})
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                         {filteredNegativeBalance.map(c => (
@@ -666,7 +672,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                   {(anomalyActiveTab === 'all' || anomalyActiveTab === 'expired') && filteredIsgExpired.length > 0 && (
                     <div style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                       <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                        🔴 {t('isg.badge_expired', 'İSG Süresi Dolanlar')} ({filteredIsgExpired.length})
+                         {t('isg.badge_expired', 'İSG Süresi Dolanlar')} ({filteredIsgExpired.length})
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                         {filteredIsgExpired.map(c => (
@@ -683,7 +689,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                   {(anomalyActiveTab === 'all' || anomalyActiveTab === 'approaching') && filteredIsgApproaching.length > 0 && (
                     <div style={{ background: 'rgba(245, 158, 11, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
                       <div style={{ color: '#f59e0b', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                        🟡 {t('isg.badge_approaching', 'İSG Süresi Yaklaşanlar')} ({filteredIsgApproaching.length})
+                         {t('isg.badge_approaching', 'İSG Süresi Yaklaşanlar')} ({filteredIsgApproaching.length})
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                         {filteredIsgApproaching.map(c => (
@@ -703,7 +709,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
           {/* Subcontractor financial report summary */}
           <div className="glass-card">
             <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              📊 {t('subcontractor.financial_summary', 'Taşeron Finans Özeti')}
+               {t('subcontractor.financial_summary', 'Taşeron Finans Özeti')}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
@@ -761,7 +767,13 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
       {/* Slide-out Drawer for Add / Edit Subcontractor (matches Personnel styling) */}
       {isDrawerOpen && (
         <div className="drawer-overlay" onClick={handleCloseDrawer}>
-          <div className="drawer-content" style={{ display: 'flex', flexDirection: 'column', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+          <div
+            ref={drawerRef}
+            {...dialogProps}
+            className="drawer-content"
+            style={{ display: 'flex', flexDirection: 'column', padding: '2rem', outline: 'none' }}
+            onClick={e => e.stopPropagation()}
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.75rem' }}>
               <h2 className="drawer-title" style={{ margin: 0, fontSize: '1.3rem', fontWeight: 'bold' }}>
                 {editingId ? t('subcontractor.edit_title', 'Taşeronu Düzenle') : t('subcontractor.new_title', 'Yeni Taşeron Ekle')}
@@ -769,10 +781,12 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
               <button 
                 type="button"
                 className="btn btn-danger" 
+                aria-label={t('common.close', 'Kapat')}
+                title={t('common.close', 'Kapat')}
                 onClick={handleCloseDrawer} 
                 style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', border: 'none' }}
               >
-                ✕
+                
               </button>
             </div>
 
@@ -848,7 +862,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
               <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', marginTop: '0.25rem' }}>
                 <div style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  🛡️ {t('isg.section_title', 'İSG (İş Sağlığı ve Güvenliği)')}
+                   {t('isg.section_title', 'İSG (İş Sağlığı ve Güvenliği)')}
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>

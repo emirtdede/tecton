@@ -1,13 +1,14 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import useModalA11y from '../../hooks/useModalA11y';
 
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirmText, cancelText, type = "danger" }) => {
   const { t } = useTranslation();
+  const { dialogProps, containerRef } = useModalA11y({ isOpen, onClose, label: title });
   if (!isOpen) return null;
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div className="glass-card" style={{ width: '400px', maxWidth: '90%', animation: 'fadeIn 0.3s ease', background: 'var(--spotlight-bg)', border: '1px solid var(--glass-border)' }}>
+      <div ref={containerRef} {...dialogProps} className="glass-card" style={{ width: '400px', maxWidth: '90%', animation: 'fadeIn 0.3s ease', background: 'var(--spotlight-bg)', border: '1px solid var(--glass-border)', outline: 'none' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <h3 style={{ 
             fontSize: '1.25rem', 
@@ -17,7 +18,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirm
             alignItems: 'center',
             gap: '0.5rem'
           }}>
-            {type === 'danger' && '⚠️'} {title}
+            {type === 'danger' && ''} {title}
           </h3>
           
           <p style={{ color: 'var(--text-main)', fontSize: '0.95rem', lineHeight: '1.5' }}>
@@ -27,6 +28,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirm
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
             {cancelText !== "" && (
               <button 
+                type="button"
                 className="btn" 
                 onClick={onClose}
                 style={{ background: 'transparent' }}
@@ -35,6 +37,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirm
               </button>
             )}
             <button 
+              type="button"
               className={`btn ${type === 'danger' ? 'btn-danger' : 'btn-primary'}`} 
               onClick={() => {
                 onConfirm && onConfirm();

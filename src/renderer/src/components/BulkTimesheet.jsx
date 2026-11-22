@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { logError } from '../utils/logger';
 import { useTranslation } from 'react-i18next';
 import CustomDatePicker from './ui/CustomDatePicker';
+import NoProjectNotice from './ui/NoProjectNotice';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatCurrency, trLower } from '../utils/formatUtils';
+import { formatCurrency, trLower, localToday, toLocalDateString, parseLocalDate } from '../utils/formatUtils';
+import apiWrite from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
 
 const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -20,7 +24,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
 
   // Unified form
   const [formData, setFormData] = useState({
-    work_date: new Date().toISOString().split('T')[0],
+    work_date: localToday(),
     end_date: '',
     work_type_id: '',
     overtime_hours: 0,
@@ -40,29 +44,45 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
       const overlapping = (tsData || []).filter(ts => ts.work_date >= start && ts.work_date <= end);
       setExistingTimesheets(overlapping);
     } catch (err) {
-      console.error('Error fetching existing timesheets:', err);
+      logError('Error fetching existing timesheets:', err);
     }
   };
+
+  // Guards against stale async results after a rapid project switch.
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!activeProjectId || !window.api) return;
+      const requestId = ++requestIdRef.current;
       setLoading(true);
-      const [workerData, workTypeData, groupData] = await Promise.all([
-        window.api.db.read('workers', { project_id: activeProjectId }),
-        window.api.db.read('work_types'),
-        window.api.db.read('worker_groups')
-      ]);
-      setWorkers(workerData.filter(w => w.status !== 'passive'));
-      setWorkTypes(workTypeData);
-      setWorkerGroups(groupData || []);
-      if (workTypeData.length > 0 && !formData.work_type_id) {
-        const defaultType = workTypeData.find(wt => wt.name === 'Tam Gün') || workTypeData.find(wt => wt.multiplier === 1.0) || workTypeData[0];
-        if (defaultType) {
-          setFormData(prev => ({ ...prev, work_type_id: defaultType.id }));
+      try {
+        const [workerData, workTypeData, groupData] = await Promise.all([
+          window.api.db.read('workers', { project_id: activeProjectId }),
+          window.api.db.read('work_types'),
+          window.api.db.read('worker_groups')
+        ]);
+        if (requestId !== requestIdRef.current) return;
+        setWorkers((workerData || []).filter(w => w.status !== 'passive'));
+        setWorkTypes(workTypeData || []);
+        setWorkerGroups(groupData || []);
+        if (workTypeData && workTypeData.length > 0 && !formData.work_type_id) {
+          const defaultType = workTypeData.find(wt => wt.name === 'Tam Gün') || workTypeData.find(wt => wt.multiplier === 1.0) || workTypeData[0];
+          if (defaultType) {
+            setFormData(prev => ({ ...prev, work_type_id: defaultType.id }));
+          }
         }
+      } catch (err) {
+        // A rejected IPC used to escape as an unhandled rejection and left the
+        // screen stuck on its loader.
+        if (requestId !== requestIdRef.current) return;
+        logError('Bulk timesheet data fetch failed:', err);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('bulk_timesheet.load_error', 'Puantaj verileri yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, [activeProjectId]);
@@ -107,33 +127,37 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
     });
   };
 
-  const filteredWorkers = workers.filter(w => {
+  // Memoized filter: previously re-ran on every render, including every
+  // checkbox toggle and date-field keystroke in the bulk entry form.
+  const filteredWorkers = useMemo(() => {
     const q = trLower(searchQuery);
-    const groupObj = workerGroups.find(g => g.id === w.group_id);
-    const groupName = groupObj ? trLower(groupObj.name) : '';
+    return workers.filter(w => {
+      const groupObj = workerGroups.find(g => g.id === w.group_id);
+      const groupName = groupObj ? trLower(groupObj.name) : '';
 
-    const wageStr = String(w.daily_wage);
-    const wageCommaStr = wageStr.replace('.', ',');
-    const formattedWage = formatCurrency(w.daily_wage, i18n.language);
+      const wageStr = String(w.daily_wage);
+      const wageCommaStr = wageStr.replace('.', ',');
+      const formattedWage = formatCurrency(w.daily_wage, i18n.language);
 
-    const matchesSearch = !searchQuery ||
-      trLower(w.full_name).includes(q) ||
-      (w.tc_no && w.tc_no.includes(q)) ||
-      (w.phone && w.phone.includes(q)) ||
-      groupName.includes(q) ||
-      wageStr.includes(q) ||
-      wageCommaStr.includes(q) ||
-      trLower(formattedWage).includes(q);
+      const matchesSearch = !searchQuery ||
+        trLower(w.full_name).includes(q) ||
+        (w.tc_no && w.tc_no.includes(q)) ||
+        (w.phone && w.phone.includes(q)) ||
+        groupName.includes(q) ||
+        wageStr.includes(q) ||
+        wageCommaStr.includes(q) ||
+        trLower(formattedWage).includes(q);
 
-    const matchesGroup = !selectedGroup || String(w.group_id) === String(selectedGroup);
+      const matchesGroup = !selectedGroup || String(w.group_id) === String(selectedGroup);
 
-    const hasTimesheet = existingTimesheets.some(ts => ts.worker_id === w.id);
-    let matchesStatus = true;
-    if (filterStatus === 'entered') matchesStatus = hasTimesheet;
-    if (filterStatus === 'not_entered') matchesStatus = !hasTimesheet;
+      const hasTimesheet = existingTimesheets.some(ts => ts.worker_id === w.id);
+      let matchesStatus = true;
+      if (filterStatus === 'entered') matchesStatus = hasTimesheet;
+      if (filterStatus === 'not_entered') matchesStatus = !hasTimesheet;
 
-    return matchesSearch && matchesGroup && matchesStatus;
-  });
+      return matchesSearch && matchesGroup && matchesStatus;
+    });
+  }, [workers, workerGroups, existingTimesheets, searchQuery, selectedGroup, filterStatus, i18n.language]);
 
   const handleToggle = (id) => {
     const hasTimesheet = existingTimesheets.some(ts => ts.worker_id === id);
@@ -169,10 +193,15 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
 
   const getDatesInRange = (startDateStr, endDateStr) => {
     const dates = [];
-    let currentDate = new Date(startDateStr);
-    const endDate = new Date(endDateStr);
+    let currentDate = parseLocalDate(startDateStr);
+    const endDate = parseLocalDate(endDateStr);
+    if (!currentDate || !endDate || currentDate > endDate) return [];
+    // A typed range like 1900-01-01 → 2100-01-01 would build ~73,000 rows and
+    // exhaust renderer memory before the insert even starts.
+    const dayCount = Math.round((endDate - currentDate) / 86400000) + 1;
+    if (dayCount > 366) return [];
     while (currentDate <= endDate) {
-      dates.push(currentDate.toISOString().split('T')[0]);
+      dates.push(toLocalDateString(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
     }
     return dates;
@@ -186,42 +215,61 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
     }
     if (!selectedType) return;
 
-    setSaving(true);
-    let successCount = 0;
-    let errorCount = 0;
-
     const dates = formData.end_date ? getDatesInRange(formData.work_date, formData.end_date) : [formData.work_date];
-    const dataList = [];
-
-    for (const date of dates) {
-      for (const workerId of selectedIds) {
-        try {
-          const worker = workers.find(w => w.id === workerId);
-          if (!worker) continue;
-
-          const wageRes = await window.api.finance.calculateWage({
-            daily_wage: worker.daily_wage,
-            multiplier: selectedType.multiplier,
-            overtime_hours: formData.overtime_hours
-          });
-
-          const earnedAmount = wageRes.success ? wageRes.wage : worker.daily_wage * selectedType.multiplier;
-
-          dataList.push({
-            worker_id: workerId,
-            work_date: date,
-            work_type_id: formData.work_type_id,
-            applied_wage: worker.daily_wage,
-            applied_multiplier: selectedType.multiplier,
-            overtime_hours: formData.overtime_hours,
-            earned_amount: earnedAmount,
-            notes: formData.notes,
-            tags: '[]',
-            project_id: activeProjectId
-          });
-        } catch (err) {
-          console.error(`Bulk timesheet calculation error for worker ${workerId} on ${date}:`, err);
+    if (dates.length === 0 || !dates[0]) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: {
+          message: t('bulk_timesheet.invalid_range', 'Geçersiz tarih aralığı. En fazla 366 günlük bir aralık seçin.'),
+          type: 'warning'
         }
+      }));
+      return;
+    }
+
+    setSaving(true);
+
+    // The earned amount depends only on the worker's wage, the work-type
+    // multiplier and the overtime hours - not on the date. The old nested loop
+    // called `finance.calculateWage` once per date×worker cell (366 × 50 = 18k
+    // IPC round-trips for a year of a 50-person group). Resolve it once per
+    // worker, in parallel, then fan the result out over the dates.
+    const selectedWorkers = [...selectedIds]
+      .map(id => workers.find(w => w.id === id))
+      .filter(Boolean);
+
+    const wageByWorker = new Map();
+    await Promise.all(selectedWorkers.map(async (worker) => {
+      try {
+        const wageRes = await window.api.finance.calculateWage({
+          daily_wage: worker.daily_wage,
+          multiplier: selectedType.multiplier,
+          overtime_hours: formData.overtime_hours
+        });
+        wageByWorker.set(
+          worker.id,
+          wageRes && wageRes.success ? wageRes.wage : worker.daily_wage * selectedType.multiplier
+        );
+      } catch (err) {
+        logError(`Bulk timesheet wage calculation failed for worker ${worker.id}:`, err);
+        wageByWorker.set(worker.id, Number(worker.daily_wage) * Number(selectedType.multiplier));
+      }
+    }));
+
+    const dataList = [];
+    for (const date of dates) {
+      for (const worker of selectedWorkers) {
+        dataList.push({
+          worker_id: worker.id,
+          work_date: date,
+          work_type_id: formData.work_type_id,
+          applied_wage: worker.daily_wage,
+          applied_multiplier: selectedType.multiplier,
+          overtime_hours: formData.overtime_hours,
+          earned_amount: wageByWorker.get(worker.id),
+          notes: formData.notes,
+          tags: '[]',
+          project_id: activeProjectId
+        });
       }
     }
 
@@ -258,7 +306,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
         }
       } catch (err) {
         setSaving(false);
-        console.error('Bulk save error:', err);
+        logError('Bulk save error:', err);
         window.dispatchEvent(new CustomEvent('show-toast', {
           detail: {
             message: t('bulk_timesheet.save_error', 'Bazı kayıtlarda hata oluştu. Başarılı: {{success}}, Hata: {{error}}')
@@ -270,17 +318,26 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
       }
     } else {
       // Fallback: loop-based create (if Electron app hasn't been restarted yet)
-      let successCount = 0;
-      let errorCount = 0;
-      for (const item of dataList) {
+      // Rows are independent writes, so they are issued together rather than
+      // awaited one by one (a 300-row save was 300 round-trips).
+      const results = await Promise.all(dataList.map(async (item) => {
         try {
-          await window.api.db.create('timesheets', item);
-          successCount++;
+          // A rejected write comes back as { success: false } rather than
+          // throwing, so it must be classified explicitly or a failed row
+          // would be counted as a success.
+          const res = await apiWrite(window.api.db.create('timesheets', item), { silent: true });
+          if (res && res.success === false) {
+            logError('Fallback timesheet rejected:', res.message);
+            return false;
+          }
+          return true;
         } catch (err) {
-          console.error('Fallback timesheet error:', err);
-          errorCount++;
+          logError('Fallback timesheet error:', err);
+          return false;
         }
-      }
+      }));
+      const errorCount = results.filter(ok => !ok).length;
+      const successCount = results.length - errorCount;
       setSaving(false);
       if (errorCount === 0) {
         window.dispatchEvent(new CustomEvent('show-toast', {
@@ -306,12 +363,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
   };
 
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>📋 {t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="bulk_timesheet.title" titleFallback="Bulk timesheet" />;
   }
 
   return (
@@ -323,19 +375,13 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              📋 {t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}
+               {t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}
             </h2>
             <p className="card-subtitle active-project-subtitle" style={{ margin: 0 }}>
               {t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span>
             </p>
           </div>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ cursor: 'pointer', opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', transition: 'opacity 0.25s ease-in-out', fontSize: '1.5rem', userSelect: 'none', padding: '0.25rem' }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >💡</span>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} fontSize="1.5rem" />
         </div>
 
         {/* Add Record Form */}
@@ -385,7 +431,13 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
               min="0"
               step="0.5"
               value={formData.overtime_hours}
-              onChange={e => setFormData(prev => ({ ...prev, overtime_hours: e.target.value === '' ? '' : Number(e.target.value) }))}
+              onChange={e => {
+                const raw = e.target.value;
+                setFormData(prev => ({
+                  ...prev,
+                  overtime_hours: raw === '' ? '' : (Number.isNaN(Number(raw)) ? prev.overtime_hours : Number(raw))
+                }));
+              }}
             />
           </div>
 
@@ -443,7 +495,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
                   type="button"
                   onClick={() => setSearchQuery('')}
                   style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', padding: '4px' }}
-                >✕</button>
+                ><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
               )}
             </div>
           </div>
@@ -494,7 +546,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
       {/* Bottom Card: Worker List (Independent Scrolling) */}
       <div className="glass-card" style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          👥 {t('bulk_timesheet.select_workers', 'Personel Seçin')} ({t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)})
+           {t('bulk_timesheet.select_workers', 'Personel Seçin')} ({t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)})
         </h3>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem', marginTop: '0.25rem', paddingBottom: '2.5rem' }}>
@@ -537,7 +589,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'all 0.15s ease'
                   }}>
-                    {(isSelected || hasTimesheet) && <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</span>}
+                    {(isSelected || hasTimesheet) && <span style={{ color: '#fff', display: 'inline-flex' }}><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>}
                   </div>
                   <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
@@ -556,7 +608,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
                         fontSize: '0.75rem',
                         fontWeight: '600'
                       }}>
-                        {t('bulk_timesheet.already_entered', '✓ Girildi')}
+                        {t('bulk_timesheet.already_entered', ' Girildi')}
                       </span>
                     )}
                   </div>

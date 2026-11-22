@@ -4,6 +4,11 @@ const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
 const AdmZip = require('adm-zip');
+const logger = require('../logger');
+const { toUserError } = require('../utils/errorUtils');
+const { removeMediaFile, removeMediaProjectDir } = require('../utils/mediaPaths');
+const { TABLES_SQL, INDEXES_SQL } = require('./schema');
+const { runExclusive } = require('./transaction');
 
 let dbPromise;
 
@@ -27,12 +32,22 @@ function findLatestBackup(backupFolder) {
     sqliteFiles.sort((a, b) => b.localeCompare(a));
     return sqliteFiles[0];
   } catch (err) {
-    console.error('Error finding latest backup:', err);
+    logger.error('Error finding latest backup:', err);
     return null;
   }
 }
 
 let initPromise = null;
+
+/**
+ * SQLite reports an already-applied `ALTER TABLE ... ADD COLUMN` with
+ * "duplicate column name". Every other ALTER failure (disk full, locked file,
+ * unsupported schema) is a real problem and must not be swallowed.
+ */
+function isDuplicateColumnError(err) {
+  const message = err && err.message ? String(err.message) : '';
+  return /duplicate column name/i.test(message);
+}
 
 async function getDB() {
   if (dbPromise) return dbPromise;
@@ -42,7 +57,7 @@ async function getDB() {
 
   const isDev = process.env.NODE_ENV === 'development';
   const dbPath = isDev 
-    ? path.join(__dirname, '../../../database.sqlite')
+    ? path.join(__dirname, '../../../.tecton-dev-data/database.sqlite')
     : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 
   let db;
@@ -52,26 +67,40 @@ async function getDB() {
       driver: sqlite3.Database
     });
   } catch (err) {
-    console.error('Failed to open primary database. Attempting auto-recovery...', err);
+    logger.error('Failed to open primary database. Attempting auto-recovery...', err);
     const backupDir = app 
       ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
-      : path.join(__dirname, '../../test_data/Database-Backups');
+      : path.join(__dirname, '../../.tecton-dev-data/Database-Backups');
     
     const latestBackup = findLatestBackup(backupDir);
     if (latestBackup && fs.existsSync(latestBackup)) {
-      console.log(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
+      logger.info(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
       fs.copyFileSync(latestBackup, dbPath);
       db = await open({
         filename: dbPath,
         driver: sqlite3.Database
       });
     } else {
-      console.error('[Auto-Recovery] No valid backups found to recover from.');
+      logger.error('[Auto-Recovery] No valid backups found to recover from.');
       throw err;
     }
   }
 
   // dbPromise set deferred
+
+  // Connection hardening:
+  // - foreign_keys: SQLite ignores FK constraints unless explicitly enabled
+  //   (every REFERENCES clause in the schema would otherwise be decorative).
+  // - journal_mode = WAL: readers no longer block the writer, which matters for
+  //   the backup/VACUUM/archiving tasks that run alongside the UI.
+  // - busy_timeout: avoids instant SQLITE_BUSY failures when two writes overlap.
+  try {
+    await db.run('PRAGMA foreign_keys = ON');
+    await db.run('PRAGMA journal_mode = WAL');
+    await db.run('PRAGMA busy_timeout = 5000');
+  } catch (pragmaErr) {
+    logger.error('Failed to apply SQLite PRAGMAs:', pragmaErr);
+  }
 
   // Verify clean shutdown state and perform integrity check if it was unclean
   try {
@@ -80,15 +109,15 @@ async function getDB() {
       const cleanSetting = await db.get("SELECT setting_value FROM app_settings WHERE setting_key = 'clean_shutdown'");
       if (cleanSetting) {
         if (cleanSetting.setting_value === '0') {
-          console.warn('[Integrity Check] Unclean shutdown detected. Checking database integrity...');
+          logger.warn('[Integrity Check] Unclean shutdown detected. Checking database integrity...');
           const check = await db.get('PRAGMA integrity_check');
-          console.log('[Integrity Check] Result:', check);
+          logger.info('[Integrity Check] Result:', check);
           if (check && check.integrity_check !== 'ok') {
-            console.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
+            logger.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
             await db.close();
             const backupDir = app 
               ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
-              : path.join(__dirname, '../../test_data/Database-Backups');
+              : path.join(__dirname, '../../.tecton-dev-data/Database-Backups');
             const latestBackup = findLatestBackup(backupDir);
             if (latestBackup) {
               fs.copyFileSync(latestBackup, dbPath);
@@ -103,244 +132,38 @@ async function getDB() {
       }
     }
   } catch (checkErr) {
-    console.error('[Integrity Check] Failed to run integrity verification:', checkErr);
+    logger.error('[Integrity Check] Failed to run integrity verification:', checkErr);
   }
 
   // Create tables (Zero-Code Change Architecture)
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS app_settings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      setting_key TEXT UNIQUE NOT NULL,
-      setting_value TEXT NOT NULL,
-      description TEXT,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS work_types (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      multiplier REAL NOT NULL,
-      is_active BOOLEAN DEFAULT 1,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS worker_groups (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      is_active BOOLEAN DEFAULT 1,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS workers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      full_name TEXT NOT NULL,
-      tc_no TEXT,
-      phone TEXT,
-      daily_wage REAL NOT NULL,
-      group_id INTEGER,
-      start_date DATE,
-      status TEXT DEFAULT 'active',
-      extra_data TEXT,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (group_id) REFERENCES worker_groups (id)
-    );
-
-    CREATE TABLE IF NOT EXISTS timesheets (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      worker_id INTEGER,
-      work_date DATE NOT NULL,
-      work_type_id INTEGER,
-      applied_wage REAL NOT NULL,
-      applied_multiplier REAL NOT NULL,
-      overtime_hours REAL DEFAULT 0,
-      earned_amount REAL NOT NULL,
-      notes TEXT,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (worker_id) REFERENCES workers (id),
-      FOREIGN KEY (work_type_id) REFERENCES work_types (id)
-    );
-
-    CREATE TABLE IF NOT EXISTS transactions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      worker_id INTEGER,
-      trans_date DATE NOT NULL,
-      trans_type TEXT NOT NULL,
-      amount REAL NOT NULL,
-      notes TEXT,
-      linked_cash_id INTEGER,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (worker_id) REFERENCES workers (id)
-    );
-
-    CREATE TABLE IF NOT EXISTS cash_register (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      trans_date DATE NOT NULL,
-      type TEXT NOT NULL,
-      amount REAL NOT NULL,
-      description TEXT,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS audit_logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      table_name TEXT,
-      record_id INTEGER,
-      action TEXT,
-      old_values TEXT,
-      new_values TEXT,
-      project_id INTEGER,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (project_id) REFERENCES projects (id)
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs (created_at);
-
-    CREATE TABLE IF NOT EXISTS projects (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      location TEXT,
-      status TEXT DEFAULT 'active',
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS production_records (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      project_id INTEGER NOT NULL,
-      item_name TEXT NOT NULL,
-      quantity REAL NOT NULL,
-      unit TEXT NOT NULL,
-      notes TEXT,
-      record_date DATE NOT NULL,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (project_id) REFERENCES projects(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS materials (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      project_id INTEGER NOT NULL,
-      supplier TEXT NOT NULL,
-      material_type TEXT NOT NULL,
-      quantity REAL NOT NULL,
-      unit TEXT NOT NULL,
-      receipt_number TEXT,
-      receipt_date DATE NOT NULL,
-      photo_path TEXT,
-      notes TEXT,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (project_id) REFERENCES projects(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS daily_journals (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      project_id INTEGER NOT NULL,
-      journal_date DATE NOT NULL,
-      weather_temp REAL,
-      weather_desc TEXT,
-      weather_icon TEXT,
-      notes TEXT,
-      worker_count INTEGER,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (project_id) REFERENCES projects(id),
-      UNIQUE(project_id, journal_date)
-    );
-
-    CREATE TABLE IF NOT EXISTS quality_reports (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      project_id INTEGER NOT NULL,
-      title TEXT NOT NULL,
-      description TEXT,
-      status TEXT DEFAULT 'open',
-      photo_path TEXT,
-      report_date DATE NOT NULL,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (project_id) REFERENCES projects(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS subcontractor_ledgers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      project_id INTEGER NOT NULL,
-      name TEXT NOT NULL,
-      service_type TEXT NOT NULL,
-      phone TEXT,
-      daily_wage REAL NOT NULL,
-      status TEXT DEFAULT 'active',
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (project_id) REFERENCES projects(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS subcontractor_transactions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      subcontractor_id INTEGER NOT NULL,
-      trans_date DATE NOT NULL,
-      type TEXT NOT NULL,
-      amount REAL NOT NULL,
-      description TEXT,
-      project_id INTEGER,
-      linked_cash_id INTEGER,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (subcontractor_id) REFERENCES subcontractor_ledgers(id),
-      FOREIGN KEY (project_id) REFERENCES projects(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS worker_leaves (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      worker_id INTEGER NOT NULL,
-      project_id INTEGER,
-      start_date DATE NOT NULL,
-      end_date DATE NOT NULL,
-      type TEXT NOT NULL,
-      description TEXT,
-      is_deleted BOOLEAN DEFAULT 0,
-      deleted_at TIMESTAMP,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (worker_id) REFERENCES workers(id),
-      FOREIGN KEY (project_id) REFERENCES projects(id)
-    );
-  `);
+  await db.exec(TABLES_SQL);
 
   // Migrations for existing DB
   try {
     await db.run('ALTER TABLE projects ADD COLUMN sort_order INTEGER DEFAULT 0');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   try {
     await db.run('ALTER TABLE workers ADD COLUMN group_id INTEGER REFERENCES worker_groups(id)');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   try {
     await db.run('ALTER TABLE workers ADD COLUMN tc_no TEXT');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   // Project ID & ISG Date Migrations for existing tables
@@ -349,32 +172,47 @@ async function getDB() {
     try {
       await db.run(`ALTER TABLE ${t} ADD COLUMN project_id INTEGER REFERENCES projects(id)`);
     } catch (err) {
-      // Column might already exist, ignore
+      if (!isDuplicateColumnError(err)) {
+        logger.error('Schema migration failed:', err);
+        throw err;
+      }
     }
   }
 
   try {
     await db.run('ALTER TABLE workers ADD COLUMN isg_bitis_tarihi DATE');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   try {
     await db.run('ALTER TABLE workers ADD COLUMN isg_start_date DATE');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   // ISG Date Migrations for subcontractor_ledgers
   try {
     await db.run('ALTER TABLE subcontractor_ledgers ADD COLUMN isg_start_date DATE');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
   try {
     await db.run('ALTER TABLE subcontractor_ledgers ADD COLUMN isg_expiry_date DATE');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   // Tags Migrations
@@ -383,7 +221,10 @@ async function getDB() {
     try {
       await db.run(`ALTER TABLE ${t} ADD COLUMN tags TEXT`);
     } catch (err) {
-      // Column might already exist, ignore
+      if (!isDuplicateColumnError(err)) {
+        logger.error('Schema migration failed:', err);
+        throw err;
+      }
     }
   }
 
@@ -391,7 +232,10 @@ async function getDB() {
   try {
     await db.run('ALTER TABLE audit_logs ADD COLUMN project_id INTEGER REFERENCES projects(id)');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   // Soft Delete Column Migrations for all main tables to ensure they have is_deleted and deleted_at
@@ -405,34 +249,56 @@ async function getDB() {
     try {
       await db.run(`ALTER TABLE ${t} ADD COLUMN is_deleted INTEGER DEFAULT 0`);
     } catch (err) {
-      // Column might already exist, ignore
+      if (!isDuplicateColumnError(err)) {
+        logger.error('Schema migration failed:', err);
+        throw err;
+      }
     }
     try {
       await db.run(`ALTER TABLE ${t} ADD COLUMN deleted_at TIMESTAMP`);
     } catch (err) {
-      // Column might already exist, ignore
+      if (!isDuplicateColumnError(err)) {
+        logger.error('Schema migration failed:', err);
+        throw err;
+      }
     }
   }
 
-  // Create recycle_bin table if not exists
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS recycle_bin (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      table_name TEXT NOT NULL,
-      record_id INTEGER NOT NULL,
-      title TEXT NOT NULL,
-      deleted_at TIMESTAMP DEFAULT (datetime('now', 'localtime')),
-      is_restored BOOLEAN DEFAULT 0,
-      restored_at TIMESTAMP DEFAULT (datetime('now', 'localtime')),
-      original_data TEXT,
-      project_id INTEGER
+  // Data migration: the cash direction and the worker ledger type used to be
+  // stored as Turkish labels, which made reports, exports and the local API
+  // language-dependent. The canonical values are language-neutral; this rewrite
+  // runs once and is a no-op afterwards.
+  try {
+    await db.run(
+      "UPDATE cash_register SET type = 'income' WHERE type IN ('Nakit Girişi', 'Nakit Girisi', 'Gelir', 'gelir', 'Tahsilat', 'tahsilat')"
     );
-  `);
+    await db.run(
+      "UPDATE cash_register SET type = 'expense' WHERE type IN ('Nakit Çıkışı', 'Nakit Cikisi', 'Gider', 'gider', 'Ödeme', 'ödeme', 'odeme')"
+    );
+    await db.run("UPDATE transactions SET trans_type = 'advance' WHERE trans_type IN ('Avans', 'avans', 'Ödeme', 'ödeme', 'odeme')");
+    await db.run(
+      "UPDATE subcontractor_transactions SET type = 'payment' WHERE type IN ('Ödeme', 'ödeme', 'odeme', 'Payment')"
+    );
+    await db.run(
+      "UPDATE subcontractor_transactions SET type = 'progress' WHERE type IN ('Hakediş', 'Hakedis', 'Progress billing')"
+    );
+  } catch (err) {
+    logger.error('Cash and ledger type migration failed:', err);
+    throw err;
+  }
+
+  // Indexes for the columns the app filters on most often.
+  // Without these every list screen does a full table scan (project_id /
+  // worker_id are used in nearly every read and every balance calculation).
+  await db.exec(INDEXES_SQL);
 
   try {
     await db.run('ALTER TABLE recycle_bin ADD COLUMN project_id INTEGER');
   } catch (err) {
-    // Column might already exist, ignore
+    if (!isDuplicateColumnError(err)) {
+      logger.error('Schema migration failed:', err);
+      throw err;
+    }
   }
 
   // Triggers for main tables when they are soft-deleted (is_deleted = 1)
@@ -488,7 +354,7 @@ async function getDB() {
     {
       name: 'trg_worker_leaves_deleted',
       table: 'worker_leaves',
-      titleExpr: "NEW.type || ' İzni (' || NEW.start_date || ' - ' || NEW.end_date || ')'",
+      titleExpr: "NEW.type || ' (leave) ' || NEW.start_date || ' - ' || NEW.end_date",
       projIdExpr: 'NEW.project_id'
     }
   ];
@@ -505,89 +371,120 @@ async function getDB() {
         END;
       `);
     } catch (err) {
-      console.error(`Error creating trigger ${trg.name}:`, err);
+      logger.error(`Error creating trigger ${trg.name}:`, err);
     }
+  }
+
+  // The installer's language picker runs before there is any database, so its
+  // choice wins over the Windows display language. Anything without a shipped
+  // dictionary is English (never Turkish): the interface must never open in a
+  // language the user did not choose.
+  const SUPPORTED_UI_LANGUAGES = [
+    'tr', 'en', 'de', 'es', 'fr', 'it', 'pt', 'nl', 'pl', 'ru',
+    'ja', 'ko', 'zh', 'sv', 'no', 'da', 'cs', 'ar', 'hi',
+  ];
+
+  function resolveSupportedLanguage(value) {
+    const raw = String(value || '').trim().toLowerCase().replace('_', '-');
+    if (!raw) return null;
+    if (raw === 'zh-tw' || raw === 'zh-hk' || raw === 'zh-hant') return 'zh';
+    const base = raw.split('-')[0];
+    return SUPPORTED_UI_LANGUAGES.includes(base) ? base : null;
   }
 
   function getSystemDefaultLanguage() {
     try {
-      const locale = require('electron').app.getLocale().toLowerCase();
-      const systemLang = locale.split('-')[0];
-      const supportedLangs = ['tr', 'en', 'zh', 'es', 'fr', 'ar', 'hi', 'ru', 'pt', 'de', 'sv', 'no', 'da', 'pl', 'it', 'nl', 'cs', 'ja', 'ko'];
-      if (supportedLangs.includes(systemLang)) {
-        return systemLang;
-      }
+      const installed = require('../services/platform').readInstallerLanguage();
+      const resolvedInstaller = resolveSupportedLanguage(installed);
+      if (resolvedInstaller) return resolvedInstaller;
     } catch (err) {
-      console.error('Failed to get system locale:', err);
+      logger.error('Failed to read the installer language:', err);
     }
-    return 'tr';
+    try {
+      const resolvedSystem = resolveSupportedLanguage(require('electron').app.getLocale());
+      if (resolvedSystem) return resolvedSystem;
+    } catch (err) {
+      logger.error('Failed to get system locale:', err);
+    }
+    return 'en';
   }
 
-  // Seeder logic for initial default values
+  // Seeder logic for initial default values.
+  //
+  // Every setting is declared once in DEFAULT_SETTINGS and then both inserted
+  // (empty database) and reconciled (existing database), so a new setting can
+  // never be missing from an upgraded installation.
+  const defaultBackupDir = path.join(require('electron').app.getPath('documents'), 'TectonBackups');
+  if (!fs.existsSync(defaultBackupDir)) {
+    try {
+      fs.mkdirSync(defaultBackupDir, { recursive: true });
+    } catch (err) {
+      logger.error('Failed to create default backup folder:', err);
+    }
+  }
+
+  const systemLang = getSystemDefaultLanguage();
+  const DEFAULT_SETTINGS = [
+    ['standard_daily_hours', '8', 'Standard daily working hours'],
+    ['overtime_multiplier', '1.5', 'Overtime rate multiplier'],
+    ['theme', 'dark', 'Surface mode: dark, light or system'],
+    ['theme_id', 'obsidian', 'Accent palette id'],
+    ['custom_theme_color', '#8b5cf6', 'Custom accent colour (hex)'],
+    ['app_icon', 'auto', 'Application icon variant'],
+    ['app_icon_color', '#8b5cf6', 'Custom application icon colour (hex)'],
+    ['language', systemLang, 'Interface language code'],
+    ['ui_zoom', '1', 'Interface zoom factor (0.8 - 1.6)'],
+    ['a11y_high_contrast', 'false', 'High contrast accessibility mode'],
+    ['a11y_enhanced_focus', 'false', 'Enhanced keyboard focus outlines'],
+    ['a11y_readable_spacing', 'false', 'Increased letter and line spacing'],
+    ['a11y_reduce_motion', 'false', 'Reduce interface animations'],
+    ['onboarding_completed', 'false', 'First-run wizard completed'],
+    ['close_to_tray', 'true', 'Closing the window keeps the app in the tray'],
+    ['start_minimized', 'false', 'Start hidden in the system tray'],
+    ['autostart', 'false', 'Launch when Windows starts'],
+    ['notifications_enabled', 'true', 'Show desktop notifications'],
+    ['notification_sound', 'true', 'Play a sound with notifications'],
+    ['company_name', '', 'Company or organisation name'],
+    ['company_logo', '', 'Company logo (base64)'],
+    ['company_website', '', 'Publisher website'],
+    ['company_email', '', 'Publisher support email'],
+    ['custom_currency', 'auto', 'Currency: auto, TRY, USD, EUR, GBP'],
+    ['custom_date_format', 'auto', 'Date format: auto, DD.MM.YYYY, YYYY-MM-DD, MM/DD/YYYY'],
+    ['custom_time_format', 'auto', 'Time format: auto, 24h, 12h'],
+    ['cloud_sync_folder', defaultBackupDir, 'Silent cloud backup folder'],
+    ['cloud_provider', 'none', 'Active cloud sync provider'],
+    ['cloud_auto_sync', 'true', 'Sync changes to the cloud automatically'],
+    ['cloud_last_sync', '', 'Timestamp of the last successful cloud sync'],
+  ];
+
   const settingsCount = await db.get('SELECT COUNT(*) as count FROM app_settings');
   if (settingsCount.count === 0) {
-    const systemLang = getSystemDefaultLanguage();
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['standard_daily_hours', '8', 'Standart günlük çalışma saati']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['overtime_multiplier', '1.5', 'Mesai saat ücreti çarpanı']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['theme', 'dark', 'Uygulama Teması (dark/light)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['language', systemLang, 'Uygulama Dili (tr/en)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_name', '', 'Şirket/Kurum Adı']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_logo', '', 'Şirket Logosu (Base64)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_currency', 'auto', 'Para Birimi Seçimi (auto, TRY, USD, EUR, GBP)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_date_format', 'auto', 'Tarih Formatı Seçimi (auto, DD.MM.YYYY, YYYY-MM-DD, MM/DD/YYYY)']);
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_time_format', 'auto', 'Saat Formatı Seçimi (auto, 24h, 12h)']);
-    const defaultBackupDir = path.join(require('electron').app.getPath('documents'), 'TectonBackups');
-    if (!fs.existsSync(defaultBackupDir)) {
-      try {
-        fs.mkdirSync(defaultBackupDir, { recursive: true });
-      } catch (err) {
-        console.error('Failed to create default backup folder:', err);
-      }
+    for (const [key, value, description] of DEFAULT_SETTINGS) {
+      await db.run(
+        'INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)',
+        [key, value, description]
+      );
     }
-    await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', defaultBackupDir, 'Sessiz Bulut Yedekleme Klasörü']);
   } else {
-    // Migration for existing databases to ensure new settings exist
+    // Migration for existing databases: add any setting introduced after the
+    // installation was first created, leaving user values untouched.
     const keys = await db.all('SELECT setting_key FROM app_settings');
-    const existingKeys = keys.map(k => k.setting_key);
-    
-    if (!existingKeys.includes('company_name')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_name', '', 'Şirket/Kurum Adı']);
-    }
-    if (!existingKeys.includes('company_logo')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['company_logo', '', 'Şirket Logosu (Base64)']);
-    }
-    if (!existingKeys.includes('language')) {
-      const systemLang = getSystemDefaultLanguage();
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['language', systemLang, 'Uygulama Dili (tr/en)']);
-    }
-    if (!existingKeys.includes('custom_currency')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_currency', 'auto', 'Para Birimi Seçimi (auto, TRY, USD, EUR, GBP)']);
-    }
-    if (!existingKeys.includes('custom_date_format')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_date_format', 'auto', 'Tarih Formatı Seçimi (auto, DD.MM.YYYY, YYYY-MM-DD, MM/DD/YYYY)']);
-    }
-    if (!existingKeys.includes('custom_time_format')) {
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['custom_time_format', 'auto', 'Saat Formatı Seçimi (auto, 24h, 12h)']);
-    }
-    if (!existingKeys.includes('cloud_sync_folder')) {
-      const defaultBackupDir = path.join(require('electron').app.getPath('documents'), 'TectonBackups');
-      if (!fs.existsSync(defaultBackupDir)) {
-        try {
-          fs.mkdirSync(defaultBackupDir, { recursive: true });
-        } catch (err) {
-          console.error('Failed to create default backup folder:', err);
-        }
-      }
-      await db.run("INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)", ['cloud_sync_folder', defaultBackupDir, 'Sessiz Bulut Yedekleme Klasörü']);
+    const existingKeys = new Set(keys.map((row) => row.setting_key));
+    for (const [key, value, description] of DEFAULT_SETTINGS) {
+      if (existingKeys.has(key)) continue;
+      await db.run(
+        'INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)',
+        [key, value, description]
+      );
     }
   }
 
   const workTypesCount = await db.get('SELECT COUNT(*) as count FROM work_types');
   if (workTypesCount.count === 0) {
-    await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Tam Gün', 1.0]);
-    await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Yarım Gün', 0.5]);
+    await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Full Day', 1.0]);
+    await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Half Day', 0.5]);
     await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Pazar Mesaisi', 2.0]);
-    await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['İzinli (Ücretsiz)', 0.0]);
+    await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Unpaid Leave', 0.0]);
   }
 
   // Run cleanup tasks asynchronously to optimize startup time
@@ -597,20 +494,29 @@ async function getDB() {
     return db;
   })();
 
-  const resultDb = await initPromise;
-  initPromise = null;
-  return resultDb;
+  try {
+    const resultDb = await initPromise;
+    initPromise = null;
+    return resultDb;
+  } catch (err) {
+    // Do not cache a rejected initialisation forever: after the user fixes the
+    // cause (disk space, locked file) the next getDB() must retry instead of
+    // instantly rethrowing the stale error.
+    initPromise = null;
+    dbPromise = null;
+    throw err;
+  }
 }
 
 function getSystemLogsDir() {
   const baseDir = app 
     ? path.join(app.getPath('documents'), 'TectonBackups', 'SystemLogs-Backups') 
-    : path.join(__dirname, '../../test_data/SystemLogs-Backups');
+    : path.join(__dirname, '../../.tecton-dev-data/SystemLogs-Backups');
   if (!fs.existsSync(baseDir)) {
     try {
       fs.mkdirSync(baseDir, { recursive: true });
     } catch (e) {
-      console.error('Failed to create SystemLogs-Backups directory:', e);
+      logger.error('Failed to create SystemLogs-Backups directory:', e);
     }
   }
   return baseDir;
@@ -654,34 +560,94 @@ function runDeferredCleanup(db) {
         }
       }
     } catch (err) {
-      console.error('Audit logs cleanup/archiving error:', err);
+      logger.error('Audit logs cleanup/archiving error:', err);
     }
 
     // Auto-Cleanup 30 days old deleted records
     try {
       const oldRecords = await db.all("SELECT id, table_name, record_id FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days') AND is_restored = 0");
-      for (const r of oldRecords) {
+      // table_name comes from the recycle_bin table, but treat it as untrusted:
+      // only real, non-audit business tables may be hard-deleted with an
+      // interpolated identifier.
+      // The rank encodes FK dependency depth: children before parents, so that
+      // 'PRAGMA foreign_keys = ON' cannot reject a delete because a parent row
+      // is removed while a child row still references it.
+      const deletableTables = new Map([
+        ['timesheets', 1],
+        ['transactions', 1],
+        ['cash_register', 1],
+        ['production_records', 1],
+        ['materials', 1],
+        ['daily_journals', 1],
+        ['quality_reports', 1],
+        ['subcontractor_transactions', 1],
+        ['worker_leaves', 1],
+        ['workers', 2],
+        ['subcontractor_ledgers', 2],
+        ['work_types', 3],
+        ['worker_groups', 3],
+        ['projects', 4],
+        ['app_settings', 5],
+      ]);
+      const ordered = [...oldRecords].sort(
+        (a, b) => (deletableTables.get(a.table_name) ?? 99) - (deletableTables.get(b.table_name) ?? 99)
+      );
+      // Photo files live on disk, not in SQLite: once the row is deleted the path
+      // is gone and the file leaks forever. Capture the references first, delete
+      // the rows, then unlink - never before, or a failing DELETE would lose the
+      // photo while the record survives.
+      const orphanedPhotos = [];
+      const orphanedProjects = [];
+      // Only recycle_bin rows whose record was really removed may be dropped.
+      // The old code deleted EVERY expired recycle_bin row after the loop, so a
+      // record whose hard-delete threw (FK violation, lock) stayed in the table
+      // while its recycle_bin entry vanished - leaving it soft-deleted, hidden
+      // from every screen and never purged again (permanent silent data orphan).
+      const purgedRecycleIds = [];
+      for (const r of ordered) {
         try {
+          if (!deletableTables.has(r.table_name)) {
+            logger.warn(`Skipped hard-delete for unknown table: ${r.table_name}`);
+            continue;
+          }
+          if (r.table_name === 'materials' || r.table_name === 'quality_reports') {
+            const row = await db.get(`SELECT photo_path FROM ${r.table_name} WHERE id = ?`, [r.record_id]);
+            if (row && row.photo_path) orphanedPhotos.push(row.photo_path);
+          } else if (r.table_name === 'projects') {
+            orphanedProjects.push(r.record_id);
+          }
           await db.run(`DELETE FROM ${r.table_name} WHERE id = ? AND is_deleted = 1`, [r.record_id]);
+          purgedRecycleIds.push(r.id);
         } catch (e) {
-          console.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
+          logger.error(`Error hard-deleting record ${r.record_id} from ${r.table_name}:`, e);
         }
       }
-      await db.run("DELETE FROM recycle_bin WHERE deleted_at <= datetime('now', '-30 days')");
+      for (const relPath of orphanedPhotos) {
+        removeMediaFile(relPath);
+      }
+      for (const projectId of orphanedProjects) {
+        removeMediaProjectDir(projectId);
+      }
+      // Delete by id, not by date: an entry that failed above keeps its row and
+      // is retried on the next launch instead of being forgotten.
+      if (purgedRecycleIds.length > 0) {
+        const placeholders = purgedRecycleIds.map(() => '?').join(', ');
+        await db.run(`DELETE FROM recycle_bin WHERE id IN (${placeholders})`, purgedRecycleIds);
+      }
       
       if (oldRecords && oldRecords.length > 0) {
         vacuumNeeded = true;
       }
     } catch (err) {
-      console.error('Auto cleanup error:', err);
+      logger.error('Auto cleanup error:', err);
     }
 
     if (vacuumNeeded) {
       try {
         await db.run('VACUUM');
-        console.log('Database vacuum completed successfully.');
+        logger.info('Database vacuum completed successfully.');
       } catch (e) {
-        console.error('VACUUM error:', e);
+        logger.error('VACUUM error:', e);
       }
     }
 
@@ -699,7 +665,7 @@ function runDeferredCleanup(db) {
         processBackupArchiving(backupFolder);
       }
     } catch (err) {
-      console.error('Database archiving error at startup:', err);
+      logger.error('Database archiving error at startup:', err);
     }
   }, 5000);
 }
@@ -739,7 +705,7 @@ function archiveOldLogs() {
             });
 
             zip.writeZip(zipPath);
-            console.log(`Archived log folder ${folderYearMonth} to ${zipPath}`);
+            logger.info(`Archived log folder ${folderYearMonth} to ${zipPath}`);
           }
 
           fs.rmSync(monthPath, { recursive: true, force: true });
@@ -757,44 +723,108 @@ function archiveOldLogs() {
       }
     }
   } catch (err) {
-    console.error('Log archiving error:', err);
+    logger.error('Log archiving error:', err);
   }
 }
 
 
-// Zaman Makinesi (Restore Point) Snapshot Fonksiyonları
+// Restore point (time machine) snapshot helpers
 function getDBPath() {
   const isDev = process.env.NODE_ENV === 'development';
   return isDev 
-    ? path.join(__dirname, '../../../database.sqlite')
+    ? path.join(__dirname, '../../../.tecton-dev-data/database.sqlite')
     : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 }
 
-function createSnapshot(suffix = 'restore-point') {
+/**
+ * Creates a restore point through SQLite instead of copying the file.
+ *
+ * `fs.copyFileSync` on a live WAL database copies only the main file; commits
+ * still sitting in `-wal` are omitted, so the "restore point" can silently
+ * lose the most recent data. VACUUM INTO writes a consistent snapshot that
+ * includes every committed transaction.
+ */
+async function createSnapshot(suffix = 'restore-point') {
+  const dbPath = getDBPath();
+  const backupPath = `${dbPath}.${suffix}`;
+  const tempPath = `${backupPath}.tmp`;
   try {
-    const dbPath = getDBPath();
-    const backupPath = `${dbPath}.${suffix}`;
-    fs.copyFileSync(dbPath, backupPath);
+    const db = await getDB();
+    await runExclusive(async () => {
+      if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+      await db.run('VACUUM INTO ?', [tempPath]);
+      fs.renameSync(tempPath, backupPath);
+    });
+    // Announced only after the rename: a listener must never receive an event
+    // for a backup that is still being written.
+    try {
+      require('../services/integrationRuntime').emitEvent('backup.completed', { suffix, path: backupPath });
+    } catch {
+      // Integrations are optional; a failure here cannot fail the backup.
+    }
     return { success: true, backupPath };
   } catch (err) {
-    console.error('Snapshot creation failed:', err);
-    return { success: false, message: err.message };
-  }
-}
-
-function restoreSnapshot(suffix = 'restore-point') {
-  try {
-    const dbPath = getDBPath();
-    const backupPath = `${dbPath}.${suffix}`;
-    if (fs.existsSync(backupPath)) {
-      fs.copyFileSync(backupPath, dbPath);
-      return { success: true };
+    try {
+      if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+    } catch (cleanupErr) {
+      logger.warn('Snapshot temp cleanup failed:', cleanupErr.message);
     }
-    return { success: false, message: 'Restore point bulunamadı.' };
-  } catch (err) {
-    console.error('Restore failed:', err);
-    return { success: false, message: err.message };
+    logger.error('Snapshot creation failed:', err);
+    return { success: false, ...toUserError(err, 'file_error') };
   }
 }
 
-module.exports = { getDB, createSnapshot, restoreSnapshot };
+/**
+ * Restores a restore point. Closes the shared connection first and removes the
+ * WAL sidecars, otherwise SQLite would replay the old database's WAL over the
+ * restored file. The caller must restart the app afterwards: every IPC handler
+ * still holds the closed connection.
+ */
+async function restoreSnapshot(suffix = 'restore-point') {
+  const dbPath = getDBPath();
+  const backupPath = `${dbPath}.${suffix}`;
+  if (!fs.existsSync(backupPath)) {
+    return { success: false, message: 'Restore point not found.', messageKey: 'errors.restore_point_missing' };
+  }
+  try {
+    await runExclusive(async () => {
+      if (dbPromise) {
+        try {
+          await dbPromise.close();
+        } catch (closeErr) {
+          logger.warn('Snapshot restore: connection close failed:', closeErr.message);
+        }
+      }
+      dbPromise = null;
+      initPromise = null;
+      for (const sidecar of ['-wal', '-shm', '-journal']) {
+        const sidecarPath = `${dbPath}${sidecar}`;
+        try {
+          if (fs.existsSync(sidecarPath)) fs.unlinkSync(sidecarPath);
+        } catch (unlinkErr) {
+          logger.warn(`Snapshot restore: failed to remove ${sidecar}:`, unlinkErr.message);
+        }
+      }
+      fs.copyFileSync(backupPath, dbPath);
+    });
+    return { success: true, restartRequired: true };
+  } catch (err) {
+    logger.error('Restore failed:', err);
+    return { success: false, ...toUserError(err, 'file_error') };
+  }
+}
+
+/**
+ * Drop the cached connection so the next `getDB()` reopens the file.
+ *
+ * Needed after a DB-file restore is rolled back: the handler closes the
+ * connection before swapping the file, and if the copy fails the app keeps
+ * running - but with `dbPromise` still pointing at a closed handle, so every
+ * later query throws "Database is closed" until the user restarts.
+ */
+function resetConnection() {
+  dbPromise = null;
+  initPromise = null;
+}
+
+module.exports = { getDB, createSnapshot, restoreSnapshot, resetConnection };

@@ -1,37 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { exportToExcel, exportToCSV, exportToJSON } from '../utils/exportUtils';
 import TagInput from './ui/TagInput';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
-import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe } from '../utils/formatUtils';
+import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe, localToday, toLocalDateString } from '../utils/formatUtils';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import html2canvas from 'html2canvas';
+import { escapeHtml } from '../utils/htmlUtils';
+import { createPdfContainer, renderContainerToPdfPage } from '../utils/pdfRenderUtils';
 import GuideDrawer from './ui/GuideDrawer';
-
+import apiWrite from '../utils/apiWrite';
+import { logError } from '../utils/logger';
+import { CASH_IN, isCashIncome, isCashExpense, normalizeCashType } from '../utils/cashTypes';
+
+import { toAsciiFilename } from '../utils/pdfUtils';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
+import pdfStyles from '../utils/pdfStyles';
 const CashRegister = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
   const [transactions, setTransactions] = useState([]);
-  const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [helpOpen, setHelpOpen] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState('');
   
   // Rapor State
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = localToday();
   const [reportDate, setReportDate] = useState(todayStr);
   const [reportData, setReportData] = useState(null);
 
   const getFirstDayOfCurrentMonth = () => {
     const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    return toLocalDateString(new Date(now.getFullYear(), now.getMonth(), 1));
   };
 
   const getLastDayOfCurrentMonth = () => {
     const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+    return toLocalDateString(new Date(now.getFullYear(), now.getMonth() + 1, 0));
   };
 
   // Project Filter state (initialized dynamically based on active workspace)
@@ -51,20 +58,14 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const handleStartDateChange = (val) => {
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterStartDate(filterEndDate);
-      setFilterEndDate(val);
-    } else {
-      setFilterStartDate(val);
-    }
+    const [start, end] = reorderRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
   const handleEndDateChange = (val) => {
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterEndDate(filterStartDate);
-      setFilterStartDate(val);
-    } else {
-      setFilterEndDate(val);
-    }
+    const [start, end] = reorderRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
   const [filterType, setFilterType] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,8 +75,8 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
 
   // Form State
   const [formData, setFormData] = useState({
-    trans_date: new Date().toISOString().split('T')[0],
-    type: 'Nakit Girişi', // 'Nakit Girişi' | 'Nakit Çıkışı'
+    trans_date: localToday(),
+    type: CASH_IN, // CASH_IN | CASH_OUT
     amount: '',
     description: '',
     project_id: activeProjectId ? String(activeProjectId) : ''
@@ -98,50 +99,66 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
   });
 
   useEffect(() => {
-    if (cashListBodyRef.current) {
-      setTimeout(() => {
-        cashListBodyRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 50);
-    }
+    if (!cashListBodyRef.current) return;
+    // The ref can become null if the list unmounts before the timer fires, and
+    // the timer must be cancelled on unmount to avoid touching a dead node.
+    const timer = setTimeout(() => {
+      cashListBodyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 50);
+    return () => clearTimeout(timer);
   }, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, filterStartDate, filterEndDate, filterType, filterProject]);
 
+  // Guards against stale responses overwriting newer data (rapid project/date changes).
+  const cashRequestIdRef = useRef(0);
+  const reportRequestIdRef = useRef(0);
+
   const fetchCashData = async () => {
-    if (window.api) {
-      setLoading(true);
-      const data = await window.api.db.read('cash_register');
-      const settings = await window.api.db.read('app_settings');
-      
-      const cName = settings.find(s => s.setting_key === 'company_name')?.setting_value;
-      const cLogo = settings.find(s => s.setting_key === 'company_logo')?.setting_value;
+    if (!window.api) return;
+    const requestId = ++cashRequestIdRef.current;
+    setLoading(true);
+    try {
+      const [data, settings] = await Promise.all([
+        window.api.db.read('cash_register'),
+        window.api.db.read('app_settings')
+      ]);
+      if (requestId !== cashRequestIdRef.current) return;
+
+      const settingsRows = Array.isArray(settings) ? settings : [];
+      const cName = settingsRows.find(s => s.setting_key === 'company_name')?.setting_value;
+      const cLogo = settingsRows.find(s => s.setting_key === 'company_logo')?.setting_value;
       if (cName) setCompanyName(cName);
       if (cLogo) setCompanyLogo(cLogo);
-      
-      let total = 0;
-      data.forEach(t => {
-        if (t.type === 'Nakit Girişi') total += t.amount;
-        else if (t.type === 'Nakit Çıkışı') total -= t.amount;
-      });
-      
-      setBalance(total);
-      setTransactions(data);
-      
-      const parts = reportDate.split('-');
-      fetchReportData(parseInt(parts[0]), parseInt(parts[1]), filterProject);
-      
-      setLoading(false);
+
+      setTransactions(Array.isArray(data) ? data : []);
+    } catch (error) {
+      logError('Failed to load cash register data:', error);
+      if (requestId === cashRequestIdRef.current) {
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('common.error_occurred', 'Hata:'), type: 'error' }
+        }));
+      }
+    } finally {
+      // Only the latest request may clear the loading flag; otherwise a stale
+      // response can hide the spinner while a newer one is still in flight.
+      if (requestId === cashRequestIdRef.current) setLoading(false);
     }
   };
 
   const fetchReportData = async (year, month, projectId) => {
-    if (window.api) {
+    if (!window.api) return;
+    const requestId = ++reportRequestIdRef.current;
+    try {
       const res = await window.api.finance.companyReport(year, month, projectId);
-      if (res.success) {
+      if (requestId !== reportRequestIdRef.current) return;
+      if (res && res.success) {
         setReportData(res);
       }
+    } catch (error) {
+      logError('Failed to load monthly cash summary:', error);
     }
   };
 
@@ -162,7 +179,10 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'amount' ? Number(value) : value
+      // Number('') is 0 and Number('abc') is NaN; neither may reach the form.
+      [name]: name === 'amount'
+        ? (value === '' ? '' : (Number.isNaN(Number(value)) ? prev.amount : Number(value)))
+        : value
     }));
   };
 
@@ -177,7 +197,10 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
         project_id: formData.project_id ? Number(formData.project_id) : null,
         tags: JSON.stringify(cashTags) 
       };
-      await window.api.db.create('cash_register', dataToSave);
+      const res = await apiWrite(window.api.db.create('cash_register', dataToSave));
+      // Clear the form only when the row was really written. Previously a
+      // rejected insert still wiped the user's typed amount and description.
+      if (res && res.success === false) return;
       setFormData(prev => ({ ...prev, amount: '', description: '' }));
       setCashTags([]);
       fetchCashData();
@@ -190,15 +213,11 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
       title: t('cash.delete_title', 'Kasa İşlemini Sil'),
       message: t('cash.delete_confirm', 'Bu kasa işlemini silmek istediğinize emin misiniz? Bu işlem kasa bakiyesini kalıcı olarak etkileyecektir.'),
       onConfirm: async () => {
-        await window.api.db.delete('cash_register', id);
+        await apiWrite(window.api.db.delete('cash_register', id));
         fetchCashData();
       }
     });
   };
-
-  if (loading) {
-    return <div className="text-center"><div className="loading-spinner"></div></div>;
-  }
 
   // Calculate project name
   const getProjectName = (projId) => {
@@ -207,45 +226,46 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
     return proj ? proj.name : t('cash.headquarters');
   };
 
-  // Recalculate dynamic totals based on the selected project filter
-  const projectFilteredTransactions = transactions.filter(t => {
-    if (filterProject === 'merkez') {
-      return !t.project_id;
-    } else if (filterProject !== 'all') {
-      return t.project_id === Number(filterProject);
-    }
-    return true;
-  });
+  // Recalculate dynamic totals based on the selected project filter.
+  // Memoized so unrelated state changes (pagination, modals, form typing) don't
+  // re-scan the whole transaction list.
+  const { projTotalIn, projTotalOut, projNetBalance } = useMemo(() => {
+    const rows = transactions.filter(t => {
+      if (filterProject === 'merkez') {
+        return !t.project_id;
+      } else if (filterProject !== 'all') {
+        return t.project_id === Number(filterProject);
+      }
+      return true;
+    });
 
-  let projTotalIn = 0;
-  let projTotalOut = 0;
-  projectFilteredTransactions.forEach(t => {
-    if (t.type === 'Nakit Girişi') projTotalIn += t.amount;
-    else if (t.type === 'Nakit Çıkışı') projTotalOut += t.amount;
-  });
-  const projNetBalance = projTotalIn - projTotalOut;
-
-  // Filtered transactions for current listing (includes dates, search query and type filters)
-  const filteredTransactions = transactions.filter(t => {
-    let matchStart = true;
-    let matchEnd = true;
-    let matchType = true;
-    let matchSearch = true;
-    let matchProject = true;
-    
-    if (filterStartDate) matchStart = t.trans_date >= filterStartDate;
-    if (filterEndDate) matchEnd = t.trans_date <= filterEndDate;
-    if (filterType) matchType = t.type === filterType;
-    if (searchQuery) matchSearch = t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    if (filterProject === 'merkez') {
-      matchProject = !t.project_id;
-    } else if (filterProject !== 'all') {
-      matchProject = t.project_id === Number(filterProject);
+    let totalIn = 0;
+    let totalOut = 0;
+    for (const t of rows) {
+      if (isCashIncome(t.type)) totalIn += Number(t.amount) || 0;
+      else if (isCashExpense(t.type)) totalOut += Number(t.amount) || 0;
     }
-    
-    return matchStart && matchEnd && matchType && matchSearch && matchProject;
-  });
+    return {
+      projTotalIn: totalIn,
+      projTotalOut: totalOut,
+      projNetBalance: totalIn - totalOut
+    };
+  }, [transactions, filterProject]);
+
+  // Filtered transactions for current listing (dates, search query, type, project)
+  const filteredTransactions = useMemo(() => {
+    const query = searchQuery ? searchQuery.toLowerCase() : '';
+    return transactions.filter(t => {
+      if (filterStartDate && !(t.trans_date >= filterStartDate)) return false;
+      if (filterEndDate && !(t.trans_date <= filterEndDate)) return false;
+      if (filterType && normalizeCashType(t.type) !== filterType) return false;
+      if (query && !(t.description && t.description.toLowerCase().includes(query))) return false;
+
+      if (filterProject === 'merkez') return !t.project_id;
+      if (filterProject !== 'all') return t.project_id === Number(filterProject);
+      return true;
+    });
+  }, [transactions, filterStartDate, filterEndDate, filterType, searchQuery, filterProject]);
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
   const paginatedTransactions = filteredTransactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -271,38 +291,27 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
     }
 
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 190;
-    const position = 15;
 
     for (let index = 0; index < chunks.length; index++) {
       const chunk = chunks[index];
       
-      // Create a temporary container styled as a clean A4 sheet
-      const container = document.createElement('div');
-      container.style.position = 'fixed';
-      container.style.left = '-9999px';
-      container.style.top = '0';
-      container.style.width = '800px';
-      container.style.background = '#ffffff';
-      container.style.color = '#1e293b';
-      container.style.fontFamily = "'Inter', 'Noto Sans', 'Arial', sans-serif";
-      container.style.padding = '40px';
+      const container = createPdfContainer();
       
       container.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div style="${pdfStyles.reportHeader}">
           <div>
-            ${companyLogo ? `<img src="${companyLogo}" style="max-width: 150px; max-height: 50px; margin-bottom: 10px; display: block;" />` : ''}
-            <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${companyName || ''}</div>
+            ${companyLogo ? `<img src="${escapeHtml(companyLogo)}" style="${pdfStyles.companyLogo}" />` : ''}
+            <div style="${pdfStyles.companyName}">${escapeHtml(companyName || '')}</div>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 18px; font-weight: bold; color: #6389b9; margin-bottom: 8px; font-family: inherit;">${t('cash.reportTitle', 'Kasa Hareketleri Raporu').toUpperCase()}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.filter', 'Filtre')}:</strong> ${projFilterText}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${filterStartDate || 'Tümü'} / ${filterEndDate || 'Tümü'}</div>
-            <div style="font-size: 11px; color: #64748b; font-family: inherit;"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${reportDateStr}</div>
+            <div style="${pdfStyles.reportTitle}">${t('cash.reportTitle', 'Kasa Hareketleri Raporu').toUpperCase()}</div>
+            <div style="${pdfStyles.metaLine}"><strong>${t('global.filter', 'Filtre')}:</strong> ${escapeHtml(projFilterText)}</div>
+            <div style="${pdfStyles.metaLine}"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${escapeHtml(filterStartDate || 'Tümü')} / ${escapeHtml(filterEndDate || 'Tümü')}</div>
+            <div style="${pdfStyles.metaLineTight}"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${escapeHtml(reportDateStr)}</div>
           </div>
         </div>
         
-        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;" />
+        <hr style="${pdfStyles.headerDivider}" />
         
         <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
           <span style="font-size: 13px; color: #64748b; font-weight: 500; font-family: inherit;">${t('cash.netBalance', 'Net Kasa Bakiyesi')}:</span>
@@ -311,34 +320,34 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
           </span>
         </div>
         
-        <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #334155; font-family: inherit;">
+        <table style="${pdfStyles.table}">
           <thead>
-            <tr style="background: #1e3a8a; color: #ffffff;">
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.date', 'Tarih')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.type', 'İşlem Türü')}</th>
-              <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.amount', 'Tutar')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('pdf_project_site', 'Project / Site')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('cash.table.desc', 'Açıklama')}</th>
+            <tr style="${pdfStyles.tableHeadRow}">
+              <th style="${pdfStyles.tableHeadCell}">${t('cash.table.date', 'Tarih')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('cash.table.type', 'İşlem Türü')}</th>
+              <th style="${pdfStyles.tableHeadCellRight}">${t('cash.table.amount', 'Tutar')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('pdf_project_site', 'Project / Site')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('cash.table.desc', 'Açıklama')}</th>
             </tr>
           </thead>
           <tbody>
             ${chunk.length === 0 ? `
               <tr>
-                <td colspan="5" style="padding: 20px; text-align: center; color: #64748b; font-family: inherit;">
+                <td colspan="5" style="${pdfStyles.emptyCell}">
                   ${t('cash.table.empty', 'Kasa işlemi bulunamadı.')}
                 </td>
               </tr>
             ` : chunk.map(t_row => {
-              const typeText = t_row.type === 'Nakit Girişi' 
+              const typeText = isCashIncome(t_row.type) 
                 ? t('cash.income', 'Nakit Girişi') 
                 : t('cash.expense', 'Nakit Çıkışı');
               return `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${t_row.trans_date}</td>
-                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${typeText}</td>
+                <tr style="${pdfStyles.tableRow}">
+                  <td style="${pdfStyles.tableCell}">${escapeHtml(t_row.trans_date)}</td>
+                  <td style="${pdfStyles.tableCell}">${escapeHtml(typeText)}</td>
                   <td style="padding: 8px 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: 500; font-family: inherit;">${formatCurrencySafe(t_row.amount, i18n.language)}</td>
-                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${getProjectName(t_row.project_id)}</td>
-                  <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${t_row.description || '-'}</td>
+                  <td style="${pdfStyles.tableCell}">${escapeHtml(getProjectName(t_row.project_id))}</td>
+                  <td style="${pdfStyles.tableCell}">${escapeHtml(t_row.description || '-')}</td>
                 </tr>
               `;
             }).join('')}
@@ -346,40 +355,13 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
         </table>
       `;
 
-      document.body.appendChild(container);
-      
-      // Wait for fonts to load
-      await document.fonts.ready;
-      
-      const canvas = await html2canvas(container, {
-        scale: 2.5,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
+      await renderContainerToPdfPage(pdf, container, {
+        addPage: index < chunks.length - 1
       });
-      
-      document.body.removeChild(container);
-      
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      
-      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-      
-      if (index < chunks.length - 1) {
-        pdf.addPage();
-      }
     }
     
-    const trMap = { 'ç':'c', 'ğ':'g', 'ş':'s', 'ö':'o', 'ü':'u', 'ı':'i', 'Ç':'C', 'Ğ':'G', 'Ş':'S', 'Ö':'O', 'Ü':'U', 'İ':'I' };
-    const toEn = (str) => {
-      if (!str) return '';
-      let s = String(str);
-      s = s.replace(/[çğşöüıÇĞŞÖÜİ]/g, letter => trMap[letter]);
-      s = s.replace(/₺/g, 'TL');
-      return s;
-    };
 
-    pdf.save(`${toEn(companyName || 'Kasa')}_Raporu.pdf`);
+    pdf.save(`${toAsciiFilename(companyName || 'Kasa')}_Raporu.pdf`);
   };
 
   const handleExport = (format) => {
@@ -397,27 +379,19 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
     if (format === 'pdf') generatePDF();
   };
 
+  // Kept after every hook so the hook order stays stable while the first load
+  // resolves; returning earlier made React see a different hook sequence and
+  // threw "change in the order of Hooks".
+  if (loading) {
+    return <div className="text-center" style={{ padding: '3rem' }}><div className="loading-spinner"></div></div>;
+  }
+
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
       <header className="header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <h2 style={{ margin: 0 }}>{t('cash.title')}</h2>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.4rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} fontSize="1.4rem" />
         </div>
       </header>
 
@@ -509,8 +483,8 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
               <div className="form-group">
                 <label className="form-label">{t('cash.table.type')}</label>
                 <select name="type" className="form-input" value={formData.type} onChange={handleChange} required>
-                  <option value="Nakit Girişi">{t('cash.table.income')} (+)</option>
-                  <option value="Nakit Çıkışı">{t('cash.table.expense')} (-)</option>
+                  <option value="income">{t('cash.table.income')} (+)</option>
+                  <option value="expense">{t('cash.table.expense')} (-)</option>
                 </select>
               </div>
               <div className="form-group">
@@ -541,10 +515,10 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
               </div>
               <button 
                 type="submit" 
-                className={`btn ${formData.type === 'Nakit Girişi' ? 'btn-primary' : 'btn-danger'}`} 
+                className={`btn ${isCashIncome(formData.type) ? 'btn-primary' : 'btn-danger'}`} 
                 style={{ width: '100%' }}
               >
-                {formData.type === 'Nakit Girişi' ? t('cash.add_in') : t('cash.add_out')}
+                {isCashIncome(formData.type) ? t('cash.add_in') : t('cash.add_out')}
               </button>
             </form>
           </div>
@@ -588,8 +562,8 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
                 <label className="form-label" style={{ fontSize: '0.8rem' }}>{t('cash.trans_dir')}</label>
                 <select className="form-input" value={filterType} onChange={e => setFilterType(e.target.value)}>
                   <option value="">{t('cash.all')}</option>
-                  <option value="Nakit Girişi">{t('cash.table.income')}</option>
-                  <option value="Nakit Çıkışı">{t('cash.table.expense')}</option>
+                  <option value="income">{t('cash.table.income')}</option>
+                  <option value="expense">{t('cash.table.expense')}</option>
                 </select>
               </div>
             </div>
@@ -624,19 +598,19 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
                 }}
                 title={t('common.clear', 'Temizle')}
               >
-                ✕
+                
               </button>
             )}
           </div>
           
           {filteredTransactions.length === 0 ? (
             <p className="text-muted" style={{ marginTop: '2rem', textAlign: 'center' }}>
-              {searchQuery ? 'Arama kriterlerine uygun kasa hareketi bulunamadı.' : (t('common.empty_data') || 'Gösterilecek veri bulunamadı.')}
+              {searchQuery ? t('cash.no_results', 'Arama kriterlerine uygun kasa hareketi bulunamadı.') : t('common.empty_data', 'Gösterilecek veri bulunamadı.')}
             </p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {paginatedTransactions.map(tr => {
-                const isIncome = tr.type === 'Nakit Girişi';
+                const isIncome = isCashIncome(tr.type);
                 return (
                   <div key={tr.id} style={{ 
                     background: isIncome ? 'var(--success-bg-light)' : 'var(--danger-bg-light)', 
@@ -669,7 +643,7 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
                           background: 'rgba(255, 255, 255, 0.05)',
                           color: 'var(--text-muted)'
                         }}>
-                          📁 {getProjectName(tr.project_id)}
+                           {getProjectName(tr.project_id)}
                         </span>
                       </div>
                     </div>
@@ -688,61 +662,8 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
                 );
               })}
 
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} ({filteredTransactions.length} {t('common.records', 'Kayıt')})
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button 
-                      type="button" 
-                      disabled={currentPage === 1} 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-                      style={{ 
-                        padding: '0.4rem 1rem', 
-                        fontSize: '0.9rem', 
-                        fontWeight: '600', 
-                        background: 'rgba(255,255,255,0.03)', 
-                        border: '1px solid var(--glass-border)', 
-                        borderRadius: '8px', 
-                        color: 'var(--text-main)',
-                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                        opacity: currentPage === 1 ? 0.5 : 1,
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                      onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                    >
-                      {t('common.prev', 'Önceki')}
-                    </button>
-                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                      {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
-                    </span>
-                    <button 
-                      type="button" 
-                      disabled={currentPage === totalPages} 
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
-                      style={{ 
-                        padding: '0.4rem 1rem', 
-                        fontSize: '0.9rem', 
-                        fontWeight: '600', 
-                        background: 'rgba(255,255,255,0.03)', 
-                        border: '1px solid var(--glass-border)', 
-                        borderRadius: '8px', 
-                        color: 'var(--text-main)',
-                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                        opacity: currentPage === totalPages ? 0.5 : 1,
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                      onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                    >
-                      {t('common.next', 'Sonraki')}
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Pagination - shared component (ui/Pagination) */}
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredTransactions.length} />
             </div>
           )}
         </div>

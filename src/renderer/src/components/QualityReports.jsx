@@ -1,11 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { logError } from '../utils/logger';
 import ConfirmationModal from './ui/ConfirmationModal';
+import NoProjectNotice from './ui/NoProjectNotice';
 import CustomDatePicker from './ui/CustomDatePicker';
 import LightboxModal from './ui/LightboxModal';
-import { compressImage } from '../utils/imageCompressor';
+import { readPhotoAsBase64, savePhotoFromFile } from '../utils/photoUtils';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate, trLower } from '../utils/formatUtils';
+import { formatDate, trLower, localToday } from '../utils/formatUtils';
+import apiWrite, { apiMessage } from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
+import useTransientMessage from '../hooks/useTransientMessage';
+import MobileUploadModal from './ui/MobileUploadModal';
+import Pagination from './ui/Pagination';
 
 const QualityReports = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -15,14 +23,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const [helpOpen, setHelpOpen] = useState(false);
   const containerRef = useRef(null);
   
-  const getLocalDateString = () => {
-    const d = new Date();
-    const offset = d.getTimezoneOffset();
-    const localDate = new Date(d.getTime() - (offset * 60 * 1000));
-    return localDate.toISOString().split('T')[0];
-  };
-
-  const todayStr = getLocalDateString();
+  const todayStr = localToday();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -36,24 +37,8 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const [qrModal, setQrModal] = useState({ isOpen: false, qrCode: '', url: '' });
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
   const [lightboxImage, setLightboxImage] = useState(null);
-  const [toastMessage, setToastMessage] = useState('');
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage('');
-    }, 3000);
-  };
-
-  const renderDescription = (text) => {
-    const parts = text.split('**');
-    return parts.map((part, index) => {
-      if (index % 2 === 1) {
-        return <strong key={index} style={{ fontWeight: 'bold' }}>{part}</strong>;
-      }
-      return part;
-    });
-  };
+  // Inline transient message (replaces the local timer ref + cleanup copy).
+  const { message: toastMessage, show: showToast } = useTransientMessage();
 
   const handleStartEdit = (rep) => {
     setEditingId(rep.id);
@@ -82,17 +67,15 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const itemsPerPage = 4;
 
   const handleStartDateChange = (val) => {
-    setFilterStartDate(val);
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterEndDate(val);
-    }
+    const [start, end] = clampRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
 
   const handleEndDateChange = (val) => {
-    setFilterEndDate(val);
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterStartDate(val);
-    }
+    const [start, end] = clampRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
 
   useEffect(() => {
@@ -107,12 +90,34 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
+  // Guards against stale responses overwriting newer data after a project switch.
+  const requestIdRef = useRef(0);
+
   const fetchReports = async () => {
-    if (!activeProjectId) return;
+    if (!activeProjectId) {
+      setReports([]);
+      setLoading(false);
+      return;
+    }
+    const requestId = ++requestIdRef.current;
     if (window.api && window.api.db) {
       setLoading(true);
-      const data = await window.api.db.read('quality_reports', { project_id: activeProjectId });
-      setReports(data);
+      try {
+        const data = await window.api.db.read('quality_reports', { project_id: activeProjectId });
+        if (requestId !== requestIdRef.current) return;
+        setReports(Array.isArray(data) ? data : []);
+      } catch (err) {
+        // An unguarded rejection used to leave the table spinning forever.
+        if (requestId !== requestIdRef.current) return;
+        logError('Quality reports fetch failed:', err);
+        setReports([]);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('quality.load_error', 'Kalite tutanakları yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
@@ -133,9 +138,11 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
           setFormData(prev => ({ ...prev, photo_path: data.relativePath }));
           loadPhotoPreview(data.relativePath);
           // Local showToast removed, using global ToastManager
-          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', '✓ Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', ' Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
           setQrModal({ isOpen: false, qrCode: '', url: '' });
-          window.api.system.stopLANServer();
+          // Fire-and-forget, but a rejection must not surface as an
+          // unhandled promise rejection in the renderer.
+          Promise.resolve(window.api.system.stopLANServer()).catch(logError);
         }
       });
       return () => unsubscribe();
@@ -143,12 +150,8 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   }, [activeProjectId]);
 
   const loadPhotoPreview = async (relativePath) => {
-    if (window.api && window.api.media.readPhoto && relativePath) {
-      const res = await window.api.media.readPhoto({ relativePath });
-      if (res.success) {
-        setPhotoPreview(res.base64);
-      }
-    }
+    const base64 = await readPhotoAsBase64(relativePath);
+    if (base64) setPhotoPreview(base64);
   };
 
   const handleSelectLocalPhoto = () => {
@@ -156,24 +159,19 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   };
 
   const handleLocalFileChange = async (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      try {
-        const compressedBase64 = await compressImage(e.target.files[0]);
-        if (window.api && window.api.media.savePhotoBase64) {
-          const saveRes = await window.api.media.savePhotoBase64({ 
-            projectId: activeProjectId, 
-            base64Data: compressedBase64 
-          });
-          if (saveRes.success) {
-            setFormData(prev => ({ ...prev, photo_path: saveRes.relativePath }));
-            setPhotoPreview(compressedBase64);
-          } else {
-            window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_error', 'Fotoğraf kaydedilemedi:') + ' ' + saveRes.message, type: 'error' } }));
-          }
-        }
-      } catch (err) {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_upload_error', 'Fotoğraf işlenirken hata oluştu:') + ' ' + err.message, type: 'error' } }));
+    if (!e.target.files || e.target.files.length === 0) return;
+    try {
+      const saveRes = await savePhotoFromFile(e.target.files[0], activeProjectId);
+      if (saveRes.success) {
+        setFormData(prev => ({ ...prev, photo_path: saveRes.relativePath }));
+        setPhotoPreview(saveRes.base64);
+      } else {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_error', 'Fotoğraf kaydedilemedi:') + ' ' + apiMessage(saveRes), type: 'error' } }));
       }
+    } catch (err) {
+      // Log technical detail, show a user-safe message instead of the raw error.
+      logError('Photo upload failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_upload_error', 'Fotoğraf işlenirken hata oluştu.'), type: 'error' } }));
     }
   };
 
@@ -191,7 +189,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
           url: res.url
         });
       } else {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.lan_error', 'Yerel sunucu başlatılamadı:') + ' ' + res.message, type: 'error' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.lan_error', 'Yerel sunucu başlatılamadı:') + ' ' + apiMessage(res), type: 'error' } }));
       }
     }
   };
@@ -199,7 +197,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const handleCloseQRModal = () => {
     setQrModal({ isOpen: false, qrCode: '', url: '' });
     if (window.api && window.api.system.stopLANServer) {
-      window.api.system.stopLANServer();
+      Promise.resolve(window.api.system.stopLANServer()).catch(logError);
     }
   };
 
@@ -217,12 +215,11 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
         report_date: formData.report_date
       };
 
-      if (editingId) {
-        await window.api.db.update('quality_reports', editingId, payload);
-        setEditingId(null);
-      } else {
-        await window.api.db.create('quality_reports', payload);
-      }
+      const res = editingId
+        ? await apiWrite(window.api.db.update('quality_reports', editingId, payload))
+        : await apiWrite(window.api.db.create('quality_reports', payload));
+      if (res && res.success === false) return;
+      if (editingId) setEditingId(null);
 
       setFormData(prev => ({
         ...prev,
@@ -240,7 +237,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
   const handleToggleStatus = async (report) => {
     if (window.api && window.api.db) {
       const nextStatus = report.status === 'open' ? 'resolved' : 'open';
-      await window.api.db.update('quality_reports', report.id, { status: nextStatus });
+      await apiWrite(window.api.db.update('quality_reports', report.id, { status: nextStatus }));
       fetchReports();
     }
   };
@@ -251,51 +248,47 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
 
   const confirmDelete = async () => {
     if (window.api && window.api.db && confirmModal.id) {
-      await window.api.db.delete('quality_reports', confirmModal.id);
+      await apiWrite(window.api.db.delete('quality_reports', confirmModal.id));
       setConfirmModal({ isOpen: false, id: null });
       fetchReports();
     }
   };
 
-  // Filter and paginated reports
-  const filteredReports = reports.filter(r => {
+  // Filter and sort reports (memoized - filter + in-place sort ran on every render).
+  const filteredReports = useMemo(() => {
     const q = trLower(searchQuery);
-    const matchesSearch = !searchQuery || 
-                          trLower(r.title).includes(q) || 
-                          (r.description && trLower(r.description).includes(q)) ||
-                          trLower(formatDate(r.report_date, i18n.language)).includes(q);
-    const matchesPhoto = !filterPhoto || 
-                         (filterPhoto === 'yes' && !!r.photo_path) || 
-                         (filterPhoto === 'no' && !r.photo_path);
-    const matchesStatus = !filterStatus || r.status === filterStatus;
+    const rows = reports.filter(r => {
+      const matchesSearch = !searchQuery ||
+                            trLower(r.title).includes(q) ||
+                            (r.description && trLower(r.description).includes(q)) ||
+                            trLower(formatDate(r.report_date, i18n.language)).includes(q);
+      const matchesPhoto = !filterPhoto ||
+                           (filterPhoto === 'yes' && !!r.photo_path) ||
+                           (filterPhoto === 'no' && !r.photo_path);
+      const matchesStatus = !filterStatus || r.status === filterStatus;
 
-    let matchesDate = true;
-    if (filterStartDate) matchesDate = matchesDate && r.report_date >= filterStartDate;
-    if (filterEndDate) matchesDate = matchesDate && r.report_date <= filterEndDate;
+      let matchesDate = true;
+      if (filterStartDate) matchesDate = matchesDate && r.report_date >= filterStartDate;
+      if (filterEndDate) matchesDate = matchesDate && r.report_date <= filterEndDate;
 
-    return matchesSearch && matchesPhoto && matchesStatus && matchesDate;
-  });
+      return matchesSearch && matchesPhoto && matchesStatus && matchesDate;
+    });
 
-  // Apply sorting
-  filteredReports.sort((a, b) => {
-    if (sortBy === 'date_desc') {
-      return b.report_date.localeCompare(a.report_date);
-    } else if (sortBy === 'date_asc') {
-      return a.report_date.localeCompare(b.report_date);
-    }
-    return 0;
-  });
+    return rows.sort((a, b) => {
+      if (sortBy === 'date_desc') {
+        return b.report_date.localeCompare(a.report_date);
+      } else if (sortBy === 'date_asc') {
+        return a.report_date.localeCompare(b.report_date);
+      }
+      return 0;
+    });
+  }, [reports, searchQuery, filterPhoto, filterStatus, filterStartDate, filterEndDate, sortBy, i18n.language]);
 
   const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
   const paginatedReports = filteredReports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>🛡️ {t('nav.quality', 'Kalite Kontrol Tutanakları')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="nav.quality" titleFallback="Quality control reports" />;
   }
 
   return (
@@ -303,23 +296,8 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
       {/* Main List and Form */}
       <div className="glass-card" style={{ width: '100%', padding: '1rem 1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('quality.title', '🛡️ Kalite Kontrol & Şantiye Tutanakları')}</h2>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('quality.title', ' Kalite Kontrol & Şantiye Tutanakları')}</h2>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
@@ -361,10 +339,10 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
             <label className="form-label">{t('quality.photo_label', 'Görsel / Tutanak Fotoğrafı')}</label>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <button type="button" className="btn" onClick={handleSelectLocalPhoto} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.select_pc', '📂 PC\'den Seç')}
+                {t('quality.select_pc', ' PC\'den Seç')}
               </button>
               <button type="button" className="btn btn-primary" onClick={handleOpenQRModal} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.upload_mobile', '📲 Mobilden Yükle (QR)')}
+                {t('quality.upload_mobile', ' Mobilden Yükle (QR)')}
               </button>
               {photoPreview && (
                 <div 
@@ -381,7 +359,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                   }} 
                   onClick={() => setLightboxImage(photoPreview)}
                 >
-                  <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={photoPreview} alt={t('common.preview', 'Önizleme')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button 
                     type="button"
                     style={{ 
@@ -407,7 +385,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                       setFormData(prev => ({ ...prev, photo_path: '' })); 
                     }}
                   >
-                    ✕
+                    
                   </button>
                 </div>
               )}
@@ -503,7 +481,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                     }}
                     title={t('common.clear', 'Temizle')}
                   >
-                    ✕
+                    
                   </button>
                 )}
               </div>
@@ -591,7 +569,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
                   <div>
                     <h3 className="card-title" style={{ fontSize: '1.05rem' }}>{rep.title}</h3>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>📅 {formatDate(rep.report_date, i18n.language)}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}> {formatDate(rep.report_date, i18n.language)}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span 
@@ -607,7 +585,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                         border: rep.status === 'resolved' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
                       }}
                     >
-                      {rep.status === 'resolved' ? `✓ ${t('filters.status_resolved', 'ÇÖZÜLDÜ')}` : `⚠️ ${t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}`}
+                      {rep.status === 'resolved' ? ` ${t('filters.status_resolved', 'ÇÖZÜLDÜ')}` : ` ${t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}`}
                     </span>
                     {rep.photo_path && (
                       <button 
@@ -658,98 +636,20 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
               </div>
             ))}
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{
-                position: 'sticky',
-                bottom: 0,
-                background: 'var(--option-bg, #0f172a)',
-                borderTop: '1px solid var(--glass-border)',
-                zIndex: 10,
-                padding: '0.6rem 1rem',
-                marginTop: '0.5rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '0 0 12px 12px'
-              }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                  {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} ({filteredReports.length} {t('common.records', 'Kayıt')})
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
-                  </span>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Pagination - shared component (ui/Pagination) */}
+            <Pagination variant="sticky" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredReports.length} />
           </div>
         )}
       </div>
 
-      {/* QR Code Pop-up Modal (Centered, Glassmorphism Backdrop Blur) */}
-      {qrModal.isOpen && (
-        <div 
-          className="drawer-overlay" 
-          style={{ 
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: 9999,
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            backdropFilter: 'blur(16px)',
-            backgroundColor: 'rgba(15, 23, 42, 0.75)'
-          }} 
-          onClick={handleCloseQRModal}
-        >
-          <div 
-            className="glass-card" 
-            style={{ 
-              maxWidth: '400px', 
-              width: '90%', 
-              padding: '2.5rem 2rem', 
-              textAlign: 'center',
-              background: 'var(--spotlight-bg)',
-              border: '1px solid var(--glass-border)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-              borderRadius: '20px'
-            }} 
-            onClick={e => e.stopPropagation()}
-          >
-            <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--accent)' }}>📲 {t('quality.upload_mobile_title', 'Tutanak Fotoğrafı Yükle')}</h3>
-            <p className="card-subtitle" style={{ marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-              {renderDescription(t('quality.upload_mobile_desc', 'Telefonunuzu **aynı WiFi ağına** bağlayıp aşağıdaki QR kodu okutun:'))}
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <div style={{ background: '#fff', padding: '1rem', borderRadius: '16px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)', width: '212px', height: '212px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={qrModal.qrCode} alt="LAN QR Code" style={{ width: '180px', height: '180px', display: 'block', objectFit: 'contain' }} />
-              </div>
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-              URL: <code style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{qrModal.url}</code>
-            </div>
-            <button className="btn btn-danger" onClick={handleCloseQRModal} style={{ width: '100%', marginTop: '1.5rem', height: '42px', fontWeight: 'bold' }}>{t('common.cancel', 'İptal Et')}</button>
-          </div>
-        </div>
-      )}
+      <MobileUploadModal
+        isOpen={qrModal.isOpen}
+        onClose={handleCloseQRModal}
+        title={t('quality.upload_mobile_title', 'Tutanak Fotoğrafı Yükle')}
+        description={t('quality.upload_mobile_desc', 'Telefonunuzu **aynı WiFi ağına** bağlayıp aşağıdaki QR kodu okutun:')}
+        qrCode={qrModal.qrCode}
+        url={qrModal.url}
+      />
 
       {/* Lightbox / Fullscreen Image Viewer Modal */}
       <LightboxModal 

@@ -1,34 +1,150 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import WorkerDrawer from './components/WorkerDrawer';
-import WorkerProfile from './components/WorkerProfile';
-import Settings from './components/Settings';
-import CashRegister from './components/CashRegister';
 import AnomalyPanel from './components/AnomalyPanel';
 import GroupReportPanel from './components/GroupReportPanel';
 import ConfirmationModal from './components/ui/ConfirmationModal';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 import Spotlight from './components/ui/Spotlight';
 import GuideDrawer from './components/ui/GuideDrawer';
 import ToastManager from './components/ui/ToastManager';
 import Titlebar from './components/ui/Titlebar';
-import TectonDark from './assets/tecton_dark.svg';
-import TectonLight from './assets/tecton_light.svg';
-// New ERP Modules
-import ProjectManagement from './components/ProjectManagement';
-import ProductionManagement from './components/ProductionManagement';
-import MaterialManagement from './components/MaterialManagement';
-import DailyJournal from './components/DailyJournal';
-import QualityReports from './components/QualityReports';
-import SubcontractorLedger from './components/SubcontractorLedger';
-import SubcontractorProfile from './components/SubcontractorProfile';
-import MediaGallery from './components/MediaGallery';
-import BulkTimesheet from './components/BulkTimesheet';
-import AboutHelp from './components/AboutHelp';
+import NoProjectNotice from './components/ui/NoProjectNotice';
+// Brand marks live in a single place (`tecton_assets/`) so the window icon, the
+// splash screen, the packaged installer and the UI can never drift apart.
+// `npm run brand` regenerates the PNG/ICO derivatives from these SVGs.
+import TectonDark from '../../../tecton_assets/tecton-tray-dark.svg';
+import TectonLight from '../../../tecton_assets/tecton-tray-light.svg';
+// New ERP Modules - route-level code splitting so a view's (and its heavy
+// dependencies') code only loads when the user opens it.
+const WorkerProfile = lazy(() => import('./components/WorkerProfile'));
+const Settings = lazy(() => import('./components/Settings'));
+const CashRegister = lazy(() => import('./components/CashRegister'));
+const ProjectManagement = lazy(() => import('./components/ProjectManagement'));
+const ProductionManagement = lazy(() => import('./components/ProductionManagement'));
+const MaterialManagement = lazy(() => import('./components/MaterialManagement'));
+const DailyJournal = lazy(() => import('./components/DailyJournal'));
+const QualityReports = lazy(() => import('./components/QualityReports'));
+const SubcontractorLedger = lazy(() => import('./components/SubcontractorLedger'));
+const SubcontractorProfile = lazy(() => import('./components/SubcontractorProfile'));
+const MediaGallery = lazy(() => import('./components/MediaGallery'));
+const BulkTimesheet = lazy(() => import('./components/BulkTimesheet'));
+const AboutHelp = lazy(() => import('./components/AboutHelp'));
+const Documentation = lazy(() => import('./components/Documentation'));
+const LegalNotice = lazy(() => import('./components/LegalNotice'));
 
 import { exportToExcel, exportToCSV, exportToJSON, generateExcelTemplate } from './utils/exportUtils';
 import { readWorkersFromExcel } from './utils/importUtils';
 import { useTranslation } from 'react-i18next';
-import { formatCurrency } from './utils/formatUtils';
+import { ensureLocale, applyDocumentLanguage } from './i18n';
+import { applyAppearance } from './theme/appearance';
+import OnboardingWizard from './components/onboarding/OnboardingWizard';
+import { formatCurrency, setRegionalSettings } from './utils/formatUtils';
+import { parseTags } from './utils/tagUtils';
+import { logError } from './utils/logger';
 import './index.css';
+import apiWrite, { apiMessage } from './utils/apiWrite';
+import PageGuideIcon from './components/ui/PageGuideIcon';
+import {
+  Building2,
+  Users,
+  HardHat,
+  Wallet,
+  Settings as SettingsIcon,
+  FolderKanban,
+  UserRound,
+  Handshake,
+  ClipboardList,
+  Ruler,
+  Package,
+  BookOpen,
+  ShieldCheck,
+  Scale,
+  Images,
+  CircleDollarSign,
+  CircleHelp,
+  SlidersHorizontal,
+  Landmark,
+  ShieldEllipsis,
+  ScrollText,
+  Trash2,
+  Plug,
+  Brain,
+  Github,
+  Heart,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  Lightbulb,
+  Activity,
+  Flag,
+  Camera,
+} from 'lucide-react';
+
+
+// ---------------------------------------------------------------------------
+// Two-level navigation. The first column is a rail of modules; the second is
+// the page list of the selected module. Keeping the structure as data means a
+// page can never be reachable in one level and invisible in the other.
+// ---------------------------------------------------------------------------
+const NAV_GROUPS = [
+  {
+    id: 'sites',
+    icon: Building2,
+    labelKey: 'nav.projects',
+    items: [{ view: 'projects', icon: FolderKanban, labelKey: 'nav.projects' }],
+  },
+  {
+    id: 'people',
+    icon: Users,
+    labelKey: 'nav.personnel',
+    items: [
+      { view: 'list', icon: UserRound, labelKey: 'nav.personnel' },
+      { view: 'subcontractor', icon: Handshake, labelKey: 'nav.subcontractors' },
+      { view: 'bulk_timesheet', icon: ClipboardList, labelKey: 'bulk_timesheet.nav_title' },
+    ],
+  },
+  {
+    id: 'operations',
+    icon: HardHat,
+    labelKey: 'nav.production',
+    items: [
+      { view: 'production', icon: Ruler, labelKey: 'nav.production' },
+      { view: 'materials', icon: Package, labelKey: 'nav.materials' },
+      { view: 'journal', icon: BookOpen, labelKey: 'nav.journal' },
+      { view: 'quality', icon: ShieldCheck, labelKey: 'nav.quality' },
+      { view: 'media', icon: Images, labelKey: 'nav.media' },
+    ],
+  },
+  {
+    id: 'finance',
+    icon: Wallet,
+    labelKey: 'nav.cash',
+    items: [{ view: 'kasa', icon: CircleDollarSign, labelKey: 'nav.cash' }],
+  },
+  {
+    id: 'system',
+    icon: SettingsIcon,
+    labelKey: 'nav.settings',
+    items: [
+      { view: 'hakkinda', icon: CircleHelp, labelKey: 'nav.help' },
+      { view: 'docs', icon: BookOpen, labelKey: 'nav.docs' },
+      { view: 'legal', icon: Scale, labelKey: 'nav.legal' },
+      { view: 'settings_genel', icon: SlidersHorizontal, labelKey: 'nav.settings_genel' },
+      { view: 'settings_finance', icon: Landmark, labelKey: 'nav.settings_finance' },
+      { view: 'settings_security', icon: ShieldEllipsis, labelKey: 'nav.settings_security' },
+      { view: 'settings_integrations', icon: Plug, labelKey: 'nav.settings_integrations' },
+      { view: 'settings_ai', icon: Brain, labelKey: 'nav.settings_ai' },
+      { view: 'settings_logs', icon: ScrollText, labelKey: 'nav.settings_logs' },
+      { view: 'settings_recycle', icon: Trash2, labelKey: 'sidebar_recycle_btn' },
+    ],
+  },
+];
+
+const VIEW_TO_GROUP = NAV_GROUPS.reduce((map, group) => {
+  for (const item of group.items) map[item.view] = group.id;
+  if (group.items.some((item) => item.view === 'profile')) map.profile = group.id;
+  return map;
+}, {});
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -74,43 +190,99 @@ function App() {
   const [editingWorker, setEditingWorker] = useState(null);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [activeGroupId, setActiveGroupId] = useState(() => VIEW_TO_GROUP.list || 'operations');
   const [dashboardHelpOpen, setDashboardHelpOpen] = useState(false);
   const [sidebarState, setSidebarState] = useState(() => {
     return localStorage.getItem('sidebar_state') || 'full';
   });
   const [sidebarWidth, setSidebarWidth] = useState(() => {
-    return parseInt(localStorage.getItem('sidebar_width') || '290', 10);
+    const parsed = parseInt(localStorage.getItem('sidebar_width') || '364', 10);
+    // A corrupted localStorage value used to produce NaN, which then became an
+    // invalid CSS width on every launch. The rail takes 68 px, so the floor
+    // leaves the page panel enough room for real navigation labels.
+    return Number.isFinite(parsed) && parsed > 0 ? Math.max(280, parsed) : 364;
   });
   const [isResizing, setIsResizing] = useState(false);
   const hasInitializedView = React.useRef(false);
 
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [dontShowAgain, setDontShowAgain] = useState(false);
 
+  // First run is decided by the database, so a restored or cloud-synced profile
+  // does not show the wizard again, and a fresh install always shows it. The
+  // localStorage flag remains as a cache for the very first paint.
   useEffect(() => {
-    const hideWelcome = localStorage.getItem('hide_welcome_modal');
-    if (hideWelcome !== 'true') {
-      setShowWelcomeModal(true);
-    }
+    let cancelled = false;
+
+    const decide = async () => {
+      let completed = localStorage.getItem('hide_welcome_modal') === 'true';
+      try {
+        const rows = await window.api?.db?.read?.('app_settings');
+        const row = Array.isArray(rows) ? rows.find((entry) => entry.setting_key === 'onboarding_completed') : null;
+        if (row) completed = row.setting_value === 'true';
+      } catch (error) {
+        logError('Failed to read the onboarding state:', error);
+      }
+      if (cancelled) return;
+      if (completed) localStorage.setItem('hide_welcome_modal', 'true');
+      else localStorage.removeItem('hide_welcome_modal');
+      setShowWelcomeModal(!completed);
+    };
+
+    decide();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Jump List / command-line deep link, e.g. `--route=settings_security`.
+  useEffect(() => {
+    let cancelled = false;
+    Promise.resolve(window.api?.platform?.launchRoute?.())
+      .then((route) => {
+        if (cancelled || !route) return;
+        if (typeof route === 'string' && route.startsWith('settings_')) setView(route);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Pages that need an active site raise this instead of duplicating the
+  // sidebar logic; the shell owns navigation.
+  useEffect(() => {
+    const handleNavigate = (event) => {
+      const next = event?.detail?.view;
+      if (typeof next === 'string' && next) setView(next);
+    };
+    document.addEventListener('tecton:navigate', handleNavigate);
+    return () => document.removeEventListener('tecton:navigate', handleNavigate);
   }, []);
 
   const changeAppLanguage = async (newLang) => {
+    // Locale dictionaries are separate chunks now, so load before switching.
+    newLang = await ensureLocale(newLang);
     i18n.changeLanguage(newLang);
-    document.documentElement.lang = newLang;
-    if (window.regionalSettings) window.regionalSettings.language = newLang;
+    applyDocumentLanguage(newLang);
+    setRegionalSettings({ language: newLang });
 
     if (window.api && window.api.db) {
       try {
         const settingsData = await window.api.db.read('app_settings');
         const langSetting = settingsData.find(s => s.setting_key === 'language');
         if (langSetting) {
-          await window.api.db.update('app_settings', langSetting.id, { setting_value: newLang });
+          await apiWrite(window.api.db.update('app_settings', langSetting.id, { setting_value: newLang }));
         }
       } catch (err) {
-        console.error('Failed to update language in DB:', err);
+        logError('Failed to update language in DB:', err);
       }
     }
   };
+
+  useEffect(() => {
+    const groupId = VIEW_TO_GROUP[view];
+    if (groupId) setActiveGroupId(groupId);
+  }, [view]);
 
   const handleSidebarStateChange = (state) => {
     setSidebarState(state);
@@ -126,7 +298,7 @@ function App() {
     if (!isResizing) return;
 
     const handleMouseMove = (e) => {
-      const newWidth = Math.max(240, Math.min(480, e.clientX));
+      const newWidth = Math.max(280, Math.min(520, e.clientX));
       setSidebarWidth(newWidth);
       localStorage.setItem('sidebar_width', newWidth.toString());
     };
@@ -167,15 +339,36 @@ function App() {
   // Excel Import Undo State
   const [undoAvailable, setUndoAvailable] = useState(false);
   const fileInputRef = React.useRef(null);
+  // Tracks the 15s "undo import" timer so it can be replaced/cleared instead of
+  // surviving unmounts or stacking up on repeated imports.
+  const undoTimerRef = React.useRef(null);
+
+  useEffect(() => () => {
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+  }, []);
+
+  // Guards against out-of-order async results when the active project changes
+  // mid-fetch: a slow response for the previous project must not overwrite the
+  // freshly selected one.
+  const workersRequestIdRef = React.useRef(0);
+  const activeProjectIdRef = React.useRef(activeProjectId);
+  useEffect(() => { activeProjectIdRef.current = activeProjectId; }, [activeProjectId]);
 
   const fetchWorkers = async () => {
+    const requestId = ++workersRequestIdRef.current;
     try {
       if (window.api && window.api.db) {
-        const data = await window.api.db.read('workers');
-        const groupsData = await window.api.db.read('worker_groups');
-        const settingsData = await window.api.db.read('app_settings');
-        const projectsData = await window.api.db.read('projects');
-        
+        // Four independent reads: one wait instead of four serial round-trips.
+        const [data, groupsData, settingsData, projectsData] = await Promise.all([
+          window.api.db.read('workers'),
+          window.api.db.read('worker_groups'),
+          window.api.db.read('app_settings'),
+          window.api.db.read('projects')
+        ]);
+
+        // A newer fetch (e.g. after a project switch) already took over.
+        if (requestId !== workersRequestIdRef.current) return;
+
         setWorkers(data);
         setWorkerGroups(groupsData || []);
         setProjects(projectsData || []);
@@ -198,62 +391,99 @@ function App() {
           const sMap = {};
           settingsData.forEach(s => sMap[s.setting_key] = s.setting_value);
           
-          window.regionalSettings = {
+          setRegionalSettings({
             currency: sMap['custom_currency'] || 'auto',
             dateFormat: sMap['custom_date_format'] || 'auto',
             timeFormat: sMap['custom_time_format'] || 'auto',
             language: sMap['language'] || 'tr'
-          };
-
-          if (sMap['theme']) {
-            document.documentElement.setAttribute('data-theme', sMap['theme']);
-          } else {
-            const defaultTheme = 'dark';
-            document.documentElement.setAttribute('data-theme', defaultTheme);
-            await window.api.db.create('app_settings', { setting_key: 'theme', setting_value: defaultTheme, description: 'Uygulama Teması (dark/light)' });
-          }
+          });
+          // Appearance is applied as one unit: surface, palette, icon, zoom and
+          // accessibility flags. Writing only `data-theme` here would lose the
+          // user's accent and zoom on every restart.
+          applyAppearance({
+            mode: sMap['theme'] || 'dark',
+            themeId: sMap['theme_id'] || 'obsidian',
+            customColor: sMap['custom_theme_color'] || '#8b5cf6',
+            appIcon: sMap['app_icon'] || 'auto',
+            iconColor: sMap['app_icon_color'] || '#8b5cf6',
+            zoom: sMap['ui_zoom'] || 1,
+            highContrast: sMap['a11y_high_contrast'] === 'true',
+            enhancedFocus: sMap['a11y_enhanced_focus'] === 'true',
+            readableSpacing: sMap['a11y_readable_spacing'] === 'true',
+            reduceMotion: sMap['a11y_reduce_motion'] === 'true',
+          });
 
           if (sMap['language']) {
-            i18n.changeLanguage(sMap['language']);
-            document.documentElement.lang = sMap['language'];
+            const restoredLang = await ensureLocale(sMap['language']);
+            i18n.changeLanguage(restoredLang);
+            applyDocumentLanguage(restoredLang);
           } else {
-            let defaultLang = 'tr';
+            // First run (no stored choice): the installer's picker wins, then the
+            // Windows display language, then the browser locale. Anything Tecton
+            // does not ship falls back to English.
+            let requested = '';
             try {
-              const navLang = navigator.language.split('-')[0];
-              const supportedLangs = ['tr', 'en', 'zh', 'es', 'fr', 'ar', 'hi', 'ru', 'pt', 'de', 'sv', 'no', 'da', 'pl', 'it', 'nl', 'cs', 'ja', 'ko'];
-              if (supportedLangs.includes(navLang)) {
-                defaultLang = navLang;
-              }
+              const info = await window.api?.platform?.info?.();
+              requested = info?.installerLanguage || info?.systemLocale || '';
             } catch (e) {
-              console.error('Failed to get navigator language:', e);
+              logError('Failed to read the system language:', e);
             }
+            const defaultLang = await ensureLocale(requested || navigator.language || 'en');
             i18n.changeLanguage(defaultLang);
-            document.documentElement.lang = defaultLang;
-            await window.api.db.create('app_settings', { setting_key: 'language', setting_value: defaultLang, description: 'Uygulama Dili' });
+            applyDocumentLanguage(defaultLang);
+            await apiWrite(window.api.db.create('app_settings', { setting_key: 'language', setting_value: defaultLang, description: 'Uygulama Dili' }));
           }
         }
 
-        // Fetch balances for each worker
-        const newBalances = {};
-        for (const w of data) {
-          const res = await window.api.finance.getBalance(w.id);
-          if (res.success) newBalances[w.id] = res.balance;
+        // One batched IPC call + two grouped SQL queries instead of the previous
+        // N+1 (`finance.getBalance` per worker), which dominated first paint.
+        let newBalances = {};
+        if (data.length > 0) {
+          const bulkRes = window.api.finance?.getBalances
+            ? await window.api.finance.getBalances(data.map(w => w.id))
+            : null;
+
+          if (bulkRes && bulkRes.success) {
+            newBalances = bulkRes.balances || {};
+          } else {
+            // Fallback for an older preload bundle (app not restarted after update).
+            const balanceResults = await Promise.all(
+              data.map(w =>
+                window.api.finance.getBalance(w.id)
+                  .then(res => (res && res.success ? [w.id, res.balance] : null))
+                  .catch(() => null)
+              )
+            );
+            for (const entry of balanceResults) {
+              if (entry) newBalances[entry[0]] = entry[1];
+            }
+          }
         }
+
+        // Balance fetches are the slowest part: re-check before applying.
+        if (requestId !== workersRequestIdRef.current) return;
+
         setBalances(newBalances);
       }
     } catch (error) {
-      console.error('Error fetching workers:', error);
+      logError('Error fetching workers:', error);
     } finally {
-      setLoading(false);
-      if (window.api?.window?.appReady) {
-        window.api.window.appReady();
+      // Only the latest request may clear the loading flag.
+      if (requestId === workersRequestIdRef.current) {
+        setLoading(false);
+        if (window.api?.window?.appReady) {
+          Promise.resolve(window.api.window.appReady()).catch(logError);
+        }
       }
     }
   };
 
+  // Workers only need refetching when the active project changes; mutations call
+  // fetchWorkers() explicitly. Previously this also ran on every `view` change,
+  // causing a full workers + balances reload on each navigation.
   useEffect(() => {
     fetchWorkers();
-  }, [view, activeProjectId]);
+  }, [activeProjectId]);
 
   useEffect(() => {
     if (view.startsWith('settings_')) {
@@ -298,9 +528,9 @@ function App() {
       // Bind worker to the active project
       const dataToSave = { ...workerData, project_id: activeProjectId };
       if (id) {
-        await window.api.db.update('workers', id, dataToSave);
+        await apiWrite(window.api.db.update('workers', id, dataToSave));
       } else {
-        await window.api.db.create('workers', dataToSave);
+        await apiWrite(window.api.db.create('workers', dataToSave));
       }
       fetchWorkers();
       handleCloseDrawer();
@@ -314,7 +544,7 @@ function App() {
       message: t('dashboard.delete_worker_msg', 'Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır.'),
       onConfirm: async () => {
         if (window.api && window.api.db) {
-          await window.api.db.delete('workers', id);
+          await apiWrite(window.api.db.delete('workers', id));
           fetchWorkers();
         }
       }
@@ -331,39 +561,58 @@ function App() {
     setView('list');
   };
 
-  // Filter workers by search query AND active project
-  const filteredWorkers = workers.filter(w => {
-    const matchProject = activeProjectId ? w.project_id == activeProjectId : true;
-    const matchText = w.full_name.toLowerCase().includes(filterText.toLowerCase()) || 
-                      (w.tc_no && w.tc_no.includes(filterText)) ||
-                      (w.phone && w.phone.includes(filterText));
-    const matchGroup = filterGroup ? w.group_id == filterGroup : true;
-    return matchProject && matchText && matchGroup;
-  });
+  // Filter workers by search query AND active project.
+  // Memoized: this ran on every App re-render (sidebar resize, modal toggles,
+  // balance updates...), not just when the filters or worker list changed.
+  const filteredWorkers = React.useMemo(() => {
+    const query = filterText.toLowerCase();
+    return workers.filter(w => {
+      const matchProject = activeProjectId ? w.project_id == activeProjectId : true;
+      const matchText = w.full_name.toLowerCase().includes(query) ||
+                        (w.tc_no && w.tc_no.includes(filterText)) ||
+                        (w.phone && w.phone.includes(filterText));
+      const matchGroup = filterGroup ? w.group_id == filterGroup : true;
+      return matchProject && matchText && matchGroup;
+    });
+  }, [workers, activeProjectId, filterText, filterGroup]);
+
+  // Workers grouped by their group name, for the grouped dashboard view.
+  // Previously recomputed inside the JSX IIFE on every render.
+  const groupedWorkers = React.useMemo(() => {
+    const grouped = filteredWorkers.reduce((acc, w) => {
+      const g = workerGroups.find(group => group.id === w.group_id);
+      const gName = g ? g.name : t('group_report.no_group', 'Grupsuz');
+      if (!acc[gName]) acc[gName] = [];
+      acc[gName].push(w);
+      return acc;
+    }, {});
+    const sortedNames = Object.keys(grouped).sort((a, b) => a.localeCompare(b, i18n.language || 'tr'));
+    return { grouped, sortedNames };
+  }, [filteredWorkers, workerGroups, i18n.language, t]);
 
   const handleExport = (format) => {
     const lang = i18n.language;
     const isTr = lang === 'tr';
+    // Headers used to be `isTr ? 'Türkçe' : 'English'`, so the other 17
+    // supported locales silently got English column names.
     const dataToExport = filteredWorkers.map(w => ({
-      [isTr ? 'Ad Soyad' : 'Full Name']: w.full_name,
-      [isTr ? 'TC Kimlik No' : 'TC Identity No']: w.tc_no || '-',
-      [isTr ? 'Telefon' : 'Phone']: w.phone || '-',
-      [isTr ? 'Günlük Yevmiye' : 'Daily Wage']: w.daily_wage,
-      [isTr ? 'Bağlı Olduğu Grup' : 'Group']: workerGroups.find(g => g.id === w.group_id)?.name || '-',
-      [isTr ? 'Şantiye' : 'Project']: projects.find(p => p.id == w.project_id)?.name || '-',
-      [isTr ? 'Durum' : 'Status']: w.status === 'active' ? (isTr ? 'Aktif' : 'Active') : (w.status === 'passive' ? (isTr ? 'Pasif' : 'Passive') : w.status || '-'),
-      [isTr ? 'Etiketler' : 'Tags']: (() => {
-        try {
-          const parsed = w.tags ? JSON.parse(w.tags) : [];
-          return Array.isArray(parsed) ? parsed.join(', ') : '-';
-        } catch (e) {
-          return w.tags || '-';
-        }
-      })(),
-      [isTr ? 'Net Bakiye' : 'Net Balance']: balances[w.id] || 0,
-      [isTr ? 'İşe Başlama' : 'Start Date']: w.start_date,
-      [isTr ? 'İSG Başlangıç' : 'ISG Start Date']: w.isg_start_date || '-',
-      [isTr ? 'İSG Bitiş' : 'ISG End Date']: w.isg_bitis_tarihi || '-'
+      [t('export.full_name', 'Ad Soyad')]: w.full_name,
+      [t('export.tc_no', 'TC Kimlik No')]: w.tc_no || '-',
+      [t('common.phone', 'Telefon')]: w.phone || '-',
+      [t('export.daily_wage', 'Günlük Yevmiye')]: w.daily_wage,
+      [t('export.group', 'Grup')]: workerGroups.find(g => g.id === w.group_id)?.name || '-',
+      [t('export.project', 'Şantiye')]: projects.find(p => p.id == w.project_id)?.name || '-',
+      [t('export.status', 'Durum')]:
+        w.status === 'active'
+          ? t('export.active', 'Aktif')
+          : w.status === 'passive'
+            ? t('export.passive', 'Pasif')
+            : w.status || '-',
+      [t('export.tags', 'Etiketler')]: parseTags(w.tags).join(', ') || '-',
+      [t('export.net_balance', 'Net Bakiye')]: balances[w.id] || 0,
+      [t('export.start_date', 'İşe Başlama')]: w.start_date,
+      [t('export.isg_start', 'İSG Başlangıç')]: w.isg_start_date || '-',
+      [t('export.isg_end', 'İSG Bitiş')]: w.isg_bitis_tarihi || '-'
     }));
 
     const fName = isTr ? 'Personel_Listesi' : 'Personnel_List';
@@ -380,12 +629,15 @@ function App() {
       const result = await readWorkersFromExcel(file, t);
       if (result.success) {
         if (window.api && window.api.system.createSnapshot) {
-          await window.api.system.createSnapshot();
+          await apiWrite(window.api.system.createSnapshot(), { silent: true });
         }
 
         // Get a mutable local copy of current worker groups and workers
         let localGroups = [...workerGroups];
         let currentWorkersList = [...workers];
+        // Rows the DB rejected must be reported: a silent failure here looks
+        // like a complete import while part of the workbook never landed.
+        let importFailures = 0;
 
         for (const worker of result.data) {
           const { group_name, ...cleanWorker } = worker;
@@ -406,6 +658,8 @@ function App() {
               if (createRes && createRes.success) {
                 resolvedGroupId = createRes.id;
                 localGroups.push({ id: createRes.id, name: trimmedName });
+              } else {
+                importFailures++;
               }
             }
           }
@@ -454,8 +708,12 @@ function App() {
               isg_bitis_tarihi: cleanWorker.isg_bitis_tarihi || existingWorker.isg_bitis_tarihi
             };
 
-            await window.api.db.update('workers', existingWorker.id, updateData);
-            
+            const updateRes = await apiWrite(
+              window.api.db.update('workers', existingWorker.id, updateData),
+              { silent: true }
+            );
+            if (updateRes && updateRes.success === false) importFailures++;
+
             // Update local list to prevent duplicate matching within the same batch
             const idx = currentWorkersList.findIndex(w => w.id === existingWorker.id);
             if (idx !== -1) {
@@ -476,17 +734,29 @@ function App() {
                 group_id: resolvedGroupId,
                 project_id: activeProjectId
               });
+            } else {
+              importFailures++;
             }
           }
         }
         fetchWorkers();
+        if (importFailures > 0) {
+          window.dispatchEvent(new CustomEvent('show-toast', {
+            detail: {
+              message: t('common.import_partial', '{{count}} kayıt içe aktarılamadı.').replace('{{count}}', importFailures),
+              type: 'warning'
+            }
+          }));
+        }
         setUndoAvailable(true);
-        e.target.value = null; // reset
-        setTimeout(() => setUndoAvailable(false), 15000);
+        e.target.value = ''; // reset (empty string, not null - keeps the input controlled)
+        if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+        undoTimerRef.current = setTimeout(() => setUndoAvailable(false), 15000);
       }
     } catch (err) {
-      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + err.message, type: 'error' } }));
-      e.target.value = null;
+      logError('Worker import failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('common.error_occurred', 'Hata:') + ' ' + t('common.import_failed', 'İçe aktarma başarısız oldu. Lütfen dosya biçimini kontrol edin.'), type: 'error' } }));
+      e.target.value = '';
     }
   };
 
@@ -498,7 +768,7 @@ function App() {
         setUndoAvailable(false);
         fetchWorkers();
       } else {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('dashboard.undo_error', 'Geri alma başarısız oldu:') + ' ' + res.message, type: 'error' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('dashboard.undo_error', 'Geri alma başarısız oldu:') + ' ' + apiMessage(res), type: 'error' } }));
       }
     }
   };
@@ -512,6 +782,10 @@ function App() {
   };
 
   const currentSidebarWidth = sidebarState === 'full' ? sidebarWidth : (sidebarState === 'collapsed' ? 76 : 0);
+
+  // The panel always belongs to a module that exists, even if a stale view name
+  // survives a restore. Without the fallback the rail would render empty.
+  const activeGroup = NAV_GROUPS.find((group) => group.id === activeGroupId) || NAV_GROUPS[2];
 
   return (
     <>
@@ -540,187 +814,180 @@ function App() {
               onMouseDown={handleMouseDown}
             />
           )}
-          <div className="sidebar-logo">
-            {sidebarState === 'collapsed' ? (
-              <button 
-                type="button"
-                className="sidebar-collapsed-logo-btn"
-                onClick={() => handleSidebarStateChange('full')}
-                title={t('nav.expand', 'Genişlet')}
-              >
-                <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ width: '24px', height: '24px' }} />
-                <img src={TectonLight} alt="Tecton" className="logo-light" style={{ width: '24px', height: '24px' }} />
-                <span className="hover-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </span>
-              </button>
-            ) : (
-              <>
-                <div className="sidebar-logo-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ height: '24px' }} />
-                  <img src={TectonLight} alt="Tecton" className="logo-light" style={{ height: '24px' }} />
-                  <span className="sidebar-text" style={{ fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'Inter, sans-serif' }}>{t('app.name', 'Tecton')}</span>
+          {/* Level 1: module rail. Level 2: page panel for the selected module. */}
+          <div className="sidebar-rail">
+            <div className="rail-brand">
+              {sidebarState === 'collapsed' ? (
+                <button
+                  type="button"
+                  className="rail-brand-btn"
+                  onClick={() => handleSidebarStateChange('full')}
+                  title={t('nav.expand', 'Expand')}
+                  aria-label={t('nav.expand', 'Expand')}
+                >
+                  <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ width: '26px', height: '26px' }} />
+                  <img src={TectonLight} alt="Tecton" className="logo-light" style={{ width: '26px', height: '26px' }} />
+                </button>
+              ) : (
+                <div className="rail-brand-mark" aria-hidden="true">
+                  <img src={TectonDark} alt="" className="logo-dark" style={{ width: '26px', height: '26px' }} />
+                  <img src={TectonLight} alt="" className="logo-light" style={{ width: '26px', height: '26px' }} />
                 </div>
-                <div className="sidebar-controls">
-                  <button 
-                    type="button" 
+              )}
+            </div>
+
+            <nav className="rail-nav" aria-label={t('nav.main_menu', 'Main menu')}>
+              {NAV_GROUPS.map((group) => {
+                const GroupIcon = group.icon;
+                const isActive = activeGroupId === group.id;
+                return (
+                  <button
+                    key={group.id}
+                    type="button"
+                    className={`rail-btn ${isActive ? 'active' : ''}`}
+                    aria-current={isActive ? 'page' : undefined}
+                    title={t(group.labelKey)}
+                    onClick={() => {
+                      setActiveGroupId(group.id);
+                      if (group.items.length === 1) setView(group.items[0].view);
+                    }}
+                  >
+                    <GroupIcon size={20} strokeWidth={2} />
+                    <span className="rail-label">{t(`nav.rail_${group.id}`, t(group.labelKey))}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            <div className="rail-footer">
+              {sidebarState === 'collapsed' ? (
+                <button
+                  type="button"
+                  className="rail-icon-btn"
+                  onClick={() => handleSidebarStateChange('full')}
+                  title={t('nav.expand', 'Expand')}
+                  aria-label={t('nav.expand', 'Expand')}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="rail-icon-btn"
                     onClick={() => handleSidebarStateChange('collapsed')}
-                    className="sidebar-control-btn"
-                    title={t('nav.collapse', 'Daralt')}
+                    title={t('nav.collapse', 'Collapse')}
+                    aria-label={t('nav.collapse', 'Collapse')}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <ChevronLeft size={16} />
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
+                    className="rail-icon-btn"
                     onClick={() => handleSidebarStateChange('hidden')}
-                    className="sidebar-control-btn"
-                    title={t('nav.hide', 'Gizle')}
+                    title={t('nav.hide', 'Hide')}
+                    aria-label={t('nav.hide', 'Hide')}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <X size={16} />
                   </button>
-                </div>
-              </>
-            )}
-          </div>
-          
-          {/* Active project badge */}
-          {activeProjectObj ? (
-            <div className="sidebar-active-project" style={{
-              background: 'rgba(139, 92, 246, 0.1)',
-              border: '1px solid rgba(139, 92, 246, 0.2)',
-              borderRadius: '8px',
-              padding: '0.65rem 0.85rem',
-              margin: '0 1rem 1.5rem 1rem',
-              fontSize: '0.8rem'
-            }}>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.05em' }}>{t('nav.active_project', 'Aktif Şantiye')}</div>
-              <strong style={{ color: '#fff', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.15rem' }}>{activeProjectObj.name}</strong>
+                </>
+              )}
             </div>
-          ) : (
-            <div className="sidebar-active-project" style={{ color: 'var(--danger)', fontSize: '0.8rem', margin: '0 1rem 1.5rem 1rem', fontWeight: 'bold' }}>⚠️ {t('nav.no_project_selected', 'Şantiye Seçilmedi!')}</div>
+          </div>
+
+          {sidebarState !== 'collapsed' && (
+            <div className="sidebar-panel">
+              <div className="sidebar-panel-header">
+                <span className="sidebar-panel-title">{t(activeGroup.labelKey)}</span>
+              </div>
+
+              {activeProjectObj ? (
+                <div
+                  className="sidebar-active-project"
+                  style={{
+                    background: 'var(--accent-bg)',
+                    border: '1px solid var(--accent-border)',
+                    borderRadius: '10px',
+                    padding: '0.65rem 0.85rem',
+                    margin: '0 0 0.75rem 0',
+                    fontSize: '0.8rem'
+                  }}
+                >
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
+                    {t('nav.active_project', 'Active site')}
+                  </div>
+                  <strong style={{ color: 'var(--text-main)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.15rem' }}>
+                    {activeProjectObj.name}
+                  </strong>
+                </div>
+              ) : (
+                <div className="sidebar-project-empty">
+                  <Flag size={14} aria-hidden="true" />
+                  <span>{t('nav.no_project_selected', 'No site selected')}</span>
+                </div>
+              )}
+
+              <nav className="sidebar-nav" aria-label={t('nav.main_menu', 'Main menu')}>
+                {activeGroup.items.map((item) => {
+                  const ItemIcon = item.icon;
+                  const isActive = view === item.view
+                    || (item.view === 'list' && (view === 'profile' || view === 'list'))
+                    || (item.view === 'subcontractor' && view === 'subcontractor_profile');
+                  return (
+                    <button
+                      key={item.view}
+                      type="button"
+                      className={`sidebar-link ${isActive ? 'active' : ''}`}
+                      aria-current={isActive ? 'page' : undefined}
+                      onClick={() => {
+                        setView(item.view);
+                        if (item.view === 'list') setSelectedWorkerProfile(null);
+                      }}
+                    >
+                      <ItemIcon size={17} strokeWidth={2} className="sidebar-icon" />
+                      <span className="sidebar-text">{t(item.labelKey)}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="sidebar-footer">
+                <div className="sidebar-spotlight">
+                  <Lightbulb size={13} /> {t('sidebar_spotlight', 'Spotlight: Ctrl + K')}
+                </div>
+                <div className="sidebar-social">
+                  <a
+                    href="https://github.com/emirtdede/tecton"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="sidebar-social-btn"
+                    title={t('sidebar_github', 'GitHub')}
+                  >
+                    <Github size={13} />
+                    <span>{t('sidebar_github', 'GitHub')}</span>
+                  </a>
+                  <a
+                    href="https://github.com/sponsors/emirtdede"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="sidebar-social-btn sponsor"
+                    title={t('sidebar_sponsor', 'Sponsor')}
+                  >
+                    <Heart size={13} />
+                    <span>{t('sidebar_sponsor', 'Sponsor')}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           )}
-
-          <nav className="sidebar-nav">
-            <div className={`sidebar-link ${view === 'projects' ? 'active' : ''}`} onClick={() => setView('projects')}>
-              <span className="sidebar-icon">🏗️</span>
-              <span className="sidebar-text">{t('nav.projects', 'Şantiyeler (Lokasyon)')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'list' || view === 'profile' ? 'active' : ''}`} onClick={() => { setView('list'); setSelectedWorkerProfile(null); }}>
-              <span className="sidebar-icon">👥</span>
-              <span className="sidebar-text">{t('nav.personnel')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'subcontractor' || view === 'subcontractor_profile' ? 'active' : ''}`} onClick={() => setView('subcontractor')}>
-              <span className="sidebar-icon">🚜</span>
-              <span className="sidebar-text">{t('nav.subcontractors', 'Taşeron Carileri')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'bulk_timesheet' ? 'active' : ''}`} onClick={() => setView('bulk_timesheet')}>
-              <span className="sidebar-icon">📋</span>
-              <span className="sidebar-text">{t('bulk_timesheet.nav_title', 'Çoklu Puantaj')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'production' ? 'active' : ''}`} onClick={() => setView('production')}>
-              <span className="sidebar-icon">📐</span>
-              <span className="sidebar-text">{t('nav.production', 'İmalat ve Metraj')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'materials' ? 'active' : ''}`} onClick={() => setView('materials')}>
-              <span className="sidebar-icon">📄</span>
-              <span className="sidebar-text">{t('nav.materials', 'İrsaliye & Malzeme')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'journal' ? 'active' : ''}`} onClick={() => setView('journal')}>
-              <span className="sidebar-icon">📓</span>
-              <span className="sidebar-text">{t('nav.journal', 'Günlük Jurnal')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'quality' ? 'active' : ''}`} onClick={() => setView('quality')}>
-              <span className="sidebar-icon">🛡️</span>
-              <span className="sidebar-text">{t('nav.quality', 'Kalite Kontrol')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'media' ? 'active' : ''}`} onClick={() => setView('media')}>
-              <span className="sidebar-icon">📷</span>
-              <span className="sidebar-text">{t('nav.media', 'Medya Galerisi')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'kasa' ? 'active' : ''}`} onClick={() => setView('kasa')}>
-              <span className="sidebar-icon">💵</span>
-              <span className="sidebar-text">{t('nav.cash')}</span>
-            </div>
-            <div className={`sidebar-link ${view === 'hakkinda' ? 'active' : ''}`} onClick={() => setView('hakkinda')}>
-              <span className="sidebar-icon">❓</span>
-              <span className="sidebar-text">{t('nav.help', 'Hakkında & Yardım')}</span>
-            </div>
-            <div>
-              <div 
-                className={`sidebar-link ${view.startsWith('settings_') ? 'active' : ''}`} 
-                onClick={() => setIsSettingsOpen(prev => !prev)}
-              >
-                <span className="sidebar-icon">⚙️</span>
-                <span className="sidebar-text" style={{ flex: 1 }}>{t('nav.settings')}</span>
-                <span className="sidebar-text" style={{ 
-                  transform: isSettingsOpen ? 'rotate(180deg)' : 'rotate(0deg)', 
-                  transition: 'transform 0.2s ease', 
-                  fontSize: '0.7rem', 
-                  opacity: 0.7 
-                }}>▼</span>
-              </div>
-              
-              <div className="sidebar-submenu" style={{
-                maxHeight: isSettingsOpen ? '250px' : '0px',
-                overflow: 'hidden',
-                transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                paddingLeft: sidebarState === 'collapsed' ? '0' : '1rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.2rem',
-                marginTop: isSettingsOpen ? '0.25rem' : '0'
-              }}>
-                <div 
-                  className={`sidebar-link ${view === 'settings_genel' ? 'active' : ''}`} 
-                  onClick={() => setView('settings_genel')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
-                >
-                  <span className="sidebar-icon">⚙️</span>
-                  <span className="sidebar-text">{t('nav.settings_genel', 'Genel Ayarlar')}</span>
-                </div>
-                <div 
-                  className={`sidebar-link ${view === 'settings_finance' ? 'active' : ''}`} 
-                  onClick={() => setView('settings_finance')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
-                >
-                  <span className="sidebar-icon">💼</span>
-                  <span className="sidebar-text">{t('nav.settings_finance', 'Finans & Operasyon')}</span>
-                </div>
-                <div 
-                  className={`sidebar-link ${view === 'settings_security' ? 'active' : ''}`} 
-                  onClick={() => setView('settings_security')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
-                >
-                  <span className="sidebar-icon">🛡️</span>
-                  <span className="sidebar-text">{t('nav.settings_security', 'Güvenlik & Yedek')}</span>
-                </div>
-                <div 
-                  className={`sidebar-link ${view === 'settings_logs' ? 'active' : ''}`} 
-                  onClick={() => setView('settings_logs')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
-                >
-                  <span className="sidebar-icon">📋</span>
-                  <span className="sidebar-text">{t('nav.settings_logs', 'Sistem Kayıtları')}</span>
-                </div>
-                <div 
-                  className={`sidebar-link ${view === 'settings_recycle' ? 'active' : ''}`} 
-                  onClick={() => setView('settings_recycle')}
-                  style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
-                >
-                  <span className="sidebar-icon">🗑️</span>
-                  <span className="sidebar-text">{t('sidebar_recycle_btn', 'Çöp Kutusu')}</span>
-                </div>
-              </div>
-            </div>
-          </nav>
-
-          <div className="sidebar-footer" style={{ textAlign: 'center' }}>
-            <div>{t('sidebar_spotlight', 'Spotlight: Ctrl + K')}</div>
-          </div>
         </aside>
 
         {/* Right Dynamic Page View */}
         <main className="main-content">
+          {/* Each view gets its own boundary keyed by `view`, so a crash inside
+              one screen is contained and resets automatically when navigating. */}
+          <ErrorBoundary key={view} name={`view:${view}`}>
+          <Suspense fallback={<div style={{ padding: '2rem', opacity: 0.7 }}>{t('common.loading', 'Yükleniyor...')}</div>}>
           {view === 'profile' && selectedWorkerProfile ? (
             <WorkerProfile worker={selectedWorkerProfile} onBack={closeProfile} />
           ) : view === 'subcontractor_profile' && selectedSubcontractorProfile ? (
@@ -731,6 +998,10 @@ function App() {
             <Settings activeTab="genel" />
           ) : view === 'hakkinda' ? (
             <AboutHelp />
+          ) : view === 'docs' ? (
+            <Documentation />
+          ) : view === 'legal' ? (
+            <LegalNotice />
           ) : view === 'kasa' ? (
             <CashRegister activeProjectId={activeProjectId} projects={projects} />
           ) : view === 'projects' ? (
@@ -763,22 +1034,7 @@ function App() {
                 <header className="header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <h1 style={{ margin: 0 }}>{t('dashboard.title')}</h1>
-                    <span 
-                      onClick={() => setDashboardHelpOpen(true)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-                        transition: 'opacity 0.25s ease-in-out', 
-                        fontSize: '1.4rem',
-                        userSelect: 'none',
-                        padding: '0.25rem'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-                      onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-                      title={t('common.page_guide', 'Sayfa Kılavuzu')}
-                    >
-                      💡
-                    </span>
+                    <PageGuideIcon onClick={() => setDashboardHelpOpen(true)} fontSize="1.4rem" />
                   </div>
                   
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -790,7 +1046,7 @@ function App() {
                       onChange={handleFileUpload}
                     />
                     <button className="btn btn-bulk-timesheet" onClick={() => setView('bulk_timesheet')}>
-                      {t('dashboard.bulk_timesheet', '📋 Çoklu Puantaj')}
+                      {t('dashboard.bulk_timesheet', ' Çoklu Puantaj')}
                     </button>
                     <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
                       {t('dashboard.import_excel')}
@@ -812,10 +1068,7 @@ function App() {
               )}
 
               {!activeProjectId ? (
-                <div className="glass-card text-center" style={{ padding: '3rem' }}>
-                  <h2>👥 {t('nav.personnel', 'Personel Yönetimi')}</h2>
-                  <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-                </div>
+                <NoProjectNotice titleKey="nav.personnel" titleFallback="Personnel management" />
               ) : (
                 <div className="bento-grid">
                   {/* Left Column: Personnel List (span 8) */}
@@ -850,7 +1103,7 @@ function App() {
                             }}
                             title={t('common.clear', 'Temizle')}
                           >
-                            ✕
+                            
                           </button>
                         )}
                       </div>
@@ -934,29 +1187,22 @@ function App() {
                     ) : filteredWorkers.length === 0 ? (
                       <div className="glass-card text-center" style={{ padding: '4rem 2rem' }}>
                         {filterText || filterGroup ? (
-                          <h2 className="card-title" style={{ margin: 0 }}>Arama kriterlerine uygun personel kaydı bulunamadı.</h2>
+                          <h2 className="card-title" style={{ margin: 0 }}>{t('dashboard.no_search_results', 'Arama kriterlerine uygun personel kaydı bulunamadı.')}</h2>
                         ) : (
                           <>
                             <h2 className="card-title">{t('dashboard.empty_state')}</h2>
-                            <p className="card-subtitle mt-4">{t('dashboard.empty_state_sub')}</p>
+                            <p className="card-subtitle" style={{ marginTop: '1rem' }}>{t('dashboard.empty_state_sub')}</p>
                           </>
                         )}
                       </div>
                                         ) : (() => {
-                      const grouped = filteredWorkers.reduce((acc, w) => {
-                        const g = workerGroups.find(group => group.id === w.group_id);
-                        const gName = g ? g.name : t('group_report.no_group', 'Grupsuz');
-                        if (!acc[gName]) acc[gName] = [];
-                        acc[gName].push(w);
-                        return acc;
-                      }, {});
-                      const sortedNames = Object.keys(grouped).sort((a, b) => a.localeCompare(b, i18n.language || 'tr'));
+                      const { grouped, sortedNames } = groupedWorkers;
                       return (
                         <div className="workers-grouped-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                           {sortedNames.map((groupName) => (
                             <div key={groupName}>
                               <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-main)', borderLeft: '4px solid var(--accent)', paddingLeft: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span>👥 {groupName}</span>
+                                <span> {groupName}</span>
                                 <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', padding: '0.2rem 0.5rem', borderRadius: '10px' }}>
                                   {grouped[groupName].length} {t('group_report.person_count')}
                                 </span>
@@ -1028,7 +1274,20 @@ function App() {
                                     const bal = balances[worker.id] || 0;
                                     const isPositive = bal >= 0;
                                     return (
-                                      <div key={worker.id} className="glass-card" onClick={() => openProfile(worker)} style={{ cursor: 'pointer', position: 'relative' }}>
+                                      <div
+                                        key={worker.id}
+                                        className="glass-card"
+                                        role="link"
+                                        tabIndex={0}
+                                        onClick={() => openProfile(worker)}
+                                        onKeyDown={e => {
+                                          if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            openProfile(worker);
+                                          }
+                                        }}
+                                        style={{ cursor: 'pointer', position: 'relative' }}
+                                      >
                                         <div className="card-header">
                                           <div>
                                             <h3 className="card-title">{worker.full_name}</h3>
@@ -1073,12 +1332,14 @@ function App() {
                   {/* Right Column: Widgets / Anomaly & Reports (span 4) */}
                   <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <AnomalyPanel workers={filteredWorkers} balances={balances} viewMode={viewMode} />
-                    <GroupReportPanel activeProjectId={activeProjectId} workers={workers} balances={balances} viewMode={viewMode} />
+                    <GroupReportPanel activeProjectId={activeProjectId} viewMode={viewMode} />
                   </div>
                 </div>
               )}
             </div>
           )}
+          </Suspense>
+          </ErrorBoundary>
         </main>
       </div>
 
@@ -1140,270 +1401,19 @@ function App() {
           animation: 'fadeIn 0.3s ease-out'
         }}>
           <div>
-            <strong>Toplu aktarım tamamlandı!</strong>
-            <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Bir hata yaptıysanız işlemi hemen geri alabilirsiniz.</div>
+            <strong>{t('dashboard.import_done', 'Toplu aktarım tamamlandı!')}</strong>
+            <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>{t('dashboard.import_undo_hint', 'Bir hata yaptıysanız işlemi hemen geri alabilirsiniz.')}</div>
           </div>
           <button onClick={handleUndoImport} style={{
             background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem 1rem',
             borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
           }}>
-            Geri Al (Undo)
+            {t('dashboard.undo_button', 'Geri Al (Undo)')}
           </button>
         </div>
       )}
 
-      {showWelcomeModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(5, 7, 12, 0.7)',
-          backdropFilter: 'blur(28px)',
-          WebkitBackdropFilter: 'blur(28px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 99999,
-          animation: 'fadeIn 0.4s ease-out'
-        }}>
-          <style>{`
-            :root[data-theme='light'] {
-              --welcome-card-bg: #ffffff;
-              --welcome-card-border: rgba(0,0,0,0.08);
-              --welcome-text-title: #0f172a;
-              --welcome-text-muted: #475569;
-              --welcome-close-color: #64748b;
-              --welcome-close-hover: #0f172a;
-              --welcome-features-bg: rgba(139, 92, 246, 0.15);
-              --welcome-features-border: rgba(139, 92, 246, 0.25);
-            }
-            :root[data-theme='dark'] {
-              --welcome-card-bg: #0d111a;
-              --welcome-card-border: rgba(255, 255, 255, 0.08);
-              --welcome-text-title: #f8fafc;
-              --welcome-text-muted: #94a3b8;
-              --welcome-close-color: #94a3b8;
-              --welcome-close-hover: #ffffff;
-              --welcome-features-bg: rgba(139, 92, 246, 0.05);
-              --welcome-features-border: rgba(139, 92, 246, 0.1);
-            }
-          `}</style>
-          <div className="glass-card" style={{
-            width: '540px',
-            padding: '3.5rem 2.5rem 2.5rem 2.5rem',
-            borderRadius: '24px',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.12)',
-            border: '1px solid var(--welcome-card-border)',
-            background: 'var(--welcome-card-bg)',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-          }}>
-            {/* Language Selector in Top Left */}
-            <div style={{ position: 'absolute', top: '1.25rem', left: '1.25rem' }}>
-              <select
-                value={i18n.language}
-                onChange={(e) => changeAppLanguage(e.target.value)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  color: 'var(--welcome-text-title)',
-                  padding: '0.4rem 0.8rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  outline: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: '500',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={e => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                }}
-                onMouseLeave={e => {
-                  e.target.style.background = 'rgba(255, 255, 255, 0.05)';
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                }}
-              >
-                <option value="tr" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Türkçe</option>
-                <option value="en" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>English</option>
-                <option value="de" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Deutsch</option>
-                <option value="fr" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Français</option>
-                <option value="es" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Español</option>
-                <option value="it" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Italiano</option>
-                <option value="pt" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Português</option>
-                <option value="nl" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Nederlands</option>
-                <option value="pl" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Polski</option>
-                <option value="ru" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Русский</option>
-                <option value="zh" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>简体中文</option>
-                <option value="ja" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>日本語</option>
-                <option value="ko" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>한국어</option>
-                <option value="ar" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>العربية</option>
-                <option value="hi" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>हिन्दी</option>
-                <option value="sv" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Svenska</option>
-                <option value="no" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Norsk</option>
-                <option value="da" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Dansk</option>
-                <option value="cs" style={{ background: 'var(--welcome-card-bg)', color: 'var(--welcome-text-title)' }}>Čeština</option>
-              </select>
-            </div>
-
-            {/* Close Button in Top Right */}
-            <button
-              onClick={() => {
-                if (dontShowAgain) {
-                  localStorage.setItem('hide_welcome_modal', 'true');
-                }
-                setShowWelcomeModal(false);
-              }}
-              style={{
-                position: 'absolute',
-                top: '1.25rem',
-                right: '1.25rem',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--welcome-close-color)',
-                cursor: 'pointer',
-                padding: '0.4rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'color 0.2s',
-                outline: 'none'
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--welcome-close-hover)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--welcome-close-color)'}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-
-            {/* Direct Premium App Logo (Borderless) */}
-            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
-              <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 16px rgba(139, 92, 246, 0.4))' }} />
-              <img src={TectonLight} alt="Tecton" className="logo-light" style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 16px rgba(139, 92, 246, 0.4))' }} />
-            </div>
-
-            {/* Welcome Content */}
-            <h1 style={{
-              fontSize: '2rem',
-              fontWeight: '800',
-              margin: '0 0 1rem 0',
-              background: 'linear-gradient(135deg, var(--welcome-text-title) 30%, #a78bfa 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              letterSpacing: '-0.02em',
-              fontFamily: 'Outfit, Inter, sans-serif'
-            }}>
-              {t('welcome.modal_title')}
-            </h1>
-
-            <p style={{
-              fontSize: '0.975rem',
-              lineHeight: '1.6',
-              color: 'var(--welcome-text-muted)',
-              margin: '0 0 2rem 0',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              {t('welcome.modal_desc')}
-            </p>
-
-            {/* Premium Badge Section / Features summary */}
-            <div style={{
-              background: 'var(--welcome-features-bg)',
-              border: '1px solid var(--welcome-features-border)',
-              borderRadius: '12px',
-              padding: '0.85rem 1.25rem',
-              fontSize: '0.825rem',
-              color: '#a78bfa',
-              fontWeight: '500',
-              marginBottom: '2.5rem',
-              lineHeight: '1.6',
-              fontFamily: 'Inter, sans-serif',
-              letterSpacing: '0.01em',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '0.4rem',
-              width: '100%'
-            }}>
-              <div>🚀 {t('welcome.infra_feature')} | 📊 {t('welcome.finance_feature')}</div>
-              <div>🔒 {t('welcome.database_feature')}</div>
-            </div>
-
-            {/* Footer Actions */}
-            <div style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '1.25rem'
-            }}>
-              <button
-                onClick={() => {
-                  if (dontShowAgain) {
-                    localStorage.setItem('hide_welcome_modal', 'true');
-                  }
-                  setShowWelcomeModal(false);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '0.9rem',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-                  color: '#ffffff',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(139, 92, 246, 0.3)',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  fontFamily: 'Inter, sans-serif'
-                }}
-                onMouseEnter={e => {
-                  e.target.style.transform = 'translateY(-1px)';
-                  e.target.style.boxShadow = '0 6px 24px rgba(139, 92, 246, 0.4)';
-                }}
-                onMouseLeave={e => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 4px 20px rgba(139, 92, 246, 0.3)';
-                }}
-              >
-                {t('welcome.get_started')}
-              </button>
-
-              {/* Do not show again checkbox */}
-              <label style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                cursor: 'pointer',
-                userSelect: 'none',
-                fontSize: '0.85rem',
-                color: 'var(--welcome-text-muted)',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                <input
-                  type="checkbox"
-                  checked={dontShowAgain}
-                  onChange={(e) => setDontShowAgain(e.target.checked)}
-                  style={{
-                    cursor: 'pointer',
-                    accentColor: '#8b5cf6',
-                    width: '15px',
-                    height: '15px'
-                  }}
-                />
-                <span>{t('welcome.dont_show_again')}</span>
-              </label>
-            </div>
-          </div>
-        </div>
-      )}
+      <OnboardingWizard open={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
 
       {isShuttingDown && (
         <div style={{

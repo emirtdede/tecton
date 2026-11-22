@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Minus, Square, X } from 'lucide-react';
 import '../../index.css';
@@ -8,19 +7,19 @@ const Titlebar = () => {
 
   const handleMinimize = () => {
     if (window.api?.window?.minimize) {
-      window.api.window.minimize();
+      Promise.resolve(window.api.window.minimize()).catch(() => {});
     }
   };
 
   const handleMaximize = () => {
     if (window.api?.window?.maximize) {
-      window.api.window.maximize();
+      Promise.resolve(window.api.window.maximize()).catch(() => {});
     }
   };
 
   const handleClose = () => {
     if (window.api?.window?.close) {
-      window.api.window.close();
+      Promise.resolve(window.api.window.close()).catch(() => {});
     }
   };
 

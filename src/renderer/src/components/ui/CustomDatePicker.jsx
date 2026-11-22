@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useTranslation } from 'react-i18next';
 import { tr, enUS, de, fr, es, zhCN, ru, ja, ko, it, nl, pt, arSA, hi, sv, nb, da, pl, cs } from 'date-fns/locale';
+import { parseLocalDate, parseLocalMonth } from '../../utils/formatUtils';
 
 registerLocale('tr', tr);
 registerLocale('en', enUS);
@@ -25,26 +26,22 @@ registerLocale('pl', pl);
 registerLocale('cs', cs);
 
 const CustomDatePicker = ({ value, onChange, className, required, style, name, placeholder, showMonthYearPicker, popperPlacement }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language || 'tr';
 
-  const [date, setDate] = useState(value ? new Date(value) : null);
+  // Parse the stored value from local calendar parts in BOTH the initial state
+  // and the sync effect. `new Date('2026-11-01')` is UTC midnight, so west of UTC
+  // the first paint showed the previous day until the effect corrected it.
+  const parseValue = (raw) => {
+    if (!raw) return null;
+    return showMonthYearPicker ? (parseLocalMonth(raw) || parseLocalDate(raw)) : parseLocalDate(raw);
+  };
+
+  const [date, setDate] = useState(() => parseValue(value));
 
   useEffect(() => {
-    // Prevent timezone shift by parsing local parts
-    if (value) {
-      const parts = value.split('-');
-      if (parts.length === 3) {
-        setDate(new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])));
-      } else if (parts.length === 2) {
-        setDate(new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1));
-      } else {
-        setDate(new Date(value));
-      }
-    } else {
-      setDate(null);
-    }
-  }, [value]);
+    setDate(parseValue(value));
+  }, [value, showMonthYearPicker]);
 
   const handleChange = (selectedDate) => {
     setDate(selectedDate);
@@ -124,9 +121,9 @@ const CustomDatePicker = ({ value, onChange, className, required, style, name, p
             padding: '4px',
             zIndex: 10
           }}
-          title="Temizle"
+          title={t('common.clear', 'Temizle')}
         >
-          ✕
+          
         </button>
       )}
     </div>

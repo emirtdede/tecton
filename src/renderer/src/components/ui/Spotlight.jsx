@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import useModalA11y from '../../hooks/useModalA11y';
 
 const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] }) => {
   const { t } = useTranslation();
@@ -9,25 +10,18 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
 
   // Focus input on open
   useEffect(() => {
-    if (isOpen) {
-      setQuery('');
-      setActiveIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (!isOpen) return;
+    setQuery('');
+    setActiveIndex(0);
+    // Focusing is deferred so the element exists; the timer is cleared on close
+    // or unmount so a fast toggle cannot focus a detached input.
+    const timer = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
-  // Global keydown listeners for opening (Ctrl+K / Cmd+K) and navigating
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        if (isOpen) onClose();
-        else onClose(true); // Open trigger
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  // NOTE: The global Ctrl/Cmd+K toggle is owned by App (it owns `isSpotlightOpen`).
+  // Registering a second listener here caused the palette to open and immediately
+  // close again on a single key press.
 
   // Handle keys when open
   const handleKeys = (e) => {
@@ -65,20 +59,25 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
     { type: 'faq', id: 'faq_2', label: t('spotlight_faq_2_label', 'Sistem yedeği (Geri Yükleme) nasıl yapılır?'), desc: t('spotlight_faq_2_desc', 'Settings sayfasında .sqlite yedeğini sürükleyip bırakarak yapılır.') }
   ];
 
-  // Compile search database
-  const searchItems = [
+  // Compile search database.
+  // Memoized: `searchItems` rebuilt and re-filtered on every render, which
+  // included every keystroke AND every parent (App) re-render.
+  const searchItems = useMemo(() => [
     ...navItems,
     ...workers.map(w => ({ type: 'worker', id: w.id, label: w.full_name, desc: `${w.phone || ''} | ${t('worker_balance', 'Bakiye')}: ${w.daily_wage}`, raw: w })),
     ...projects.map(p => ({ type: 'project', id: p.id, label: p.name, desc: p.location || t('project_no_location', 'Lokasyon girilmemiş'), raw: p })),
     ...faqItems
-  ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [workers, projects, t]);
 
   // Filter items based on query
-  const filteredItems = searchItems.filter(item => {
-    if (!query) return item.type === 'nav'; // default show navigation links
+  const filteredItems = useMemo(() => {
     const term = query.toLowerCase();
-    return item.label.toLowerCase().includes(term) || item.desc.toLowerCase().includes(term);
-  }).slice(0, 8); // limit to 8 results for premium look
+    return searchItems.filter(item => {
+      if (!query) return item.type === 'nav'; // default show navigation links
+      return item.label.toLowerCase().includes(term) || item.desc.toLowerCase().includes(term);
+    }).slice(0, 8); // limit to 8 results for premium look
+  }, [searchItems, query]);
 
   const selectItem = (item) => {
     if (item.type === 'nav') {
@@ -93,11 +92,27 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
     onClose();
   };
 
+  // The palette is a dialog. It already handled Escape through onKeyDown on the
+  // input, but that only fired while the input had focus; the shared hook adds
+  // role/aria-modal, a focus trap and focus restoration on close.
+  const { dialogProps, containerRef } = useModalA11y({
+    isOpen,
+    onClose,
+    label: t('spotlight_search_placeholder', 'Şantiye komuta merkezinde ara...'),
+    closeOnEscape: false // Escape is handled by handleKeys to also reset state
+  });
+
   if (!isOpen) return null;
 
   return (
     <div className="spotlight-overlay" onClick={onClose}>
-      <div className="spotlight-modal" onClick={e => e.stopPropagation()}>
+      <div
+        ref={containerRef}
+        {...dialogProps}
+        className="spotlight-modal"
+        style={{ outline: 'none' }}
+        onClick={e => e.stopPropagation()}
+      >
         <div className="spotlight-search-container">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
@@ -111,10 +126,20 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
             value={query}
             onChange={e => { setQuery(e.target.value); setActiveIndex(0); }}
             onKeyDown={handleKeys}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="spotlight-results"
+            aria-autocomplete="list"
+            aria-activedescendant={filteredItems[activeIndex] ? `spotlight-option-${activeIndex}` : undefined}
           />
           <kbd style={{ background: 'rgba(255,255,255,0.08)', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>ESC</kbd>
         </div>
-        <div className="spotlight-results">
+        <div
+          className="spotlight-results"
+          id="spotlight-results"
+          role="listbox"
+          aria-label={t('spotlight_search_placeholder', 'Şantiye komuta merkezinde ara...')}
+        >
           {filteredItems.length === 0 ? (
             <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
               {t('spotlight_no_results', 'Sonuç bulunamadı. Başka bir kelime aramayı deneyin.')}
@@ -123,6 +148,9 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
             filteredItems.map((item, idx) => (
               <div 
                 key={`${item.type}-${item.id}`}
+                id={`spotlight-option-${idx}`}
+                role="option"
+                aria-selected={idx === activeIndex}
                 className={`spotlight-item ${idx === activeIndex ? 'active' : ''}`}
                 onClick={() => selectItem(item)}
                 onMouseEnter={() => setActiveIndex(idx)}

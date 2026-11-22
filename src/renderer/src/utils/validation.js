@@ -1,3 +1,45 @@
+/**
+ * True only for a finite number greater than zero.
+ *
+ * Numeric form fields were guarded with a truthiness check (`!formData.quantity`),
+ * which rejects '' and 0 but happily accepts '-5'. The schema has no CHECK
+ * constraints (all quantity/wage columns are plain REAL NOT NULL), so a negative
+ * quantity or wage was persisted and then poisoned every total that summed it.
+ *
+ * @param {unknown} value raw input or parsed number
+ * @returns {boolean}
+ */
+export const isPositiveNumber = (value) => {
+  if (value === null || value === undefined || value === '') return false;
+  const num = typeof value === 'number' ? value : Number(String(value).replace(',', '.'));
+  return Number.isFinite(num) && num > 0;
+};
+
+/**
+ * Parses a user-entered numeric field, returning `null` when the value is not a
+ * positive number. Callers show a validation message and abort the save.
+ *
+ * @param {unknown} value
+ * @returns {number|null}
+ */
+export const parsePositiveNumber = (value) => {
+  if (!isPositiveNumber(value)) return null;
+  return typeof value === 'number' ? value : Number(String(value).replace(',', '.'));
+};
+
+/**
+ * True for a finite number >= 0 (quantities such as weather/worker counts that
+ * legitimately allow zero but never a negative).
+ *
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export const isNonNegativeNumber = (value) => {
+  if (value === null || value === undefined || value === '') return false;
+  const num = typeof value === 'number' ? value : Number(String(value).replace(',', '.'));
+  return Number.isFinite(num) && num >= 0;
+};
+
 export const isValidTCKN = (tc) => {
   // If empty or falsy, we don't validate because it's optional
   if (!tc) return true;

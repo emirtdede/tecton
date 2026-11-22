@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmationModal from './ui/ConfirmationModal';
+import NoProjectNotice from './ui/NoProjectNotice';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate, trLower } from '../utils/formatUtils';
+import { formatDate, trLower, localToday } from '../utils/formatUtils';
+import { logError } from '../utils/logger';
+import apiWrite from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
+import Pagination from './ui/Pagination';
 
 const DailyJournal = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -14,14 +19,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
   const [editingId, setEditingId] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const containerRef = useRef(null);
-  const getLocalDateString = () => {
-    const d = new Date();
-    const offset = d.getTimezoneOffset();
-    const localDate = new Date(d.getTime() - (offset * 60 * 1000));
-    return localDate.toISOString().split('T')[0];
-  };
-
-  const todayStr = getLocalDateString();
+  const todayStr = localToday();
 
   const [formData, setFormData] = useState({
     journal_date: todayStr,
@@ -78,12 +76,34 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
     });
   };
 
+  // Guards against stale responses overwriting newer data after a project switch.
+  const requestIdRef = useRef(0);
+
   const fetchJournals = async () => {
-    if (!activeProjectId) return;
+    if (!activeProjectId) {
+      setJournals([]);
+      setLoading(false);
+      return;
+    }
+    const requestId = ++requestIdRef.current;
     if (window.api && window.api.db) {
       setLoading(true);
-      const data = await window.api.db.read('daily_journals', { project_id: activeProjectId });
-      setJournals(data);
+      try {
+        const data = await window.api.db.read('daily_journals', { project_id: activeProjectId });
+        if (requestId !== requestIdRef.current) return;
+        setJournals(Array.isArray(data) ? data : []);
+      } catch (err) {
+        // An unguarded rejection used to leave the list on a permanent spinner.
+        if (requestId !== requestIdRef.current) return;
+        logError('Daily journals fetch failed:', err);
+        setJournals([]);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('journal.load_error', 'Günlük kayıtlar yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
@@ -96,58 +116,77 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
     setCurrentPage(1);
   }, [searchQuery]);
 
+  // Weather + worker-count fetch is async and keyed on date/project, so a fast
+  // date change could let an older response overwrite the newer one.
+  const weatherRequestIdRef = useRef(0);
+
   // Fetch weather automatically when location or date changes
   useEffect(() => {
     const fetchWeather = async () => {
       if (!activeProject || !activeProject.location) return;
+      const requestId = ++weatherRequestIdRef.current;
       setWeatherLoading(true);
-      if (window.api && window.api.system.getWeather) {
-        const res = await window.api.system.getWeather({ location: activeProject.location, lang: i18n.language, date: formData.journal_date });
-        if (res.success) {
-          setFormData(prev => ({
-            ...prev,
-            weather_temp: res.temp.toString(),
-            weather_desc: res.desc,
-            weather_icon: res.icon
-          }));
-          setWeatherError('');
-        } else {
-          let errorMessage = res.message;
-          if (res.errorType === 'not_found') {
-            errorMessage = t('journal.weather_not_found', 'Belirtilen konum bulunamadı: "{{location}}". Lütfen il/ilçe adını kontrol edin.', { location: activeProject.location });
-          } else if (res.errorType === 'unauthorized') {
-            errorMessage = t('journal.weather_unauthorized', 'Hava durumu API anahtarı geçersiz veya süresi dolmuş. Lütfen Ayarlar sayfasından güncelleyin.');
-          } else if (res.errorType === 'offline') {
-            errorMessage = t('journal.weather_offline', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.');
-          } else if (res.errorType === 'api_error') {
-            errorMessage = t('journal.weather_api_error', 'Hava durumu servisi hata döndürdü.');
+      try {
+        if (window.api && window.api.system.getWeather) {
+          const res = await window.api.system.getWeather({ location: activeProject.location, lang: i18n.language, date: formData.journal_date });
+          // A newer request (date/language/project change) already took over.
+          if (requestId !== weatherRequestIdRef.current) return;
+          if (res.success) {
+            setFormData(prev => ({
+              ...prev,
+              weather_temp: res.temp.toString(),
+              weather_desc: res.desc,
+              weather_icon: res.icon
+            }));
+            setWeatherError('');
+          } else {
+            let errorMessage = res.message;
+            if (res.errorType === 'not_found') {
+              errorMessage = t('journal.weather_not_found', 'Belirtilen konum bulunamadı: "{{location}}". Lütfen il/ilçe adını kontrol edin.', { location: activeProject.location });
+            } else if (res.errorType === 'unauthorized') {
+              errorMessage = t('journal.weather_unauthorized', 'Hava durumu API anahtarı geçersiz veya süresi dolmuş. Lütfen Ayarlar sayfasından güncelleyin.');
+            } else if (res.errorType === 'offline') {
+              errorMessage = t('journal.weather_offline', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.');
+            } else if (res.errorType === 'api_error') {
+              errorMessage = t('journal.weather_api_error', 'Hava durumu servisi hata döndürdü.');
+            }
+
+            setWeatherError(errorMessage || t('journal.weather_error', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.'));
+            setFormData(prev => ({
+              ...prev,
+              weather_temp: '',
+              weather_desc: '',
+              weather_icon: ''
+            }));
           }
-          
-          setWeatherError(errorMessage || t('journal.weather_error', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.'));
-          setFormData(prev => ({
-            ...prev,
-            weather_temp: '',
-            weather_desc: '',
-            weather_icon: ''
-          }));
         }
+
+        // Calculate worker count automatically from timesheets for this date
+        if (window.api && window.api.db) {
+          // The two reads are independent.
+          const [tsData, workers] = await Promise.all([
+            window.api.db.read('timesheets', { work_date: formData.journal_date }),
+            window.api.db.read('workers', { project_id: activeProjectId })
+          ]);
+          if (requestId !== weatherRequestIdRef.current) return;
+          const workerIds = new Set((workers || []).map(w => w.id));
+          const count = (tsData || []).filter(ts => workerIds.has(ts.worker_id)).length;
+          setFormData(prev => ({ ...prev, worker_count: count.toString() }));
+        }
+      } catch (err) {
+        if (requestId === weatherRequestIdRef.current) {
+          logError('Weather/worker-count fetch failed:', err);
+          setWeatherError(t('journal.weather_error', 'İnternet bağlantısı yok veya hava durumu servisine ulaşılamıyor.'));
+        }
+      } finally {
+        // Only the newest request may clear the spinner; an older rejected call
+        // must not hide the loader while the current one is still running.
+        if (requestId === weatherRequestIdRef.current) setWeatherLoading(false);
       }
-      
-      // Calculate worker count automatically from timesheets for this date
-      if (window.api && window.api.db) {
-        const tsData = await window.api.db.read('timesheets', { work_date: formData.journal_date });
-        // Filter by workers on active project
-        const workers = await window.api.db.read('workers', { project_id: activeProjectId });
-        const workerIds = workers.map(w => w.id);
-        const count = tsData.filter(ts => workerIds.includes(ts.worker_id)).length;
-        setFormData(prev => ({ ...prev, worker_count: count.toString() }));
-      }
-      
-      setWeatherLoading(false);
     };
 
     fetchWeather();
-  }, [activeProjectId, formData.journal_date]);
+  }, [activeProjectId, formData.journal_date, activeProject?.location, i18n.language, t]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -162,24 +201,22 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
         notes: formData.notes
       };
 
+      let res;
       if (editingId) {
-        await window.api.db.update('daily_journals', editingId, payload);
-        setEditingId(null);
+        res = await apiWrite(window.api.db.update('daily_journals', editingId, payload));
       } else {
         // Check if journal already exists for this date on this project
         const existing = journals.find(j => j.journal_date === formData.journal_date);
-        if (existing) {
-          // Update it
-          await window.api.db.update('daily_journals', existing.id, payload);
-        } else {
-          // Create new
-          await window.api.db.create('daily_journals', {
+        res = existing
+          ? await apiWrite(window.api.db.update('daily_journals', existing.id, payload))
+          : await apiWrite(window.api.db.create('daily_journals', {
             project_id: activeProjectId,
             journal_date: formData.journal_date,
             ...payload
-          });
-        }
+          }));
       }
+      if (res && res.success === false) return;
+      if (editingId) setEditingId(null);
       setFormData(prev => ({
         ...prev,
         notes: ''
@@ -194,54 +231,53 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
 
   const confirmDelete = async () => {
     if (window.api && window.api.db && confirmModal.id) {
-      await window.api.db.delete('daily_journals', confirmModal.id);
+      await apiWrite(window.api.db.delete('daily_journals', confirmModal.id));
       setConfirmModal({ isOpen: false, id: null });
       fetchJournals();
     }
   };
 
-  // Filter and paginated journals
-  const filteredJournals = journals.filter(j => {
+  // Filter and sort journals.
+  // Memoized: the previous version filtered AND globally re-sorted on every
+  // render (sort mutates the filtered array in place), including while typing in
+  // unrelated form fields.
+  const filteredJournals = useMemo(() => {
     const q = trLower(searchQuery);
-    if (searchQuery && 
-        !trLower(j.notes).includes(q) && 
-        !(j.weather_desc && trLower(j.weather_desc).includes(q)) &&
-        !trLower(formatDate(j.journal_date, i18n.language)).includes(q)) {
-      return false;
-    }
-    if (startDate && j.journal_date < startDate) return false;
-    if (endDate && j.journal_date > endDate) return false;
-    return true;
-  });
+    const rows = journals.filter(j => {
+      if (searchQuery &&
+          !trLower(j.notes).includes(q) &&
+          !(j.weather_desc && trLower(j.weather_desc).includes(q)) &&
+          !trLower(formatDate(j.journal_date, i18n.language)).includes(q)) {
+        return false;
+      }
+      if (startDate && j.journal_date < startDate) return false;
+      if (endDate && j.journal_date > endDate) return false;
+      return true;
+    });
 
-  // Apply sorting
-  filteredJournals.sort((a, b) => {
-    if (sortBy === 'date_desc') {
-      return b.journal_date.localeCompare(a.journal_date);
-    } else if (sortBy === 'date_asc') {
-      return a.journal_date.localeCompare(b.journal_date);
-    } else if (sortBy === 'workers_desc') {
-      const wa = a.worker_count ? parseInt(a.worker_count, 10) : 0;
-      const wb = b.worker_count ? parseInt(b.worker_count, 10) : 0;
-      return wb - wa;
-    } else if (sortBy === 'workers_asc') {
-      const wa = a.worker_count ? parseInt(a.worker_count, 10) : 0;
-      const wb = b.worker_count ? parseInt(b.worker_count, 10) : 0;
-      return wa - wb;
-    }
-    return 0;
-  });
+    return rows.sort((a, b) => {
+      if (sortBy === 'date_desc') {
+        return b.journal_date.localeCompare(a.journal_date);
+      } else if (sortBy === 'date_asc') {
+        return a.journal_date.localeCompare(b.journal_date);
+      } else if (sortBy === 'workers_desc') {
+        const wa = a.worker_count ? parseInt(a.worker_count, 10) : 0;
+        const wb = b.worker_count ? parseInt(b.worker_count, 10) : 0;
+        return wb - wa;
+      } else if (sortBy === 'workers_asc') {
+        const wa = a.worker_count ? parseInt(a.worker_count, 10) : 0;
+        const wb = b.worker_count ? parseInt(b.worker_count, 10) : 0;
+        return wa - wb;
+      }
+      return 0;
+    });
+  }, [journals, searchQuery, startDate, endDate, sortBy, i18n.language]);
 
   const totalPages = Math.ceil(filteredJournals.length / itemsPerPage);
   const paginatedJournals = filteredJournals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>📓 {t('nav.journal', 'Günlük Jurnal Takibi')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="nav.journal" titleFallback="Daily journal" />;
   }
 
   return (
@@ -250,25 +286,10 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
       <div className="glass-card" style={{ padding: '1.25rem', gap: '0.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
-            <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{t('journal.title', '📓 Şantiye Günlük Jurnali')}</h2>
+            <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{t('journal.title', ' Şantiye Günlük Jurnali')}</h2>
             <p className="card-subtitle active-project-subtitle" style={{ marginBottom: 0 }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
           </div>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
 
         {/* Add/Edit Journal Form */}
@@ -329,10 +350,10 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
               {weatherLoading ? (
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('journal.weather_loading', 'Bulutlardan okunuyor...')}</span>
               ) : weatherError ? (
-                <span style={{ fontSize: '0.9rem', color: 'var(--danger-text)', fontWeight: 'bold' }}>⚠️ {weatherError}</span>
+                <span style={{ fontSize: '0.9rem', color: 'var(--danger-text)', fontWeight: 'bold' }}> {weatherError}</span>
               ) : formData.weather_desc ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  {formData.weather_icon && <img src={`http://openweathermap.org/img/wn/${formData.weather_icon}.png`} alt="Weather Icon" style={{ width: '30px', height: '30px' }} />}
+                  {formData.weather_icon && <img src={`https://openweathermap.org/img/wn/${formData.weather_icon}.png`} alt={t('common.weather_icon', 'Hava durumu simgesi')} style={{ width: '30px', height: '30px' }} />}
                   <strong style={{ fontSize: '0.95rem', color: 'var(--text-main)' }}>{formData.weather_temp} °C, {formData.weather_desc.toUpperCase()}</strong>
                 </div>
               ) : (
@@ -422,7 +443,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                     }}
                     title={t('common.clear', 'Temizle')}
                   >
-                    ✕
+                    
                   </button>
                 )}
               </div>
@@ -481,14 +502,14 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                     <strong style={{ fontSize: '1.05rem', color: 'var(--primary)' }}>{formatDate(j.journal_date, i18n.language)}</strong>
                     {j.weather_desc && (
                       <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        {j.weather_icon && <img src={`http://openweathermap.org/img/wn/${j.weather_icon}.png`} alt="Icon" style={{ width: '20px', height: '20px' }} />}
+                        {j.weather_icon && <img src={`https://openweathermap.org/img/wn/${j.weather_icon}.png`} alt={t('common.weather_icon', 'Hava durumu simgesi')} style={{ width: '20px', height: '20px' }} />}
                         {j.weather_temp} °C, {j.weather_desc}
                       </span>
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ fontSize: '0.8rem', background: 'var(--accent-bg)', color: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginRight: '0.5rem', fontWeight: '500' }}>
-                      👷 {j.worker_count} {t('journal.worker_count_badge', 'Çalışan')}
+                       {j.worker_count} {t('journal.worker_count_badge', 'Çalışan')}
                     </span>
                     {j.journal_date === todayStr && (
                       <button 
@@ -522,74 +543,8 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
               </div>
             ))}
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{
-                position: 'sticky',
-                bottom: 0,
-                background: 'var(--option-bg, #0f172a)',
-                borderTop: '1px solid var(--glass-border)',
-                zIndex: 10,
-                padding: '1rem',
-                marginTop: '1rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '0 0 12px 12px'
-              }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                  {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} {t('global.recordsCount', { count: filteredJournals.length })}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ 
-                      padding: '0.4rem 1rem', 
-                      fontSize: '0.85rem',
-                      fontWeight: '600',
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid var(--glass-border)',
-                      borderRadius: '8px',
-                      color: 'var(--text-main)',
-                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === 1 ? 0.5 : 1,
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                    onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
-                  </span>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ 
-                      padding: '0.4rem 1rem', 
-                      fontSize: '0.85rem',
-                      fontWeight: '600',
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid var(--glass-border)',
-                      borderRadius: '8px',
-                      color: 'var(--text-main)',
-                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === totalPages ? 0.5 : 1,
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                    onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Pagination - shared component (ui/Pagination) */}
+            <Pagination variant="sticky" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredJournals.length} />
           </div>
         )}
       </div>

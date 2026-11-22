@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LightboxModal from './ui/LightboxModal';
+import NoProjectNotice from './ui/NoProjectNotice';
 import GuideDrawer from './ui/GuideDrawer';
 import { formatDate, trLower } from '../utils/formatUtils';
+import { logError } from '../utils/logger';
 import CustomDatePicker from './ui/CustomDatePicker';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
 
 
 const MediaGallery = ({ activeProjectId, projects = [] }) => {
@@ -14,6 +19,9 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
   const [helpOpen, setHelpOpen] = useState(false);
   const [viewMode, setViewMode] = useState('list'); // 'list' is default
   const [currentPage, setCurrentPage] = useState(1);
+  // relativePath -> data URL | null. Populated only for the visible page.
+  const [photoCache, setPhotoCache] = useState({});
+  const inFlightPhotosRef = useRef(new Set());
 
   // Search & Filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,12 +33,27 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
+  // Guards against out-of-order async results: when the user switches projects
+  // quickly, a slow response for the old project must not overwrite the new one.
+  const requestIdRef = useRef(0);
+
   const fetchMedia = async () => {
-    if (!activeProjectId) return;
+    if (!activeProjectId) {
+      setMediaItems([]);
+      setLoading(false);
+      return;
+    }
+    const requestId = ++requestIdRef.current;
     setLoading(true);
-    if (window.api && window.api.db) {
-      const materials = await window.api.db.read('materials', { project_id: activeProjectId });
-      const reports = await window.api.db.read('quality_reports', { project_id: activeProjectId });
+    try {
+      if (!window.api || !window.api.db) return;
+      const [materials, reports] = await Promise.all([
+        window.api.db.read('materials', { project_id: activeProjectId }),
+        window.api.db.read('quality_reports', { project_id: activeProjectId })
+      ]);
+
+      // A newer fetch started while we were waiting - drop this result.
+      if (requestId !== requestIdRef.current) return;
 
       const items = [];
 
@@ -58,91 +81,86 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
         });
       }
 
-      // Read base64 content for each (only if it has photo_path)
-      const resolvedItems = [];
-      for (const item of items) {
-        if (item.photo_path) {
-          const res = await window.api.media.readPhoto({ relativePath: item.photo_path });
-          if (res.success) {
-            resolvedItems.push({
-              ...item,
-              base64: res.base64
-            });
-          } else {
-            resolvedItems.push({
-              ...item,
-              base64: null
-            });
-          }
-        } else {
-          resolvedItems.push({
-            ...item,
-            base64: null
-          });
-        }
-      }
-
-      setMediaItems(resolvedItems);
-      setLoading(false);
+      // Photos are NOT read here: a project with a few hundred receipts would
+      // hold every full-size image as a base64 string in state (tens of MB).
+      // The visible page loads its own thumbnails in the effect below.
+      setMediaItems(items);
+    } catch (err) {
+      // Without this the spinner never stopped and the rejection surfaced as an
+      // unhandled promise rejection in the renderer.
+      if (requestId !== requestIdRef.current) return;
+      logError('Media gallery fetch failed:', err);
+      setMediaItems([]);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('media.load_error', 'Medya galerisi yüklenemedi.'), type: 'error' }
+      }));
+    } finally {
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchMedia();
-  }, [activeProjectId]);
+    return () => {
+      // Invalidate any in-flight response when the project changes/unmounts.
+      requestIdRef.current += 1;
+    };
+  }, [activeProjectId, t]);
 
   const handleStartDateChange = (val) => {
-    setFilterStartDate(val);
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterEndDate(val);
-    }
+    const [start, end] = clampRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
 
   const handleEndDateChange = (val) => {
-    setFilterEndDate(val);
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterStartDate(val);
-    }
+    const [start, end] = clampRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, sortBy, filterType, filterPhoto, filterStartDate, filterEndDate, activeProjectId]);
 
-  // Filter and Sort logic
-  const filteredItems = mediaItems.filter(item => {
-    const formattedDate = formatDate(item.date, i18n.language);
+  // Filter, sort and paginate media items.
+  // Memoized: the filter chain + sort previously re-ran on every render
+  // (including each base64 photo batch load).
+  const sortedItems = useMemo(() => {
     const query = trLower(searchQuery);
-    const matchesSearch = !searchQuery || 
-      trLower(item.title).includes(query) || 
-      trLower(item.typeLabel).includes(query) ||
-      trLower(formattedDate).includes(query);
-    
-    const matchesType = !filterType || 
-      (filterType === 'material' && item.id.startsWith('material_')) ||
-      (filterType === 'report' && item.id.startsWith('report_'));
-      
-    const matchesPhoto = !filterPhoto ||
-      (filterPhoto === 'yes' && !!item.base64) ||
-      (filterPhoto === 'no' && !item.base64);
+    const filtered = mediaItems.filter(item => {
+      const formattedDate = formatDate(item.date, i18n.language);
+      const matchesSearch = !searchQuery ||
+        trLower(item.title).includes(query) ||
+        trLower(item.typeLabel).includes(query) ||
+        trLower(formattedDate).includes(query);
 
-    let matchesDate = true;
-    if (filterStartDate) matchesDate = matchesDate && item.date >= filterStartDate;
-    if (filterEndDate) matchesDate = matchesDate && item.date <= filterEndDate;
+      const matchesType = !filterType ||
+        (filterType === 'material' && item.id.startsWith('material_')) ||
+        (filterType === 'report' && item.id.startsWith('report_'));
 
-    return matchesSearch && matchesType && matchesPhoto && matchesDate;
-  });
+      const matchesPhoto = !filterPhoto ||
+        (filterPhoto === 'yes' && !!item.photo_path) ||
+        (filterPhoto === 'no' && !item.photo_path);
 
-  const sortedItems = [...filteredItems].sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    if (sortBy === 'date_desc') {
-      return dateB - dateA;
-    } else if (sortBy === 'date_asc') {
-      return dateA - dateB;
-    }
-    return 0;
-  });
+      let matchesDate = true;
+      if (filterStartDate) matchesDate = matchesDate && item.date >= filterStartDate;
+      if (filterEndDate) matchesDate = matchesDate && item.date <= filterEndDate;
+
+      return matchesSearch && matchesType && matchesPhoto && matchesDate;
+    });
+
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (sortBy === 'date_desc') {
+        return dateB - dateA;
+      } else if (sortBy === 'date_asc') {
+        return dateA - dateB;
+      }
+      return 0;
+    });
+  }, [mediaItems, searchQuery, filterType, filterPhoto, filterStartDate, filterEndDate, sortBy, i18n.language]);
 
   // Pagination logic
   const itemsPerPage = viewMode === 'list' ? 7 : 12;
@@ -152,36 +170,65 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
   const startIndex = (validCurrentPage - 1) * itemsPerPage;
   const paginatedItems = sortedItems.slice(startIndex, startIndex + itemsPerPage);
 
+  // Key the loader on the visible photo set, not on `photoCache` (adding the
+  // cache to the deps would re-trigger the effect that fills it).
+  const visiblePhotoKey = paginatedItems.map(item => item.photo_path || '').join('|');
+
+  useEffect(() => {
+    if (!window.api?.media) return undefined;
+    let cancelled = false;
+    // Photos already cached (or in flight) are skipped, so revisiting a page or
+    // paginating back and forth never re-reads the same file.
+    const pending = paginatedItems
+      .map(item => item.photo_path)
+      .filter((relativePath, index, list) =>
+        relativePath &&
+        !photoCache[relativePath] &&
+        !inFlightPhotosRef.current.has(relativePath) &&
+        list.indexOf(relativePath) === index
+      );
+
+    if (pending.length === 0) return undefined;
+
+    pending.forEach(relativePath => inFlightPhotosRef.current.add(relativePath));
+
+    Promise.all(pending.map(async (relativePath) => {
+      let dataUrl = null;
+      try {
+        const res = await window.api.media.readPhoto({ relativePath });
+        dataUrl = res && res.success ? res.base64 : null;
+      } catch (err) {
+        logError('Media thumbnail read failed:', err);
+      } finally {
+        inFlightPhotosRef.current.delete(relativePath);
+      }
+      return [relativePath, dataUrl];
+    })).then((entries) => {
+      if (cancelled) return;
+      setPhotoCache(prev => {
+        const next = { ...prev };
+        for (const [relativePath, dataUrl] of entries) next[relativePath] = dataUrl;
+        return next;
+      });
+    });
+
+    return () => { cancelled = true; };
+    // `paginatedItems`/`photoCache` are intentionally read without being deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visiblePhotoKey]);
+
+  const getPhoto = (item) => (item.photo_path ? photoCache[item.photo_path] : null);
+
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>📷 {t('nav.media', 'Medya Galerisi')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="nav.media" titleFallback="Media gallery" />;
   }
 
   return (
     <>
       <div className="glass-card" style={{ padding: '1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('media.gallery_title', '📷 Şantiye Medya Galerisi')}</h2>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('media.gallery_title', ' Şantiye Medya Galerisi')}</h2>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
@@ -222,7 +269,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                     padding: '4px'
                   }}
                 >
-                  ✕
+                  
                 </button>
               )}
             </div>
@@ -373,15 +420,17 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedItems.map(item => (
+                {paginatedItems.map(item => {
+                  const photo = getPhoto(item);
+                  return (
                   <tr key={item.id}>
                     <td>
-                      {item.base64 ? (
+                      {photo ? (
                         <img 
-                          src={item.base64} 
+                          src={photo} 
                           alt={item.title} 
                           style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--glass-border)' }} 
-                          onClick={() => setSelectedImage(item.base64)}
+                          onClick={() => setSelectedImage(photo)}
                         />
                       ) : (
                         <div style={{ 
@@ -396,7 +445,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                           fontSize: '1.2rem',
                           border: '1px dashed rgba(255, 255, 255, 0.08)'
                         }}>
-                          📄
+                          
                         </div>
                       )}
                     </td>
@@ -417,15 +466,15 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                       </span>
                     </td>
                     <td>
-                      📅 {formatDate(item.date, i18n.language)}
+                       {formatDate(item.date, i18n.language)}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      {item.base64 ? (
+                      {photo ? (
                         <button
                           type="button"
                           className="btn btn-primary"
                           style={{ width: '28px', height: '28px', padding: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 'auto' }}
-                          onClick={() => setSelectedImage(item.base64)}
+                          onClick={() => setSelectedImage(photo)}
                           title={t('common.view', 'Görüntüle')}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -438,28 +487,31 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                       )}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
         ) : (
           /* Gallery/Grid View */
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
-            {paginatedItems.map(item => (
+            {paginatedItems.map(item => {
+              const photo = getPhoto(item);
+              return (
               <div 
                 key={item.id} 
                 className="glass-card" 
                 style={{ 
                   padding: '0.5rem', 
                   overflow: 'hidden', 
-                  cursor: item.base64 ? 'pointer' : 'default',
+                  cursor: photo ? 'pointer' : 'default',
                   transition: 'transform 0.2s, box-shadow 0.2s'
                 }}
-                onClick={() => item.base64 && setSelectedImage(item.base64)}
+                onClick={() => photo && setSelectedImage(photo)}
               >
-                {item.base64 ? (
+                {photo ? (
                   <img 
-                    src={item.base64} 
+                    src={photo} 
                     alt={item.title} 
                     style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px' }} 
                   />
@@ -477,7 +529,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                     fontSize: '2rem',
                     border: '1px dashed rgba(255, 255, 255, 0.08)'
                   }}>
-                    📄
+                    
                     <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--text-muted)' }}>{t('media.no_image', 'Görsel Yok')}</span>
                   </div>
                 )}
@@ -496,51 +548,16 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                   <h4 style={{ fontSize: '0.85rem', margin: '0.5rem 0 0.25rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#fff' }}>
                     {item.title}
                   </h4>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>📅 {formatDate(item.date, i18n.language)}</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}> {formatDate(item.date, i18n.language)}</span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
-        {/* Premium Pagination Controls */}
-        {!loading && totalItems > 0 && (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            marginTop: '0.5rem',
-            paddingTop: '0.75rem',
-            borderTop: '1px solid var(--glass-border)'
-          }}>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              {t('common.page', 'Sayfa')} {validCurrentPage} / {totalPages} ({totalItems} {t('common.records', 'Kayıt')})
-            </div>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                disabled={validCurrentPage === 1}
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                style={{ padding: '6px 14px', fontSize: '0.85rem', cursor: validCurrentPage === 1 ? 'not-allowed' : 'pointer' }}
-              >
-                {t('common.prev', 'Önceki')}
-              </button>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {t('common.page', 'Sayfa')} {validCurrentPage} / {totalPages}
-              </span>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                disabled={validCurrentPage === totalPages}
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                style={{ padding: '6px 14px', fontSize: '0.85rem', cursor: validCurrentPage === totalPages ? 'not-allowed' : 'pointer' }}
-              >
-                {t('common.next_short', 'Sonraki')}
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Pagination - shared component (ui/Pagination) */}
+        <Pagination currentPage={validCurrentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={totalItems} />
       </div>
 
       {/* Lightbox / Fullscreen Image Viewer Modal */}

@@ -1,17 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { escapeHtml } from '../utils/htmlUtils';
+import { createPdfContainer, renderContainerToPdfPage } from '../utils/pdfRenderUtils';
 import { exportToExcel, exportToCSV, exportToJSON } from '../utils/exportUtils';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
-import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe } from '../utils/formatUtils';
-import TagInput from './ui/TagInput';
+import { formatCurrency, formatDate, getCurrencySymbol, formatCurrencySafe, localToday } from '../utils/formatUtils';
+import { logError } from '../utils/logger';
 import GuideDrawer from './ui/GuideDrawer';
-
+import apiWrite, { apiMessage } from '../utils/apiWrite';
+import { LEDGER_PAYMENT, LEDGER_PROGRESS, isLedgerPayment, isLedgerProgress, normalizeLedgerType } from '../utils/ledgerTypes';
+
+import { toAsciiFilename } from '../utils/pdfUtils';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
+import pdfStyles from '../utils/pdfStyles';
+import { parseTags } from '../utils/tagUtils';
 const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const { t, i18n } = useTranslation();
-  const [loading, setLoading] = useState(true);
   const [projectName, setProjectName] = useState('');
   
   const [transactions, setTransactions] = useState([]);
@@ -22,17 +30,15 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const [filterEndDate, setFilterEndDate] = useState('');
 
   const handleStartDateChange = (val) => {
-    setFilterStartDate(val);
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterEndDate(val);
-    }
+    const [start, end] = clampRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
 
   const handleEndDateChange = (val) => {
-    setFilterEndDate(val);
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterStartDate(val);
-    }
+    const [start, end] = clampRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
 
   // Pagination states
@@ -40,33 +46,23 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const ITEMS_PER_PAGE = 4;
   
   const [reportFilterText, setReportFilterText] = useState('');
-  const [reportFilterType, setReportFilterType] = useState('Tümü'); // 'Tümü' | 'Hakediş' | 'Ödeme'
+  const [reportFilterType, setReportFilterType] = useState('all'); // 'all' | 'progress' | 'payment'
   
   const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState('');
 
-  let parsedTags = [];
-  try {
-    if (subcontractor && subcontractor.tags) {
-      const parsed = typeof subcontractor.tags === 'string' ? JSON.parse(subcontractor.tags) : subcontractor.tags;
-      if (Array.isArray(parsed)) {
-        parsedTags = parsed;
-      }
-    }
-  } catch (e) {
-    console.error("Failed to parse tags", e);
-  }
+  const parsedTags = parseTags(subcontractor && subcontractor.tags);
 
   // Forms
   const [hakedisData, setHakedisData] = useState({
-    trans_date: new Date().toISOString().split('T')[0],
+    trans_date: localToday(),
     amount: '',
     description: ''
   });
   const [hakedisTags, setHakedisTags] = useState([]);
 
   const [odemeData, setOdemeData] = useState({
-    trans_date: new Date().toISOString().split('T')[0],
+    trans_date: localToday(),
     amount: '',
     description: ''
   });
@@ -77,24 +73,38 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
 
   const historyRef = useRef(null);
 
+  // Guards against stale responses overwriting newer data when the profile is
+  // switched quickly or the component unmounts mid-fetch.
+  const profileRequestIdRef = useRef(0);
+
   const fetchProfileData = async () => {
     if (window.api && subcontractor) {
-      setLoading(true);
-      
-      const settings = await window.api.db.read('app_settings');
-      const cName = settings.find(s => s.setting_key === 'company_name')?.setting_value;
-      const cLogo = settings.find(s => s.setting_key === 'company_logo')?.setting_value;
-      if (cName) setCompanyName(cName);
-      if (cLogo) setCompanyLogo(cLogo);
-      
-      const allProjects = await window.api.db.read('projects');
-      const matchedProj = allProjects.find(p => p.id == subcontractor.project_id);
-      setProjectName(matchedProj ? matchedProj.name : '');
-      
-      const rawTransactions = await window.api.db.read('subcontractor_transactions', { subcontractor_id: subcontractor.id });
-      setTransactions(rawTransactions);
-      
-      setLoading(false);
+      const requestId = ++profileRequestIdRef.current;
+
+      try {
+        const [settings, allProjects, rawTransactions] = await Promise.all([
+          window.api.db.read('app_settings'),
+          window.api.db.read('projects'),
+          window.api.db.read('subcontractor_transactions', { subcontractor_id: subcontractor.id })
+        ]);
+        if (requestId !== profileRequestIdRef.current) return;
+
+        const settingsRows = Array.isArray(settings) ? settings : [];
+        const cName = settingsRows.find(s => s.setting_key === 'company_name')?.setting_value;
+        const cLogo = settingsRows.find(s => s.setting_key === 'company_logo')?.setting_value;
+        if (cName) setCompanyName(cName);
+        if (cLogo) setCompanyLogo(cLogo);
+
+        const matchedProj = (allProjects || []).find(p => p.id == subcontractor.project_id);
+        setProjectName(matchedProj ? matchedProj.name : '');
+
+        setTransactions(Array.isArray(rawTransactions) ? rawTransactions : []);
+      } catch (err) {
+        // Three sequential unguarded reads; one rejection blanked the profile
+        // with an unhandled promise rejection.
+        if (requestId !== profileRequestIdRef.current) return;
+        logError('Subcontractor profile fetch failed:', err);
+      }
     }
   };
 
@@ -108,12 +118,22 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
 
   const handleHakedisChange = (e) => {
     const { name, value } = e.target;
-    setHakedisData(prev => ({ ...prev, [name]: name === 'amount' ? Number(value) : value }));
+    setHakedisData(prev => ({
+      ...prev,
+      [name]: name === 'amount'
+        ? (value === '' ? '' : (Number.isNaN(Number(value)) ? prev.amount : Number(value)))
+        : value
+    }));
   };
 
   const handleOdemeChange = (e) => {
     const { name, value } = e.target;
-    setOdemeData(prev => ({ ...prev, [name]: name === 'amount' ? Number(value) : value }));
+    setOdemeData(prev => ({
+      ...prev,
+      [name]: name === 'amount'
+        ? (value === '' ? '' : (Number.isNaN(Number(value)) ? prev.amount : Number(value)))
+        : value
+    }));
   };
 
   const handleSaveHakedis = async (e) => {
@@ -122,14 +142,15 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       const dataToSave = {
         subcontractor_id: subcontractor.id,
         trans_date: hakedisData.trans_date,
-        type: 'Hakediş',
+        type: LEDGER_PROGRESS,
         amount: hakedisData.amount,
         description: hakedisData.description,
         project_id: subcontractor.project_id,
         tags: JSON.stringify(hakedisTags)
       };
       
-      await window.api.db.create('subcontractor_transactions', dataToSave);
+      const res = await apiWrite(window.api.db.create('subcontractor_transactions', dataToSave));
+      if (res && res.success === false) return;
       setHakedisData(prev => ({ ...prev, amount: '', description: '' }));
       setHakedisTags([]);
       fetchProfileData();
@@ -139,34 +160,28 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const handleSaveOdeme = async (e) => {
     e.preventDefault();
     if (window.api && odemeData.amount > 0) {
-      const dataToSave = {
+      const cashDesc = t('subcontractor_profile.cash_desc', '[{{name}}] - Taşeron Ödemesi', { name: subcontractor.name });
+
+      // Atomic call: the cash-out row and its subcontractor ledger entry are
+      // written in one transaction, so a failure cannot leave money recorded in
+      // the register without a matching ledger entry.
+      const res = await window.api.finance.createSubcontractorTransaction({
         subcontractor_id: subcontractor.id,
         trans_date: odemeData.trans_date,
-        type: 'Ödeme',
+        type: LEDGER_PAYMENT,
         amount: odemeData.amount,
-        description: odemeData.description,
-        project_id: subcontractor.project_id,
-        tags: JSON.stringify(odemeTags)
-      };
-
-      // 1. Kasa (Cash Register) Entegrasyonu
-      const cashDesc = t('subcontractor_profile.cash_desc', '[{{name}}] - Taşeron Ödemesi', { name: subcontractor.name });
-      const cashRes = await window.api.db.create('cash_register', {
-        trans_date: odemeData.trans_date,
-        type: 'Nakit Çıkışı',
-        amount: odemeData.amount,
-        description: cashDesc,
+        description: odemeData.description || cashDesc,
         project_id: subcontractor.project_id,
         tags: JSON.stringify(odemeTags)
       });
 
-      if (cashRes && cashRes.success) {
-        dataToSave.linked_cash_id = cashRes.id;
+      if (res && res.success === false) {
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: apiMessage(res, t('common.error_occurred', 'Hata:')), type: 'error' }
+        }));
+        return;
       }
 
-      // 2. Taşeron İşlemi
-      await window.api.db.create('subcontractor_transactions', dataToSave);
-      
       setOdemeData(prev => ({ ...prev, amount: '', description: '' }));
       setOdemeTags([]);
       fetchProfileData();
@@ -179,13 +194,18 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       title: t('subcontractor_profile.delete_title', 'İşlemi Sil'),
       message: t('subcontractor_profile.delete_msg', 'Bu işlemi silmek istediğinize emin misiniz? Eğer bu bir ödeme ise Kasa tablosundan da silinecektir.'),
       onConfirm: async () => {
-        if (window.api) {
-          await window.api.db.delete('subcontractor_transactions', tr.id);
-          if (tr.linked_cash_id) {
-            await window.api.db.delete('cash_register', tr.linked_cash_id);
-          }
-          fetchProfileData();
+        if (!window.api) return;
+        // Single atomic call: the subcontractor row and its linked cash entry are
+        // soft-deleted in one transaction, so a failure cannot leave an orphaned
+        // cash record skewing the project balance.
+        const res = await window.api.finance.deleteSubcontractorTransaction(tr.id);
+        if (res && res.success === false) {
+          window.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message: apiMessage(res, t('common.error_occurred', 'Hata:')), type: 'error' }
+          }));
+          return;
         }
+        fetchProfileData();
       }
     });
   };
@@ -223,7 +243,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const handleExport = (format) => {
     const exportData = reportTransactions.map(tr => ({
       [t('global.date', 'Tarih')]: formatDate(tr.trans_date, i18n.language),
-      [t('global.actionType', 'İşlem Türü')]: tr.type === 'Hakediş' ? t('subcontractor_profile.earned_badge', 'Hakediş') : t('subcontractor_profile.payment_badge', 'Ödeme'),
+      [t('global.actionType', 'İşlem Türü')]: isLedgerProgress(tr.type) ? t('subcontractor_profile.earned_badge', 'Hakediş') : t('subcontractor_profile.payment_badge', 'Ödeme'),
       [t('global.description', 'Açıklama')]: tr.description || '-',
       [t('global.amount', 'Tutar')]: formatCurrencySafe(tr.amount, i18n.language)
     }));
@@ -256,48 +276,38 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
     if (chunks.length === 0) chunks.push([]);
 
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 190;
-    const position = 15;
 
     for (let index = 0; index < chunks.length; index++) {
       const chunk = chunks[index];
       
-      const container = document.createElement('div');
-      container.style.position = 'fixed';
-      container.style.left = '-9999px';
-      container.style.top = '0';
-      container.style.width = '800px';
-      container.style.background = '#ffffff';
-      container.style.color = '#1e293b';
-      container.style.fontFamily = "'Inter', 'Noto Sans', 'Arial', sans-serif";
-      container.style.padding = '40px';
+      const container = createPdfContainer();
       
       const isFirstPage = index === 0;
       const isLastPage = index === chunks.length - 1;
       
       let headerHtml = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div style="${pdfStyles.reportHeader}">
           <div>
-            ${companyLogo && isFirstPage ? `<img src="${companyLogo}" style="max-width: 150px; max-height: 50px; margin-bottom: 10px; display: block;" />` : ''}
-            <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${companyName || ''}</div>
+            ${companyLogo && isFirstPage ? `<img src="${escapeHtml(companyLogo)}" style="${pdfStyles.companyLogo}" />` : ''}
+            <div style="${pdfStyles.companyName}">${escapeHtml(companyName || '')}</div>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 18px; font-weight: bold; color: #6389b9; margin-bottom: 8px; font-family: inherit;">${t('subcontractor_profile.statementTitle', 'Taşeron Cari Ekstresi').toUpperCase()}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.filter', 'Filtre')}:</strong> ${projectName ? projectName : t('global.unspecified', 'Belirtilmemiş')}</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${filterStartDate || 'Tümü'} / ${filterEndDate || 'Tümü'}</div>
-            <div style="font-size: 11px; color: #64748b; font-family: inherit;"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${reportDateStr}</div>
+            <div style="${pdfStyles.reportTitle}">${t('subcontractor_profile.statementTitle', 'Taşeron Cari Ekstresi').toUpperCase()}</div>
+            <div style="${pdfStyles.metaLine}"><strong>${t('global.filter', 'Filtre')}:</strong> ${escapeHtml(projectName ? projectName : t('global.unspecified', 'Belirtilmemiş'))}</div>
+            <div style="${pdfStyles.metaLine}"><strong>${t('global.dateRange', 'Tarih Aralığı')}:</strong> ${escapeHtml(filterStartDate || 'Tümü')} / ${escapeHtml(filterEndDate || 'Tümü')}</div>
+            <div style="${pdfStyles.metaLineTight}"><strong>${t('global.creationDate', 'Oluşturma Tarihi')}:</strong> ${escapeHtml(reportDateStr)}</div>
           </div>
         </div>
-        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;" />
+        <hr style="${pdfStyles.headerDivider}" />
       `;
       
       let subInfoHtml = `
         <div style="margin-bottom: 20px; font-family: inherit;">
-          <div style="font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; font-family: inherit;">${subcontractor.name}</div>
+          <div style="font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; font-family: inherit;">${escapeHtml(subcontractor.name)}</div>
           <div style="font-size: 11px; color: #64748b; display: flex; gap: 15px; flex-wrap: wrap; font-family: inherit;">
-            <span><strong>${t('recycle.tableProject', 'Şantiye')}:</strong> ${projectName ? projectName : t('global.unspecified', 'Belirtilmemiş')}</span>
-            <span><strong>${t('subcontractor_profile.service_type', 'Hizmet Türü')}:</strong> ${subcontractor.service_type || '-'}</span>
-            <span><strong>${t('worker.phone', 'Telefon')}:</strong> ${subcontractor.phone || '-'}</span>
+            <span><strong>${t('recycle.tableProject', 'Şantiye')}:</strong> ${escapeHtml(projectName ? projectName : t('global.unspecified', 'Belirtilmemiş'))}</span>
+            <span><strong>${t('subcontractor_profile.service_type', 'Hizmet Türü')}:</strong> ${escapeHtml(subcontractor.service_type || '-')}</span>
+            <span><strong>${t('worker.phone', 'Telefon')}:</strong> ${escapeHtml(subcontractor.phone || '-')}</span>
           </div>
         </div>
       `;
@@ -306,20 +316,20 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       if (isFirstPage) {
         summaryCardsHtml = `
           <div style="display: flex; gap: 10px; margin-bottom: 25px; font-family: inherit;">
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('subcontractor_profile.prev_balance', 'Devreden Bakiye')}</div>
-              <div style="font-size: 14px; font-weight: bold; color: #334155; font-family: inherit;">${formatCurrencySafe(reportDevreden, i18n.language)}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('subcontractor_profile.prev_balance', 'Devreden Bakiye')}</div>
+              <div style="${pdfStyles.companyName}">${formatCurrencySafe(reportDevreden, i18n.language)}</div>
             </div>
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('subcontractor_profile.period_earned', 'Dönem Hakedişi')}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('subcontractor_profile.period_earned', 'Dönem Hakedişi')}</div>
               <div style="font-size: 14px; font-weight: bold; color: #16a34a; font-family: inherit;">+${formatCurrencySafe(reportDonemHakedis, i18n.language)}</div>
             </div>
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('subcontractor_profile.period_paid', 'Dönem Ödemesi')}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('subcontractor_profile.period_paid', 'Dönem Ödemesi')}</div>
               <div style="font-size: 14px; font-weight: bold; color: #dc2626; font-family: inherit;">-${formatCurrencySafe(reportDonemOdeme, i18n.language)}</div>
             </div>
-            <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center;">
-              <div style="font-size: 11px; color: #64748b; margin-bottom: 4px; font-family: inherit;">${t('subcontractor_profile.new_balance', 'Yeni Bakiye')}</div>
+            <div style="${pdfStyles.summaryBox}">
+              <div style="${pdfStyles.metaLine}">${t('subcontractor_profile.new_balance', 'Yeni Bakiye')}</div>
               <div style="font-size: 14px; font-weight: bold; color: ${reportYeniBakiye >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">${formatCurrencySafe(reportYeniBakiye, i18n.language)}</div>
             </div>
           </div>
@@ -330,24 +340,24 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       if (chunk.length === 0) {
         tableRowsHtml = `
           <tr>
-            <td colspan="4" style="padding: 20px; text-align: center; color: #64748b; font-family: inherit;">
+            <td colspan="4" style="${pdfStyles.emptyCell}">
               ${t('subcontractor_profile.no_records', 'Bu tarih aralığında kayıt bulunamadı.')}
             </td>
           </tr>
         `;
       } else {
         tableRowsHtml = chunk.map(item => {
-          const isHakedis = item.type === 'Hakediş';
+          const isHakedis = isLedgerProgress(item.type);
           const typeText = isHakedis 
             ? t('subcontractor_profile.earned_badge', 'Hakediş') 
             : t('subcontractor_profile.payment_badge', 'Ödeme');
           const amountSign = isHakedis ? '+' : '-';
           const amountColor = isHakedis ? '#16a34a' : '#dc2626';
           return `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${formatDate(item.trans_date, i18n.language)}</td>
-              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${typeText}</td>
-              <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-family: inherit;">${item.description || '-'}</td>
+            <tr style="${pdfStyles.tableRow}">
+              <td style="${pdfStyles.tableCell}">${escapeHtml(formatDate(item.trans_date, i18n.language))}</td>
+              <td style="${pdfStyles.tableCell}">${escapeHtml(typeText)}</td>
+              <td style="${pdfStyles.tableCell}">${escapeHtml(item.description || '-')}</td>
               <td style="padding: 8px 10px; text-align: right; border: 1px solid #e2e8f0; font-weight: 500; color: ${amountColor}; font-family: inherit;">${amountSign}${formatCurrencySafe(item.amount, i18n.language)}</td>
             </tr>
           `;
@@ -355,13 +365,13 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       }
 
       let tableHtml = `
-        <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #334155; font-family: inherit;">
+        <table style="${pdfStyles.table}">
           <thead>
-            <tr style="background: #1e3a8a; color: #ffffff;">
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.date', 'Tarih')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.actionType', 'İşlem Türü')}</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.description', 'Açıklama')}</th>
-              <th style="padding: 10px; text-align: right; border: 1px solid #cbd5e1; font-family: inherit;">${t('global.amount', 'Tutar')}</th>
+            <tr style="${pdfStyles.tableHeadRow}">
+              <th style="${pdfStyles.tableHeadCell}">${t('global.date', 'Tarih')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('global.actionType', 'İşlem Türü')}</th>
+              <th style="${pdfStyles.tableHeadCell}">${t('global.description', 'Açıklama')}</th>
+              <th style="${pdfStyles.tableHeadCellRight}">${t('global.amount', 'Tutar')}</th>
             </tr>
           </thead>
           <tbody>
@@ -374,13 +384,13 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       if (isLastPage) {
         signatureHtml = `
           <div style="margin-top: 60px; display: flex; justify-content: space-between; font-family: inherit;">
-            <div style="width: 250px; text-align: center; font-family: inherit;">
-              <hr style="border: 0; border-top: 1px solid #94a3b8; margin-bottom: 8px;" />
-              <div style="font-size: 11px; font-weight: 500; color: #334155; font-family: inherit;">${t('pdf.signatureSubcontractor', 'Taşeron (Kaşe/İmza)')}</div>
+            <div style="${pdfStyles.signatureCell}">
+              <hr style="${pdfStyles.signatureLine}" />
+              <div style="${pdfStyles.signatureLabel}">${t('pdf.signatureSubcontractor', 'Taşeron (Kaşe/İmza)')}</div>
             </div>
-            <div style="width: 250px; text-align: center; font-family: inherit;">
-              <hr style="border: 0; border-top: 1px solid #94a3b8; margin-bottom: 8px;" />
-              <div style="font-size: 11px; font-weight: 500; color: #334155; font-family: inherit;">${t('pdf.signatureCompany', 'Firma Yetkilisi (Kaşe/İmza)')}</div>
+            <div style="${pdfStyles.signatureCell}">
+              <hr style="${pdfStyles.signatureLine}" />
+              <div style="${pdfStyles.signatureLabel}">${t('pdf.signatureCompany', 'Firma Yetkilisi (Kaşe/İmza)')}</div>
             </div>
           </div>
         `;
@@ -394,92 +404,78 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
         ${signatureHtml}
       `;
 
-      document.body.appendChild(container);
-      
-      await document.fonts.ready;
-      
-      const canvas = await html2canvas(container, {
-        scale: 2.5,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
+      await renderContainerToPdfPage(pdf, container, {
+        addPage: index < chunks.length - 1
       });
-      
-      document.body.removeChild(container);
-      
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      
-      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-      
-      if (index < chunks.length - 1) {
-        pdf.addPage();
-      }
     }
 
-    const trMap = { 'ç':'c', 'ğ':'g', 'ş':'s', 'ö':'o', 'ü':'u', 'ı':'i', 'Ç':'C', 'Ğ':'G', 'Ş':'S', 'Ö':'O', 'Ü':'U', 'İ':'I' };
-    const toEn = (str) => {
-      if (!str) return '';
-      let s = String(str);
-      s = s.replace(/[çğşöüıÇĞŞÖÜİ]/g, letter => trMap[letter]);
-      s = s.replace(/₺/g, 'TL');
-      return s;
-    };
 
-    pdf.save(`${toEn(subcontractor.name)}_Cari_Hesap_Ekstresi.pdf`);
+    pdf.save(`${toAsciiFilename(subcontractor.name)}_Cari_Hesap_Ekstresi.pdf`);
   };
 
-  // Hesaplamalar (Genel)
-  let totalHakedis = 0;
-  let totalOdeme = 0;
-
-  transactions.forEach(t => {
-    if (t.type === 'Hakediş') totalHakedis += t.amount;
-    else if (t.type === 'Ödeme') totalOdeme += t.amount;
-  });
-
-  const netBalance = totalHakedis - totalOdeme;
+  // Hesaplamalar (Genel) - memoized so typing in filters / paginating does not
+  // re-scan every transaction (this used to run on every render).
+  const { totalHakedis, totalOdeme, netBalance } = useMemo(() => {
+    let hakedis = 0;
+    let odeme = 0;
+    for (const t of transactions) {
+      if (isLedgerProgress(t.type)) hakedis += t.amount;
+      else if (isLedgerPayment(t.type)) odeme += t.amount;
+    }
+    return { totalHakedis: hakedis, totalOdeme: odeme, netBalance: hakedis - odeme };
+  }, [transactions]);
 
   // Hesaplamalar (Rapor İçin)
-  let reportDevreden = 0;
-  let reportDonemHakedis = 0;
-  let reportDonemOdeme = 0;
-  let reportYeniBakiye = 0;
+  const { reportTransactions, reportDevreden, reportDonemHakedis, reportDonemOdeme, reportYeniBakiye } = useMemo(() => {
+    let devreden = 0;
+    let donemHakedis = 0;
+    let donemOdeme = 0;
 
-  const reportTransactions = transactions.filter(t => {
-    // Devreden Bakiye
-    if (filterStartDate && new Date(t.trans_date) < new Date(filterStartDate)) {
-      if (t.type === 'Hakediş') reportDevreden += t.amount;
-      else if (t.type === 'Ödeme') reportDevreden -= t.amount;
-      return false; 
-    }
-    
-    // Bitiş tarihi sonrası
-    if (filterEndDate && new Date(t.trans_date) > new Date(filterEndDate)) {
-      return false;
-    }
+    const rows = transactions.filter(t => {
+      // Devreden Bakiye
+      if (filterStartDate && new Date(t.trans_date) < new Date(filterStartDate)) {
+        if (isLedgerProgress(t.type)) devreden += t.amount;
+        else if (isLedgerPayment(t.type)) devreden -= t.amount;
+        return false;
+      }
 
-    // Dönem içi
-    if (t.type === 'Hakediş') reportDonemHakedis += t.amount;
-    else if (t.type === 'Ödeme') reportDonemOdeme += t.amount;
+      // Bitiş tarihi sonrası
+      if (filterEndDate && new Date(t.trans_date) > new Date(filterEndDate)) {
+        return false;
+      }
 
-    return true;
-  }).filter(t => {
-    if (reportFilterType !== 'Tümü' && t.type !== reportFilterType) return false;
-    if (reportFilterText) {
-      const matchText = (t.description || '').toLowerCase().includes(reportFilterText.toLowerCase());
-      if (!matchText) return false;
-    }
-    return true;
-  }).sort((a, b) => new Date(b.trans_date) - new Date(a.trans_date));
+      // Dönem içi
+      if (isLedgerProgress(t.type)) donemHakedis += t.amount;
+      else if (isLedgerPayment(t.type)) donemOdeme += t.amount;
 
-  reportYeniBakiye = reportDevreden + reportDonemHakedis - reportDonemOdeme;
+      return true;
+    }).filter(t => {
+      if (reportFilterType !== 'all' && normalizeLedgerType(t.type) !== reportFilterType) return false;
+      if (reportFilterText) {
+        const matchText = (t.description || '').toLowerCase().includes(reportFilterText.toLowerCase());
+        if (!matchText) return false;
+      }
+      return true;
+    }).sort((a, b) => new Date(b.trans_date) - new Date(a.trans_date));
 
-  const filteredTransactions = transactions.filter(t => {
-    return t.type === (activeTab === 'hakedis' ? 'Hakediş' : 'Ödeme') &&
-           (!filterStartDate || t.trans_date >= filterStartDate) && 
-           (!filterEndDate || t.trans_date <= filterEndDate);
-  }).sort((a, b) => new Date(b.trans_date) - new Date(a.trans_date));
+    return {
+      reportTransactions: rows,
+      reportDevreden: devreden,
+      reportDonemHakedis: donemHakedis,
+      reportDonemOdeme: donemOdeme,
+      reportYeniBakiye: devreden + donemHakedis - donemOdeme
+    };
+  }, [transactions, filterStartDate, filterEndDate, reportFilterType, reportFilterText]);
+
+  const filteredTransactions = useMemo(
+    () => transactions.filter(t => {
+      const wanted = activeTab === 'hakedis' ? LEDGER_PROGRESS : LEDGER_PAYMENT;
+      return normalizeLedgerType(t.type) === wanted &&
+             (!filterStartDate || t.trans_date >= filterStartDate) &&
+             (!filterEndDate || t.trans_date <= filterEndDate);
+    }).sort((a, b) => new Date(b.trans_date) - new Date(a.trans_date)),
+    [transactions, activeTab, filterStartDate, filterEndDate]
+  );
 
   const itemsToPaginate = activeTab === 'rapor' ? reportTransactions : filteredTransactions;
   const totalPages = Math.ceil(itemsToPaginate.length / ITEMS_PER_PAGE) || 1;
@@ -490,22 +486,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
       <div style={{ padding: '0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
           <button className="btn" style={{ marginBottom: 0, padding: '0.5rem 1rem' }} onClick={onBack}>← {t('common.back', 'Geri')}</button>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         
         <div className="profile-grid" style={{ marginTop: '0.5rem', gridTemplateColumns: '350px 1fr' }}>
@@ -520,7 +501,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', margin: '0.25rem 0 0.5rem 0' }}>
               {projectName && (
                 <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                  🏗️ {projectName}
+                   {projectName}
                 </span>
               )}
               {(() => {
@@ -528,7 +509,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                 if (!expiryDate) {
                   return (
                     <span style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                      🛡️ {t('isg.badge_undefined', 'İSG Tanımsız')}
+                       {t('isg.badge_undefined', 'İSG Tanımsız')}
                     </span>
                   );
                 }
@@ -537,11 +518,11 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                 const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
                 let badgeBg, badgeColor, badgeText, badgeIcon;
                 if (diffDays < 0) {
-                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = '🔴'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = ''; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
                 } else if (diffDays <= 30) {
-                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = '🟡'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = ''; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
                 } else {
-                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = '🟢'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = ''; badgeText = t('isg.badge_valid', 'İSG Geçerli');
                 }
                 return (
                   <span style={{ fontSize: '0.8rem', background: badgeBg, color: badgeColor, padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
@@ -551,7 +532,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
               })()}
               {parsedTags.map((tag, idx) => (
                 <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                  🏷️ {tag}
+                   {tag}
                 </span>
               ))}
             </div>
@@ -651,9 +632,9 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                     onChange={e => setReportFilterType(e.target.value)} 
                     style={{ flex: 1, minWidth: '120px' }}
                   >
-                    <option value="Tümü">{t('subcontractor_profile.filter_all', 'Tümü')}</option>
-                    <option value="Hakediş">{t('subcontractor_profile.filter_earned', 'Hakediş')}</option>
-                    <option value="Ödeme">{t('subcontractor_profile.filter_paid', 'Ödeme')}</option>
+                    <option value="all">{t('subcontractor_profile.filter_all', 'Tümü')}</option>
+                    <option value="progress">{t('subcontractor_profile.filter_earned', 'Hakediş')}</option>
+                    <option value="payment">{t('subcontractor_profile.filter_paid', 'Ödeme')}</option>
                   </select>
                 </div>
 
@@ -669,14 +650,14 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                     }} 
                     value=""
                   >
-                    <option value="" disabled>📄 {t('worker_profile.filter.export', 'Dışa Aktar / Yazdır...')}</option>
+                    <option value="" disabled> {t('worker_profile.filter.export', 'Dışa Aktar / Yazdır...')}</option>
                     <option value="pdf">PDF</option>
                     <option value="excel">Excel (.xlsx)</option>
                     <option value="csv">CSV</option>
                     <option value="json">JSON</option>
                   </select>
                   <button onClick={handleWhatsAppSend} className="btn" style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    💬 {t('subcontractor_profile.whatsapp_share', 'WhatsApp')}
+                     {t('subcontractor_profile.whatsapp_share', 'WhatsApp')}
                   </button>
                 </div>
               </div>
@@ -740,17 +721,17 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                         <span style={{ fontWeight: 'bold' }}>{formatDate(tr.trans_date, i18n.language)}</span>
                         <span style={{
                           fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px',
-                          background: tr.type === 'Hakediş' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                          color: tr.type === 'Hakediş' ? 'var(--success-text)' : 'var(--danger-text)'
+                          background: isLedgerProgress(tr.type) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                          color: isLedgerProgress(tr.type) ? 'var(--success-text)' : 'var(--danger-text)'
                         }}>
-                          {tr.type === 'Hakediş' ? t('subcontractor_profile.earned_badge', 'Hakediş') : t('subcontractor_profile.payment_badge', 'Ödeme')}
+                          {isLedgerProgress(tr.type) ? t('subcontractor_profile.earned_badge', 'Hakediş') : t('subcontractor_profile.payment_badge', 'Ödeme')}
                         </span>
                       </div>
                       <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{tr.description}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: tr.type === 'Hakediş' ? 'var(--success-text)' : 'var(--danger-text)' }}>
-                        {tr.type === 'Hakediş' ? '+' : '-'}{formatCurrency(tr.amount, i18n.language)}
+                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: isLedgerProgress(tr.type) ? 'var(--success-text)' : 'var(--danger-text)' }}>
+                        {isLedgerProgress(tr.type) ? '+' : '-'}{formatCurrency(tr.amount, i18n.language)}
                       </div>
                       <button 
                         onClick={() => handleDeleteTransaction(tr)} 
@@ -764,14 +745,8 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
               )}
             </div>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--glass-border)' }}>
-                <button type="button" className="btn" disabled={currentPage === 1} onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>{t('common.prev', 'Önceki')}</button>
-                <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>{t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}</span>
-                <button type="button" className="btn" disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}>{t('common.next', 'Sonraki')}</button>
-              </div>
-            )}
+            {/* Pagination - shared component (ui/Pagination) */}
+            <Pagination variant="bordered" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
           </div>
         </div>

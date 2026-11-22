@@ -1,11 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { logError } from '../utils/logger';
 import ConfirmationModal from './ui/ConfirmationModal';
+import NoProjectNotice from './ui/NoProjectNotice';
 import CustomDatePicker from './ui/CustomDatePicker';
 import LightboxModal from './ui/LightboxModal';
-import { compressImage } from '../utils/imageCompressor';
+import { readPhotoAsBase64, savePhotoFromFile } from '../utils/photoUtils';
 import GuideDrawer from './ui/GuideDrawer';
-import { formatDate, trLower } from '../utils/formatUtils';
+import { formatDate, trLower, localToday } from '../utils/formatUtils';
+import apiWrite, { apiMessage } from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
+import useTransientMessage from '../hooks/useTransientMessage';
+import MobileUploadModal from './ui/MobileUploadModal';
+import Pagination from './ui/Pagination';
+import { parsePositiveNumber } from '../utils/validation';
 
 const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -22,7 +31,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
     quantity: '',
     unit: 'm³',
     receipt_number: '',
-    receipt_date: new Date().toISOString().split('T')[0],
+    receipt_date: localToday(),
     photo_path: '',
     notes: ''
   });
@@ -31,40 +40,22 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const [qrModal, setQrModal] = useState({ isOpen: false, qrCode: '', url: '' });
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
   const [lightboxImage, setLightboxImage] = useState(null);
-  const [toastMessage, setToastMessage] = useState('');
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage('');
-    }, 3000);
-  };
-
-  const renderDescription = (text) => {
-    const parts = text.split('**');
-    return parts.map((part, index) => {
-      if (index % 2 === 1) {
-        return <strong key={index} style={{ fontWeight: 'bold' }}>{part}</strong>;
-      }
-      return part;
-    });
-  };
+  // Inline transient message (replaces the local timer ref + cleanup copy).
+  const { message: toastMessage, show: showToast } = useTransientMessage();
 
   // Search & Pagination states
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const handleStartDateChange = (val) => {
-    setFilterStartDate(val);
-    if (val && filterEndDate && new Date(val) > new Date(filterEndDate)) {
-      setFilterEndDate(val);
-    }
+    const [start, end] = clampRangeForStart(val, filterEndDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
   const handleEndDateChange = (val) => {
-    setFilterEndDate(val);
-    if (val && filterStartDate && new Date(filterStartDate) > new Date(val)) {
-      setFilterStartDate(val);
-    }
+    const [start, end] = clampRangeForEnd(val, filterStartDate);
+    setFilterStartDate(start);
+    setFilterEndDate(end);
   };
   const [filterPhoto, setFilterPhoto] = useState(''); // '' | 'yes' | 'no'
   const [filterUnit, setFilterUnit] = useState('');
@@ -84,12 +75,35 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
 
   const activeProject = projects.find(p => p.id === activeProjectId);
 
+  // Guards against stale responses overwriting newer data after a project switch.
+  const requestIdRef = useRef(0);
+
   const fetchRecords = async () => {
-    if (!activeProjectId) return;
+    if (!activeProjectId) {
+      setRecords([]);
+      setLoading(false);
+      return;
+    }
+    const requestId = ++requestIdRef.current;
     if (window.api && window.api.db) {
       setLoading(true);
-      const data = await window.api.db.read('materials', { project_id: activeProjectId });
-      setRecords(data);
+      try {
+        const data = await window.api.db.read('materials', { project_id: activeProjectId });
+        if (requestId !== requestIdRef.current) return;
+        setRecords(Array.isArray(data) ? data : []);
+      } catch (err) {
+        // Previously an IPC rejection escaped as an unhandled rejection and the
+        // loader never cleared.
+        if (requestId !== requestIdRef.current) return;
+        logError('Materials fetch failed:', err);
+        setRecords([]);
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('materials.load_error', 'Malzeme kayıtları yüklenemedi.'), type: 'error' }
+        }));
+      } finally {
+        if (requestId === requestIdRef.current) setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
@@ -111,9 +125,11 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
           loadPhotoPreview(data.relativePath);
           // Show non-blocking toast and close QR Modal
           // Local showToast removed, using global ToastManager
-          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', '✓ Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', ' Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
           setQrModal({ isOpen: false, qrCode: '', url: '' });
-          window.api.system.stopLANServer();
+          // Fire-and-forget, but a rejection must not surface as an
+          // unhandled promise rejection in the renderer.
+          Promise.resolve(window.api.system.stopLANServer()).catch(logError);
         }
       });
       return () => unsubscribe();
@@ -121,12 +137,8 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   }, [activeProjectId]);
 
   const loadPhotoPreview = async (relativePath) => {
-    if (window.api && window.api.media.readPhoto && relativePath) {
-      const res = await window.api.media.readPhoto({ relativePath });
-      if (res.success) {
-        setPhotoPreview(res.base64);
-      }
-    }
+    const base64 = await readPhotoAsBase64(relativePath);
+    if (base64) setPhotoPreview(base64);
   };
 
   const handleSelectLocalPhoto = () => {
@@ -134,24 +146,19 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   };
 
   const handleLocalFileChange = async (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      try {
-        const compressedBase64 = await compressImage(e.target.files[0]);
-        if (window.api && window.api.media.savePhotoBase64) {
-          const saveRes = await window.api.media.savePhotoBase64({ 
-            projectId: activeProjectId, 
-            base64Data: compressedBase64 
-          });
-          if (saveRes.success) {
-            setFormData(prev => ({ ...prev, photo_path: saveRes.relativePath }));
-            setPhotoPreview(compressedBase64);
-          } else {
-            window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_error', 'Fotoğraf kaydedilemedi:') + ' ' + saveRes.message, type: 'error' } }));
-          }
-        }
-      } catch (err) {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_upload_error', 'Fotoğraf işlenirken hata oluştu:') + ' ' + err.message, type: 'error' } }));
+    if (!e.target.files || e.target.files.length === 0) return;
+    try {
+      const saveRes = await savePhotoFromFile(e.target.files[0], activeProjectId);
+      if (saveRes.success) {
+        setFormData(prev => ({ ...prev, photo_path: saveRes.relativePath }));
+        setPhotoPreview(saveRes.base64);
+      } else {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_error', 'Fotoğraf kaydedilemedi:') + ' ' + apiMessage(saveRes), type: 'error' } }));
       }
+    } catch (err) {
+      // Log technical detail, show a user-safe message instead of the raw error.
+      logError('Photo upload failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_upload_error', 'Fotoğraf işlenirken hata oluştu.'), type: 'error' } }));
     }
   };
 
@@ -169,7 +176,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
           url: res.url
         });
       } else {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.lan_error', 'Yerel sunucu başlatılamadı:') + ' ' + res.message, type: 'error' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.lan_error', 'Yerel sunucu başlatılamadı:') + ' ' + apiMessage(res), type: 'error' } }));
       }
     }
   };
@@ -177,7 +184,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const handleCloseQRModal = () => {
     setQrModal({ isOpen: false, qrCode: '', url: '' });
     if (window.api && window.api.system.stopLANServer) {
-      window.api.system.stopLANServer();
+      Promise.resolve(window.api.system.stopLANServer()).catch(logError);
     }
   };
 
@@ -203,13 +210,22 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!activeProjectId || !formData.supplier || !formData.material_type || !formData.quantity) return;
+    // The truthiness check above accepts '-5'. Quantity is stored as REAL with no
+    // CHECK constraint, so a negative value would persist and corrupt every total.
+    const quantity = parsePositiveNumber(formData.quantity);
+    if (quantity === null) {
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('common.invalid_positive_number', 'Lütfen sıfırdan büyük geçerli bir miktar girin.'), type: 'warning' }
+      }));
+      return;
+    }
 
     if (window.api && window.api.db) {
       const payload = {
         project_id: activeProjectId,
         supplier: formData.supplier,
         material_type: formData.material_type,
-        quantity: Number(formData.quantity),
+        quantity,
         unit: formData.unit,
         receipt_number: formData.receipt_number,
         receipt_date: formData.receipt_date,
@@ -217,12 +233,12 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
         notes: formData.notes
       };
 
-      if (editingId) {
-        await window.api.db.update('materials', editingId, payload);
-        setEditingId(null);
-      } else {
-        await window.api.db.create('materials', payload);
-      }
+      const res = editingId
+        ? await apiWrite(window.api.db.update('materials', editingId, payload))
+        : await apiWrite(window.api.db.create('materials', payload));
+      // Keep the filled form on failure so the user does not have to retype it.
+      if (res && res.success === false) return;
+      if (editingId) setEditingId(null);
 
       setFormData(prev => ({
         ...prev,
@@ -244,58 +260,57 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
 
   const confirmDelete = async () => {
     if (window.api && window.api.db && confirmModal.id) {
-      await window.api.db.delete('materials', confirmModal.id);
+      await apiWrite(window.api.db.delete('materials', confirmModal.id));
       setConfirmModal({ isOpen: false, id: null });
       fetchRecords();
     }
   };
 
-  // Filter and Paginated records
-  const filteredRecords = records.filter(r => {
+  // Filter and paginate records.
+  // Memoized: search + per-row currency/date formatting previously ran on every
+  // render (typing in the form, opening modals, photo previews...).
+  const filteredRecords = useMemo(() => {
     const q = trLower(searchQuery);
-    const formattedDate = formatDate(r.receipt_date, i18n.language);
-    
-    const qtyStr = String(r.quantity);
-    const qtyCommaStr = qtyStr.replace('.', ',');
-    const unitStr = r.unit ? trLower(r.unit) : '';
-    const qtyWithUnit = `${qtyStr} ${unitStr}`;
-    const qtyWithUnitNoSpace = `${qtyStr}${unitStr}`;
-    const qtyCommaWithUnit = `${qtyCommaStr} ${unitStr}`;
-    const qtyCommaWithUnitNoSpace = `${qtyCommaStr}${unitStr}`;
+    return records.filter(r => {
+      const formattedDate = formatDate(r.receipt_date, i18n.language);
 
-    const matchesSearch = !searchQuery ||
-                          trLower(r.supplier).includes(q) ||
-                          trLower(r.material_type).includes(q) ||
-                          (r.receipt_number && trLower(r.receipt_number).includes(q)) ||
-                          (r.notes && trLower(r.notes).includes(q)) ||
-                          trLower(formattedDate).includes(q) ||
-                          trLower(r.receipt_date).includes(q) ||
-                          qtyStr.includes(q) ||
-                          qtyCommaStr.includes(q) ||
-                          qtyWithUnit.includes(q) ||
-                          qtyWithUnitNoSpace.includes(q) ||
-                          qtyCommaWithUnit.includes(q) ||
-                          qtyCommaWithUnitNoSpace.includes(q);
-    const matchesUnit = !filterUnit || r.unit === filterUnit;
-    const matchesPhoto = !filterPhoto || 
-                         (filterPhoto === 'yes' && !!r.photo_path) || 
-                         (filterPhoto === 'no' && !r.photo_path);
-    let matchesDate = true;
-    if (filterStartDate) matchesDate = matchesDate && r.receipt_date >= filterStartDate;
-    if (filterEndDate) matchesDate = matchesDate && r.receipt_date <= filterEndDate;
-    return matchesSearch && matchesUnit && matchesPhoto && matchesDate;
-  });
+      const qtyStr = String(r.quantity);
+      const qtyCommaStr = qtyStr.replace('.', ',');
+      const unitStr = r.unit ? trLower(r.unit) : '';
+      const qtyWithUnit = `${qtyStr} ${unitStr}`;
+      const qtyWithUnitNoSpace = `${qtyStr}${unitStr}`;
+      const qtyCommaWithUnit = `${qtyCommaStr} ${unitStr}`;
+      const qtyCommaWithUnitNoSpace = `${qtyCommaStr}${unitStr}`;
+
+      const matchesSearch = !searchQuery ||
+                            trLower(r.supplier).includes(q) ||
+                            trLower(r.material_type).includes(q) ||
+                            (r.receipt_number && trLower(r.receipt_number).includes(q)) ||
+                            (r.notes && trLower(r.notes).includes(q)) ||
+                            trLower(formattedDate).includes(q) ||
+                            trLower(r.receipt_date).includes(q) ||
+                            qtyStr.includes(q) ||
+                            qtyCommaStr.includes(q) ||
+                            qtyWithUnit.includes(q) ||
+                            qtyWithUnitNoSpace.includes(q) ||
+                            qtyCommaWithUnit.includes(q) ||
+                            qtyCommaWithUnitNoSpace.includes(q);
+      const matchesUnit = !filterUnit || r.unit === filterUnit;
+      const matchesPhoto = !filterPhoto ||
+                           (filterPhoto === 'yes' && !!r.photo_path) ||
+                           (filterPhoto === 'no' && !r.photo_path);
+      let matchesDate = true;
+      if (filterStartDate) matchesDate = matchesDate && r.receipt_date >= filterStartDate;
+      if (filterEndDate) matchesDate = matchesDate && r.receipt_date <= filterEndDate;
+      return matchesSearch && matchesUnit && matchesPhoto && matchesDate;
+    });
+  }, [records, searchQuery, filterUnit, filterPhoto, filterStartDate, filterEndDate, i18n.language]);
 
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage);
   const paginatedRecords = filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (!activeProjectId) {
-    return (
-      <div className="glass-card text-center" style={{ padding: '3rem' }}>
-        <h2>📄 {t('nav.materials', 'İrsaliye & Malzeme Takibi')}</h2>
-        <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
-      </div>
-    );
+    return <NoProjectNotice titleKey="nav.materials" titleFallback="Delivery notes and materials" />;
   }
 
   return (
@@ -303,23 +318,8 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
       {/* Main List and Form */}
       <div className="glass-card" style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('materials.title', '🚚 İrsaliye ve Malzeme Girişi')}</h2>
-          <span 
-            onClick={() => setHelpOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('materials.title', ' İrsaliye ve Malzeme Girişi')}</h2>
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
@@ -368,9 +368,9 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
               onChange={e => setFormData(prev => ({ ...prev, unit: e.target.value }))}
             >
               <option value="m³">m³</option>
-              <option value="ton">ton</option>
-              <option value="kg">kg</option>
-              <option value="adet">adet</option>
+              <option value="ton">{t('units.ton', 'Ton')}</option>
+              <option value="kg">{t('units.kg', 'Kg')}</option>
+              <option value="adet">{t('units.adet', 'Adet')}</option>
               <option value="m²">m²</option>
               <option value="mt">mt</option>
             </select>
@@ -399,10 +399,10 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             <label className="form-label">{t('materials.document_photo', 'Evrak Fotoğrafı')}</label>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <button type="button" className="btn" onClick={handleSelectLocalPhoto} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.select_pc', '📂 PC\'den Seç')}
+                {t('quality.select_pc', ' PC\'den Seç')}
               </button>
               <button type="button" className="btn btn-primary" onClick={handleOpenQRModal} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.upload_mobile', '📲 Mobilden Yükle (QR)')}
+                {t('quality.upload_mobile', ' Mobilden Yükle (QR)')}
               </button>
               {photoPreview && (
                 <div 
@@ -419,7 +419,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                   }} 
                   onClick={() => setLightboxImage(photoPreview)}
                 >
-                  <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={photoPreview} alt={t('common.preview', 'Önizleme')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button 
                     type="button"
                     style={{ 
@@ -445,7 +445,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                       setFormData(prev => ({ ...prev, photo_path: '' })); 
                     }}
                   >
-                    ✕
+                    
                   </button>
                 </div>
               )}
@@ -486,7 +486,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                     quantity: '',
                     unit: 'm³',
                     receipt_number: '',
-                    receipt_date: new Date().toISOString().split('T')[0],
+                    receipt_date: localToday(),
                     photo_path: '',
                     notes: ''
                   });
@@ -544,7 +544,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                     }}
                     title={t('common.clear', 'Temizle')}
                   >
-                    ✕
+                    
                   </button>
                 )}
               </div>
@@ -580,12 +580,11 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
               >
                 <option value="">{t('filters.all_units', 'Tümü')}</option>
                 <option value="m³">m³</option>
-                <option value="Adet">Adet</option>
-                <option value="Ton">Ton</option>
-                <option value="Kg">Kg</option>
+                <option value="adet">{t('units.adet', 'Adet')}</option>
+                <option value="ton">{t('units.ton', 'Ton')}</option>
+                <option value="kg">{t('units.kg', 'Kg')}</option>
                 <option value="m²">m²</option>
                 <option value="mt">mt</option>
-                <option value="Diğer">Diğer</option>
               </select>
             </div>
 
@@ -686,99 +685,20 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
               </tbody>
             </table>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div style={{
-                position: 'sticky',
-                bottom: 0,
-                background: 'var(--option-bg, #0f172a)',
-                borderTop: '1px solid var(--glass-border)',
-                zIndex: 10,
-                padding: '1rem 1.5rem',
-                marginTop: '0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: '1rem',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '0 0 12px 12px'
-              }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  {t('common.pagination_info', 'Sayfa {{page}} / {{total}} ({{records}} Kayıt)', { page: currentPage, total: totalPages, records: filteredRecords.length })}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === 1} 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                  >
-                    {t('common.prev', 'Önceki')}
-                  </button>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {t('common.page', 'Sayfa')} {currentPage} / {totalPages}
-                  </span>
-                  <button 
-                    className="btn" 
-                    disabled={currentPage === totalPages} 
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                  >
-                    {t('common.next', 'Sonraki')}
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Pagination - shared component (ui/Pagination) */}
+            <Pagination variant="sticky" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredRecords.length} />
           </div>
         )}
       </div>
 
-      {/* QR Code Pop-up Modal (Centered, Glassmorphism Backdrop Blur) */}
-      {qrModal.isOpen && (
-        <div 
-          className="drawer-overlay" 
-          style={{ 
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: 9999,
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            backdropFilter: 'blur(16px)',
-            backgroundColor: 'rgba(15, 23, 42, 0.75)'
-          }} 
-          onClick={handleCloseQRModal}
-        >
-          <div 
-            className="glass-card" 
-            style={{ 
-              maxWidth: '400px', 
-              width: '90%', 
-              padding: '2.5rem 2rem', 
-              textAlign: 'center',
-              background: 'var(--spotlight-bg)',
-              border: '1px solid var(--glass-border)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-              borderRadius: '20px'
-            }} 
-            onClick={e => e.stopPropagation()}
-          >
-            <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--accent)' }}>📲 {t('materials.upload_mobile_title', 'Mobil Fotoğraf Yükle')}</h3>
-            <p className="card-subtitle" style={{ marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-              {renderDescription(t('materials.upload_mobile_desc', 'Telefonunuzu ve bilgisayarınızı **aynı WiFi ağına** bağlayın, ardından QR kodu kameranızla taratın:'))}
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <div style={{ background: '#fff', padding: '1rem', borderRadius: '16px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)', width: '212px', height: '212px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={qrModal.qrCode} alt="LAN QR Code" style={{ width: '180px', height: '180px', display: 'block', objectFit: 'contain' }} />
-              </div>
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-              {t('materials.qr_link', 'Bağlantı:')} <code style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{qrModal.url}</code>
-            </div>
-            <button className="btn btn-danger" onClick={handleCloseQRModal} style={{ width: '100%', marginTop: '1.5rem', height: '42px', fontWeight: 'bold' }}>{t('common.cancel', 'İptal Et')}</button>
-          </div>
-        </div>
-      )}
+      <MobileUploadModal
+        isOpen={qrModal.isOpen}
+        onClose={handleCloseQRModal}
+        title={t('materials.upload_mobile_title', 'Mobil Fotoğraf Yükle')}
+        description={t('materials.upload_mobile_desc', 'Telefonunuzu ve bilgisayarınızı **aynı WiFi ağına** bağlayın, ardından QR kodu kameranızla taratın:')}
+        qrCode={qrModal.qrCode}
+        url={qrModal.url}
+      />
 
       {/* Lightbox / Fullscreen Image Viewer Modal */}
       <LightboxModal 

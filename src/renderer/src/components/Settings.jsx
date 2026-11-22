@@ -1,12 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import SystemLogs from './SystemLogs';
 import ConfirmationModal from './ui/ConfirmationModal';
 import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
 import { useTranslation } from 'react-i18next';
-import { GripVertical, Edit2, Check, X, Trash2, RotateCcw, Save } from 'lucide-react';
-import TectonDark from '../assets/tecton_dark.svg';
-import TectonLight from '../assets/tecton_light.svg';
+import { ensureLocale } from '../i18n';
+import { GripVertical, Edit2, Check, X, Trash2, RotateCcw, Save, ShieldAlert, Download, FolderOpen, DatabaseZap } from 'lucide-react';
+// Single source of truth: the brand marks live in `tecton_assets/` (shared with
+// the window icon, splash screen and installer) - see `npm run brand`.
+import { setRegionalSettings } from '../utils/formatUtils';
+import { logError } from '../utils/logger';
+import apiWrite, { apiMessage } from '../utils/apiWrite';
+import PageGuideIcon from './ui/PageGuideIcon';
+import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
+import AppearancePanel from './settings/AppearancePanel';
+import CloudSyncCard from './settings/CloudSyncCard';
+import IntegrationsPanel from './settings/IntegrationsPanel';
+import AiPanel from './settings/AiPanel';
+import { applyAppearance, cacheAppearance } from '../theme/appearance';
 
 const Settings = ({ activeTab = 'genel' }) => {
   const { t, i18n } = useTranslation();
@@ -40,7 +52,6 @@ const Settings = ({ activeTab = 'genel' }) => {
   // Recycle Bin states
   const [deletedItems, setDeletedItems] = useState([]);
   const [recycleSearch, setRecycleSearch] = useState('');
-  const [recycleSearchField, setRecycleSearchField] = useState('all');
   const [recycleFilterType, setRecycleFilterType] = useState('');
   const [recycleFilterProject, setRecycleFilterProject] = useState('');
   const [allProjects, setAllProjects] = useState([]);
@@ -52,13 +63,21 @@ const Settings = ({ activeTab = 'genel' }) => {
   const [recycleCurrentPage, setRecycleCurrentPage] = useState(1);
   const recycleContainerRef = useRef(null);
 
+  // Guards against stale responses overwriting newer data (rapid tab switches /
+  // repeated recycle-bin refreshes).
+  const deletedRequestIdRef = useRef(0);
+  const dataRequestIdRef = useRef(0);
+
   const fetchDeleted = async () => {
+    const requestId = ++deletedRequestIdRef.current;
     if (window.api && window.api.db && window.api.db.readDeleted) {
       const items = await window.api.db.readDeleted();
+      if (requestId !== deletedRequestIdRef.current) return;
       setDeletedItems(items || []);
     }
     if (window.api && window.api.db && window.api.db.readAllProjects) {
       const projs = await window.api.db.readAllProjects();
+      if (requestId !== deletedRequestIdRef.current) return;
       setAllProjects(projs || []);
     }
   };
@@ -89,7 +108,7 @@ const Settings = ({ activeTab = 'genel' }) => {
             setModalConfig({
               isOpen: true,
               title: t('common.error', 'Hata'),
-              message: t('recycle.restore_error', 'Geri yükleme hatası:') + ' ' + res.message,
+              message: t('recycle.restore_error', 'Geri yükleme hatası:') + ' ' + apiMessage(res),
               type: 'danger',
               confirmText: t('common.ok', 'Tamam'),
               cancelText: '',
@@ -102,30 +121,21 @@ const Settings = ({ activeTab = 'genel' }) => {
   };
 
   const handleStartDateChange = (e) => {
-    const val = e.target.value;
-    if (val && recycleEndDate && new Date(val) > new Date(recycleEndDate)) {
-      setRecycleStartDate(recycleEndDate);
-      setRecycleEndDate(val);
-    } else {
-      setRecycleStartDate(val);
-    }
+    const [start, end] = reorderRangeForStart(e.target.value, recycleEndDate);
+    setRecycleStartDate(start);
+    setRecycleEndDate(end);
   };
 
   const handleEndDateChange = (e) => {
-    const val = e.target.value;
-    if (val && recycleStartDate && new Date(recycleStartDate) > new Date(val)) {
-      setRecycleEndDate(recycleStartDate);
-      setRecycleStartDate(val);
-    } else {
-      setRecycleEndDate(val);
-    }
+    const [start, end] = reorderRangeForEnd(e.target.value, recycleStartDate);
+    setRecycleStartDate(start);
+    setRecycleEndDate(end);
   };
 
   useEffect(() => {
     if (activeTab === 'recycle') {
       setRestoredKeys([]);
       setRecycleSearch('');
-      setRecycleSearchField('all');
       setRecycleFilterType('');
       setRecycleFilterProject('');
       setRecycleStartDate('');
@@ -148,28 +158,89 @@ const Settings = ({ activeTab = 'genel' }) => {
   }, [recycleSearch, recycleFilterType, recycleFilterProject, recycleStartDate, recycleEndDate, recycleRestoreStatus]);
 
   const fetchData = async () => {
-    if (window.api) {
-      setLoading(true);
-      const settingsData = await window.api.db.read('app_settings');
-      const typesData = await window.api.db.read('work_types');
-      const groupsData = await window.api.db.read('worker_groups');
-      
-      setAppSettings(settingsData);
-      
-      const nameSetting = settingsData.find(s => s.setting_key === 'company_name');
-      const logoSetting = settingsData.find(s => s.setting_key === 'company_logo');
+    if (!window.api) return;
+    const requestId = ++dataRequestIdRef.current;
+    setLoading(true);
+    try {
+      // Independent reads: issuing them together removes two serial round-trips.
+      const [settingsData, typesData, groupsData] = await Promise.all([
+        window.api.db.read('app_settings'),
+        window.api.db.read('work_types'),
+        window.api.db.read('worker_groups')
+      ]);
+
+      // Drop stale results if a newer fetch already started.
+      if (requestId !== dataRequestIdRef.current) return;
+
+      const safeSettings = Array.isArray(settingsData) ? settingsData : [];
+      setAppSettings(safeSettings);
+
+      const nameSetting = safeSettings.find(s => s.setting_key === 'company_name');
+      const logoSetting = safeSettings.find(s => s.setting_key === 'company_logo');
       if (nameSetting) setTempCompanyName(nameSetting.setting_value || '');
       if (logoSetting) setTempCompanyLogo(logoSetting.setting_value || '');
-      
-      setWorkTypes(typesData);
-      setWorkerGroups(groupsData);
-      setLoading(false);
+
+      setWorkTypes(Array.isArray(typesData) ? typesData : []);
+      setWorkerGroups(Array.isArray(groupsData) ? groupsData : []);
+    } catch (err) {
+      // Previously an IPC rejection escaped as an unhandled rejection and left
+      // the settings screen on a permanent skeleton.
+      if (requestId !== dataRequestIdRef.current) return;
+      logError('Settings data fetch failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('settings.load_error', 'Ayarlar yüklenemedi.'), type: 'error' }
+      }));
+    } finally {
+      if (requestId === dataRequestIdRef.current) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // The surface the appearance preview should render against. `system` follows
+  // the OS at the moment the panel renders; the engine re-applies on OS flips.
+  const appearanceSurface = useMemo(() => {
+    const mode = appSettings.find((s) => s.setting_key === 'theme')?.setting_value || 'dark';
+    if (mode === 'system') {
+      try {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } catch {
+        return 'dark';
+      }
+    }
+    return mode === 'light' ? 'light' : 'dark';
+  }, [appSettings]);
+
+  /**
+   * Applies the current appearance rows to the document, optionally with one
+   * value overridden (the click that triggered the change).
+   */
+  const applyCurrentAppearance = (overrides = {}) => {
+    const read = (key, fallback) => {
+      if (Object.prototype.hasOwnProperty.call(overrides, key)) return overrides[key];
+      const row = appSettings.find((s) => s.setting_key === key);
+      return row && row.setting_value !== undefined ? row.setting_value : fallback;
+    };
+    const next = {
+      mode: read('theme', 'dark'),
+      themeId: read('theme_id', 'obsidian'),
+      customColor: read('custom_theme_color', '#8b5cf6'),
+      appIcon: read('app_icon', 'auto'),
+      iconColor: read('app_icon_color', '#8b5cf6'),
+      zoom: read('ui_zoom', 1),
+      highContrast: read('a11y_high_contrast', 'false') === 'true',
+      enhancedFocus: read('a11y_enhanced_focus', 'false') === 'true',
+      readableSpacing: read('a11y_readable_spacing', 'false') === 'true',
+      reduceMotion: read('a11y_reduce_motion', 'false') === 'true',
+    };
+    const applied = applyAppearance(next);
+    cacheAppearance(applied.appearance);
+    // Keep the tray, taskbar and shortcut icon in step with the surface.
+    window.api?.platform?.applyIcon?.(applied.surface)?.catch?.(() => {});
+    return applied;
+  };
 
   // Update App Settings
   const handleSettingChange = async (id, key, value) => {
@@ -180,31 +251,42 @@ const Settings = ({ activeTab = 'genel' }) => {
       const numVal = Number(value);
       if (!isNaN(numVal) && numVal > 0) {
         if (window.api) {
-          await window.api.db.update('app_settings', id, { setting_value: value });
+          await apiWrite(window.api.db.update('app_settings', id, { setting_value: value }));
         }
       }
       return;
     }
 
     if (window.api) {
+      // Optimistic update: the UI reflects the new value immediately.
+      // If the write is rejected the previous value is restored, otherwise the
+      // screen would keep showing a setting that was never persisted.
+      const previous = appSettings.find(s => s.id === id)?.setting_value;
       setAppSettings(prev => prev.map(s => s.id === id ? { ...s, setting_value: value } : s));
-      await window.api.db.update('app_settings', id, { setting_value: value });
+      const res = await apiWrite(window.api.db.update('app_settings', id, { setting_value: value }));
+      if (res && res.success === false) {
+        if (previous !== undefined) {
+          setAppSettings(prev => prev.map(s => s.id === id ? { ...s, setting_value: previous } : s));
+        }
+        return;
+      }
 
-      if (key === 'theme') {
-        document.documentElement.setAttribute('data-theme', value);
+      if (key === 'theme' || key === 'theme_id' || key === 'custom_theme_color' || key === 'app_icon' || key === 'app_icon_color' || key === 'ui_zoom' || key.startsWith('a11y_')) {
+        applyCurrentAppearance({ [key]: value });
       }
       if (key === 'language') {
-        i18n.changeLanguage(value);
-        if (window.regionalSettings) window.regionalSettings.language = value;
+        // Lazy chunk: load the dictionary before activating it.
+        i18n.changeLanguage(await ensureLocale(value));
+        setRegionalSettings({ language: value });
       }
       if (key === 'custom_currency') {
-        if (window.regionalSettings) window.regionalSettings.currency = value;
+        setRegionalSettings({ currency: value });
       }
       if (key === 'custom_date_format') {
-        if (window.regionalSettings) window.regionalSettings.dateFormat = value;
+        setRegionalSettings({ dateFormat: value });
       }
       if (key === 'custom_time_format') {
-        if (window.regionalSettings) window.regionalSettings.timeFormat = value;
+        setRegionalSettings({ timeFormat: value });
       }
     }
   };
@@ -227,26 +309,50 @@ const Settings = ({ activeTab = 'genel' }) => {
 
   const handleLogoUpload = async (id, file) => {
     if (!file) return;
-    
+
     const reader = new FileReader();
+    reader.onerror = () => {
+      logError('Company logo read failed:', reader.error);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('settings.logo_read_error', 'Logo dosyası okunamadı.'), type: 'error' }
+      }));
+    };
     reader.onload = async (e) => {
       const base64Img = e.target.result;
-      
+
       const img = new Image();
-      img.src = base64Img;
+      // Handlers must be attached before `src`: a cached data URL can fire
+      // `load` synchronously and the resize would never run.
+      img.onerror = () => {
+        logError('Company logo decode failed.');
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: { message: t('settings.logo_decode_error', 'Logo görseli açılamadı. Lütfen geçerli bir PNG/JPG dosyası seçin.'), type: 'error' }
+        }));
+      };
       img.onload = async () => {
+        // A zero-width image (corrupt file, unsupported SVG) made scaleSize
+        // Infinity and canvas.height NaN, which then threw from toDataURL.
+        if (!img.width || !img.height) {
+          logError('Company logo has zero dimensions; skipping resize.');
+          return;
+        }
         const canvas = document.createElement('canvas');
         const MAX_WIDTH = 200;
         const scaleSize = MAX_WIDTH / img.width;
         canvas.width = MAX_WIDTH;
-        canvas.height = img.height * scaleSize;
-        
+        canvas.height = Math.max(1, Math.round(img.height * scaleSize));
+
         const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          logError('Company logo canvas context unavailable.');
+          return;
+        }
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
+
         const resizedBase64 = canvas.toDataURL('image/png');
         setTempCompanyLogo(resizedBase64);
       };
+      img.src = base64Img;
     };
     reader.readAsDataURL(file);
   };
@@ -261,12 +367,14 @@ const Settings = ({ activeTab = 'genel' }) => {
       const logoSetting = appSettings.find(s => s.setting_key === 'company_logo');
       
       if (nameSetting) {
-        await window.api.db.update('app_settings', nameSetting.id, { setting_value: tempCompanyName });
+        const res = await apiWrite(window.api.db.update('app_settings', nameSetting.id, { setting_value: tempCompanyName }));
+        if (res && res.success === false) return;
       }
       if (logoSetting) {
-        await window.api.db.update('app_settings', logoSetting.id, { setting_value: tempCompanyLogo });
+        const res = await apiWrite(window.api.db.update('app_settings', logoSetting.id, { setting_value: tempCompanyLogo }));
+        if (res && res.success === false) return;
       }
-      
+
       setAppSettings(prev => prev.map(s => {
         if (s.setting_key === 'company_name') return { ...s, setting_value: tempCompanyName };
         if (s.setting_key === 'company_logo') return { ...s, setting_value: tempCompanyLogo };
@@ -286,7 +394,7 @@ const Settings = ({ activeTab = 'genel' }) => {
   const handleAddWorkType = async (e) => {
     e.preventDefault();
     if (window.api && newWorkType.name) {
-      await window.api.db.create('work_types', newWorkType);
+      await apiWrite(window.api.db.create('work_types', newWorkType));
       setNewWorkType({ name: '', multiplier: 1.0 });
       fetchData();
     }
@@ -300,7 +408,7 @@ const Settings = ({ activeTab = 'genel' }) => {
       message: t('settings.delete_work_type_msg', 'Bu çalışma tipini silmek istediğinize emin misiniz? Eski puantajlardaki hesaplamalar veritabanına kaydedildiği için geçmiş verileriniz bozulmayacaktır.'),
       type: 'danger',
       onConfirm: async () => {
-        await window.api.db.delete('work_types', id);
+        await apiWrite(window.api.db.delete('work_types', id));
         fetchData();
       }
     });
@@ -310,7 +418,7 @@ const Settings = ({ activeTab = 'genel' }) => {
   const handleAddGroup = async (e) => {
     e.preventDefault();
     if (window.api && newGroup.name) {
-      await window.api.db.create('worker_groups', newGroup);
+      await apiWrite(window.api.db.create('worker_groups', newGroup));
       setNewGroup({ name: '' });
       fetchData();
     }
@@ -324,7 +432,7 @@ const Settings = ({ activeTab = 'genel' }) => {
       message: t('settings.delete_group_msg', 'Bu grubu silmek istediğinize emin misiniz? Gruptaki işçilerin grup atamaları kaldırılacaktır (İşçiler silinmez).'),
       type: 'danger',
       onConfirm: async () => {
-        await window.api.db.delete('worker_groups', id);
+        await apiWrite(window.api.db.delete('worker_groups', id));
         fetchData();
       }
     });
@@ -338,12 +446,15 @@ const Settings = ({ activeTab = 'genel' }) => {
       if (existing) {
         await handleSettingChange(existing.id, key, orderString);
       } else {
-        const res = await window.api.db.create('app_settings', {
+        // Routed through apiWrite like the update branch above: a raw call here
+        // meant a rejected INSERT (constraint, locked DB) silently dropped the
+        // drag-and-drop reordering the user had just performed.
+        const res = await apiWrite(window.api.db.create('app_settings', {
           setting_key: key,
           setting_value: orderString,
-          description: 'Sıralama Düzeni'
-        });
-        if (res.success) {
+          description: t('settings.sort_order_description', 'Sıralama Düzeni')
+        }));
+        if (res && res.success !== false) {
           fetchData();
         }
       }
@@ -389,7 +500,7 @@ const Settings = ({ activeTab = 'genel' }) => {
 
   const handleSaveWorkTypeEdit = async (id) => {
     if (window.api && editingWorkTypeVal.name) {
-      await window.api.db.update('work_types', id, editingWorkTypeVal);
+      await apiWrite(window.api.db.update('work_types', id, editingWorkTypeVal));
       setEditingWorkTypeId(null);
       fetchData();
     }
@@ -407,7 +518,7 @@ const Settings = ({ activeTab = 'genel' }) => {
 
   const handleSaveGroupEdit = async (id) => {
     if (window.api && editingGroupVal.name) {
-      await window.api.db.update('worker_groups', id, editingGroupVal);
+      await apiWrite(window.api.db.update('worker_groups', id, editingGroupVal));
       setEditingGroupId(null);
       fetchData();
     }
@@ -417,16 +528,69 @@ const Settings = ({ activeTab = 'genel' }) => {
     setEditingGroupId(null);
   };
 
-  const sortedWorkTypes = getSortedItems(workTypes, 'work_types_order');
-  const sortedWorkerGroups = getSortedItems(workerGroups, 'worker_groups_order');
+  const sortedWorkTypes = useMemo(
+    () => getSortedItems(workTypes, 'work_types_order'),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workTypes, appSettings]
+  );
+  const sortedWorkerGroups = useMemo(
+    () => getSortedItems(workerGroups, 'worker_groups_order'),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workerGroups, appSettings]
+  );
+
+  // Recycle-bin list: filter + paginate moved out of the render IIFE and memoized.
+  const filteredDeletedItems = useMemo(() => {
+    const typeTranslationMap = {
+      workers: t('recycle.type.personnel', 'Personel Kaydı'),
+      transactions: t('recycle.type.cash', 'Kasa Hareketi'),
+      materials: t('recycle.type.delivery', 'İrsaliye / Malzeme'),
+      daily_journals: t('recycle.type.journal', 'Günlük Jurnal'),
+      quality_reports: t('recycle.type.quality', 'Kalite Kontrol Tutanağı'),
+      subcontractor_ledgers: t('recycle.type.subcontractor', 'Taşeron Cari Kaydı'),
+      projects: t('recycle.type.project', 'Şantiye Kaydı'),
+      worker_leaves: t('recycle.type.worker_leaves', 'Personel İzni')
+    };
+    const q = recycleSearch ? recycleSearch.toLowerCase() : '';
+    const start = recycleStartDate ? new Date(recycleStartDate) : null;
+    if (start) start.setHours(0, 0, 0, 0);
+    const end = recycleEndDate ? new Date(recycleEndDate) : null;
+    if (end) end.setHours(23, 59, 59, 999);
+
+    return deletedItems.filter(item => {
+      const typeLabel = typeTranslationMap[item.table] || item.table;
+      const formattedDate = item.deleted_at ? new Date(item.deleted_at).toLocaleString() : '';
+      const itemKey = `${item.table}_${item.id}`;
+      const isRestored = item.is_deleted === 0 || restoredKeys.includes(itemKey);
+
+      if (recycleRestoreStatus === 'only_deleted' && isRestored) return false;
+      if (recycleRestoreStatus === 'only_restored' && !isRestored) return false;
+      if (recycleFilterType && item.table !== recycleFilterType) return false;
+      if (recycleFilterProject && String(item.project_id) !== String(recycleFilterProject)) return false;
+      if (start && new Date(item.deleted_at) < start) return false;
+      if (end && new Date(item.deleted_at) > end) return false;
+
+      if (q) {
+        const matchType = typeLabel.toLowerCase().includes(q);
+        const matchTitle = (item.title || '').toLowerCase().includes(q);
+        const matchDate = formattedDate.toLowerCase().includes(q);
+        const matchProject = (item.project_name || '').toLowerCase().includes(q);
+        return matchType || matchTitle || matchDate || matchProject;
+      }
+      return true;
+    });
+  }, [
+    deletedItems, restoredKeys, recycleRestoreStatus, recycleFilterType,
+    recycleFilterProject, recycleStartDate, recycleEndDate, recycleSearch, t
+  ]);
 
   const handleBackup = async () => {
     if (window.api) {
       const res = await window.api.system.backupDB();
       if (res.success) {
         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.backup_success', 'Yedekleme başarıyla tamamlandı!'), type: 'success' } }));
-      } else if (res.message !== 'İşlem iptal edildi') {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.backup_error', 'Yedekleme Hatası:') + ' ' + res.message, type: 'error' } }));
+      } else if (res.messageKey !== 'errors.operation_cancelled') {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.backup_error', 'Yedekleme Hatası:') + ' ' + apiMessage(res), type: 'error' } }));
       }
     }
   };
@@ -441,7 +605,7 @@ const Settings = ({ activeTab = 'genel' }) => {
         if (window.api && window.api.system.vacuumDB) {
           const res = await window.api.system.vacuumDB();
           if (res.success) window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.optimize_success', 'Veritabanı başarıyla optimize edildi.'), type: 'success' } }));
-          else window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.optimize_error', 'Optimizasyon Hatası:') + ' ' + res.message, type: 'error' } }));
+          else window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.optimize_error', 'Optimizasyon Hatası:') + ' ' + apiMessage(res), type: 'error' } }));
         }
       }
     });
@@ -453,6 +617,10 @@ const Settings = ({ activeTab = 'genel' }) => {
       if (res.success) {
         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.cloud_folder_success', 'Sessiz bulut yedekleme klasörü başarıyla ayarlandı:') + '\n' + res.folderPath, type: 'success' } }));
         fetchData();
+      } else if (res.messageKey !== 'errors.operation_cancelled') {
+        // The user closing the OS folder picker is not an error (same rule as
+        // handleBackup); anything else must be surfaced instead of swallowed.
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.cloud_folder_error', 'Klasör ayarlanamadı:') + ' ' + apiMessage(res), type: 'error' } }));
       }
     }
   };
@@ -463,14 +631,14 @@ const Settings = ({ activeTab = 'genel' }) => {
       if (res.success) {
         window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.icon_change_success', 'Masaüstü kısayol ikonu başarıyla değiştirildi. (Değişikliğin yansıması birkaç saniye sürebilir)'), type: 'success' } }));
       } else {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.icon_change_error', 'İkon değiştirme hatası: ') + res.message, type: 'error' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.icon_change_error', 'İkon değiştirme hatası: ') + apiMessage(res), type: 'error' } }));
       }
     }
   };
 
   const handleOpenOldBackups = async () => {
     if (window.api && window.api.system.openOldBackupsFolder) {
-      await window.api.system.openOldBackupsFolder();
+      await apiWrite(window.api.system.openOldBackupsFolder());
     }
   };
 
@@ -482,29 +650,16 @@ const Settings = ({ activeTab = 'genel' }) => {
     <div style={{ maxWidth: (activeTab === 'recycle' || activeTab === 'logs') ? '100%' : '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', minHeight: 'calc(100vh - 100px)' }}>
       <header className="header" style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0 }}>
-          {activeTab === 'genel' ? `⚙️ ${t('nav.settings_genel', 'Genel Ayarlar')}` : 
-           activeTab === 'finance' ? `💼 ${t('nav.settings_finance', 'Finans & Operasyon')}` : 
-           activeTab === 'security' ? `🛡️ ${t('nav.settings_security', 'Güvenlik ve Yedekleme')}` : 
-           activeTab === 'recycle' ? `🗑️ ${t('recycle.title', 'Geri Dönüşüm & Çöp Kutusu')}` :
-           `📋 ${t('nav.settings_logs', 'Sistem Kayıtları')}`}
+          {activeTab === 'genel' ? ` ${t('nav.settings_genel', 'Genel Ayarlar')}` : 
+           activeTab === 'finance' ? ` ${t('nav.settings_finance', 'Finans & Operasyon')}` : 
+           activeTab === 'security' ? ` ${t('nav.settings_security', 'Güvenlik ve Yedekleme')}` : 
+           activeTab === 'integrations' ? ` ${t('nav.settings_integrations', 'Entegrasyonlar')}` :
+           activeTab === 'ai' ? ` ${t('nav.settings_ai', 'Yapay Zeka')}` :
+           activeTab === 'recycle' ? ` ${t('recycle.title', 'Geri Dönüşüm & Çöp Kutusu')}` :
+           ` ${t('nav.settings_logs', 'Sistem Kayıtları')}`}
         </h2>
         {activeTab === 'finance' && (
-          <span 
-            onClick={() => setIsGuideOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.6rem',
-              userSelect: 'none',
-              padding: '0.25rem'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
-          >
-            💡
-          </span>
+          <PageGuideIcon onClick={() => setIsGuideOpen(true)} />
         )}
       </header>
 
@@ -512,87 +667,12 @@ const Settings = ({ activeTab = 'genel' }) => {
         
         {activeTab === 'genel' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {/* Tema ve Dil Seçimi */}
-            <div className="glass-card">
-              <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>{t('settings.theme_language', 'Görünüm ve Dil')}</h3>
-              
-              {appSettings.map(setting => {
-                if (setting.setting_key === 'theme') {
-                  return (
-                    <div key={setting.id} className="form-group">
-                      <label className="form-label">{t('settings.theme', 'Tema')}</label>
-                      <select 
-                        className="form-input" 
-                        value={setting.setting_value}
-                        onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
-                      >
-                        <option value="dark">{t('settings.theme_dark', 'Karanlık')}</option>
-                        <option value="light">{t('settings.theme_light', 'Aydınlık')}</option>
-                      </select>
-                    </div>
-                  );
-                }
-                if (setting.setting_key === 'language') {
-                  return (
-                    <div key={setting.id} className="form-group">
-                      <label className="form-label">{t('settings.language', 'Dil')}</label>
-                      <select 
-                        className="form-input" 
-                        value={setting.setting_value}
-                        onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
-                      >
-                        <option value="tr">Türkçe (TR)</option>
-                        <option value="en">English (EN)</option>
-                        <option value="de">Deutsch (DE)</option>
-                        <option value="sv">Svenska (SV)</option>
-                        <option value="no">Norsk (NO)</option>
-                        <option value="da">Dansk (DA)</option>
-                        <option value="fr">Français (FR)</option>
-                        <option value="pl">Polski (PL)</option>
-                        <option value="it">Italiano (IT)</option>
-                        <option value="nl">Nederlands (NL)</option>
-                        <option value="cs">Čeština (CS)</option>
-                        <option value="es">Español (ES)</option>
-                        <option value="pt">Português (PT)</option>
-                        <option value="ru">Русский (RU)</option>
-                        <option value="zh">中文 (Mandarin)</option>
-                        <option value="ja">日本語 (JA)</option>
-                        <option value="ko">한국어 (KO)</option>
-                        <option value="ar">العربية (AR)</option>
-                        <option value="hi">हिन्दी (HI)</option>
-                      </select>
-                    </div>
-                  );
-                }
-                return null;
-              })}
-            </div>
+            <AppearancePanel
+              settings={appSettings}
+              onChange={handleSettingChange}
+              surface={appearanceSurface}
+            />
 
-            {/* Masaüstü Kısayol İkonu (Desktop Icon) */}
-            <div className="glass-card">
-              <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>{t('settings.desktop_icon', 'Masaüstü Kısayol İkonu')}</h3>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                {t('settings.desktop_icon_desc', 'Masaüstündeki uygulamanın kısayol ikonunu açık veya koyu tema ile uyumlu hale getirin.')}
-              </p>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button 
-                  className="btn" 
-                  onClick={() => handleDesktopIconChange('dark')}
-                  style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}
-                >
-                  <img src={TectonDark} alt="Dark Icon" style={{ width: '48px', height: '48px', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }} />
-                  <span style={{ fontWeight: '500' }}>{t('settings.icon_dark', 'Koyu İkon')}</span>
-                </button>
-                <button 
-                  className="btn" 
-                  onClick={() => handleDesktopIconChange('light')}
-                  style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}
-                >
-                  <img src={TectonLight} alt="Light Icon" style={{ width: '48px', height: '48px', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }} />
-                  <span style={{ fontWeight: '500' }}>{t('settings.icon_light', 'Açık İkon')}</span>
-                </button>
-              </div>
-            </div>
 
             {/* Bölgesel Format Ayarları */}
             <div className="glass-card">
@@ -716,7 +796,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                         <div style={{ position: 'relative', display: 'inline-block', alignSelf: 'flex-start' }}>
                           <img 
                             src={tempCompanyLogo} 
-                            alt="Company Logo" 
+                            alt={t('common.company_logo', 'Şirket logosu')} 
                             style={{ maxWidth: '150px', maxHeight: '100px', objectFit: 'contain', background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }} 
                           />
                           <button 
@@ -725,7 +805,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                             style={{ position: 'absolute', top: '-10px', right: '-10px', width: '24px', height: '24px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             onClick={() => handleRemoveLogo(setting.id)}
                           >
-                            ✕
+                            
                           </button>
                         </div>
                       )}
@@ -736,7 +816,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                           className="btn"
                           style={{ cursor: 'pointer', margin: 0 }}
                         >
-                          📁 {t('settings.file_select_button')}
+                           {t('settings.file_select_button')}
                         </label>
                         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                           {tempCompanyLogo ? t('settings.logo_uploaded', 'Logo yüklendi') : t('settings.file_not_selected')}
@@ -778,7 +858,17 @@ const Settings = ({ activeTab = 'genel' }) => {
                 if (['theme', 'language', 'company_name', 'company_logo', 'custom_currency', 'custom_date_format', 'custom_time_format', 'cloud_sync_folder', 'clean_shutdown'].includes(setting.setting_key) || setting.setting_key.endsWith('_order')) return null;
                 return (
                   <div key={setting.id} className="form-group">
-                    <label className="form-label">{t(`settings.keys.${setting.setting_key}`) || setting.description || setting.setting_key}</label>
+                    {/*
+                      i18next returns the key itself (truthy) when a translation
+                      is missing, so `t(k) || description || k` could never fall
+                      back and the raw internal key ("settings.keys.foo") leaked
+                      into the UI. defaultValue is the only working fallback.
+                    */}
+                    <label className="form-label">
+                      {t(`settings.keys.${setting.setting_key}`, {
+                        defaultValue: setting.description || setting.setting_key
+                      })}
+                    </label>
                     <input 
                       type="text" 
                       className="form-input" 
@@ -874,12 +964,27 @@ const Settings = ({ activeTab = 'genel' }) => {
                             className="form-input" 
                             style={{ flex: 1, padding: '0.4rem 0.75rem' }} 
                             value={editingWorkTypeVal.multiplier} 
-                            onChange={e => setEditingWorkTypeVal(prev => ({ ...prev, multiplier: Number(e.target.value) }))}
+                            onChange={e => {
+                              const raw = e.target.value;
+                              // Empty/partial input yields '' (kept controlled);
+                              // anything non-numeric becomes NaN and would be
+                              // written to the DB as an invalid multiplier.
+                              setEditingWorkTypeVal(prev => ({
+                                ...prev,
+                                multiplier: raw === '' ? '' : (Number.isNaN(Number(raw)) ? prev.multiplier : Number(raw))
+                              }));
+                            }}
                           />
                           <button onClick={() => handleSaveWorkTypeEdit(wt.id)} className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
                             <Check size={14} />
                           </button>
-                          <button onClick={handleCancelWorkTypeEdit} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                          <button
+                            onClick={handleCancelWorkTypeEdit}
+                            className="btn"
+                            aria-label={t('common.cancel', 'İptal')}
+                            title={t('common.cancel', 'İptal')}
+                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+                          >
                             <X size={14} />
                           </button>
                         </div>
@@ -889,7 +994,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                             <GripVertical size={16} style={{ color: 'var(--text-muted)', opacity: 0.6, cursor: 'grab', flexShrink: 0 }} />
                             <div>
                               <strong>{wt.name}</strong>
-                              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Çarpan: x{wt.multiplier}</div>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('settings.multiplier_label', 'Çarpan: x{{value}}', { value: wt.multiplier })}</div>
                             </div>
                           </div>
                           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
@@ -935,7 +1040,13 @@ const Settings = ({ activeTab = 'genel' }) => {
                     step="0.1"
                     className="form-input" 
                     value={newWorkType.multiplier}
-                    onChange={e => setNewWorkType(prev => ({...prev, multiplier: Number(e.target.value)}))}
+                    onChange={e => {
+                      const raw = e.target.value;
+                      setNewWorkType(prev => ({
+                        ...prev,
+                        multiplier: raw === '' ? '' : (Number.isNaN(Number(raw)) ? prev.multiplier : Number(raw))
+                      }));
+                    }}
                     required
                   />
                 </div>
@@ -1023,7 +1134,13 @@ const Settings = ({ activeTab = 'genel' }) => {
                           <button onClick={() => handleSaveGroupEdit(grp.id)} className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
                             <Check size={14} />
                           </button>
-                          <button onClick={handleCancelGroupEdit} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                          <button
+                            onClick={handleCancelGroupEdit}
+                            className="btn"
+                            aria-label={t('common.cancel', 'İptal')}
+                            title={t('common.cancel', 'İptal')}
+                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+                          >
                             <X size={14} />
                           </button>
                         </div>
@@ -1077,76 +1194,77 @@ const Settings = ({ activeTab = 'genel' }) => {
 
         {activeTab === 'security' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            
-            {/* Kritik Veri İşlemleri - Kırmızı / Uyarı Tasarımı */}
-            <div className="glass-card" style={{ borderLeft: '4px solid var(--danger)', background: 'rgba(239, 68, 68, 0.02)' }}>
-              <h3 className="card-title" style={{ color: 'var(--danger)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                ⚠️ {t('settings.critical_system_actions', 'Kritik Sistem Eylemleri')}
-              </h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <CloudSyncCard />
+
+            {/* Destructive data operations - kept visually separate from the
+                cloud card because every action here replaces or exports the
+                whole database. */}
+            <div className="glass-card danger-card">
+              <div className="danger-card-head">
+                <span className="danger-card-icon"><ShieldAlert size={18} /></span>
                 <div>
-                  <button className="btn btn-primary" onClick={handleBackup} style={{ width: '100%', background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', marginBottom: '0.5rem' }}>
-                    📦 {t('settings.backup_db', 'Tüm Veritabanını Yedekle (.sqlite Export)')}
-                  </button>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {t('settings.backup_db_desc', 'Tüm sisteminizi (.sqlite veritabanı dosyası olarak) yerel diskinize aktarır. Bilgisayar değişimi veya yedekleme için kullanabilirsiniz.')}
+                  <h3 className="card-title">{t('settings.critical_system_actions', 'Critical system actions')}</h3>
+                  <p className="danger-card-sub">
+                    {t('settings.critical_system_actions_desc', 'These actions work on the entire database. A copy is kept automatically before anything is replaced.')}
                   </p>
                 </div>
+              </div>
 
-                <div>
-                  <button className="btn" onClick={handleOpenOldBackups} style={{ width: '100%', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)' }}>
-                    📂 {t('settings.open_old_backups', 'Eski Yedekleme Klasörünü Aç')}
+              <div className="danger-list">
+                <div className="danger-row">
+                  <div className="danger-row-text">
+                    <strong>{t('settings.backup_db', 'Back up the whole database')}</strong>
+                    <span>{t('settings.backup_db_desc', 'Exports every record into a single .sqlite file you can keep for a computer replacement.')}</span>
+                  </div>
+                  <button type="button" className="btn btn-primary btn-sm" onClick={handleBackup}>
+                    <Download size={15} /> {t('settings.backup_db_action', 'Back up')}
                   </button>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                    {t('settings.old_backups_desc', 'Geri yükleme öncesinde otomatik alınan sistem yedeklerine (Time Machine) buradan ulaşabilirsiniz.')}
-                  </p>
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(239, 68, 68, 0.15)', paddingTop: '1.25rem' }}>
-                  <label className="form-label" style={{ color: '#fca5a5' }}>{t('settings.restore_db_label', 'Yedekten Geri Yükle (Drag & Drop)')}</label>
-                  <div 
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={async (e) => {
-                      e.preventDefault();
-                      const file = e.dataTransfer.files[0];
-                      if (file && (file.name.endsWith('.sqlite') || file.name.endsWith('.db'))) {
-                        setModalConfig({
-                          isOpen: true,
-                          title: t('settings.restore_confirm_title', 'Geri Yükleme Onayı'),
-                          message: t('settings.restore_confirm', 'Veritabanını geri yüklemek istediğinize emin misiniz? Mevcut tüm verileriniz silinecektir!'),
-                          type: 'danger',
-                          onConfirm: async () => {
-                            const res = await window.api.system.restoreDBFile({ filePath: file.path });
-                            if (res && !res.success) {
-                              if (res.message === 'RESTORE_CORRUPTED') {
-                                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_corrupted_error', 'Geri yükleme başarısız, dosya bozuk veya hatalı. Güvenlik için eski veritabanına dönüldü.'), type: 'error' } }));
-                              } else {
-                                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_error', 'Geri yükleme hatası:') + ' ' + res.message, type: 'error' } }));
-                              }
+                <div className="danger-row">
+                  <div className="danger-row-text">
+                    <strong>{t('settings.open_old_backups', 'Open the automatic backups folder')}</strong>
+                    <span>{t('settings.old_backups_desc', 'Safety copies Tecton takes before every restore are kept here.')}</span>
+                  </div>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={handleOpenOldBackups}>
+                    <FolderOpen size={15} /> {t('settings.open_folder_action', 'Open folder')}
+                  </button>
+                </div>
+              </div>
+
+              <div className="danger-restore">
+                <span className="form-label">{t('settings.restore_db_label', 'Restore from a backup')}</span>
+                <div
+                  className="danger-dropzone"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (file && (file.name.endsWith('.sqlite') || file.name.endsWith('.db'))) {
+                      setModalConfig({
+                        isOpen: true,
+                        title: t('settings.restore_confirm_title', 'Confirm restore'),
+                        message: t('settings.restore_confirm', 'Restoring replaces every current record. Continue?'),
+                        type: 'danger',
+                        onConfirm: async () => {
+                          const res = await window.api.system.restoreDBFile({ filePath: file.path });
+                          if (res && !res.success) {
+                            if (res.message === 'RESTORE_CORRUPTED') {
+                              window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_corrupted_error', 'The file is damaged, so the previous database was kept.'), type: 'error' } }));
+                            } else {
+                              window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_error', 'Restore failed:') + ' ' + apiMessage(res), type: 'error' } }));
                             }
                           }
-                        });
-                      } else {
-                        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_invalid_file', 'Lütfen geçerli bir SQLite (.sqlite veya .db) veritabanı dosyası sürükleyin.'), type: 'warning' } }));
-                      }
-                    }}
-                    style={{
-                      border: '2px dashed rgba(239, 68, 68, 0.3)',
-                      borderRadius: '8px',
-                      padding: '1.75rem',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      background: 'rgba(239, 68, 68, 0.04)',
-                      transition: 'all 0.2s',
-                    }}
-                    onDragEnter={(e) => e.currentTarget.style.borderColor = 'var(--danger)'}
-                    onDragLeave={(e) => e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'}
-                  >
-                    <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>📥</div>
-                    <strong style={{ fontSize: '0.85rem', color: '#fff', display: 'block' }}>{t('settings.restore_db_title', 'Yedek Veritabanını Üzerine Yazdır')}</strong>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('settings.restore_db_desc', '.sqlite dosyasını buraya sürükleyip bırakın (Uygulama otomatik olarak yeniden başlayacaktır)')}</span>
-                  </div>
+                        }
+                      });
+                    } else {
+                      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings.restore_invalid_file', 'Drop a valid SQLite file (.sqlite or .db).'), type: 'warning' } }));
+                    }
+                  }}
+                >
+                  <DatabaseZap size={22} className="danger-dropzone-icon" />
+                  <strong>{t('settings.restore_db_title', 'Drop a database file here')}</strong>
+                  <span>{t('settings.restore_db_desc', 'Tecton checks the file, restarts and keeps the old database if the file is damaged.')}</span>
                 </div>
               </div>
             </div>
@@ -1158,31 +1276,10 @@ const Settings = ({ activeTab = 'genel' }) => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <div>
                   <button className="btn" onClick={handleVacuum} style={{ width: '100%', marginBottom: '0.5rem', background: 'rgba(255,255,255,0.04)' }}>
-                    🧹 {t('settings.vacuum_db', 'Veritabanını Optimize Et (Vacuum)')}
+                     {t('settings.vacuum_db', 'Veritabanını Optimize Et (Vacuum)')}
                   </button>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     {t('settings.vacuum_db_desc', 'Boşaltılan veya silinen kayıtların oluşturduğu veritabanı boşluklarını temizler, disk alanını geri kazanır ve sorgu hızlarını artırır.')}
-                  </p>
-                </div>
-
-                <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem' }}>
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#10B981', fontWeight: '500' }}>
-                    ☁️ {t('settings.keys.cloud_sync_folder', 'Bulut Yedekleme Klasörü')}
-                  </label>
-                  <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      readOnly 
-                      value={appSettings.find(s => s.setting_key === 'cloud_sync_folder')?.setting_value || ''} 
-                      style={{ flex: 1, marginBottom: 0 }}
-                    />
-                    <button className="btn" onClick={handleCloudSyncFolder} style={{ border: '1px solid #10B981', color: '#10B981', background: 'transparent', whiteSpace: 'nowrap' }}>
-                      {t('settings.select_folder', 'Klasör Seç')}
-                    </button>
-                  </div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {t('settings.cloud_sync_desc', 'Her uygulama kapandığında arkaplanda (sessizce) otomatik yedeklerin kaydedileceği bir Dropbox, Drive vb. bulut klasörü seçmenizi sağlar.')}
                   </p>
                 </div>
               </div>
@@ -1190,6 +1287,10 @@ const Settings = ({ activeTab = 'genel' }) => {
 
           </div>
         )}
+
+        {activeTab === 'integrations' && <IntegrationsPanel />}
+
+        {activeTab === 'ai' && <AiPanel />}
 
         {activeTab === 'logs' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -1201,24 +1302,9 @@ const Settings = ({ activeTab = 'genel' }) => {
           <div ref={recycleContainerRef} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <h3 className="card-title" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                🗑️ {t('recycle_page_title', 'Geri Dönüşüm & Çöp Kutusu')}
+                 {t('recycle_page_title', 'Geri Dönüşüm & Çöp Kutusu')}
               </div>
-              <span 
-                onClick={() => setIsGuideOpen(true)}
-                style={{ 
-                  cursor: 'pointer', 
-                  opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-                  transition: 'opacity 0.25s ease-in-out', 
-                  fontSize: '1.6rem',
-                  userSelect: 'none',
-                  padding: '0.25rem'
-                }}
-                onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-                onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-                title={t('common.page_guide', 'Sayfa Kılavuzu')}
-              >
-                💡
-              </span>
+              <PageGuideIcon onClick={() => setIsGuideOpen(true)} />
             </h3>
             <p className="card-subtitle" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               {t('recycle_page_desc', 'Silinen kayıtları buradan inceleyip orijinal yerlerine geri yükleyebilirsiniz.')}
@@ -1265,7 +1351,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                     }}
                     title={t('common.clear', 'Temizle')}
                   >
-                    ✕
+                    
                   </button>
                 )}
               </div>
@@ -1342,60 +1428,6 @@ const Settings = ({ activeTab = 'genel' }) => {
             </div>
 
             {(() => {
-              const filteredDeletedItems = deletedItems.filter(item => {
-                const typeTranslationMap = {
-                  workers: t('recycle.type.personnel', 'Personel Kaydı'),
-                  transactions: t('recycle.type.cash', 'Kasa Hareketi'),
-                  materials: t('recycle.type.delivery', 'İrsaliye / Malzeme'),
-                  daily_journals: t('recycle.type.journal', 'Günlük Jurnal'),
-                  quality_reports: t('recycle.type.quality', 'Kalite Kontrol Tutanağı'),
-                  subcontractor_ledgers: t('recycle.type.subcontractor', 'Taşeron Cari Kaydı'),
-                  projects: t('recycle.type.project', 'Şantiye Kaydı'),
-                  worker_leaves: t('recycle.type.worker_leaves', 'Personel İzni')
-                };
-                const typeLabel = typeTranslationMap[item.table] || item.table;
-                const formattedDate = item.deleted_at ? new Date(item.deleted_at).toLocaleString() : '';
-                const itemKey = `${item.table}_${item.id}`;
-                const isRestored = item.is_deleted === 0 || restoredKeys.includes(itemKey);
-
-                if (recycleRestoreStatus === 'only_deleted' && isRestored) {
-                  return false;
-                }
-                if (recycleRestoreStatus === 'only_restored' && !isRestored) {
-                  return false;
-                }
-
-                if (recycleFilterType && item.table !== recycleFilterType) {
-                  return false;
-                }
-
-                if (recycleFilterProject && String(item.project_id) !== String(recycleFilterProject)) {
-                  return false;
-                }
-
-                if (recycleStartDate) {
-                  const start = new Date(recycleStartDate);
-                  start.setHours(0, 0, 0, 0);
-                  if (new Date(item.deleted_at) < start) return false;
-                }
-                if (recycleEndDate) {
-                  const end = new Date(recycleEndDate);
-                  end.setHours(23, 59, 59, 999);
-                  if (new Date(item.deleted_at) > end) return false;
-                }
-
-                if (recycleSearch) {
-                  const q = recycleSearch.toLowerCase();
-                  const matchType = typeLabel.toLowerCase().includes(q);
-                  const matchTitle = (item.title || '').toLowerCase().includes(q);
-                  const matchDate = formattedDate.toLowerCase().includes(q);
-                  const matchProject = (item.project_name || '').toLowerCase().includes(q);
-                  return matchType || matchTitle || matchDate || matchProject;
-                }
-
-                return true;
-              });
-
               if (filteredDeletedItems.length === 0) {
                 return (
                   <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
@@ -1531,68 +1563,8 @@ const Settings = ({ activeTab = 'genel' }) => {
                     </table>
                   </div>
 
-                  {totalPages > 1 && (
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center', 
-                      padding: '1rem 0.5rem 0.5rem 0.5rem', 
-                      borderTop: '1px solid var(--glass-border)',
-                      flexWrap: 'wrap',
-                      gap: '1rem'
-                    }}>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                        {t('common.page_info', 'Sayfa')} {recycleCurrentPage} / {totalPages} {t('global.recordsCount', { count: filteredDeletedItems.length })}
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <button
-                          className="btn"
-                          disabled={recycleCurrentPage === 1}
-                          onClick={() => setRecycleCurrentPage(prev => Math.max(prev - 1, 1))}
-                          style={{
-                            padding: '0.4rem 1rem',
-                            fontSize: '0.85rem',
-                            fontWeight: '600',
-                            background: 'rgba(255,255,255,0.03)',
-                            border: '1px solid var(--glass-border)',
-                            borderRadius: '8px',
-                            color: 'var(--text-main)',
-                            cursor: recycleCurrentPage === 1 ? 'not-allowed' : 'pointer',
-                            opacity: recycleCurrentPage === 1 ? 0.5 : 1,
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseEnter={(e) => { if (recycleCurrentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                          onMouseLeave={(e) => { if (recycleCurrentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                        >
-                          {t('common.prev', 'Önceki')}
-                        </button>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                          {t('common.page_info', 'Sayfa')} {recycleCurrentPage} / {totalPages}
-                        </span>
-                        <button
-                          className="btn"
-                          disabled={recycleCurrentPage === totalPages}
-                          onClick={() => setRecycleCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                          style={{
-                            padding: '0.4rem 1rem',
-                            fontSize: '0.85rem',
-                            fontWeight: '600',
-                            background: 'rgba(255,255,255,0.03)',
-                            border: '1px solid var(--glass-border)',
-                            borderRadius: '8px',
-                            color: 'var(--text-main)',
-                            cursor: recycleCurrentPage === totalPages ? 'not-allowed' : 'pointer',
-                            opacity: recycleCurrentPage === totalPages ? 0.5 : 1,
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseEnter={(e) => { if (recycleCurrentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                          onMouseLeave={(e) => { if (recycleCurrentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                        >
-                          {t('common.next', 'Sonraki')}
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  {/* Pagination - shared component (ui/Pagination) */}
+                  <Pagination currentPage={recycleCurrentPage} totalPages={totalPages} onPageChange={setRecycleCurrentPage} totalRecords={filteredDeletedItems.length} />
                 </div>
               );
             })()}

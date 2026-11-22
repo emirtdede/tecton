@@ -1,270 +1,205 @@
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  Github,
+  Heart,
+  Scale,
+  Tag,
+} from 'lucide-react';
+import UpdateCard from './settings/UpdateCard';
+import TectonDark from '../../../../tecton_assets/tecton-tray-dark.svg';
+import TectonLight from '../../../../tecton_assets/tecton-tray-light.svg';
+
+const APP_VERSION = '1.0.0';
+
+const SOCIAL_LINKS = {
+  code: [
+    { name: 'GitHub', url: 'https://github.com/emirtdede' },
+    { name: 'LeetCode', url: 'https://leetcode.com/emirtdede/' },
+    { name: 'HackerRank', url: 'https://www.hackerrank.com/emirtdede' },
+    { name: 'Stack Overflow', url: 'https://stackoverflow.com/users/17289462/emir-dede' },
+    { name: 'Kaggle', url: 'https://www.kaggle.com/emirdede' },
+    { name: 'ORCID', url: 'https://orcid.org/0009-0006-1356-0316' },
+  ],
+  prof: [
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/emirtdede/' },
+    { name: 'Google Developers', url: 'https://developers.google.com/profile/u/emirtdede' },
+  ],
+  social: [
+    { name: 'YouTube', url: 'https://www.youtube.com/@emirtdede' },
+    { name: 'Medium', url: 'https://emirtdede.medium.com/' },
+    { name: 'X', url: 'https://twitter.com/emirtdede' },
+    { name: 'Instagram', url: 'https://www.instagram.com/emirtdede/' },
+    { name: 'Reddit', url: 'https://www.reddit.com/user/emirtdede/' },
+  ],
+};
 
 const AboutHelp = () => {
   const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const toggleFaq = (index) => {
-    if (openFaq === index) {
-      setOpenFaq(null);
-    } else {
-      setOpenFaq(index);
-    }
-  };
-
-  const faqs = [
-    { q: t('about.faq_q1'), a: t('about.faq_a1') },
-    { q: t('about.faq_q2'), a: t('about.faq_a2') },
-    { q: t('about.faq_q3'), a: t('about.faq_a3') },
-    { q: t('about.faq_q4'), a: t('about.faq_a4') },
-    {
-      q: t('about.faq_q5', 'Bilgisayarıma format atarsam veya uygulamayı silersem verilerim gider mi? Yedekleme ve Geri Yükleme nasıl yapılır?'),
-      a: t('about.faq_a5', 'Evet, uygulama çevrimdışı (offline-first) çalıştığı için tüm verileriniz yerel bilgisayarınızda saklanır. Format atmadan önce verilerinizi korumak için:\n\n1. Ayarlar -> Sistem Güvenliği sayfasındaki "Tüm Veritabanını Yedekle (.sqlite)" butonuna basarak yedeğinizi alın.\n2. Yeni bilgisayarda uygulamayı açıp, Ayarlar sayfasındaki "Yedek Veritabanını Geri Yükle" alanına bu .sqlite dosyasını sürükleyip bırakarak sisteminizi otonom geri yükleyin (uygulama otomatik olarak yedeğin üzerine yazıp yeniden başlayacaktır).')
-    },
-    {
-      q: t('about.faq_q6', 'Yerel Ağ (LAN) Mobil Fotoğraf Yükleyicisi nasıl çalışır?'),
-      a: t('about.faq_a6', 'Malzeme İrsaliyesi veya Kalite Kontrol Tutanakları eklerken "Mobilden Yükle (QR)" butonuna bastığınızda, uygulama bilgisayarınızda geçici bir yerel ağ sunucusu (LAN Express server) açar. Telefonunuzla QR kodu okuttuğunuzda, telefon kamerasıyla çektiğiniz irsaliye resimleri internet / bulut maliyeti olmaksızın doğrudan bilgisayarınızdaki uygulamaya yüklenir.')
-    },
-    {
-      q: t('about.faq_q7', 'Şantiye jurnallerindeki hava durumu bilgisi nereden çekilir?'),
-      a: t('about.faq_a7', 'Şantiye Yönetimi sayfasından şantiyenizin lokasyon bilgisini (örneğin "İstanbul, TR") girdikten sonra Günlük Jurnal sekmesini açtığınızda, sistem otomatik olarak OpenWeather API üzerinden günün hava sıcaklık ve durum bilgisini şantiyenin konumuna göre otonom olarak çeker. İnternet olmaması durumunda ise sistem gerçekçi simüle değerler atar.')
-    }
-  ];
-
-  const filteredFaqs = faqs.filter(faq => 
-    faq.q.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    faq.a.toLowerCase().includes(searchQuery.toLowerCase())
+  const faqs = useMemo(
+    () =>
+      [1, 2, 3, 4, 5, 6].map((index) => ({
+        q: t(`about.faq_q${index}`),
+        a: t(`about.faq_a${index}`),
+      })),
+    [t]
   );
 
-  const socialLinks = {
-    code: [
-      { name: 'GitHub', url: 'https://github.com/emirtdede' },
-      { name: 'LeetCode', url: 'https://leetcode.com/emirtdede/' },
-      { name: 'HackerRank', url: 'https://www.hackerrank.com/emirtdede' },
-      { name: 'StackOverflow', url: 'https://stackoverflow.com/users/17289462/emir-dede' },
-      { name: 'Kaggle', url: 'https://www.kaggle.com/emirdede' },
-      { name: 'ReadyTensor', url: 'https://app.readytensor.ai/users/emirtdede' },
-      { name: 'ORCID', url: 'https://orcid.org/my-orcid?orcid=0009-0006-1356-0316' }
-    ],
-    prof: [
-      { name: 'LinkedIn', url: 'https://www.linkedin.com/in/emirtdede/' },
-      { name: 'Google Developers', url: 'https://developers.google.com/profile/u/emirtdede' }
-    ],
-    social: [
-      { name: 'YouTube', url: 'https://www.youtube.com/@emirtdede' },
-      { name: 'Medium', url: 'https://emirtdede.medium.com/' },
-      { name: 'Twitter', url: 'https://twitter.com/emirtdede' },
-      { name: 'Twitch', url: 'https://www.twitch.tv/Mexonom' },
-      { name: 'Instagram', url: 'https://www.instagram.com/emirtdede/' },
-      { name: 'Quora', url: 'https://www.quora.com/profile/Emir-Dede-1' },
-      { name: 'Pinterest', url: 'https://tr.pinterest.com/emirtdede/' },
-      { name: 'Reddit', url: 'https://www.reddit.com/user/emirtdede/' }
-    ]
-  };
+  const filteredFaqs = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return faqs;
+    return faqs.filter(
+      (faq) => faq.q.toLowerCase().includes(query) || faq.a.toLowerCase().includes(query)
+    );
+  }, [faqs, searchQuery]);
 
-  const renderLinks = (links) => (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', marginTop: '0.5rem' }}>
-      {links.map((link, i) => (
-        <a 
-          key={i} 
-          href={link.url} 
-          target="_blank" 
-          rel="noreferrer"
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.3rem', 
-            background: 'var(--accent-bg)', 
-            color: 'var(--accent)', 
-            padding: '0.4rem 0.8rem', 
-            borderRadius: '20px', 
-            textDecoration: 'none',
-            fontSize: '0.85rem',
-            transition: 'all 0.2s'
-          }}
-          onMouseOver={(e) => { e.currentTarget.style.background = 'var(--accent-bg-hover)' }}
-          onMouseOut={(e) => { e.currentTarget.style.background = 'var(--accent-bg)' }}
-        >
-          {link.name} <ExternalLink size={12} />
+  const facts = [
+    { label: t('about.fact_version', 'Version'), value: APP_VERSION },
+    { label: t('about.fact_license', 'Licence'), value: 'MIT' },
+    { label: t('about.fact_publisher', 'Publisher'), value: 'Emir Tarık Dede' },
+    { label: t('about.fact_stack', 'Built with'), value: 'Electron 29 / React 18 / Vite 5' },
+    { label: t('about.fact_languages', 'Interface languages'), value: '19' },
+    { label: t('about.fact_data', 'Data location'), value: '%APPDATA%/Tecton' },
+  ];
+
+  const links = [
+    { icon: Heart, label: t('about.link_sponsor', 'Sponsor this project'), url: 'https://github.com/sponsors/emirtdede' },
+    { icon: Github, label: t('about.link_github', 'Source code'), url: 'https://github.com/emirtdede/tecton' },
+    { icon: BookOpen, label: t('about.link_docs', 'Documentation'), url: 'https://github.com/emirtdede/tecton/tree/main/docs' },
+    { icon: Tag, label: t('about.link_releases', 'Releases'), url: 'https://github.com/emirtdede/tecton/releases' },
+    { icon: Scale, label: t('about.link_license', 'MIT licence'), url: 'https://github.com/emirtdede/tecton/blob/main/LICENSE' },
+  ];
+
+  const renderLinks = (items) => (
+    <div className="about-link-list">
+      {items.map((link) => (
+        <a key={link.url} href={link.url} target="_blank" rel="noreferrer" className="about-chip">
+          {link.name} <ExternalLink size={11} />
         </a>
       ))}
     </div>
   );
 
   return (
-    <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      
-      {/* Project Info */}
-      <div className="glass-card" style={{ marginBottom: '2rem' }}>
-        <h2 className="card-title" style={{ marginBottom: '0.5rem', color: 'var(--text-main)', fontSize: '1.6rem', textAlign: 'center' }}>
-          {t('about.hero_title')}
-        </h2>
-        <h4 style={{ color: 'var(--accent)', textAlign: 'center', marginBottom: '1.5rem', fontWeight: '500' }}>
-          {t('about.hero_subtitle')}
-        </h4>
-        <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '2rem', fontSize: '1rem', textAlign: 'justify' }}>
-          {t('about.hero_desc')}
-        </p>
+    <div className="about-page" style={{ animation: 'fadeIn 0.3s ease' }}>
+      <UpdateCard />
 
-        <h3 style={{ color: 'var(--text-main)', marginBottom: '1rem', fontSize: '1.3rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
-          {t('about.section_aim_title')}
-        </h3>
-        <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '2rem', fontSize: '0.95rem', textAlign: 'justify' }}>
-          {t('about.section_aim_desc')}
-        </p>
-
-        <h3 style={{ color: 'var(--text-main)', marginBottom: '1.5rem', fontSize: '1.3rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
-          {t('about.section_why_title')}
-        </h3>
-        <ul style={{ color: 'var(--text-muted)', lineHeight: '1.8', fontSize: '0.95rem', paddingLeft: '1.2rem', marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.why_1_title')}</strong> {t('about.why_1_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.why_2_title')}</strong> {t('about.why_2_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.why_3_title')}</strong> {t('about.why_3_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.why_4_title')}</strong> {t('about.why_4_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.why_5_title')}</strong> {t('about.why_5_desc')}</li>
-        </ul>
-
-        <h3 style={{ color: 'var(--text-main)', marginBottom: '1rem', fontSize: '1.3rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
-          {t('about.section_how_title')}
-        </h3>
-        <p style={{ color: 'var(--accent)', marginBottom: '1rem', fontWeight: '500' }}>{t('about.how_subtitle')}</p>
-        <ul style={{ color: 'var(--text-muted)', lineHeight: '1.8', fontSize: '0.95rem', paddingLeft: '1.2rem', marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.how_1_title')}</strong> {t('about.how_1_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.how_2_title')}</strong> {t('about.how_2_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.how_3_title')}</strong> {t('about.how_3_desc')}</li>
-          <li><strong style={{ color: 'var(--text-main)' }}>{t('about.how_4_title')}</strong> {t('about.how_4_desc')}</li>
-        </ul>
-
-        <div style={{ background: 'var(--accent-bg)', padding: '1.5rem', borderRadius: '8px', borderLeft: '4px solid var(--accent)' }}>
-          <h4 style={{ color: 'var(--text-main)', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{t('about.conclusion_1')}</h4>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>{t('about.conclusion_2')}</p>
-        </div>
-      </div>
-
-      {/* SSS Accordion */}
-      <div className="glass-card" style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <h3 className="card-title" style={{ margin: 0 }}>{t('about.faq')}</h3>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%', maxWidth: '300px' }}>
-            <input 
-              type="text" 
-              className="form-input" 
-              placeholder={t('about.faq_search_placeholder', 'Sıkça sorulan sorularda ara...')} 
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{ width: '100%', paddingRight: '2.5rem' }}
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  padding: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10
-                }}
-                title={t('common.clear', 'Temizle')}
-              >
-                ✕
-              </button>
-            )}
+      <section className="glass-card about-hero">
+        <div className="about-brand">
+          <img src={TectonDark} alt="" className="logo-dark" width="56" height="56" />
+          <img src={TectonLight} alt="" className="logo-light" width="56" height="56" />
+          <div>
+            <h1 className="about-title">Tecton</h1>
+            <p className="about-subtitle">
+              {t('about.hero_subtitle', 'Construction site operating system for Windows')}
+            </p>
           </div>
+          <span className="about-version">v{APP_VERSION}</span>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {filteredFaqs.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>{t('about.faq_no_results', 'Aradığınız kriterlere uygun soru bulunamadı.')}</div>
-          ) : (
-            filteredFaqs.map((faq, idx) => (
-              <div 
-                key={idx} 
-                style={{ 
-                  border: '1px solid var(--glass-border)', 
-                  borderRadius: '8px', 
-                  overflow: 'hidden',
-                  background: 'rgba(255,255,255,0.02)'
-                }}
-              >
-                <button 
-                  onClick={() => toggleFaq(idx)}
-                  style={{ 
-                    width: '100%', 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    padding: '1rem', 
-                    background: 'transparent', 
-                    border: 'none', 
-                    color: 'var(--text-main)', 
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                >
-                  {faq.q}
-                  {openFaq === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                </button>
-                
-                <div style={{ 
-                  maxHeight: openFaq === idx ? '500px' : '0', 
-                  overflow: 'hidden', 
-                  transition: 'max-height 0.3s ease',
-                  background: 'var(--log-bg)',
-                  borderTop: openFaq === idx ? '1px solid var(--glass-border)' : 'none'
-                }}>
-                  <div style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
-                    {faq.a}
-                  </div>
-                </div>
-              </div>
-            ))
+
+        <p className="about-desc">
+          {t(
+            'about.hero_desc',
+            'Tecton keeps sites, people, payroll, materials and cash in one offline desktop application. Every record stays on this computer and, only if you connect one, in the cloud folder you choose.'
           )}
+        </p>
+
+        <h2 className="about-section-title">{t('about.facts_title', 'At a glance')}</h2>
+        <dl className="about-facts">
+          {facts.map((fact) => (
+            <div key={fact.label}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <h2 className="about-section-title">{t('about.links_title', 'Project links')}</h2>
+        <div className="about-link-grid">
+          {links.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a key={link.url} href={link.url} target="_blank" rel="noreferrer" className="about-link-card">
+                <Icon size={18} aria-hidden="true" />
+                <span>{link.label}</span>
+                <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            );
+          })}
         </div>
-      </div>
+      </section>
 
-      {/* Developer Details & Social */}
-      <div className="glass-card">
-        <h3 className="card-title" style={{ marginBottom: '1.5rem', color: 'var(--text-main)' }}>
-          {t('about.dev_info')} Emir Tarık Dede
-        </h3>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-          
+      <section className="glass-card">
+        <div className="about-faq-head">
           <div>
-            <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.3rem' }}>
-              {t('about.cat_code')}
-            </h4>
-            {renderLinks(socialLinks.code)}
+            <h2 className="card-title" style={{ marginBottom: '0.25rem' }}>{t('about.faq', 'Frequently asked questions')}</h2>
+            <p className="about-faq-desc">
+              {t('about.help_desc', 'Short answers to the questions that come up most often.')}
+            </p>
           </div>
-
-          <div>
-            <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.3rem' }}>
-              {t('about.cat_prof')}
-            </h4>
-            {renderLinks(socialLinks.prof)}
+          <div className="about-search">
+            <input
+              type="search"
+              className="form-input"
+              placeholder={t('about.faq_search_placeholder', 'Search the questions')}
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label={t('about.faq_search_placeholder', 'Search the questions')}
+            />
           </div>
-
-          <div>
-            <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.3rem' }}>
-              {t('about.cat_social')}
-            </h4>
-            {renderLinks(socialLinks.social)}
-          </div>
-
         </div>
-      </div>
 
+        {filteredFaqs.length === 0 ? (
+          <p className="about-empty">{t('about.faq_no_results', 'No question matches your search.')}</p>
+        ) : (
+          <div className="about-faq-list">
+            {filteredFaqs.map((faq) => {
+              const open = openFaq === faq.q;
+              return (
+                <div key={faq.q} className={`about-faq-item ${open ? 'open' : ''}`}>
+                  <button
+                    type="button"
+                    className="about-faq-question"
+                    aria-expanded={open}
+                    onClick={() => setOpenFaq(open ? null : faq.q)}
+                  >
+                    <span>{faq.q}</span>
+                    {open ? <ChevronUp size={17} /> : <ChevronDown size={17} />}
+                  </button>
+                  {open && <div className="about-faq-answer">{faq.a}</div>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="glass-card">
+        <h2 className="card-title" style={{ marginBottom: '1.25rem' }}>
+          {t('about.dev_info', 'Developer')} Emir Tarık Dede
+        </h2>
+        <div className="about-dev-grid">
+          <div>
+            <h3 className="about-dev-cat">{t('about.cat_code', 'Coding and technology')}</h3>
+            {renderLinks(SOCIAL_LINKS.code)}
+          </div>
+          <div>
+            <h3 className="about-dev-cat">{t('about.cat_prof', 'Professional network')}</h3>
+            {renderLinks(SOCIAL_LINKS.prof)}
+          </div>
+          <div>
+            <h3 className="about-dev-cat">{t('about.cat_social', 'Content and social')}</h3>
+            {renderLinks(SOCIAL_LINKS.social)}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
