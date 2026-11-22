@@ -21,7 +21,7 @@ the change notes for the current version.
 ## Running the gates locally
 
 ```bash
-npm run style:check # typography: no em dashes, no emoji
+npm run style:check # typography: no em dashes, no emoji, no mojibake
 npm run i18n:check  # 19 dictionaries, key parity
 npm test            # Vitest unit and service tests
 npm run quality     # all of the above in one pass
