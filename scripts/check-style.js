@@ -27,6 +27,7 @@ const SKIP_DIRS = new Set([
   'release',
   'out',
   '.tecton-dev-data',
+  '.cache',
   'coverage',
 ]);
 const TEXT_EXTENSIONS = new Set([
