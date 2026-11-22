@@ -58,6 +58,7 @@
     "cross-env": "^7.0.3",
     "electron": "^29.1.5",
     "electron-builder": "^24.13.3",
+    "esbuild": "^0.28.2",
     "postcss": "^8.4.38",
     "rcedit": "^5.0.2",
     "vite": "^5.2.8",
