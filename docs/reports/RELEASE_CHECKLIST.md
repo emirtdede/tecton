@@ -103,10 +103,20 @@ Her satır yayın öncesinde tekrar doğrulanmalıdır. `[x]` işaretli maddeler
 | # | Kontrol | Beklenen | Durum |
 |---|---|---|---|
 | 9.1 | Sürüm | Her yerde `1.0.0` (package.json, derleme, installer) | [x] |
-| 9.2 | Etiket | `1.0.0` | [ ] |
-| 9.3 | Dallar | Yalnızca `main` ve `development` | [ ] |
-| 9.4 | Depo adı | `tecton`, herkese açık | [ ] |
-| 9.5 | CI | Yeşil, `main`e birleştirme yok | [ ] |
+| 9.2 | Etiket | `1.0.0`, `development` dalının son commit'inde | [x] |
+| 9.3 | Dallar | Yalnızca `main` ve `development` | [x] |
+| 9.4 | Depo adı | `tecton`, herkese açık (`github.com/emirtdede/tecton`) | [x] |
+| 9.5 | CI | Yeşil (`development`), `main`e birleştirme yapılmadı | [x] |
+
+> **Dal durumu (karar bekliyor):** Yayın hattı `development` dalında ve `1.0.0`
+> etiketi orayı gösteriyor. `main` dalı, bu çalışma başlamadan önceki
+> `41ae621` commit'inde (11 Ekim 2026) duruyor; o dalda ayrıştırılmış
+> bileşenler, 50 test dosyası ve güvenlik modülleri (`allowlist`, `keystore`,
+> `secret`) var, bu yayın hattında ise kurumsal katman (tema, sihirbaz, bulut,
+> yapay zeka, MCP/CLI, 73 dilli kurulum) var. İki dal 330 dosyada ayrışıyor ve
+> 30 dosyada çakışıyor; kullanıcı onayı olmadan birleştirilmedi. Bu nedenle
+> README'deki CI rozeti `main` dalını gösterdiği için kırmızı görünür; yeşil
+> koşu `development` dalındadır.
 
 ## 10. Kanıtlar
 
