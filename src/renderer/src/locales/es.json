@@ -60,6 +60,12 @@
     "settings_ai": "Inteligencia artificial"
   },
   "settings": {
+    "window_startup": "Ventana e inicio",
+    "start_with_windows": "Iniciar Tecton al arrancar Windows",
+    "start_minimized": "Iniciar oculto en la bandeja del sistema",
+    "close_to_tray": "Seguir ejecutándose en la bandeja al cerrar la ventana",
+    "standard_daily_hours_hint": "Se usa para convertir un jornal diario en tarifa por hora.",
+    "overtime_multiplier_hint": "Pago por hora de las horas extra, como múltiplo de la tarifa normal.",
     "theme_language": "Tema e Idioma",
     "language": "Idioma de la Aplicación",
     "theme": "Tema de la Aplicación",
@@ -69,7 +75,7 @@
     "company_name": "Nombre de la Empresa / Institución",
     "company_logo": "Logotipo de la Empresa",
     "backup_db": "Copia de seguridad de toda la base de datos",
-    "vacuum_db": " Optimizar Sistema (Vacuum)",
+    "vacuum_db": "Optimizar Sistema (Vacuum)",
     "vacuum_desc": "Limpia los bloques de datos no utilizados en segundo plano y reduce el tamaño de la base de datos, lo que hace que la aplicación sea más rápida. (Se recomienda una vez al mes)",
     "cloud_sync_desc": "Cuando selecciona la carpeta de sincronización de Google Drive, Dropbox o OneDrive en su ordenador, la aplicación realiza de forma autónoma una copia de seguridad en segundo plano al cerrarse.",
     "work_types_title": "Tipos de Trabajo y Multiplicadores",
@@ -204,7 +210,7 @@
     "undo_error": "Error al deshacer:",
     "delete_worker_title": "Eliminar Personal",
     "delete_worker_msg": "¿Estás seguro de que quieres eliminar este personal (mover a la papelera)? Los datos del sistema no se eliminarán permanentemente, pero se quitarán de las listas.",
-    "bulk_timesheet": " Parte de horas masivo",
+    "bulk_timesheet": "Parte de horas masivo",
     "no_search_results": "Ningún registro de personal coincide con su búsqueda.",
     "import_done": "¡Importación masiva completada!",
     "import_undo_hint": "Si cometió un error, puede deshacer la operación de inmediato.",
@@ -467,6 +473,7 @@
     "all_periods": "Todo"
   },
   "about": {
+    "page_subtitle": "Detalles de la aplicación, enlaces del proyecto y preguntas frecuentes.",
     "faq": "Preguntas frecuentes",
     "faq_q1": "¿Tecton necesita conexión a internet?",
     "faq_a1": "No. La base de datos está en este equipo y todos los módulos funcionan sin conexión. Internet solo se usa para comprobar actualizaciones.",
@@ -567,7 +574,7 @@
     "search_journal": "Buscar en notas del diario, clima o fecha..."
   },
   "media": {
-    "gallery_title": " Galería de medios de la obra",
+    "gallery_title": "Galería de medios de la obra",
     "no_image": "Sin imagen",
     "view_list": "Vista de Lista",
     "view_grid": "Vista de Galería",
@@ -575,7 +582,7 @@
     "search_placeholder": "Buscar por título, tipo de contenido o fecha..."
   },
   "subcontractor": {
-    "title": " Libros de subcontratistas",
+    "title": "Libros de subcontratistas",
     "name": "Nombre / Razón social del subcontratista",
     "name_ph": "ej. Excavaciones Karadeniz",
     "service": "Área de servicio",
@@ -600,14 +607,14 @@
     "delete_success": "Subcontratista eliminado con éxito."
   },
   "quality": {
-    "title": " Control de calidad e informes de obra",
+    "title": "Control de calidad e informes de obra",
     "report_title": "Título del informe / Incidencia",
     "report_title_ph": "ej. Desviación de eje en 3.er piso / Encofrado incorrecto",
     "initial_status": "Estado inicial",
     "status_open": "ABIERTO (Sin resolver)",
     "photo_label": "Imagen / Foto del informe",
-    "select_pc": " Seleccionar del PC",
-    "upload_mobile": " Subir desde el móvil (QR)",
+    "select_pc": "Seleccionar del PC",
+    "upload_mobile": "Subir desde el móvil (QR)",
     "detailed_description": "Descripción detallada",
     "description_ph": "Detalles del problema detectado...",
     "add_report": "Añadir informe",
@@ -619,7 +626,7 @@
     "delete_confirm": "¿Está seguro de que desea eliminar este informe de control de calidad? Esta acción no se puede deshacer."
   },
   "journal": {
-    "title": " Diario diario de la obra",
+    "title": "Diario diario de la obra",
     "worker_count": "Número de personal trabajando",
     "weather": "Estado del clima",
     "temperature": "Temperatura",
@@ -640,7 +647,7 @@
     "weather_api_error": "El servicio meteorológico devolvió un error."
   },
   "materials": {
-    "title": " Albarán y registro de materiales",
+    "title": "Albarán y registro de materiales",
     "supplier": "Proveedor",
     "supplier_ph": "ej. Akçansa Hormigón S.A.",
     "material_type": "Tipo de material",
@@ -659,7 +666,7 @@
     "lan_error": "No se pudo iniciar el servidor local:"
   },
   "production": {
-    "title": " Cubicaciones y seguimiento de producción",
+    "title": "Cubicaciones y seguimiento de producción",
     "item_name": "Partida de producción",
     "item_name_ph": "ej. Levantamiento de muro de ladrillo",
     "no_results": "No se encontraron registros de producción que coincidan con los criterios de búsqueda.",
@@ -1205,7 +1212,7 @@
     "save_error": "Algunos registros fallaron. Éxito: {{success}}, Error: {{error}}",
     "no_workers_selected": "Seleccione al menos un trabajador.",
     "no_workers": "No se encontraron trabajadores activos.",
-    "already_entered": " Registrado",
+    "already_entered": "Registrado",
     "group_filter_all": "Todos los grupos",
     "day": "día",
     "end_date": "Fecha de finalización",

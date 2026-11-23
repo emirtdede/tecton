@@ -47,7 +47,7 @@ export default function AppearancePanel({ settings, onChange, surface = 'dark' }
   const { t } = useTranslation();
   const mode = settingValue(settings, 'theme', 'dark');
   const themeId = settingValue(settings, 'theme_id', 'obsidian');
-  const customColor = settingValue(settings, 'custom_theme_color', '#8b5cf6');
+  const customColor = settingValue(settings, 'custom_theme_color', 'var(--accent)');
   const appIcon = settingValue(settings, 'app_icon', 'auto');
   const zoom = clampZoom(settingValue(settings, 'ui_zoom', 1));
 
@@ -151,7 +151,7 @@ export default function AppearancePanel({ settings, onChange, surface = 'dark' }
               />
             </div>
             <p id="custom-theme-hint" className="form-hint">
-              {t('settings.custom_color_hint', 'Enter a hex colour, for example #8b5cf6.')}
+              {t('settings.custom_color_hint', 'Enter a hex colour, for example var(--accent).')}
             </p>
           </div>
         )}

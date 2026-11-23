@@ -11,6 +11,7 @@ import Pagination from './ui/Pagination';
 import NoProjectNotice from './ui/NoProjectNotice';
 import { parsePositiveNumber } from '../utils/validation';
 import { logError } from '../utils/logger';
+import { X } from 'lucide-react';
 
 const ProductionManagement = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -203,13 +204,18 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
 
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('production.title', 'Metraj ve İmalat Takibi')}</h1>
+          <p className="card-subtitle active-project-subtitle">
+            {t('common.active_project', 'Aktif Şantiye:')} <strong>{activeProject?.name}</strong>
+          </p>
+        </div>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      </header>
+
       {/* Main List and Form */}
       <div className="glass-card" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('production.title', ' Metraj ve İmalat Takibi')}</h2>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} />
-        </div>
-        <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
         {/* Add Record Form */}
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.5rem', alignItems: 'flex-end' }}>
@@ -272,14 +278,14 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%', gridColumn: 'span 2' }}>
-            <button type="submit" className="btn btn-primary" style={{ flex: 1, height: '42px' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', width: '100%', gridColumn: 'span 2' }}>
+            <button type="submit" className="btn btn-primary" style={{ minWidth: '8rem' }}>
               {editingId ? t('common.save', 'Güncelle') : t('common.save', 'Kaydet')}
             </button>
             {editingId && (
-              <button 
-                type="button" 
-                className="btn" 
+              <button
+                type="button"
+                className="btn"
                 onClick={() => {
                   setEditingId(null);
                   setFormData({
@@ -289,8 +295,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                     record_date: localToday(),
                     notes: ''
                   });
-                }} 
-                style={{ height: '42px' }}
+                }}
               >
                 {t('common.cancel', 'Vazgeç')}
               </button>
@@ -301,7 +306,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
         {/* Filters & Search Bar */}
         {records.length > 0 && (
           <div style={{ 
-            background: 'rgba(255, 255, 255, 0.02)', 
+            background: 'var(--surface-subtle)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
             padding: '0.75rem 1rem', 
@@ -341,7 +346,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                       zIndex: 10
                     }}
                     title={t('common.clear', 'Temizle')}
-                  >
+                  ><X size={14} aria-hidden="true" />
                     
                   </button>
                 )}
@@ -413,7 +418,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                   <tr key={r.id}>
                     <td>{formatDate(r.record_date, i18n.language)}</td>
                     <td style={{ fontWeight: '600' }}>{r.item_name}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--secondary)' }}>{r.quantity}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--text-secondary)' }}>{r.quantity}</td>
                     <td>{r.unit}</td>
                     <td style={{ color: 'var(--text-muted)' }}>{r.notes || '-'}</td>
                     <td style={{ textAlign: 'right' }}>
@@ -424,7 +429,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                           style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           title={t('dashboard.edit', 'Düzenle')}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                             <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                           </svg>
@@ -435,7 +440,7 @@ const ProductionManagement = ({ activeProjectId, projects = [] }) => {
                           style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           title={t('common.delete', 'Sil')}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="3 6 5 6 21 6" />
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                             <line x1="10" y1="11" x2="10" y2="17" />

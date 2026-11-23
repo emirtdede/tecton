@@ -53,7 +53,7 @@ class ErrorBoundary extends Component {
           color: 'var(--text-main, #e2e8f0)'
         }}
       >
-        <div style={{ color: 'var(--danger, #ef4444)', display: 'flex', justifyContent: 'center' }}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
+        <div style={{ color: 'var(--danger, var(--danger))', display: 'flex', justifyContent: 'center' }}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
         <h2 style={{ margin: 0, fontSize: '1.15rem' }}>
           {t('common.error_boundary_title', 'Bu bölüm yüklenemedi')}
         </h2>

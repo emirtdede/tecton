@@ -60,6 +60,12 @@
     "settings_ai": "Intelligenza artificiale"
   },
   "settings": {
+    "window_startup": "Finestra e avvio",
+    "start_with_windows": "Avvia Tecton all'avvio di Windows",
+    "start_minimized": "Avvia nascosto nell'area di notifica",
+    "close_to_tray": "Continua a funzionare nell'area di notifica alla chiusura della finestra",
+    "standard_daily_hours_hint": "Serve a convertire una paga giornaliera in tariffa oraria.",
+    "overtime_multiplier_hint": "Paga oraria degli straordinari, come multiplo della tariffa normale.",
     "theme_language": "Tema e lingua",
     "language": "Lingua dell'app",
     "theme": "Tema dell'app",
@@ -69,7 +75,7 @@
     "company_name": "Nome dell'azienda",
     "company_logo": "Logo dell'azienda",
     "backup_db": "Esegui il backup dell'intero database",
-    "vacuum_db": " Ottimizza sistema",
+    "vacuum_db": "Ottimizza sistema",
     "vacuum_desc": "Pulisce i dati.",
     "cloud_sync_desc": "Backup automatico.",
     "work_types_title": "Tipi di lavoro",
@@ -204,7 +210,7 @@
     "undo_error": "Annullamento non riuscito:",
     "delete_worker_title": "Elimina Personale",
     "delete_worker_msg": "Sei sicuro di voler eliminare questo personale (spostarlo nel cestino)? I dati di sistema non verranno eliminati in modo permanente, ma rimossi dagli elenchi.",
-    "bulk_timesheet": " Foglio presenza multiplo",
+    "bulk_timesheet": "Foglio presenza multiplo",
     "no_search_results": "Nessun record del personale corrisponde alla ricerca.",
     "import_done": "Importazione massiva completata!",
     "import_undo_hint": "Se hai commesso un errore, puoi annullare subito l’operazione.",
@@ -468,6 +474,7 @@
     "all_periods": "Tutti"
   },
   "about": {
+    "page_subtitle": "Dettagli dell'applicazione, collegamenti al progetto e domande frequenti.",
     "faq": "Domande frequenti",
     "faq_q1": "Tecton richiede una connessione a Internet?",
     "faq_a1": "No. Il database è su questo computer e tutti i moduli funzionano offline. Internet serve solo per controllare gli aggiornamenti.",
@@ -568,7 +575,7 @@
     "search_journal": "Cerca nelle note del giornale, meteo o data..."
   },
   "media": {
-    "gallery_title": " Galleria media cantiere",
+    "gallery_title": "Galleria media cantiere",
     "no_image": "Nessuna immagine",
     "view_list": "Vista Elenco",
     "view_grid": "Vista Galleria",
@@ -576,7 +583,7 @@
     "search_placeholder": "Cerca per titolo, tipo di contenuto o data..."
   },
   "subcontractor": {
-    "title": " Registri subappaltatori",
+    "title": "Registri subappaltatori",
     "name": "Nome / Ragione sociale subappaltatore",
     "name_ph": "es. Scavi Karadeniz",
     "service": "Area di servizio",
@@ -601,14 +608,14 @@
     "delete_success": "Subappaltatore eliminato con successo."
   },
   "quality": {
-    "title": " Controllo qualità e rapporti cantiere",
+    "title": "Controllo qualità e rapporti cantiere",
     "report_title": "Titolo rapporto / Problema",
     "report_title_ph": "es. Spostamento asse 3° piano / Cassaforma errata",
     "initial_status": "Stato iniziale",
     "status_open": "APERTO (Non risolto)",
     "photo_label": "Immagine / Foto rapporto",
-    "select_pc": " Seleziona da PC",
-    "upload_mobile": " Carica da cellulare (QR)",
+    "select_pc": "Seleziona da PC",
+    "upload_mobile": "Carica da cellulare (QR)",
     "detailed_description": "Descrizione dettagliata",
     "description_ph": "Dettagli del problema riscontrato...",
     "add_report": "Aggiungi rapporto",
@@ -620,7 +627,7 @@
     "delete_confirm": "Sei sicuro di voler eliminare questo rapporto di controllo qualità? Questa azione non può essere annullata."
   },
   "journal": {
-    "title": " Giornale quotidiano di cantiere",
+    "title": "Giornale quotidiano di cantiere",
     "worker_count": "Numero di personale attivo",
     "weather": "Stato meteo",
     "temperature": "Temperatura",
@@ -641,7 +648,7 @@
     "weather_api_error": "Il servizio meteo ha restituito un errore."
   },
   "materials": {
-    "title": " Bolla di consegna e inserimento materiali",
+    "title": "Bolla di consegna e inserimento materiali",
     "supplier": "Fornitore",
     "supplier_ph": "es. Akçansa Calcestruzzi S.p.A.",
     "material_type": "Tipo materiale",
@@ -660,7 +667,7 @@
     "lan_error": "Impossibile avviare il server locale:"
   },
   "production": {
-    "title": " Computo metrico e tracciamento produzione",
+    "title": "Computo metrico e tracciamento produzione",
     "item_name": "Voce di produzione",
     "item_name_ph": "es. Muratura in mattoni",
     "no_results": "Nessun record di produzione trovato corrispondente ai criteri di ricerca.",
@@ -1205,7 +1212,7 @@
     "save_error": "Alcuni record non sono riusciti. Successo: {{success}}, Errore: {{error}}",
     "no_workers_selected": "Selezionare almeno un lavoratore.",
     "no_workers": "Nessun lavoratore attivo trovato.",
-    "already_entered": " Inserito",
+    "already_entered": "Inserito",
     "group_filter_all": "Tutti i gruppi",
     "day": "giorno",
     "end_date": "Data di fine",

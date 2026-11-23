@@ -9,6 +9,8 @@
  * ("custom") behave exactly like a built-in theme.
  */
 
+import { paletteFor } from './palettes';
+
 export const DEFAULT_MODE = 'dark';
 export const DEFAULT_THEME_ID = 'obsidian';
 export const DEFAULT_CUSTOM_COLOR = '#8b5cf6';
@@ -78,7 +80,7 @@ export function resolveAccent({ themeId = DEFAULT_THEME_ID, customColor = DEFAUL
     if (surface === 'dark' && relativeLuminance(hex) < 0.18) return mix(hex, '#ffffff', 0.35);
     return hex;
   }
-  return theme[surface === 'light' ? 'light' : 'dark'];
+  return paletteFor(theme.id, surface).accent;
 }
 
 function channel(value) {
@@ -153,10 +155,63 @@ export function buildAccentVariables(accent, surface = 'dark') {
     '--accent-border': rgba(base, surface === 'dark' ? 0.38 : 0.3),
     '--primary': base,
     '--primary-hover': hover,
-    '--secondary': mix(base, surface === 'dark' ? '#38bdf8' : '#2563eb', 0.5),
     '--shadow-glow': `0 0 30px ${rgba(base, surface === 'dark' ? 0.22 : 0.18)}`,
     '--input-focus-border': base,
     '--input-focus-shadow': `0 0 0 3px ${rgba(base, 0.18)}`,
+  };
+}
+
+/**
+ * Full variable set for a palette: surfaces, borders, text levels and accent.
+ *
+ * Writing every token (not just the accent) is what makes a theme swap read as
+ * a real theme instead of a tinted border, and it keeps `index.css` as the
+ * fallback definition rather than a competing one.
+ */
+export function buildThemeVariables({ themeId = DEFAULT_THEME_ID, customColor = DEFAULT_CUSTOM_COLOR, surface = 'dark' } = {}) {
+  const safeTheme = isThemeId(themeId) ? themeId : DEFAULT_THEME_ID;
+  const palette = paletteFor(safeTheme, surface);
+
+  const accent = safeTheme === 'custom' ? resolveAccent({ themeId: 'custom', customColor, surface }) : palette.accent;
+  const accentVars =
+    safeTheme === 'custom'
+      ? buildAccentVariables(accent, surface)
+      : {
+          '--accent': palette.accent,
+          '--accent-hover': palette.accentHover,
+          '--accent-soft': palette.accentSoft,
+          '--accent-ring': palette.accentRing,
+          '--primary': palette.accent,
+          '--primary-hover': palette.accentHover,
+          '--shadow-glow': `0 0 30px ${rgba(palette.accent, surface === 'dark' ? 0.22 : 0.18)}`,
+          '--input-focus-border': palette.accent,
+          '--input-focus-shadow': `0 0 0 3px ${palette.accentRing}`,
+        };
+
+  const accentSoft = accentVars['--accent-soft'] || palette.accentSoft;
+  const accentRing = accentVars['--accent-ring'] || palette.accentRing;
+
+  return {
+    '--canvas': palette.canvas,
+    '--surface': palette.surface,
+    '--surface-subtle': palette.surfaceSubtle,
+    '--surface-hover': palette.surfaceHover,
+    '--border': palette.border,
+    '--border-strong': palette.borderStrong,
+    '--text-primary': palette.textPrimary,
+    '--text-secondary': palette.textSecondary,
+    '--text-muted': palette.textMuted,
+    ...accentVars,
+    '--accent-soft': accentSoft,
+    '--accent-ring': accentRing,
+    '--accent-bg': accentSoft,
+    '--accent-bg-hover': accentRing,
+    '--accent-border': accentRing,
+    '--accent-text': safeTheme === 'custom' ? accentVars['--accent-text'] : palette.accentFg,
+    '--accent-fg': safeTheme === 'custom' ? accentVars['--accent-text'] : palette.accentFg,
+    '--accent-label': safeTheme === 'custom' ? accentVars['--accent'] : palette.accentLabel,
+    '--input-focus-border': palette.accent,
+    '--input-focus-shadow': `0 0 0 3px ${accentRing}`,
   };
 }
 

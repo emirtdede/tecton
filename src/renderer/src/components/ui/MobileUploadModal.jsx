@@ -69,7 +69,7 @@ const MobileUploadModal = ({ isOpen, onClose, title, description, qrCode, url, l
             <img src={qrCode} alt={t('common.qr_code', 'QR kodu')} style={{ width: '180px', height: '180px', display: 'block', objectFit: 'contain' }} />
           </div>
         </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all', padding: '0.5rem', background: 'var(--surface-subtle)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
           {linkLabel || t('common.qr_link', 'Bağlantı:')} <code style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{url}</code>
         </div>
         <button type="button" className="btn btn-danger" onClick={onClose} style={{ width: '100%', marginTop: '1.5rem', height: '42px', fontWeight: 'bold' }}>

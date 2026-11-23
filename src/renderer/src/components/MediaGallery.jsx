@@ -9,6 +9,7 @@ import CustomDatePicker from './ui/CustomDatePicker';
 import PageGuideIcon from './ui/PageGuideIcon';
 import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
 import Pagination from './ui/Pagination';
+import { LayoutGrid, List, Eye, X } from 'lucide-react';
 
 
 const MediaGallery = ({ activeProjectId, projects = [] }) => {
@@ -225,16 +226,20 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
 
   return (
     <>
-      <div className="glass-card" style={{ padding: '1.25rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('media.gallery_title', ' Şantiye Medya Galerisi')}</h2>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('media.gallery_title', 'Şantiye Medya Galerisi')}</h1>
+          <p className="card-subtitle active-project-subtitle">
+            {t('common.active_project', 'Aktif Şantiye:')} <strong>{activeProject?.name}</strong>
+          </p>
         </div>
-        <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      </header>
 
+      <div className="glass-card" style={{ padding: '1.25rem', marginTop: '1rem' }}>
         {/* Unified Search & Filters Toolbar Container */}
         <div style={{ 
-          background: 'rgba(255, 255, 255, 0.02)', 
+          background: 'var(--surface-subtle)', 
           border: '1px solid var(--glass-border)', 
           borderRadius: '12px', 
           padding: '0.75rem 1rem', 
@@ -257,7 +262,9 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
               />
               {searchQuery && (
                 <button 
+                  type="button"
                   onClick={() => setSearchQuery('')}
+                  aria-label={t('common.clear', 'Temizle')}
                   style={{
                     position: 'absolute',
                     right: '10px',
@@ -266,10 +273,12 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                     color: 'var(--text-muted)',
                     cursor: 'pointer',
                     fontSize: '1.1rem',
-                    padding: '4px'
+                    padding: '4px',
+                    display: 'flex',
+                    alignItems: 'center'
                   }}
                 >
-                  
+                  <X size={14} aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -335,65 +344,26 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
           </div>
 
           {/* View Mode Toggle Switcher */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '0.25rem', 
-            background: 'rgba(255, 255, 255, 0.05)', 
-            padding: '4px', 
-            borderRadius: '10px', 
-            border: '1px solid var(--glass-border)',
-            flexShrink: 0,
-            marginLeft: 'auto'
-          }}>
+          <div className="segmented segmented-icons" role="group" aria-label={t('media.view_mode', 'View mode')}>
             <button
               type="button"
               onClick={() => setViewMode('list')}
               title={t('media.view_list', 'Liste Görünümü')}
-              style={{
-                background: viewMode === 'list' ? 'var(--primary)' : 'transparent',
-                border: 'none',
-                color: viewMode === 'list' ? '#fff' : 'var(--text-muted)',
-                padding: '7px 10px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease-in-out'
-              }}
+              aria-label={t('media.view_list', 'Liste Görünümü')}
+              aria-pressed={viewMode === 'list'}
+              className={`segmented-item ${viewMode === 'list' ? 'active' : ''}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-              </svg>
+              <List size={16} aria-hidden="true" />
             </button>
             <button
               type="button"
               onClick={() => setViewMode('gallery')}
               title={t('media.view_grid', 'Galeri Görünümü')}
-              style={{
-                background: viewMode === 'gallery' ? 'var(--primary)' : 'transparent',
-                border: 'none',
-                color: viewMode === 'gallery' ? '#fff' : 'var(--text-muted)',
-                padding: '7px 10px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease-in-out'
-              }}
+              aria-label={t('media.view_grid', 'Galeri Görünümü')}
+              aria-pressed={viewMode === 'gallery'}
+              className={`segmented-item ${viewMode === 'gallery' ? 'active' : ''}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-              </svg>
+              <LayoutGrid size={16} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -437,13 +407,13 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                           width: '45px', 
                           height: '45px', 
                           borderRadius: '6px', 
-                          background: 'rgba(255, 255, 255, 0.03)', 
+                          background: 'var(--surface-subtle)', 
                           display: 'flex', 
                           alignItems: 'center', 
                           justifyContent: 'center', 
                           color: 'var(--text-muted)',
                           fontSize: '1.2rem',
-                          border: '1px dashed rgba(255, 255, 255, 0.08)'
+                          border: '1px dashed var(--surface-hover)'
                         }}>
                           
                         </div>
@@ -453,15 +423,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                       {item.title}
                     </td>
                     <td>
-                      <span style={{ 
-                        fontSize: '0.75rem', 
-                        fontWeight: '700', 
-                        color: item.type === 'report' ? 'var(--danger)' : 'var(--success)',
-                        background: item.type === 'report' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                        textTransform: 'uppercase'
-                      }}>
+                      <span className={`pill ${item.type === 'report' ? 'pill-danger' : 'pill-success'}`}>
                         {item.typeLabel}
                       </span>
                     </td>
@@ -472,15 +434,12 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                       {photo ? (
                         <button
                           type="button"
-                          className="btn btn-primary"
-                          style={{ width: '28px', height: '28px', padding: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 'auto' }}
+                          className="icon-btn"
                           onClick={() => setSelectedImage(photo)}
                           title={t('common.view', 'Görüntüle')}
+                          aria-label={t('common.view', 'Görüntüle')}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            <circle cx="12" cy="12" r="3" />
-                          </svg>
+                          <Eye size={15} aria-hidden="true" />
                         </button>
                       ) : (
                         <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>
@@ -520,32 +479,24 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                     width: '100%', 
                     height: '140px', 
                     borderRadius: '8px', 
-                    background: 'rgba(255, 255, 255, 0.03)', 
+                    background: 'var(--surface-subtle)', 
                     display: 'flex', 
                     flexDirection: 'column',
                     alignItems: 'center', 
                     justifyContent: 'center', 
                     color: 'var(--text-muted)',
                     fontSize: '2rem',
-                    border: '1px dashed rgba(255, 255, 255, 0.08)'
+                    border: '1px dashed var(--surface-hover)'
                   }}>
                     
                     <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--text-muted)' }}>{t('media.no_image', 'Görsel Yok')}</span>
                   </div>
                 )}
                 <div style={{ padding: '0.5rem 0.25rem 0.25rem 0.25rem' }}>
-                  <span style={{ 
-                    fontSize: '0.7rem', 
-                    fontWeight: '700', 
-                    color: item.type === 'report' ? 'var(--danger)' : 'var(--success)',
-                    background: item.type === 'report' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                    textTransform: 'uppercase'
-                  }}>
+                  <span className={`pill ${item.type === 'report' ? 'pill-danger' : 'pill-success'}`}>
                     {item.typeLabel}
                   </span>
-                  <h4 style={{ fontSize: '0.85rem', margin: '0.5rem 0 0.25rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#fff' }}>
+                  <h4 style={{ fontSize: '0.85rem', margin: '0.5rem 0 0.25rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>
                     {item.title}
                   </h4>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}> {formatDate(item.date, i18n.language)}</span>

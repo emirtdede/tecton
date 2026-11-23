@@ -136,7 +136,7 @@ export default function CloudSyncCard() {
           </span>
           <div>
             <h3 className="card-title" style={{ marginBottom: '0.15rem' }}>{t('cloud.title', 'Cloud backup')}</h3>
-            <span className={`cloud-badge ${connected ? 'on' : 'off'}`}>
+            <span className={`pill ${connected ? 'pill-success' : ''}`}>
               {connected
                 ? <><CheckCircle2 size={12} /> {t('cloud.status_connected', 'Connected')}</>
                 : t('cloud.status_disconnected', 'Not connected')}

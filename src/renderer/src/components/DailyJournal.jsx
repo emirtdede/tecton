@@ -9,6 +9,7 @@ import { logError } from '../utils/logger';
 import apiWrite from '../utils/apiWrite';
 import PageGuideIcon from './ui/PageGuideIcon';
 import Pagination from './ui/Pagination';
+import { X } from 'lucide-react';
 
 const DailyJournal = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -282,16 +283,18 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
 
   return (
     <div ref={containerRef} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', alignItems: 'start', position: 'relative' }}>
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('journal.title', 'Şantiye Günlük Jurnali')}</h1>
+          <p className="card-subtitle active-project-subtitle">
+            {t('common.active_project', 'Aktif Şantiye:')} <strong>{activeProject?.name}</strong>
+          </p>
+        </div>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      </header>
+
       {/* Main List and Form */}
       <div className="glass-card" style={{ padding: '1.25rem', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <div>
-            <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{t('journal.title', ' Şantiye Günlük Jurnali')}</h2>
-            <p className="card-subtitle active-project-subtitle" style={{ marginBottom: 0 }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
-          </div>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} />
-        </div>
-
         {/* Add/Edit Journal Form */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -344,7 +347,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', background: 'var(--surface-subtle)', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
             <div style={{ flex: 1 }}>
               <span className="form-label" style={{ marginBottom: '0.25rem' }}>{t('journal.weather', 'Hava Durumu')}</span>
               {weatherLoading ? (
@@ -402,7 +405,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
         {/* Filters & Search Bar */}
         {journals.length > 0 && (
           <div style={{ 
-            background: 'rgba(255, 255, 255, 0.02)', 
+            background: 'var(--surface-subtle)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
             padding: '0.75rem 1rem', 
@@ -442,7 +445,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                       zIndex: 10
                     }}
                     title={t('common.clear', 'Temizle')}
-                  >
+                  ><X size={14} aria-hidden="true" />
                     
                   </button>
                 )}
@@ -515,10 +518,10 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                       <button 
                         className="btn" 
                         onClick={() => handleStartEdit(j)}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)' }}
+                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-subtle)' }}
                         title={t('dashboard.edit', 'Düzenle')}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                           <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                         </svg>
@@ -530,7 +533,7 @@ const DailyJournal = ({ activeProjectId, projects = [] }) => {
                       style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       title={t('common.delete', 'Sil')}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="3 6 5 6 21 6" />
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                         <line x1="10" y1="11" x2="10" y2="17" />

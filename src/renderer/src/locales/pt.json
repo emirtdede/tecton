@@ -60,6 +60,12 @@
     "settings_ai": "Inteligência artificial"
   },
   "settings": {
+    "window_startup": "Janela e inicialização",
+    "start_with_windows": "Iniciar o Tecton quando o Windows iniciar",
+    "start_minimized": "Iniciar oculto na área de notificação",
+    "close_to_tray": "Continuar em execução na área de notificação ao fechar a janela",
+    "standard_daily_hours_hint": "Usado para converter um salário diário em valor por hora.",
+    "overtime_multiplier_hint": "Valor por hora das horas extra, como múltiplo do valor normal.",
     "theme_language": "Tema e Idioma",
     "language": "Idioma do Aplicativo",
     "theme": "Tema do Aplicativo",
@@ -69,7 +75,7 @@
     "company_name": "Nome da Empresa / Instituição",
     "company_logo": "Logotipo da Empresa",
     "backup_db": "Copiar toda a base de dados",
-    "vacuum_db": " Otimizar Sistema (Vacuum)",
+    "vacuum_db": "Otimizar Sistema (Vacuum)",
     "vacuum_desc": "Limpa blocos de dados não utilizados em segundo plano e reduz o tamanho do banco de dados, tornando o aplicativo mais rápido. (Recomendado uma vez por mês)",
     "cloud_sync_desc": "Quando você seleciona a pasta de sincronização do Google Drive, Dropbox ou OneDrive no seu computador, o aplicativo faz o backup autônomo em segundo plano ao fechar.",
     "work_types_title": "Tipos de Trabalho e Multiplicadores",
@@ -204,7 +210,7 @@
     "undo_error": "Falha ao desfazer:",
     "delete_worker_title": "Excluir Pessoal",
     "delete_worker_msg": "Tem certeza de que deseja excluir este pessoal (mover para a lixeira)? Os dados do sistema não serão excluídos permanentemente, mas removidos das listas.",
-    "bulk_timesheet": " Folha de horas em massa",
+    "bulk_timesheet": "Folha de horas em massa",
     "no_search_results": "Nenhum registo de pessoal corresponde à sua pesquisa.",
     "import_done": "Importação em massa concluída!",
     "import_undo_hint": "Se cometeu um erro, pode desfazer a operação de imediato.",
@@ -468,6 +474,7 @@
     "all_periods": "Todos"
   },
   "about": {
+    "page_subtitle": "Detalhes da aplicação, ligações do projeto e perguntas frequentes.",
     "faq": "Perguntas frequentes",
     "faq_q1": "O Tecton precisa de ligação à Internet?",
     "faq_a1": "Não. A base de dados está neste computador e todos os módulos funcionam offline. A Internet só é usada para verificar atualizações.",
@@ -568,7 +575,7 @@
     "search_journal": "Buscar em notas do diário, clima ou data..."
   },
   "media": {
-    "gallery_title": " Galeria de mídia do canteiro",
+    "gallery_title": "Galeria de mídia do canteiro",
     "no_image": "Sem imagem",
     "view_list": "Visualização em Lista",
     "view_grid": "Visualização em Galeria",
@@ -576,7 +583,7 @@
     "search_placeholder": "Pesquisar por título, tipo de conteúdo ou data..."
   },
   "subcontractor": {
-    "title": " Razões de subempreiteiros",
+    "title": "Razões de subempreiteiros",
     "name": "Nome / Razão social do subempreiteiro",
     "name_ph": "ex. Escavações Karadeniz",
     "service": "Área de serviço",
@@ -601,14 +608,14 @@
     "delete_success": "Subcontratado excluído com sucesso."
   },
   "quality": {
-    "title": " Controle de qualidade & relatórios de obra",
+    "title": "Controle de qualidade & relatórios de obra",
     "report_title": "Título do relatório / Ocorrência",
     "report_title_ph": "ex. Desvio de eixo no 3º andar / Fôrma incorreta",
     "initial_status": "Status inicial",
     "status_open": "ABERTO (Não resolvido)",
     "photo_label": "Imagem / Foto do relatório",
-    "select_pc": " Selecionar do PC",
-    "upload_mobile": " Carregar do celular (QR)",
+    "select_pc": "Selecionar do PC",
+    "upload_mobile": "Carregar do celular (QR)",
     "detailed_description": "Descrição detalhada",
     "description_ph": "Detalhes da ocorrência identificada...",
     "add_report": "Adicionar relatório",
@@ -620,7 +627,7 @@
     "delete_confirm": "Tem certeza de que deseja excluir este relatório de controle de qualidade? Esta ação não pode ser desfeita."
   },
   "journal": {
-    "title": " Diário de obra diário",
+    "title": "Diário de obra diário",
     "worker_count": "Número de funcionários ativos",
     "weather": "Estado do tempo",
     "temperature": "Temperatura",
@@ -641,7 +648,7 @@
     "weather_api_error": "O serviço de clima retornou um erro."
   },
   "materials": {
-    "title": " Nota de entrega & entrada de materiais",
+    "title": "Nota de entrega & entrada de materiais",
     "supplier": "Fornecedor",
     "supplier_ph": "ex. Akçansa Concreto S.A.",
     "material_type": "Tipo de material",
@@ -660,7 +667,7 @@
     "lan_error": "O servidor local não pôde ser iniciado:"
   },
   "production": {
-    "title": " Medições & acompanhamento de produção",
+    "title": "Medições & acompanhamento de produção",
     "item_name": "Item de produção",
     "item_name_ph": "ex. Alvenaria de tijolo",
     "no_results": "Nenhum registro de produção encontrado que corresponda aos critérios de pesquisa.",
@@ -1205,7 +1212,7 @@
     "save_error": "Alguns registros falharam. Sucesso: {{success}}, Erro: {{error}}",
     "no_workers_selected": "Selecione pelo menos um trabalhador.",
     "no_workers": "Nenhum trabalhador ativo encontrado.",
-    "already_entered": " Registrado",
+    "already_entered": "Registrado",
     "group_filter_all": "Todos os grupos",
     "day": "dia",
     "end_date": "Data de término",

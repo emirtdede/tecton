@@ -127,7 +127,7 @@ export default function AiPanel() {
               {t('ai.subtitle', 'Answers come from the built-in manual. With a local model the wording is natural; without one the matching passages are quoted directly.')}
             </p>
           </div>
-          <span className={`cloud-badge ${state?.runtime?.ready ? 'on' : 'off'}`}>
+          <span className={`pill ${state?.runtime?.ready ? 'pill-success' : ''}`}>
             {state?.runtime?.ready
               ? t('ai.active', 'Active')
               : t('ai.passive', 'Passive')}
@@ -143,7 +143,7 @@ export default function AiPanel() {
                 {t('ai.runtime_missing_desc', 'Document search already works without it. Install Ollama to let a local model write the answers instead of quoting passages.')}
               </p>
             </div>
-            <button type="button" className="btn btn-secondary" onClick={() => window.api.ai.openRuntime()}>
+            <button type="button" className="btn" onClick={() => window.api.ai.openRuntime()}>
               <ExternalLink size={14} />
               {t('ai.get_runtime', 'Open download page')}
             </button>
@@ -205,7 +205,7 @@ export default function AiPanel() {
               <div className="ai-model-main">
                 <div className="ai-model-title">
                   <strong>{model.id}</strong>
-                  {model.recommended && <span className="integration-chip">{t('ai.recommended', 'Recommended')}</span>}
+                  {model.recommended && <span className="pill pill-accent">{t('ai.recommended', 'Recommended')}</span>}
                   {model.active && (
                     <span className="integration-chip on">
                       <CheckCircle2 size={11} /> {t('ai.active', 'Active')}
@@ -352,7 +352,7 @@ export default function AiPanel() {
         {answer && (
           <div className={`ai-answer ${answer.success === false ? 'error' : ''}`}>
             <div className="ai-answer-head">
-              <span className={`cloud-badge ${answer.mode === 'model' ? 'on' : 'off'}`}>
+              <span className={`pill ${answer.mode === 'model' ? 'pill-success' : ''}`}>
                 {answer.mode === 'model' ? t('ai.mode_model', 'Local model') : t('ai.mode_knowledge', 'Manual excerpt')}
               </span>
               {answer.citations?.length > 0 && (

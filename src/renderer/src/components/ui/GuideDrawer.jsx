@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import useModalA11y from '../../hooks/useModalA11y';
+import { X } from 'lucide-react';
 
 const GuideDrawer = ({ 
   isOpen, 
@@ -77,8 +78,8 @@ const GuideDrawer = ({
             title={t('common.close', 'Kapat')}
             onClick={onClose}
             style={{
-              background: 'rgba(239, 68, 68, 0.1)',
-              color: '#ef4444',
+              background: 'var(--danger-soft)',
+              color: 'var(--danger)',
               borderRadius: '50%',
               width: '32px',
               height: '32px',
@@ -89,7 +90,7 @@ const GuideDrawer = ({
               fontSize: '1rem',
               cursor: 'pointer'
             }}
-          >
+          ><X size={16} aria-hidden="true" />
             
           </button>
         </div>

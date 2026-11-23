@@ -11,9 +11,28 @@ import { formatDate, trLower, localToday } from '../utils/formatUtils';
 import apiWrite, { apiMessage } from '../utils/apiWrite';
 import PageGuideIcon from './ui/PageGuideIcon';
 import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
+import { Eye, Pencil, Trash2, X } from 'lucide-react';
 import useTransientMessage from '../hooks/useTransientMessage';
 import MobileUploadModal from './ui/MobileUploadModal';
 import Pagination from './ui/Pagination';
+
+/**
+ * Report bodies are written by site staff and saved with `**bold**` markers for
+ * emphasis. Rendering them as plain text left the asterisks visible, so the
+ * markers are turned into real emphasis here.
+ */
+function ReportText({ text }) {
+  const parts = String(text).split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+  return (
+    <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.55, margin: 0 }}>
+      {parts.map((part, index) =>
+        part.startsWith('**') && part.endsWith('**')
+          ? <strong key={index} style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{part.slice(2, -2)}</strong>
+          : <span key={index}>{part}</span>
+      )}
+    </p>
+  );
+}
 
 const QualityReports = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -138,7 +157,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
           setFormData(prev => ({ ...prev, photo_path: data.relativePath }));
           loadPhotoPreview(data.relativePath);
           // Local showToast removed, using global ToastManager
-          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', ' Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', 'Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
           setQrModal({ isOpen: false, qrCode: '', url: '' });
           // Fire-and-forget, but a rejection must not surface as an
           // unhandled promise rejection in the renderer.
@@ -293,14 +312,18 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
 
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
-      {/* Main List and Form */}
-      <div className="glass-card" style={{ width: '100%', padding: '1rem 1.25rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('quality.title', ' Kalite Kontrol & Şantiye Tutanakları')}</h2>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('quality.title', 'Kalite Kontrol & Şantiye Tutanakları')}</h1>
+          <p className="card-subtitle active-project-subtitle">
+            {t('common.active_project', 'Aktif Şantiye:')} <strong>{activeProject?.name}</strong>
+          </p>
         </div>
-        <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '0.75rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      </header>
 
+      {/* Main List and Form */}
+      <div className="glass-card" style={{ width: '100%', marginTop: '1rem' }}>
         {/* Add Record Form */}
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.75rem', alignItems: 'flex-end' }}>
           <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 3' }}>
@@ -339,10 +362,10 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
             <label className="form-label">{t('quality.photo_label', 'Görsel / Tutanak Fotoğrafı')}</label>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <button type="button" className="btn" onClick={handleSelectLocalPhoto} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.select_pc', ' PC\'den Seç')}
+                {t('quality.select_pc', 'PC\'den Seç')}
               </button>
               <button type="button" className="btn btn-primary" onClick={handleOpenQRModal} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.upload_mobile', ' Mobilden Yükle (QR)')}
+                {t('quality.upload_mobile', 'Mobilden Yükle (QR)')}
               </button>
               {photoPreview && (
                 <div 
@@ -366,7 +389,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                       position: 'absolute', 
                       top: 0, 
                       right: 0, 
-                      background: 'rgba(239, 68, 68, 0.9)', 
+                      background: 'var(--danger)', 
                       color: 'white', 
                       border: 'none', 
                       width: '14px', 
@@ -384,7 +407,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                       setPhotoPreview(''); 
                       setFormData(prev => ({ ...prev, photo_path: '' })); 
                     }}
-                  >
+                  ><X size={10} aria-hidden="true" />
                     
                   </button>
                 </div>
@@ -410,8 +433,8 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%', gridColumn: 'span 2' }}>
-            <button type="submit" className="btn btn-primary" style={{ flex: 1, height: '42px' }}>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">
               {editingId ? t('common.save', 'Tutanak Güncelle') : t('quality.add_report', 'Tutanak Ekle')}
             </button>
             {editingId && (
@@ -429,7 +452,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                   });
                   setPhotoPreview('');
                 }}
-                style={{ height: '42px' }}
+               
               >
                 {t('common.cancel', 'Vazgeç')}
               </button>
@@ -440,7 +463,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
         {/* Filters & Search Bar */}
         {reports.length > 0 && (
           <div style={{ 
-            background: 'rgba(255, 255, 255, 0.02)', 
+            background: 'var(--surface-subtle)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
             padding: '0.75rem 1rem', 
@@ -480,7 +503,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
                       zIndex: 10
                     }}
                     title={t('common.clear', 'Temizle')}
-                  >
+                  ><X size={14} aria-hidden="true" />
                     
                   </button>
                 )}
@@ -556,83 +579,68 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
             {searchQuery ? t('quality.no_results', 'Arama kriterlerine uygun tutanak kaydı bulunamadı.') : t('empty.quality', 'Bu şantiye için henüz kalite kontrol raporu bulunmuyor.')}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginTop: '0.25rem' }}>
             {paginatedReports.map(rep => (
-              <div 
-                key={rep.id} 
-                className="glass-card" 
-                style={{ 
-                  padding: '0.5rem 0.85rem',
-                  borderLeft: rep.status === 'resolved' ? '4px solid var(--success)' : '4px solid var(--danger)'
-                }}
+              <div
+                key={rep.id}
+                className="glass-card"
+                style={{ padding: '0.875rem 1rem', gap: '0.5rem' }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                <div className="card-toolbar">
                   <div>
-                    <h3 className="card-title" style={{ fontSize: '1.05rem' }}>{rep.title}</h3>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}> {formatDate(rep.report_date, i18n.language)}</span>
+                    <h3 className="card-title" style={{ fontSize: '0.9375rem', marginBottom: '0.125rem' }}>{rep.title}</h3>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{formatDate(rep.report_date, i18n.language)}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span 
+                  <div className="card-toolbar-actions">
+                    <button
+                      type="button"
+                      className={`pill ${rep.status === 'resolved' ? 'pill-success' : 'pill-danger'}`}
                       onClick={() => handleToggleStatus(rep)}
-                      style={{ 
-                        fontSize: '0.8rem', 
-                        fontWeight: '700', 
-                        cursor: 'pointer',
-                        padding: '3px 10px', 
-                        borderRadius: '12px',
-                        background: rep.status === 'resolved' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                        color: rep.status === 'resolved' ? 'var(--success)' : 'var(--danger)',
-                        border: rep.status === 'resolved' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
-                      }}
+                      title={t('quality.toggle_status', 'Durumu değiştir')}
                     >
-                      {rep.status === 'resolved' ? ` ${t('filters.status_resolved', 'ÇÖZÜLDÜ')}` : ` ${t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}`}
-                    </span>
-                    {rep.photo_path && (
-                      <button 
-                        className="btn btn-primary" 
-                        onClick={async () => {
-                          const res = await window.api.media.readPhoto({ relativePath: rep.photo_path });
-                          if (res.success) {
-                            setLightboxImage(res.base64);
-                          }
-                        }}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        title={t('quality.open_photo', 'Tutanak Görselini Aç')}
+                      {rep.status === 'resolved'
+                        ? t('filters.status_resolved', 'ÇÖZÜLDÜ')
+                        : t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}
+                    </button>
+                    <div className="row-actions">
+                      {rep.photo_path && (
+                        <button
+                          type="button"
+                          className="icon-btn"
+                          onClick={async () => {
+                            const res = await window.api.media.readPhoto({ relativePath: rep.photo_path });
+                            if (res.success) {
+                              setLightboxImage(res.base64);
+                            }
+                          }}
+                          title={t('quality.open_photo', 'Tutanak Görselini Aç')}
+                          aria-label={t('quality.open_photo', 'Tutanak Görselini Aç')}
+                        >
+                          <Eye size={15} />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        onClick={() => handleStartEdit(rep)}
+                        title={t('dashboard.edit', 'Düzenle')}
+                        aria-label={t('dashboard.edit', 'Düzenle')}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                          <circle cx="12" cy="12" r="3" />
-                        </svg>
+                        <Pencil size={15} />
                       </button>
-                    )}
-                    <button 
-                      className="btn" 
-                      onClick={() => handleStartEdit(rep)}
-                      style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)' }}
-                      title={t('dashboard.edit', 'Düzenle')}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                    </button>
-                    <button 
-                      className="btn btn-danger" 
-                      onClick={() => handleDelete(rep.id)}
-                      style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      title={t('common.delete', 'Sil')}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </button>
+                      <button
+                        type="button"
+                        className="icon-btn is-danger"
+                        onClick={() => handleDelete(rep.id)}
+                        title={t('common.delete', 'Sil')}
+                        aria-label={t('common.delete', 'Sil')}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-                {rep.description && <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{rep.description}</p>}
-
+                {rep.description && <ReportText text={rep.description} />}
               </div>
             ))}
 
@@ -691,7 +699,7 @@ const QualityReports = ({ activeProjectId, projects = [] }) => {
           top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: 'rgba(16, 185, 129, 0.95)',
+          background: 'var(--success)',
           color: '#fff',
           padding: '0.75rem 1.5rem',
           borderRadius: '8px',

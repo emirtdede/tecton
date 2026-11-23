@@ -63,7 +63,7 @@ export default function OnboardingWizard({ open, onClose }) {
   const effective = settings || {};
   const mode = effective.theme || 'dark';
   const themeId = effective.theme_id || 'obsidian';
-  const customColor = effective.custom_theme_color || '#8b5cf6';
+  const customColor = effective.custom_theme_color || 'var(--accent)';
   const surface = useMemo(() => {
     if (mode !== 'system') return mode === 'light' ? 'light' : 'dark';
     try {
@@ -111,9 +111,9 @@ export default function OnboardingWizard({ open, onClose }) {
     const applied = applyAppearance({
       mode: map.theme || 'dark',
       themeId: map.theme_id || 'obsidian',
-      customColor: map.custom_theme_color || '#8b5cf6',
+      customColor: map.custom_theme_color || 'var(--accent)',
       appIcon: map.app_icon || 'auto',
-      iconColor: map.app_icon_color || '#8b5cf6',
+      iconColor: map.app_icon_color || 'var(--accent)',
       zoom: map.ui_zoom || 1,
       highContrast: map.a11y_high_contrast === 'true',
       enhancedFocus: map.a11y_enhanced_focus === 'true',

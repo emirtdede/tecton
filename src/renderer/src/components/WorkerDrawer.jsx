@@ -7,6 +7,7 @@ import useModalA11y from '../hooks/useModalA11y';
 import { logError } from '../utils/logger';
 import { localToday } from '../utils/formatUtils';
 import { parseTags } from '../utils/tagUtils';
+import { X } from 'lucide-react';
 
 const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
   const { t } = useTranslation();
@@ -143,7 +144,7 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
             title={t('common.close', 'Kapat')}
             onClick={onClose} 
             style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', border: 'none' }}
-          >
+          ><X size={14} aria-hidden="true" />
             
           </button>
         </div>
@@ -168,13 +169,13 @@ const WorkerDrawer = ({ isOpen, onClose, onSave, worker }) => {
               type="text" 
               name="tc_no" 
               className={`form-input ${tcError ? 'error-border' : ''}`}
-              style={tcError ? { border: '1px solid #ef4444' } : {}}
+              style={tcError ? { border: '1px solid var(--danger)' } : {}}
               value={formData.tc_no} 
               onChange={handleChange} 
               placeholder={t('worker_modal.tc_ph')}
               maxLength={11}
             />
-            {tcError && <span style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{tcError}</span>}
+            {tcError && <span style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{tcError}</span>}
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>

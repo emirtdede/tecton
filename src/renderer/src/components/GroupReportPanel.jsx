@@ -248,17 +248,17 @@ const GroupReportPanel = ({ activeProjectId, viewMode }) => {
                       {group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}
                     </td>
                     <td style={{ textAlign: 'left', padding: '0.6rem 0.15rem 0.6rem 0.35rem', whiteSpace: 'nowrap' }}>
-                      <span style={{ fontSize: '0.75rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.15rem 0.4rem', borderRadius: '12px' }}>
+                      <span style={{ fontSize: '0.75rem', background: 'var(--accent-soft)', color: 'var(--accent)', padding: '0.15rem 0.4rem', borderRadius: '12px' }}>
                         {group.worker_count}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', color: '#34d399', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'right', color: 'var(--success)', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
                       +{formatCurrency(group.period_earned, i18n.language)}
                     </td>
-                    <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'right', color: 'var(--danger)', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
                       -{formatCurrency(group.period_advance, i18n.language)}
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? 'var(--success)' : 'var(--danger)', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
                       {formatCurrency(group.absolute_balance, i18n.language)}
                     </td>
                   </tr>
@@ -272,7 +272,7 @@ const GroupReportPanel = ({ activeProjectId, viewMode }) => {
           {reportData.map(group => {
             return (
               <div key={group.group_id} style={{ 
-                background: 'rgba(255,255,255,0.02)', 
+                background: 'var(--surface-subtle)', 
                 border: '1px solid var(--glass-border)', 
                 borderRadius: '8px', 
                 padding: '1.2rem',
@@ -280,23 +280,23 @@ const GroupReportPanel = ({ activeProjectId, viewMode }) => {
                 flexDirection: 'column',
                 gap: '1rem'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--surface-subtle)', paddingBottom: '0.5rem' }}>
                   <h4 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.1rem' }}>{group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}</h4>
-                  <span style={{ fontSize: '0.8rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
+                  <span style={{ fontSize: '0.8rem', background: 'var(--accent-soft)', color: 'var(--accent)', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
                     {group.worker_count} {t('group_report.person_count')}
                   </span>
                 </div>
                 
                 <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ flex: 1, borderRight: '1px solid rgba(255,255,255,0.05)', paddingRight: '1rem' }}>
+                  <div style={{ flex: 1, borderRight: '1px solid var(--surface-subtle)', paddingRight: '1rem' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('group_report.period')}</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
                       <span>{t('group_report.earned')}</span>
-                      <span style={{ color: '#34d399' }}>+{formatCurrency(group.period_earned, i18n.language)}</span>
+                      <span style={{ color: 'var(--success)' }}>+{formatCurrency(group.period_earned, i18n.language)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                       <span>{t('group_report.advance')}</span>
-                      <span style={{ color: '#ef4444' }}>-{formatCurrency(group.period_advance, i18n.language)}</span>
+                      <span style={{ color: 'var(--danger)' }}>-{formatCurrency(group.period_advance, i18n.language)}</span>
                     </div>
                   </div>
 
@@ -305,7 +305,7 @@ const GroupReportPanel = ({ activeProjectId, viewMode }) => {
                     <div style={{ 
                       fontSize: '1.4rem', 
                       fontWeight: 'bold', 
-                      color: group.absolute_balance >= 0 ? '#34d399' : '#ef4444' 
+                      color: group.absolute_balance >= 0 ? 'var(--success)' : 'var(--danger)' 
                     }}>
                       {formatCurrency(group.absolute_balance, i18n.language)}
                     </div>

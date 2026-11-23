@@ -55,21 +55,21 @@ const ToastManager = ({ sidebarWidth = 0 }) => {
     >
       {toasts.map(toast => {
         let bg = 'rgba(15, 23, 42, 0.95)';
-        let border = '1px solid rgba(255, 255, 255, 0.1)';
+        let border = '1px solid var(--border)';
         let color = '#fff';
         let icon = 'ℹ';
 
         if (toast.type === 'success') {
-          bg = 'rgba(16, 185, 129, 0.95)'; // emerald
-          border = '1px solid rgba(16, 185, 129, 0.3)';
+          bg = 'var(--success)'; // emerald
+          border = '1px solid var(--success-border)';
           icon = '';
         } else if (toast.type === 'error') {
           bg = 'rgba(239, 68, 68, 0.95)'; // red
-          border = '1px solid rgba(239, 68, 68, 0.3)';
+          border = '1px solid var(--danger-border)';
           icon = '';
         } else if (toast.type === 'warning') {
           bg = 'rgba(245, 158, 11, 0.95)'; // amber
-          border = '1px solid rgba(245, 158, 11, 0.3)';
+          border = '1px solid var(--warning-border)';
           icon = '';
         }
 

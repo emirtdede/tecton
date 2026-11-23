@@ -12,6 +12,7 @@ import {
   DEFAULT_MODE,
   DEFAULT_THEME_ID,
   buildAccentVariables,
+  buildThemeVariables,
   describeAppearance,
   isValidHex,
   isThemeId,
@@ -131,11 +132,19 @@ export function applyAppearance(input, { prefersDark = systemPrefersDark() } = {
   root.setAttribute('data-app-icon', appearance.appIcon);
   root.setAttribute('lang', appearance.language || root.getAttribute('lang') || 'tr');
 
-  const variables = buildAccentVariables(accent, surface);
-  const css = `:root {${Object.entries(variables)
+  // Surfaces and accent together. The selector repeats `:root[data-theme=...]`
+  // so it outranks the static fallback block in index.css regardless of where
+  // this element lands in the head.
+  const variables = buildThemeVariables({
+    themeId,
+    customColor: appearance.customColor,
+    surface,
+  });
+  const body = Object.entries(variables)
     .map(([name, value]) => `${name}: ${value};`)
-    .join('')}}`;
-  ensureStyleElement().textContent = css;
+    .join('');
+  ensureStyleElement().textContent =
+    `:root, :root[data-theme='dark'], :root[data-theme='light'] {${body}}`;
 
   root.classList.toggle('a11y-high-contrast', appearance.highContrast);
   root.classList.toggle('a11y-enhanced-focus', appearance.enhancedFocus);

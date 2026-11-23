@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Github,
   Heart,
+  Info,
   Scale,
   Tag,
 } from 'lucide-react';
@@ -89,6 +90,18 @@ const AboutHelp = () => {
 
   return (
     <div className="about-page" style={{ animation: 'fadeIn 0.3s ease' }}>
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">
+            <Info size={18} aria-hidden="true" />
+            {t('nav.help', 'Hakkında & Yardım')}
+          </h1>
+          <p className="page-head-sub">
+            {t('about.page_subtitle', 'Uygulama bilgileri, proje bağlantıları ve sık sorulan sorular.')}
+          </p>
+        </div>
+      </header>
+
       <UpdateCard />
 
       <section className="glass-card about-hero">
@@ -96,7 +109,7 @@ const AboutHelp = () => {
           <img src={TectonDark} alt="" className="logo-dark" width="56" height="56" />
           <img src={TectonLight} alt="" className="logo-light" width="56" height="56" />
           <div>
-            <h1 className="about-title">Tecton</h1>
+            <h2 className="about-title">Tecton</h2>
             <p className="about-subtitle">
               {t('about.hero_subtitle', 'Construction site operating system for Windows')}
             </p>

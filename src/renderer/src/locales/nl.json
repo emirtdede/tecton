@@ -60,6 +60,12 @@
     "settings_ai": "Kunstmatige intelligentie"
   },
   "settings": {
+    "window_startup": "Venster en opstarten",
+    "start_with_windows": "Tecton starten wanneer Windows start",
+    "start_minimized": "Verborgen starten in het systeemvak",
+    "close_to_tray": "Blijven draaien in het systeemvak wanneer het venster sluit",
+    "standard_daily_hours_hint": "Wordt gebruikt om een dagloon om te rekenen naar een uurloon.",
+    "overtime_multiplier_hint": "Uurloon voor overwerk, als veelvoud van het normale tarief.",
     "theme_language": "Thema & Taal",
     "language": "App-taal",
     "theme": "App-thema",
@@ -69,7 +75,7 @@
     "company_name": "Bedrijfsnaam",
     "company_logo": "Bedrijfslogo",
     "backup_db": "Hele database back-uppen",
-    "vacuum_db": " Optimaliseer systeem",
+    "vacuum_db": "Optimaliseer systeem",
     "vacuum_desc": "Schoont data op.",
     "cloud_sync_desc": "Automatische back-up.",
     "work_types_title": "Werksoorten",
@@ -204,7 +210,7 @@
     "undo_error": "Ongedaan maken mislukt:",
     "delete_worker_title": "Personeel Verwijderen",
     "delete_worker_msg": "Weet u zeker dat u dit personeel wilt verwijderen (naar de prullenbak verplaatsen)? Systeemgegevens worden niet permanent verwijderd, maar uit lijsten verwijderd.",
-    "bulk_timesheet": " Collectieve urenstaat",
+    "bulk_timesheet": "Collectieve urenstaat",
     "no_search_results": "Geen personeelsrecords komen overeen met uw zoekopdracht.",
     "import_done": "Bulkimport voltooid!",
     "import_undo_hint": "Als u een fout heeft gemaakt, kunt u de bewerking direct ongedaan maken.",
@@ -468,6 +474,7 @@
     "all_periods": "Alle"
   },
   "about": {
+    "page_subtitle": "Applicatiedetails, projectlinks en veelgestelde vragen.",
     "faq": "Veelgestelde vragen",
     "faq_q1": "Heeft Tecton een internetverbinding nodig?",
     "faq_a1": "Nee. De database staat op deze computer en alle modules werken offline. Internet is alleen nodig om updates te controleren.",
@@ -568,7 +575,7 @@
     "search_journal": "Zoek in dagboeknotities, weer of datum..."
   },
   "media": {
-    "gallery_title": " Mediagalerij bouwplaats",
+    "gallery_title": "Mediagalerij bouwplaats",
     "no_image": "Geen afbeelding",
     "view_list": "Lijstweergave",
     "view_grid": "Galerijweergave",
@@ -576,7 +583,7 @@
     "search_placeholder": "Zoek op titel, inhoudstype of datum..."
   },
   "subcontractor": {
-    "title": " Onderaannemer registers",
+    "title": "Onderaannemer registers",
     "name": "Naam onderaannemer / Bedrijf",
     "name_ph": "bijv. Grondverzet Karadeniz",
     "service": "Diensten",
@@ -601,14 +608,14 @@
     "delete_success": "Onderaannemer succesvol verwijderd."
   },
   "quality": {
-    "title": " Kwaliteitscontrole & Platsrapportages",
+    "title": "Kwaliteitscontrole & Platsrapportages",
     "report_title": "Titel rapport / Afwijking",
     "report_title_ph": "bijv. Asverschuiving 3e verdieping / Onjuiste bekisting",
     "initial_status": "Initiële status",
     "status_open": "OPEN (Onopgelost)",
     "photo_label": "Visuele weergave / Rapportfoto",
-    "select_pc": " Selecteer van PC",
-    "upload_mobile": " Upload vanaf mobiel (QR)",
+    "select_pc": "Selecteer van PC",
+    "upload_mobile": "Upload vanaf mobiel (QR)",
     "detailed_description": "Gedetailleerde beschrijving",
     "description_ph": "Details van de geconstateerde afwijking...",
     "add_report": "Rapport toevoegen",
@@ -620,7 +627,7 @@
     "delete_confirm": "Weet u zeker dat u dit kwaliteitscontrolerapport wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
   },
   "journal": {
-    "title": " Bouwdagboek",
+    "title": "Bouwdagboek",
     "worker_count": "Aantal werkzame personeelsleden",
     "weather": "Weerstatus",
     "temperature": "Temperatuur",
@@ -641,7 +648,7 @@
     "weather_api_error": "Weerdienst heeft een fout geretourneerd."
   },
   "materials": {
-    "title": " Pakbon & Materiaalinvoer",
+    "title": "Pakbon & Materiaalinvoer",
     "supplier": "Leverancier",
     "supplier_ph": "bijv. Akçansa Beton N.V.",
     "material_type": "Materiaaltype",
@@ -660,7 +667,7 @@
     "lan_error": "Lokale server kan niet worden gestart:"
   },
   "production": {
-    "title": " Meetstaat & Productiebewaking",
+    "title": "Meetstaat & Productiebewaking",
     "item_name": "Productie-item",
     "item_name_ph": "bijv. Metselen van bakstenen muur",
     "no_results": "Er zijn geen productierecords gevonden die voldoen aan de zoekcriteria.",
@@ -1205,7 +1212,7 @@
     "save_error": "Sommige records zijn mislukt. Succes: {{success}}, Fout: {{error}}",
     "no_workers_selected": "Selecteer minimaal één werknemer.",
     "no_workers": "Geen actieve werknemers gevonden.",
-    "already_entered": " Ingevoerd",
+    "already_entered": "Ingevoerd",
     "group_filter_all": "Alle groepen",
     "day": "dag",
     "end_date": "Einddatum",

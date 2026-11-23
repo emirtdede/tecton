@@ -14,6 +14,7 @@ import { LEDGER_PAYMENT, LEDGER_PROGRESS, isLedgerPayment, isLedgerProgress, nor
 
 import { toAsciiFilename } from '../utils/pdfUtils';
 import PageGuideIcon from './ui/PageGuideIcon';
+import { ArrowLeft } from 'lucide-react';
 import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
 import Pagination from './ui/Pagination';
 import pdfStyles from '../utils/pdfStyles';
@@ -326,11 +327,11 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
             </div>
             <div style="${pdfStyles.summaryBox}">
               <div style="${pdfStyles.metaLine}">${t('subcontractor_profile.period_paid', 'Dönem Ödemesi')}</div>
-              <div style="font-size: 14px; font-weight: bold; color: #dc2626; font-family: inherit;">-${formatCurrencySafe(reportDonemOdeme, i18n.language)}</div>
+              <div style="font-size: 14px; font-weight: bold; color: var(--danger); font-family: inherit;">-${formatCurrencySafe(reportDonemOdeme, i18n.language)}</div>
             </div>
             <div style="${pdfStyles.summaryBox}">
               <div style="${pdfStyles.metaLine}">${t('subcontractor_profile.new_balance', 'Yeni Bakiye')}</div>
-              <div style="font-size: 14px; font-weight: bold; color: ${reportYeniBakiye >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">${formatCurrencySafe(reportYeniBakiye, i18n.language)}</div>
+              <div style="font-size: 14px; font-weight: bold; color: ${reportYeniBakiye >= 0 ? '#16a34a' : 'var(--danger)'}; font-family: inherit;">${formatCurrencySafe(reportYeniBakiye, i18n.language)}</div>
             </div>
           </div>
         `;
@@ -352,7 +353,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
             ? t('subcontractor_profile.earned_badge', 'Hakediş') 
             : t('subcontractor_profile.payment_badge', 'Ödeme');
           const amountSign = isHakedis ? '+' : '-';
-          const amountColor = isHakedis ? '#16a34a' : '#dc2626';
+          const amountColor = isHakedis ? '#16a34a' : 'var(--danger)';
           return `
             <tr style="${pdfStyles.tableRow}">
               <td style="${pdfStyles.tableCell}">${escapeHtml(formatDate(item.trans_date, i18n.language))}</td>
@@ -482,17 +483,20 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
   const paginatedTransactions = itemsToPaginate.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="worker-profile" style={{ fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
+    <div className="worker-profile" style={{ fontFamily: 'inherit' }}>
       <div style={{ padding: '0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-          <button className="btn" style={{ marginBottom: 0, padding: '0.5rem 1rem' }} onClick={onBack}>← {t('common.back', 'Geri')}</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <button className="btn" style={{ marginBottom: 0 }} onClick={onBack}>
+            <ArrowLeft size={15} aria-hidden="true" />
+            <span>{t('common.back', 'Geri')}</span>
+          </button>
           <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         
-        <div className="profile-grid" style={{ marginTop: '0.5rem', gridTemplateColumns: '350px 1fr' }}>
+        <div className="profile-grid">
           {/* Sol Kolon - Bilgi ve Formlar */}
-          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '1rem', gap: '0.75rem', width: '350px', height: 'calc(100vh - 150px)', boxSizing: 'border-box' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2rem', fontWeight: 'bold', margin: '0 auto', color: '#fff' }}>
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '1rem', gap: '0.75rem', boxSizing: 'border-box' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'var(--accent-soft)', border: '1px solid var(--border)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2rem', fontWeight: 'bold', margin: '0 auto', color: 'var(--text-primary)' }}>
               {subcontractor.name.charAt(0)}
             </div>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', marginTop: '0.5rem' }}>{subcontractor.name}</h2>
@@ -500,7 +504,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
             
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', margin: '0.25rem 0 0.5rem 0' }}>
               {projectName && (
-                <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                <span className="pill pill-accent">
                    {projectName}
                 </span>
               )}
@@ -508,7 +512,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                 const expiryDate = subcontractor.isg_expiry_date;
                 if (!expiryDate) {
                   return (
-                    <span style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                    <span className="pill">
                        {t('isg.badge_undefined', 'İSG Tanımsız')}
                     </span>
                   );
@@ -516,40 +520,40 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                 const today = new Date(); today.setHours(0, 0, 0, 0);
                 const expiry = new Date(expiryDate); expiry.setHours(0, 0, 0, 0);
                 const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-                let badgeBg, badgeColor, badgeText, badgeIcon;
+                let badgeClass, badgeText;
                 if (diffDays < 0) {
-                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = ''; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                  badgeClass = 'pill pill-danger'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
                 } else if (diffDays <= 30) {
-                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = ''; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                  badgeClass = 'pill pill-warning'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
                 } else {
-                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = ''; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                  badgeClass = 'pill pill-success'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
                 }
                 return (
-                  <span style={{ fontSize: '0.8rem', background: badgeBg, color: badgeColor, padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                    {badgeIcon} {badgeText}
+                  <span className={badgeClass}>
+                    {badgeText}
                   </span>
                 );
               })()}
               {parsedTags.map((tag, idx) => (
-                <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                <span key={idx} className="pill pill-success">
                    {tag}
                 </span>
               ))}
             </div>
 
             {/* Ozet Kartlari */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', marginTop: '2.5rem' }}>
-              <div style={{ background: 'var(--success-bg-light)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--success-border)' }}>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.total_earned', 'Toplam Hakediş')}</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--success-text)', marginTop: '0.25rem' }}>{formatCurrency(totalHakedis, i18n.language)}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', marginTop: '2rem' }}>
+              <div className="stat-tile">
+                <div className="stat-tile-label">{t('subcontractor_profile.total_earned', 'Toplam Hakediş')}</div>
+                <div className="stat-tile-value" style={{ color: 'var(--success-text)' }}>{formatCurrency(totalHakedis, i18n.language)}</div>
               </div>
-              <div style={{ background: 'var(--danger-bg-light)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--danger-border)' }}>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.total_paid', 'Yapılan Ödemeler')}</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--danger-text)', marginTop: '0.25rem' }}>{formatCurrency(totalOdeme, i18n.language)}</div>
+              <div className="stat-tile">
+                <div className="stat-tile-label">{t('subcontractor_profile.total_paid', 'Yapılan Ödemeler')}</div>
+                <div className="stat-tile-value" style={{ color: 'var(--danger-text)' }}>{formatCurrency(totalOdeme, i18n.language)}</div>
               </div>
-              <div style={{ background: 'var(--glass-bg)', padding: '1.5rem 1rem', borderRadius: '8px', border: '1px solid var(--glass-border)', boxShadow: 'var(--card-shadow)' }}>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{t('subcontractor_profile.remaining_balance', 'Kalan Bakiye (Net Cari)')}</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: netBalance >= 0 ? 'var(--success-text)' : 'var(--danger-text)' }}>
+              <div className="stat-tile">
+                <div className="stat-tile-label">{t('subcontractor_profile.remaining_balance', 'Kalan Bakiye (Net Cari)')}</div>
+                <div className="stat-tile-value" style={{ fontSize: '1.35rem', color: netBalance >= 0 ? 'var(--success-text)' : 'var(--danger-text)' }}>
                   {formatCurrency(netBalance, i18n.language)}
                 </div>
               </div>
@@ -558,29 +562,24 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
           </div>
 
           {/* Sag Kolon - Tabs ve Tablolar */}
-          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)' }}>
-            <div className="tabs" style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.25rem' }}>
-              <button 
-                className={`tab-btn ${activeTab === 'hakedis' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('hakedis')}
-                style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'hakedis' ? '2px solid var(--primary)' : '2px solid transparent', padding: '0.5rem 1rem', color: activeTab === 'hakedis' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: activeTab === 'hakedis' ? 'bold' : 'normal', cursor: 'pointer' }}
-              >
-                {t('subcontractor_profile.tab_earned', 'Hakedişler')}
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'odeme' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('odeme')}
-                style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'odeme' ? '2px solid var(--primary)' : '2px solid transparent', padding: '0.5rem 1rem', color: activeTab === 'odeme' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: activeTab === 'odeme' ? 'bold' : 'normal', cursor: 'pointer' }}
-              >
-                {t('subcontractor_profile.tab_payments', 'Ödemeler / Avanslar')}
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'rapor' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('rapor')}
-                style={{ background: 'transparent', border: 'none', borderBottom: activeTab === 'rapor' ? '2px solid var(--primary)' : '2px solid transparent', padding: '0.5rem 1rem', color: activeTab === 'rapor' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: activeTab === 'rapor' ? 'bold' : 'normal', cursor: 'pointer' }}
-              >
-                {t('subcontractor_profile.tab_report', 'Rapor (Cari Ekstre)')}
-              </button>
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="segmented segmented-tabs" role="tablist" style={{ marginBottom: '1rem' }}>
+              {[
+                ['hakedis', t('subcontractor_profile.tab_earned', 'Hakedişler')],
+                ['odeme', t('subcontractor_profile.tab_payments', 'Ödemeler / Avanslar')],
+                ['rapor', t('subcontractor_profile.tab_report', 'Rapor (Cari Ekstre)')],
+              ].map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === id}
+                  className={`segmented-item ${activeTab === id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(id)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
 
             {/* Tarih Filtresi */}
@@ -599,19 +598,19 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
             {activeTab === 'rapor' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem' }}>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: 1, minWidth: '120px', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                  <div style={{ flex: 1, minWidth: '120px', background: 'var(--surface-subtle)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.prev_balance', 'Devreden Bakiye')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{formatCurrencySafe(reportDevreden, i18n.language)}</div>
                   </div>
-                  <div style={{ flex: 1, minWidth: '120px', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                  <div style={{ flex: 1, minWidth: '120px', background: 'var(--surface-subtle)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.period_earned', 'Dönem Hakedişi')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--success-text)' }}>+{formatCurrencySafe(reportDonemHakedis, i18n.language)}</div>
                   </div>
-                  <div style={{ flex: 1, minWidth: '120px', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                  <div style={{ flex: 1, minWidth: '120px', background: 'var(--surface-subtle)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.period_paid', 'Dönem Ödemesi')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--danger-text)' }}>-{formatCurrencySafe(reportDonemOdeme, i18n.language)}</div>
                   </div>
-                  <div style={{ flex: 1, minWidth: '120px', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                  <div style={{ flex: 1, minWidth: '120px', background: 'var(--surface-subtle)', padding: '10px', borderRadius: '8px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('subcontractor_profile.new_balance', 'Yeni Bakiye')}</div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: reportYeniBakiye >= 0 ? 'var(--success-text)' : 'var(--danger-text)' }}>{formatCurrencySafe(reportYeniBakiye, i18n.language)}</div>
                   </div>
@@ -663,7 +662,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
               </div>
             ) : activeTab === 'hakedis' ? (
               <>
-                <form onSubmit={handleSaveHakedis} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                <form onSubmit={handleSaveHakedis} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem', background: 'var(--surface-subtle)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label">{t('common.description', 'Açıklama / İş Detayı')}</label>
                     <input type="text" name="description" className="form-input" placeholder={t('subcontractor_profile.desc_earned_ph', 'Örn: 3 Gün Kepçe Çalışması')} value={hakedisData.description} onChange={handleHakedisChange} required />
@@ -677,13 +676,13 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                       <label className="form-label">{t('common.date', 'Tarih')}</label>
                       <CustomDatePicker name="trans_date" className="form-input" value={hakedisData.trans_date} onChange={handleHakedisChange} required />
                     </div>
-                    <button type="submit" className="btn btn-primary" style={{ height: '42px', flex: 1 }}>{t('subcontractor_profile.add_earned', 'Hakediş Ekle')}</button>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>{t('subcontractor_profile.add_earned', 'Hakediş Ekle')}</button>
                   </div>
                 </form>
               </>
             ) : (
               <>
-                <form onSubmit={handleSaveOdeme} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                <form onSubmit={handleSaveOdeme} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem', background: 'var(--surface-subtle)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label">{t('common.description', 'Açıklama')}</label>
                     <input type="text" name="description" className="form-input" placeholder={t('subcontractor_profile.desc_payment_ph', 'Örn: Nakit Avans / Banka Transferi')} value={odemeData.description} onChange={handleOdemeChange} required />
@@ -697,7 +696,7 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                       <label className="form-label">{t('common.date', 'Tarih')}</label>
                       <CustomDatePicker name="trans_date" className="form-input" value={odemeData.trans_date} onChange={handleOdemeChange} required />
                     </div>
-                    <button type="submit" className="btn btn-danger" style={{ height: '42px', flex: 1 }}>{t('subcontractor_profile.add_payment', 'Ödeme Ekle')}</button>
+                    <button type="submit" className="btn btn-danger" style={{ flex: 1 }}>{t('subcontractor_profile.add_payment', 'Ödeme Ekle')}</button>
                   </div>
                 </form>
               </>
@@ -713,17 +712,13 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                 paginatedTransactions.map(tr => (
                   <div key={tr.id} style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)',
+                    background: 'var(--surface-subtle)', border: '1px solid var(--glass-border)',
                     padding: '1rem', borderRadius: '8px'
                   }}>
                     <div>
                       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0.25rem' }}>
                         <span style={{ fontWeight: 'bold' }}>{formatDate(tr.trans_date, i18n.language)}</span>
-                        <span style={{
-                          fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px',
-                          background: isLedgerProgress(tr.type) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                          color: isLedgerProgress(tr.type) ? 'var(--success-text)' : 'var(--danger-text)'
-                        }}>
+                        <span className={`pill ${isLedgerProgress(tr.type) ? 'pill-success' : 'pill-danger'}`}>
                           {isLedgerProgress(tr.type) ? t('subcontractor_profile.earned_badge', 'Hakediş') : t('subcontractor_profile.payment_badge', 'Ödeme')}
                         </span>
                       </div>
@@ -735,7 +730,8 @@ const SubcontractorProfile = ({ subcontractor, onBack }) => {
                       </div>
                       <button 
                         onClick={() => handleDeleteTransaction(tr)} 
-                        style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline', marginTop: '0.25rem' }}
+                        className="link-btn is-quiet"
+                        style={{ marginTop: '0.25rem' }}
                       >
                         {t('common.delete', 'Sil')}
                       </button>

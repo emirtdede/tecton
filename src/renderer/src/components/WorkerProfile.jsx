@@ -14,6 +14,7 @@ import { WORKER_ADVANCE } from '../utils/transactionTypes';
 
 import { toAsciiFilename } from '../utils/pdfUtils';
 import PageGuideIcon from './ui/PageGuideIcon';
+import { ArrowLeft, X } from 'lucide-react';
 import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
 import Pagination from './ui/Pagination';
 import pdfStyles from '../utils/pdfStyles';
@@ -672,11 +673,11 @@ const WorkerProfile = ({ worker, onBack }) => {
             </div>
             <div style="${pdfStyles.summaryBox}">
               <div style="${pdfStyles.metaLine}">${t('worker.periodAdvance', 'Dönem Avansı')}</div>
-              <div style="font-size: 14px; font-weight: bold; color: #dc2626; font-family: inherit;">-${formatCurrencySafe(cReport.donemAvans, i18n.language)}</div>
+              <div style="font-size: 14px; font-weight: bold; color: var(--danger); font-family: inherit;">-${formatCurrencySafe(cReport.donemAvans, i18n.language)}</div>
             </div>
             <div style="${pdfStyles.summaryBox}">
               <div style="${pdfStyles.metaLine}">${t('worker.netBalance', 'Net Bakiye')}</div>
-              <div style="font-size: 14px; font-weight: bold; color: ${cReport.yeniBakiye >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">${formatCurrencySafe(cReport.yeniBakiye, i18n.language)}</div>
+              <div style="font-size: 14px; font-weight: bold; color: ${cReport.yeniBakiye >= 0 ? '#16a34a' : 'var(--danger)'}; font-family: inherit;">${formatCurrencySafe(cReport.yeniBakiye, i18n.language)}</div>
             </div>
           </div>
         `;
@@ -698,7 +699,7 @@ const WorkerProfile = ({ worker, onBack }) => {
               ? t('worker_profile.filter.type_timesheet', 'Puantaj') 
               : t('worker.advanceBadge', 'Avans');
           const amountSign = item.isIncome ? '+' : '-';
-          const amountColor = item.isIncome ? '#16a34a' : '#dc2626';
+          const amountColor = item.isIncome ? '#16a34a' : 'var(--danger)';
           return `
             <tr style="${pdfStyles.tableRow}">
               <td style="${pdfStyles.tableCell}">${escapeHtml(formatDate(item.date, i18n.language))}</td>
@@ -766,32 +767,35 @@ const WorkerProfile = ({ worker, onBack }) => {
   const parsedTags = parseTags(worker.tags);
 
   return (
-    <div className="worker-profile" style={{ fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
+    <div className="worker-profile" style={{ fontFamily: 'inherit' }}>
       <div style={{ padding: '0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-          <button className="btn" style={{ marginBottom: 0, padding: '0.5rem 1rem' }} onClick={onBack}>← {t('worker_profile.back')}</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <button className="btn" style={{ marginBottom: 0 }} onClick={onBack}>
+            <ArrowLeft size={15} aria-hidden="true" />
+            <span>{t('worker_profile.back')}</span>
+          </button>
           <PageGuideIcon onClick={() => setHelpOpen(true)} />
         </div>
         
-        <div className="profile-grid" style={{ marginTop: '0.5rem' }}>
+        <div className="profile-grid">
           <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '1rem', gap: '0.75rem' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem', color: '#fff' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'var(--surface-subtle)', border: '1px solid var(--border)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--text-primary)' }}>
               {worker.full_name.charAt(0)}
             </div>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{worker.full_name}</h2>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', margin: '0.5rem 0 1rem 0' }}>
               {projectName && (
-                <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                <span className="pill pill-accent">
                    {projectName}
                 </span>
               )}
               {groupName && (
-                <span style={{ fontSize: '0.8rem', background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                <span className="pill">
                    {groupName}
                 </span>
               )}
               {parsedTags.map((tag, idx) => (
-                <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
+                <span key={idx} className="pill pill-success">
                    {tag}
                 </span>
               ))}
@@ -801,7 +805,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                   return (
                     <span 
                       onClick={() => { setIsgForm({ isg_start_date: worker.isg_start_date || '', isg_bitis_tarihi: '' }); setIsgModalOpen(true); }}
-                      style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
+                      className="pill" style={{ cursor: 'pointer' }}
                       title={t('isg.update_btn', 'İSG Güncelle')}
                     >
                        {t('isg.badge_undefined', 'İSG Tanımsız')}
@@ -813,21 +817,22 @@ const WorkerProfile = ({ worker, onBack }) => {
                 const expiry = new Date(expiryDate);
                 expiry.setHours(0, 0, 0, 0);
                 const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-                let badgeBg, badgeColor, badgeText, badgeIcon;
+                let badgeClass, badgeText;
                 if (diffDays < 0) {
-                  badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = ''; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                  badgeClass = 'pill pill-danger'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
                 } else if (diffDays <= 30) {
-                  badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = ''; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                  badgeClass = 'pill pill-warning'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
                 } else {
-                  badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = ''; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                  badgeClass = 'pill pill-success'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
                 }
                 return (
-                  <span 
+                  <span
                     onClick={() => { setIsgForm({ isg_start_date: worker.isg_start_date || '', isg_bitis_tarihi: worker.isg_bitis_tarihi || '' }); setIsgModalOpen(true); }}
-                    style={{ fontSize: '0.8rem', background: badgeBg, color: badgeColor, padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
+                    className={badgeClass}
+                    style={{ cursor: 'pointer' }}
                     title={t('isg.update_btn', 'İSG Güncelle')}
                   >
-                    {badgeIcon} {badgeText}
+                    {badgeText}
                   </span>
                 );
               })()}
@@ -835,12 +840,12 @@ const WorkerProfile = ({ worker, onBack }) => {
             <p className="card-subtitle" style={{ marginBottom: '1rem' }}>{worker.tc_no ? `${t('worker.idLabel', 'ID')}: ${worker.tc_no}` : ''} | {worker.phone}</p>
             
             <h3 className="card-subtitle">{t('worker_profile.current_balance')}</h3>
-            <div style={{ 
-              fontSize: '3rem', 
-              fontWeight: '700', 
+            <div style={{
+              fontSize: '2.25rem',
+              fontWeight: '700',
+              letterSpacing: '-0.02em',
               marginTop: '0.5rem',
-              color: isPositive ? 'var(--success-text)' : 'var(--danger-text)',
-              textShadow: isPositive ? 'var(--success-shadow)' : 'var(--danger-shadow)'
+              color: isPositive ? 'var(--success-text)' : 'var(--danger-text)'
             }}>
               {formatCurrency(balance, i18n.language)}
             </div>
@@ -848,31 +853,24 @@ const WorkerProfile = ({ worker, onBack }) => {
           </div>
 
           <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)' }}>
-              <div 
-                style={{ flex: 1, padding: '1rem', textAlign: 'center', cursor: 'pointer', fontWeight: '500', background: activeTab === 'puantaj' ? 'rgba(139, 92, 246, 0.2)' : 'transparent' }}
-                onClick={() => setActiveTab('puantaj')}
-              >
-                {t('worker_profile.timesheet')}
-              </div>
-              <div 
-                style={{ flex: 1, padding: '1rem', textAlign: 'center', cursor: 'pointer', fontWeight: '500', background: activeTab === 'avans' ? 'rgba(239, 68, 68, 0.2)' : 'transparent' }}
-                onClick={() => setActiveTab('avans')}
-              >
-                {t('worker_profile.advance')}
-              </div>
-              <div 
-                style={{ flex: 1, padding: '1rem', textAlign: 'center', cursor: 'pointer', fontWeight: '500', background: activeTab === 'rapor' ? 'rgba(56, 189, 248, 0.2)' : 'transparent' }}
-                onClick={() => setActiveTab('rapor')}
-              >
-                {t('worker_profile.report')}
-              </div>
-              <div 
-                style={{ flex: 1, padding: '1rem', textAlign: 'center', cursor: 'pointer', fontWeight: '500', background: activeTab === 'izinler' ? 'rgba(245, 158, 11, 0.2)' : 'transparent' }}
-                onClick={() => setActiveTab('izinler')}
-              >
-                {t('worker_profile.leaves', 'İzinler')}
-              </div>
+            <div className="segmented segmented-tabs" role="tablist">
+              {[
+                ['puantaj', t('worker_profile.timesheet')],
+                ['avans', t('worker_profile.advance')],
+                ['rapor', t('worker_profile.report')],
+                ['izinler', t('worker_profile.leaves', 'İzinler')],
+              ].map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === id}
+                  className={`segmented-item ${activeTab === id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(id)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
 
             <div style={{ padding: '1.5rem' }}>
@@ -953,7 +951,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                     <label className="form-label">{t('worker_profile.leave_form.description', 'Açıklama / Sebep')}</label>
                     <input type="text" name="description" className="form-input" value={leaveData.description} onChange={handleLeaveChange} />
                   </div>
-                  <button type="submit" className="btn btn-primary" style={{ width: '100%', background: '#f59e0b', color: '#fff', border: 'none' }}>
+                  <button type="submit" className="btn btn-primary" style={{ width: '100%', background: 'var(--warning)', color: '#fff', border: 'none' }}>
                     {t('worker_profile.leave_form.add_btn', 'İzin Ekle')}
                   </button>
                 </form>
@@ -992,7 +990,7 @@ const WorkerProfile = ({ worker, onBack }) => {
                               zIndex: 10
                             }}
                             title={t('common.clear', 'Temizle')}
-                          >
+                          ><X size={14} aria-hidden="true" />
                             
                           </button>
                         )}
@@ -1068,35 +1066,24 @@ const WorkerProfile = ({ worker, onBack }) => {
               <CustomDatePicker className="form-input" value={filterEndDate} onChange={e => handleEndDateChange(e.target.value)} />
             </div>
           </div>
-          <div ref={tabsRef} style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', marginBottom: '1.5rem', gap: '1rem', paddingBottom: '0.5rem' }}>
-            <h3 
-              className="card-title" 
-              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'puantaj' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => handleBottomTabClick('puantaj')}
-            >
-              {t('worker_profile.timesheet_history')}
-            </h3>
-            <h3 
-              className="card-title" 
-              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'avans' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => handleBottomTabClick('avans')}
-            >
-              {t('worker_profile.advance_history')}
-            </h3>
-            <h3 
-              className="card-title" 
-              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'rapor' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => handleBottomTabClick('rapor')}
-            >
-              {t('worker_profile.monthly_report_view')}
-            </h3>
-            <h3 
-              className="card-title" 
-              style={{ cursor: 'pointer', transition: 'color 0.3s ease', color: activeTab === 'izinler' ? 'var(--text-main)' : 'var(--text-muted)' }}
-              onClick={() => handleBottomTabClick('izinler')}
-            >
-              {t('worker_profile.leave_history', 'İzin Geçmişi')}
-            </h3>
+          <div ref={tabsRef} className="segmented" role="tablist" style={{ marginBottom: '1.25rem' }}>
+            {[
+              ['puantaj', t('worker_profile.timesheet_history')],
+              ['avans', t('worker_profile.advance_history')],
+              ['rapor', t('worker_profile.monthly_report_view')],
+              ['izinler', t('worker_profile.leave_history', 'İzin Geçmişi')],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === id}
+                className={`segmented-item ${activeTab === id ? 'active' : ''}`}
+                onClick={() => handleBottomTabClick(id)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
           
           <div key={activeTab} style={{ animation: 'fadeIn 0.3s ease-out' }}>
@@ -1118,11 +1105,11 @@ const WorkerProfile = ({ worker, onBack }) => {
                   let leaveBadge = null;
                   if (overlap) {
                     const lType = overlap.type === 'Ücretli' ? t('worker_profile.leave_types.paid', 'Ücretli İzin') : overlap.type === 'Ücretsiz' ? t('worker_profile.leave_types.unpaid', 'Ücretsiz İzin') : t('worker_profile.leave_types.medical', 'Raporlu');
-                    leaveBadge = <span style={{ marginLeft: '10px', fontSize: '0.7rem', color: '#d97706', border: '1px solid #d97706', padding: '2px 6px', borderRadius: '4px' }}>{lType}</span>;
+                    leaveBadge = <span style={{ marginLeft: '10px', fontSize: '0.7rem', color: 'var(--warning)', border: '1px solid var(--warning)', padding: '2px 6px', borderRadius: '4px' }}>{lType}</span>;
                   }
 
                   return (
-                    <div key={ts.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={ts.id} style={{ background: 'var(--surface-subtle)', border: '1px solid var(--glass-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <div style={{ fontWeight: '600' }}>{formatDate(ts.work_date, i18n.language)} <span className="wage-badge" style={{ marginLeft: '10px' }}>{typeName}</span>{leaveBadge}</div>
                         <div className="card-subtitle" style={{ marginTop: '0.5rem' }}>
@@ -1154,7 +1141,8 @@ const WorkerProfile = ({ worker, onBack }) => {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontWeight: 'bold', color: 'var(--danger-text)', fontSize: '1.1rem' }}>-{formatCurrency(tr.amount, i18n.language)}</div>
-                      <button onClick={() => handleDeleteTransaction(tr.id)} style={{ background: 'transparent', border: 'none', color: 'var(--danger-text)', cursor: 'pointer', fontSize: '0.8rem', marginTop: '0.5rem', textDecoration: 'underline' }}>{t('worker_profile.delete_cancel')}</button>
+                      <button onClick={() => handleDeleteTransaction(tr.id)} className="link-btn"
+                        style={{ marginTop: '0.5rem' }}>{t('worker_profile.delete_cancel')}</button>
                     </div>
                   </div>
                 ))}
@@ -1198,18 +1186,18 @@ const WorkerProfile = ({ worker, onBack }) => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {fLeaves.slice((pageIzin - 1) * ITEMS_PER_PAGE, pageIzin * ITEMS_PER_PAGE).map(l => (
-                  <div key={l.id} style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={l.id} style={{ background: 'var(--warning-soft)', border: '1px solid var(--warning-border)', padding: '1rem', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ fontWeight: '600' }}>
                         {formatDate(l.start_date, i18n.language)} - {formatDate(l.end_date, i18n.language)} 
-                        <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: '#d97706', border: '1px solid #d97706', padding: '2px 6px', borderRadius: '4px' }}>
+                        <span style={{ marginLeft: '10px', fontSize: '0.8rem', color: 'var(--warning)', border: '1px solid var(--warning)', padding: '2px 6px', borderRadius: '4px' }}>
                           {l.type === 'Ücretli' ? t('worker_profile.leave_types.paid', 'Ücretli İzin') : l.type === 'Ücretsiz' ? t('worker_profile.leave_types.unpaid', 'Ücretsiz İzin') : t('worker_profile.leave_types.medical', 'Raporlu')}
                         </span>
                       </div>
                       <div className="card-subtitle" style={{ marginTop: '0.5rem' }}>{l.description || '-'}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <button onClick={() => handleDeleteLeave(l.id)} style={{ background: 'transparent', border: 'none', color: 'var(--danger-text)', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}>{t('common.delete')}</button>
+                      <button onClick={() => handleDeleteLeave(l.id)} className="link-btn">{t('common.delete')}</button>
                     </div>
                   </div>
                 ))}

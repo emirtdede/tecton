@@ -60,6 +60,12 @@
     "settings_ai": "Umělá inteligence"
   },
   "settings": {
+    "window_startup": "Okno a spouštění",
+    "start_with_windows": "Spouštět Tecton při startu Windows",
+    "start_minimized": "Spouštět skrytě v oznamovací oblasti",
+    "close_to_tray": "Po zavření okna pokračovat v oznamovací oblasti",
+    "standard_daily_hours_hint": "Slouží k převodu denní mzdy na hodinovou sazbu.",
+    "overtime_multiplier_hint": "Hodinová sazba za přesčasy jako násobek běžné sazby.",
     "theme_language": "Motiv a jazyk",
     "language": "Jazyk aplikace",
     "theme": "Motiv",
@@ -69,7 +75,7 @@
     "company_name": "Název společnosti",
     "company_logo": "Logo společnosti",
     "backup_db": "Zálohovat celou databázi",
-    "vacuum_db": " Optimalizovat systém",
+    "vacuum_db": "Optimalizovat systém",
     "vacuum_desc": "Vyčistí data.",
     "cloud_sync_desc": "Automatická záloha.",
     "work_types_title": "Typy práce",
@@ -204,7 +210,7 @@
     "undo_error": "Vrátit zpět se nezdařilo:",
     "delete_worker_title": "Odstranit personál",
     "delete_worker_msg": "Opravdu chcete tento personál odstranit (přesunout do koše)? Systémová data nebudou trvale smazána, ale budou odstraněna ze seznamů.",
-    "bulk_timesheet": " Hromadný výkaz",
+    "bulk_timesheet": "Hromadný výkaz",
     "no_search_results": "Žádné záznamy zaměstnanců neodpovídají hledání.",
     "import_done": "Hromadný import dokončen!",
     "import_undo_hint": "Pokud jste udělali chybu, můžete operaci ihned vrátit.",
@@ -468,6 +474,7 @@
     "all_periods": "Vše"
   },
   "about": {
+    "page_subtitle": "Podrobnosti aplikace, odkazy na projekt a časté dotazy.",
     "faq": "Časté otázky",
     "faq_q1": "Potřebuje Tecton připojení k internetu?",
     "faq_a1": "Ne. Databáze je na tomto počítači a všechny moduly fungují offline. Internet slouží jen ke kontrole aktualizací.",
@@ -568,7 +575,7 @@
     "search_journal": "Hledat v poznámkách deníku, počasí nebo datu..."
   },
   "media": {
-    "gallery_title": " Mediální galerie staveniště",
+    "gallery_title": "Mediální galerie staveniště",
     "no_image": "Žádný obrázek",
     "view_list": "Zobrazení seznamu",
     "view_grid": "Zobrazení galerie",
@@ -576,7 +583,7 @@
     "search_placeholder": "Hledat podle názvu, typu obsahu nebo data..."
   },
   "subcontractor": {
-    "title": " Knihy subdodavatelů",
+    "title": "Knihy subdodavatelů",
     "name": "Název / Titul subdodavatele",
     "name_ph": "např. Výkopy Karadeniz",
     "service": "Oblast služeb",
@@ -601,14 +608,14 @@
     "delete_success": "Subdodavatel byl úspěšně smazán."
   },
   "quality": {
-    "title": " Kontrola kvality a zprávy ze staveniště",
+    "title": "Kontrola kvality a zprávy ze staveniště",
     "report_title": "Název zprávy / Problému",
     "report_title_ph": "např. Posun osy ve 3. patře / Nesprávná montáž formy",
     "initial_status": "Počáteční stav",
     "status_open": "OTEVŘENO (Nevyřešeno)",
     "photo_label": "Vizuál / Foto zprávy",
-    "select_pc": " Vybrat z PC",
-    "upload_mobile": " Nahrát z mobilu (QR)",
+    "select_pc": "Vybrat z PC",
+    "upload_mobile": "Nahrát z mobilu (QR)",
     "detailed_description": "Podrobný popis",
     "description_ph": "Podrobnosti o zjištěném problému...",
     "add_report": "Přidat zprávu",
@@ -620,7 +627,7 @@
     "delete_confirm": "Opravdu chcete smazat tuto zprávu o kontrole kvality? Tuto akci nelze vrátit zpět."
   },
   "journal": {
-    "title": " Stavební deník",
+    "title": "Stavební deník",
     "worker_count": "Počet pracujících zaměstnanců",
     "weather": "Stav počasí",
     "temperature": "Teplota",
@@ -641,7 +648,7 @@
     "weather_api_error": "Služba počasí vrátila chybu."
   },
   "materials": {
-    "title": " Dodací list a zadání materiálu",
+    "title": "Dodací list a zadání materiálu",
     "supplier": "Dodavatelská firma",
     "supplier_ph": "např. Akçansa Beton",
     "material_type": "Typ materiálu",
@@ -660,7 +667,7 @@
     "lan_error": "Místní server nelze spustit:"
   },
   "production": {
-    "title": " Výkaz výměr a sledování produkce",
+    "title": "Výkaz výměr a sledování produkce",
     "item_name": "Položka produkce",
     "item_name_ph": "např. Zdění cihlové zdi",
     "no_results": "Nebyly nalezeny žádné výrobní záznamy odpovídající kritériím vyhledávání.",
@@ -1205,7 +1212,7 @@
     "save_error": "Některé záznamy selhaly. Úspěch: {{success}}, Chyba: {{error}}",
     "no_workers_selected": "Vyberte alespoň jednoho pracovníka.",
     "no_workers": "Nebyli nalezeni žádní aktivní pracovníci.",
-    "already_entered": " Zadáno",
+    "already_entered": "Zadáno",
     "group_filter_all": "Všechny skupiny",
     "day": "den",
     "end_date": "Datum ukončení",

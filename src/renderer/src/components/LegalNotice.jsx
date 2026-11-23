@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, Scale, ShieldCheck, FileText, Mail } from 'lucide-react';
+import { ExternalLink, Scale, ShieldCheck, FileText, Mail, ScrollText, Package } from 'lucide-react';
 
 const PUBLISHER = 'Emir Tarık Dede';
 const REPOSITORY = 'https://github.com/emirtdede/tecton';
@@ -16,18 +16,18 @@ export default function LegalNotice() {
 
   return (
     <div className="docs-view" style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div className="glass-card docs-hero">
+      <header className="page-head">
         <div>
-          <h2 className="card-title" style={{ marginBottom: '0.35rem' }}>
-            <Scale size={20} /> {t('legal.title', 'Legal notice')}
-          </h2>
+          <h1 className="page-head-title">
+            <Scale size={20} aria-hidden="true" /> {t('legal.title', 'Legal notice')}
+          </h1>
           <p className="docs-subtitle">
             {t('legal.subtitle', 'Publisher, licence and privacy information for Tecton.')}
           </p>
         </div>
-      </div>
+      </header>
 
-      <div className="docs-grid">
+      <div className="docs-grid docs-grid-legal">
         <div className="glass-card docs-card">
           <h3 className="card-title" style={{ marginBottom: '0.6rem' }}>
             <FileText size={17} /> {t('legal.publisher_title', 'Publisher')}
@@ -59,7 +59,7 @@ export default function LegalNotice() {
 
         <div className="glass-card docs-card">
           <h3 className="card-title" style={{ marginBottom: '0.6rem' }}>
-            {t('legal.terms_title', 'Terms of use')}
+            <ScrollText size={17} /> {t('legal.terms_title', 'Terms of use')}
           </h3>
           <p className="docs-muted">
             {t('legal.terms_body', 'Tecton is provided as is, without warranty. You are responsible for the accuracy of the records you enter and for keeping backups. The MIT licence permits commercial use, modification and redistribution provided the copyright notice is kept.')}
@@ -68,7 +68,7 @@ export default function LegalNotice() {
 
         <div className="glass-card docs-card">
           <h3 className="card-title" style={{ marginBottom: '0.6rem' }}>
-            {t('legal.third_party_title', 'Third-party software')}
+            <Package size={17} /> {t('legal.third_party_title', 'Third-party software')}
           </h3>
           <p className="docs-muted">
             {t('legal.third_party_body', 'Tecton is built with Electron, React, Vite, SQLite, i18next, lucide-react, jsPDF and SheetJS. Each component keeps its own licence; the full list is available in the repository.')}

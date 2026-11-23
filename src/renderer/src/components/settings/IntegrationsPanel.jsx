@@ -38,7 +38,7 @@ async function copy(value) {
   }
 }
 
-function CodeBlock({ label, value, t }) {
+function CodeBlock({ label, value, display, t }) {
   const [copied, setCopied] = useState(false);
 
   const onCopy = async () => {
@@ -54,12 +54,12 @@ function CodeBlock({ label, value, t }) {
     <div className="integration-code">
       <div className="integration-code-head">
         <span>{label}</span>
-        <button type="button" className="btn btn-secondary integration-copy" onClick={onCopy}>
+        <button type="button" className="btn integration-copy" onClick={onCopy}>
           {copied ? <Check size={13} /> : <Copy size={13} />}
           {copied ? t('integrations.copied', 'Copied') : t('integrations.copy', 'Copy')}
         </button>
       </div>
-      <pre>{value}</pre>
+      <pre>{display || value}</pre>
     </div>
   );
 }
@@ -220,7 +220,7 @@ export default function IntegrationsPanel() {
               )}
             </p>
           </div>
-          <span className={`cloud-badge ${running ? 'on' : 'off'}`}>
+          <span className={`pill ${running ? 'pill-success' : ''}`}>
             {running ? t('integrations.running', 'Running') : t('integrations.stopped', 'Stopped')}
           </span>
         </div>
@@ -302,6 +302,7 @@ export default function IntegrationsPanel() {
           t={t}
           label={t('integrations.example', 'Example')}
           value={cli ? `${cli.windows} status` : ''}
+          display="tecton status"
         />
         <div className="integration-command-list">
           {['projects', 'workers', 'summary', 'docs backup', 'ask "How does cloud sync work?"'].map((command) => (
@@ -372,7 +373,7 @@ export default function IntegrationsPanel() {
                   </div>
                 </div>
                 <div className="integration-hook-side">
-                  <span className={`cloud-badge ${hook.lastStatus === 'ok' ? 'on' : 'off'}`}>
+                  <span className={`pill ${hook.lastStatus === 'ok' ? 'pill-success' : hook.lastStatus ? 'pill-danger' : ''}`}>
                     {hook.lastStatus === 'ok'
                       ? t('integrations.last_ok', 'Last delivery ok')
                       : hook.lastStatus
@@ -381,7 +382,7 @@ export default function IntegrationsPanel() {
                   </span>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn"
                     onClick={() => testHook(hook.id)}
                     disabled={busy === `test:${hook.id}`}
                   >

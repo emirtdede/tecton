@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useTranslation } from 'react-i18next';
 import { tr, enUS, de, fr, es, zhCN, ru, ja, ko, it, nl, pt, arSA, hi, sv, nb, da, pl, cs } from 'date-fns/locale';
 import { parseLocalDate, parseLocalMonth } from '../../utils/formatUtils';
+import { X } from 'lucide-react';
 
 registerLocale('tr', tr);
 registerLocale('en', enUS);
@@ -122,7 +123,7 @@ const CustomDatePicker = ({ value, onChange, className, required, style, name, p
             zIndex: 10
           }}
           title={t('common.clear', 'Temizle')}
-        >
+        ><X size={13} aria-hidden="true" />
           
         </button>
       )}

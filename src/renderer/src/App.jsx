@@ -73,18 +73,15 @@ import {
   Heart,
   ChevronRight,
   ChevronLeft,
+  Pencil,
   X,
-  Lightbulb,
-  Activity,
-  Flag,
-  Camera,
 } from 'lucide-react';
 
 
 // ---------------------------------------------------------------------------
-// Two-level navigation. The first column is a rail of modules; the second is
-// the page list of the selected module. Keeping the structure as data means a
-// page can never be reachable in one level and invisible in the other.
+// Navigation. Pages are grouped for the sidebar captions, but every page is a
+// sibling link: the shell is one flat list, exactly like the reference design.
+// Keeping the structure as data means a page cannot exist without an entry.
 // ---------------------------------------------------------------------------
 const NAV_GROUPS = [
   {
@@ -140,11 +137,8 @@ const NAV_GROUPS = [
   },
 ];
 
-const VIEW_TO_GROUP = NAV_GROUPS.reduce((map, group) => {
-  for (const item of group.items) map[item.view] = group.id;
-  if (group.items.some((item) => item.view === 'profile')) map.profile = group.id;
-  return map;
-}, {});
+// The grouping above is presentation only: every page is a sibling in the
+// sidebar, so there is no second navigation level that can drift out of sync.
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -190,17 +184,16 @@ function App() {
   const [editingWorker, setEditingWorker] = useState(null);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [activeGroupId, setActiveGroupId] = useState(() => VIEW_TO_GROUP.list || 'operations');
   const [dashboardHelpOpen, setDashboardHelpOpen] = useState(false);
   const [sidebarState, setSidebarState] = useState(() => {
     return localStorage.getItem('sidebar_state') || 'full';
   });
   const [sidebarWidth, setSidebarWidth] = useState(() => {
-    const parsed = parseInt(localStorage.getItem('sidebar_width') || '364', 10);
+    const parsed = parseInt(localStorage.getItem('sidebar_width') || '248', 10);
     // A corrupted localStorage value used to produce NaN, which then became an
-    // invalid CSS width on every launch. The rail takes 68 px, so the floor
-    // leaves the page panel enough room for real navigation labels.
-    return Number.isFinite(parsed) && parsed > 0 ? Math.max(280, parsed) : 364;
+    // invalid CSS width on every launch. Values above 340 px were saved by the
+    // old rail-plus-panel layout, which was much wider than this flat sidebar.
+    return Number.isFinite(parsed) && parsed > 0 && parsed <= 340 ? Math.max(232, parsed) : 248;
   });
   const [isResizing, setIsResizing] = useState(false);
   const hasInitializedView = React.useRef(false);
@@ -279,11 +272,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const groupId = VIEW_TO_GROUP[view];
-    if (groupId) setActiveGroupId(groupId);
-  }, [view]);
-
   const handleSidebarStateChange = (state) => {
     setSidebarState(state);
     localStorage.setItem('sidebar_state', state);
@@ -298,7 +286,7 @@ function App() {
     if (!isResizing) return;
 
     const handleMouseMove = (e) => {
-      const newWidth = Math.max(280, Math.min(520, e.clientX));
+      const newWidth = Math.max(232, Math.min(420, e.clientX));
       setSidebarWidth(newWidth);
       localStorage.setItem('sidebar_width', newWidth.toString());
     };
@@ -403,9 +391,9 @@ function App() {
           applyAppearance({
             mode: sMap['theme'] || 'dark',
             themeId: sMap['theme_id'] || 'obsidian',
-            customColor: sMap['custom_theme_color'] || '#8b5cf6',
+            customColor: sMap['custom_theme_color'] || 'var(--accent)',
             appIcon: sMap['app_icon'] || 'auto',
-            iconColor: sMap['app_icon_color'] || '#8b5cf6',
+            iconColor: sMap['app_icon_color'] || 'var(--accent)',
             zoom: sMap['ui_zoom'] || 1,
             highContrast: sMap['a11y_high_contrast'] === 'true',
             enhancedFocus: sMap['a11y_enhanced_focus'] === 'true',
@@ -781,11 +769,7 @@ function App() {
     return '';
   };
 
-  const currentSidebarWidth = sidebarState === 'full' ? sidebarWidth : (sidebarState === 'collapsed' ? 76 : 0);
-
-  // The panel always belongs to a module that exists, even if a stale view name
-  // survives a restore. Without the fallback the rail would render empty.
-  const activeGroup = NAV_GROUPS.find((group) => group.id === activeGroupId) || NAV_GROUPS[2];
+  const currentSidebarWidth = sidebarState === 'full' ? sidebarWidth : (sidebarState === 'collapsed' ? 68 : 0);
 
   return (
     <>
@@ -798,192 +782,139 @@ function App() {
           className="sidebar-restore-btn"
           title={t('nav.expand', 'Genişlet')}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 8 12 12 7 16"></polyline><polyline points="13 8 18 12 13 16"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 8 12 12 7 16"></polyline><polyline points="13 8 18 12 13 16"></polyline></svg>
         </button>
       )}
 
-      <div 
+      <div
         className={`app-layout ${getLayoutClass()} ${isResizing ? 'is-resizing' : ''}`}
-        style={{ '--sidebar-width': sidebarState === 'full' ? `${sidebarWidth}px` : undefined, marginTop: '32px' }}
+        style={{ '--sidebar-width': sidebarState === 'full' ? `${sidebarWidth}px` : undefined }}
       >
-        {/* Left fixed Sidebar Navigation */}
+        {/* One flat sidebar: brand row, workspace, grouped navigation, footer. */}
         <aside className="sidebar">
           {sidebarState === 'full' && (
-            <div 
+            <div
               className={`sidebar-resizer ${isResizing ? 'is-resizing' : ''}`}
               onMouseDown={handleMouseDown}
             />
           )}
-          {/* Level 1: module rail. Level 2: page panel for the selected module. */}
-          <div className="sidebar-rail">
-            <div className="rail-brand">
+
+          <div className="sidebar-brand">
+            <div className="sidebar-brand-identity">
               {sidebarState === 'collapsed' ? (
                 <button
                   type="button"
-                  className="rail-brand-btn"
+                  className="sidebar-brand-mark"
                   onClick={() => handleSidebarStateChange('full')}
                   title={t('nav.expand', 'Expand')}
                   aria-label={t('nav.expand', 'Expand')}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
-                  <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ width: '26px', height: '26px' }} />
-                  <img src={TectonLight} alt="Tecton" className="logo-light" style={{ width: '26px', height: '26px' }} />
+                  <img src={TectonDark} alt="Tecton" className="logo-dark" style={{ width: '22px', height: '22px' }} />
+                  <img src={TectonLight} alt="Tecton" className="logo-light" style={{ width: '22px', height: '22px' }} />
                 </button>
               ) : (
-                <div className="rail-brand-mark" aria-hidden="true">
-                  <img src={TectonDark} alt="" className="logo-dark" style={{ width: '26px', height: '26px' }} />
-                  <img src={TectonLight} alt="" className="logo-light" style={{ width: '26px', height: '26px' }} />
-                </div>
+                <span className="sidebar-brand-mark" aria-hidden="true">
+                  <img src={TectonDark} alt="" className="logo-dark" style={{ width: '22px', height: '22px' }} />
+                  <img src={TectonLight} alt="" className="logo-light" style={{ width: '22px', height: '22px' }} />
+                </span>
               )}
+              <span className="brand-text">{t('app.name', 'Tecton')}</span>
             </div>
-
-            <nav className="rail-nav" aria-label={t('nav.main_menu', 'Main menu')}>
-              {NAV_GROUPS.map((group) => {
-                const GroupIcon = group.icon;
-                const isActive = activeGroupId === group.id;
-                return (
-                  <button
-                    key={group.id}
-                    type="button"
-                    className={`rail-btn ${isActive ? 'active' : ''}`}
-                    aria-current={isActive ? 'page' : undefined}
-                    title={t(group.labelKey)}
-                    onClick={() => {
-                      setActiveGroupId(group.id);
-                      if (group.items.length === 1) setView(group.items[0].view);
-                    }}
-                  >
-                    <GroupIcon size={20} strokeWidth={2} />
-                    <span className="rail-label">{t(`nav.rail_${group.id}`, t(group.labelKey))}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="rail-footer">
-              {sidebarState === 'collapsed' ? (
+            <div className="sidebar-brand-actions">
+              <button
+                type="button"
+                className="pp-sidebar-icon-btn"
+                onClick={() => handleSidebarStateChange(sidebarState === 'collapsed' ? 'full' : 'collapsed')}
+                title={sidebarState === 'collapsed' ? t('nav.expand', 'Expand') : t('nav.collapse', 'Collapse')}
+                aria-label={sidebarState === 'collapsed' ? t('nav.expand', 'Expand') : t('nav.collapse', 'Collapse')}
+              >
+                {sidebarState === 'collapsed' ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+              </button>
+              {sidebarState !== 'collapsed' && (
                 <button
                   type="button"
-                  className="rail-icon-btn"
-                  onClick={() => handleSidebarStateChange('full')}
-                  title={t('nav.expand', 'Expand')}
-                  aria-label={t('nav.expand', 'Expand')}
+                  className="pp-sidebar-icon-btn"
+                  onClick={() => handleSidebarStateChange('hidden')}
+                  title={t('nav.hide', 'Hide')}
+                  aria-label={t('nav.hide', 'Hide')}
                 >
-                  <ChevronRight size={16} />
+                  <X size={15} />
                 </button>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    className="rail-icon-btn"
-                    onClick={() => handleSidebarStateChange('collapsed')}
-                    title={t('nav.collapse', 'Collapse')}
-                    aria-label={t('nav.collapse', 'Collapse')}
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    className="rail-icon-btn"
-                    onClick={() => handleSidebarStateChange('hidden')}
-                    title={t('nav.hide', 'Hide')}
-                    aria-label={t('nav.hide', 'Hide')}
-                  >
-                    <X size={16} />
-                  </button>
-                </>
               )}
             </div>
           </div>
 
-          {sidebarState !== 'collapsed' && (
-            <div className="sidebar-panel">
-              <div className="sidebar-panel-header">
-                <span className="sidebar-panel-title">{t(activeGroup.labelKey)}</span>
-              </div>
+          {activeProjectObj ? (
+            <div className="sidebar-project" title={activeProjectObj.name}>
+              <Building2 size={14} aria-hidden="true" />
+              <span>{activeProjectObj.name}</span>
+            </div>
+          ) : (
+            <div className="sidebar-project is-empty">
+              <Building2 size={14} aria-hidden="true" />
+              <span>{t('nav.no_project_selected', 'No site selected')}</span>
+            </div>
+          )}
 
-              {activeProjectObj ? (
-                <div
-                  className="sidebar-active-project"
-                  style={{
-                    background: 'var(--accent-bg)',
-                    border: '1px solid var(--accent-border)',
-                    borderRadius: '10px',
-                    padding: '0.65rem 0.85rem',
-                    margin: '0 0 0.75rem 0',
-                    fontSize: '0.8rem'
-                  }}
-                >
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    {t('nav.active_project', 'Active site')}
-                  </div>
-                  <strong style={{ color: 'var(--text-main)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.15rem' }}>
-                    {activeProjectObj.name}
-                  </strong>
-                </div>
-              ) : (
-                <div className="sidebar-project-empty">
-                  <Flag size={14} aria-hidden="true" />
-                  <span>{t('nav.no_project_selected', 'No site selected')}</span>
-                </div>
-              )}
-
-              <nav className="sidebar-nav" aria-label={t('nav.main_menu', 'Main menu')}>
-                {activeGroup.items.map((item) => {
+          <nav aria-label={t('nav.main_menu', 'Main menu')}>
+            {NAV_GROUPS.map((group) => (
+              <div className="nav-group" key={group.id}>
+                <span className="nav-group-title">{t(group.labelKey)}</span>
+                {group.items.map((item) => {
                   const ItemIcon = item.icon;
                   const isActive = view === item.view
                     || (item.view === 'list' && (view === 'profile' || view === 'list'))
-                    || (item.view === 'subcontractor' && view === 'subcontractor_profile');
+                    || (item.view === 'subcontractor' && (view === 'subcontractor' || view === 'subcontractor_profile'));
                   return (
                     <button
                       key={item.view}
                       type="button"
-                      className={`sidebar-link ${isActive ? 'active' : ''}`}
+                      className={`nav-btn ${isActive ? 'is-active' : ''}`}
                       aria-current={isActive ? 'page' : undefined}
                       onClick={() => {
                         setView(item.view);
                         if (item.view === 'list') setSelectedWorkerProfile(null);
                       }}
                     >
-                      <ItemIcon size={17} strokeWidth={2} className="sidebar-icon" />
-                      <span className="sidebar-text">{t(item.labelKey)}</span>
+                      <ItemIcon size={19} strokeWidth={1.9} />
+                      <span className="nav-label">{t(item.labelKey)}</span>
                     </button>
                   );
                 })}
-              </nav>
-
-              <div className="sidebar-footer">
-                <div className="sidebar-spotlight">
-                  <Lightbulb size={13} /> {t('sidebar_spotlight', 'Spotlight: Ctrl + K')}
-                </div>
-                <div className="sidebar-social">
-                  <a
-                    href="https://github.com/emirtdede/tecton"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="sidebar-social-btn"
-                    title={t('sidebar_github', 'GitHub')}
-                  >
-                    <Github size={13} />
-                    <span>{t('sidebar_github', 'GitHub')}</span>
-                  </a>
-                  <a
-                    href="https://github.com/sponsors/emirtdede"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="sidebar-social-btn sponsor"
-                    title={t('sidebar_sponsor', 'Sponsor')}
-                  >
-                    <Heart size={13} />
-                    <span>{t('sidebar_sponsor', 'Sponsor')}</span>
-                  </a>
-                </div>
               </div>
+            ))}
+          </nav>
+
+          <div className="sidebar-footer">
+            <div className="sidebar-links">
+              <a
+                href="https://github.com/emirtdede/tecton"
+                target="_blank"
+                rel="noreferrer"
+                className="sidebar-link-btn"
+                title={t('sidebar_github', 'GitHub')}
+              >
+                <Github size={14} />
+                <span>{t('sidebar_github', 'GitHub')}</span>
+              </a>
+              <a
+                href="https://github.com/sponsors/emirtdede"
+                target="_blank"
+                rel="noreferrer"
+                className="sidebar-link-btn"
+                title={t('sidebar_sponsor', 'Sponsor')}
+              >
+                <Heart size={14} />
+                <span>{t('sidebar_sponsor', 'Sponsor')}</span>
+              </a>
             </div>
-          )}
+          </div>
         </aside>
 
         {/* Right Dynamic Page View */}
         <main className="main-content">
+          <div className="page-x">
           {/* Each view gets its own boundary keyed by `view`, so a crash inside
               one screen is contained and resets automatically when navigating. */}
           <ErrorBoundary key={view} name={`view:${view}`}>
@@ -1046,12 +977,12 @@ function App() {
                       onChange={handleFileUpload}
                     />
                     <button className="btn btn-bulk-timesheet" onClick={() => setView('bulk_timesheet')}>
-                      {t('dashboard.bulk_timesheet', ' Çoklu Puantaj')}
+                      {t('dashboard.bulk_timesheet', 'Çoklu Puantaj')}
                     </button>
-                    <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
+                    <button className="btn" onClick={() => fileInputRef.current.click()}>
                       {t('dashboard.import_excel')}
                     </button>
-                    <button className="btn" style={{ background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid #38bdf8' }} onClick={() => generateExcelTemplate(t, i18n.language)}>
+                    <button className="btn" onClick={() => generateExcelTemplate(t, i18n.language)}>
                       {t('about.download_template')}
                     </button>
                     <select className="btn" style={{ padding: '0.5rem' }} onChange={e => handleExport(e.target.value)} value="">
@@ -1102,7 +1033,7 @@ function App() {
                               zIndex: 10
                             }}
                             title={t('common.clear', 'Temizle')}
-                          >
+                          ><X size={14} aria-hidden="true" />
                             
                           </button>
                         )}
@@ -1123,7 +1054,7 @@ function App() {
                       <div style={{ 
                         display: 'flex', 
                         gap: '0.25rem', 
-                        background: 'rgba(255, 255, 255, 0.05)', 
+                        background: 'var(--surface-subtle)', 
                         padding: '4px', 
                         borderRadius: '10px', 
                         border: '1px solid var(--glass-border)',
@@ -1134,9 +1065,9 @@ function App() {
                           onClick={() => { setViewMode('list'); localStorage.setItem('dashboard_view_mode', 'list'); }}
                           title={t('media.view_list', 'Liste Görünümü')}
                           style={{
-                            background: viewMode === 'list' ? 'var(--primary)' : 'transparent',
+                            background: viewMode === 'list' ? 'var(--accent-soft)' : 'transparent',
                             border: 'none',
-                            color: viewMode === 'list' ? '#fff' : 'var(--text-muted)',
+                            color: viewMode === 'list' ? 'var(--text-primary)' : 'var(--text-muted)',
                             padding: '7px 10px',
                             borderRadius: '8px',
                             cursor: 'pointer',
@@ -1160,9 +1091,9 @@ function App() {
                           onClick={() => { setViewMode('grid'); localStorage.setItem('dashboard_view_mode', 'grid'); }}
                           title={t('media.view_grid', 'Grid Görünümü')}
                           style={{
-                            background: viewMode === 'grid' ? 'var(--primary)' : 'transparent',
+                            background: viewMode === 'grid' ? 'var(--accent-soft)' : 'transparent',
                             border: 'none',
-                            color: viewMode === 'grid' ? '#fff' : 'var(--text-muted)',
+                            color: viewMode === 'grid' ? 'var(--text-primary)' : 'var(--text-muted)',
                             padding: '7px 10px',
                             borderRadius: '8px',
                             cursor: 'pointer',
@@ -1198,15 +1129,15 @@ function App() {
                                         ) : (() => {
                       const { grouped, sortedNames } = groupedWorkers;
                       return (
-                        <div className="workers-grouped-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                        <div className="workers-grouped-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
                           {sortedNames.map((groupName) => (
                             <div key={groupName}>
-                              <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-main)', borderLeft: '4px solid var(--accent)', paddingLeft: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span> {groupName}</span>
-                                <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', padding: '0.2rem 0.5rem', borderRadius: '10px' }}>
+                              <div className="group-heading">
+                                <h3>{groupName}</h3>
+                                <span className="pill">
                                   {grouped[groupName].length} {t('group_report.person_count')}
                                 </span>
-                              </h3>
+                              </div>
                               {viewMode === 'list' ? (
                                 <div className="fin-table-container">
                                   <table className="fin-table">
@@ -1224,41 +1155,33 @@ function App() {
                                         const isPositive = bal >= 0;
                                         return (
                                           <tr key={worker.id}>
-                                            <td 
-                                              style={{ fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }} 
+                                            <td
+                                              style={{ fontWeight: '600', cursor: 'pointer', color: 'var(--text-primary)' }}
                                               onClick={() => openProfile(worker)}
                                             >
                                               {worker.full_name}
                                             </td>
                                             <td>{worker.phone || t('dashboard.phone_not_found')}</td>
-                                            <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444' }}>
+                                            <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? 'var(--success)' : 'var(--danger)' }}>
                                               {formatCurrency(bal, i18n.language)}
                                             </td>
                                             <td style={{ textAlign: 'right' }}>
-                                              <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }} onClick={e => e.stopPropagation()}>
-                                                <button 
-                                                  className="btn" 
+                                              <div className="row-actions" onClick={e => e.stopPropagation()}>
+                                                <button
+                                                  type="button"
+                                                  className="icon-btn"
                                                   onClick={() => handleOpenDrawer(worker)}
-                                                  style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                   title={t('dashboard.edit', 'Düzenle')}
                                                 >
-                                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                    <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                  </svg>
+                                                  <Pencil size={14} aria-hidden="true" />
                                                 </button>
-                                                <button 
-                                                  className="btn btn-danger" 
+                                                <button
+                                                  type="button"
+                                                  className="icon-btn is-danger"
                                                   onClick={() => handleDeleteWorker(worker.id)}
-                                                  style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                   title={t('common.delete', 'Sil')}
                                                 >
-                                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <polyline points="3 6 5 6 21 6" />
-                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                                    <line x1="10" y1="11" x2="10" y2="17" />
-                                                    <line x1="14" y1="11" x2="14" y2="17" />
-                                                  </svg>
+                                                  <Trash2 size={14} aria-hidden="true" />
                                                 </button>
                                               </div>
                                             </td>
@@ -1294,7 +1217,7 @@ function App() {
                                             <p className="card-subtitle">{worker.phone || t('dashboard.phone_not_found')}</p>
                                           </div>
                                           <div style={{ textAlign: 'right' }}>
-                                            <div style={{ fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444', fontSize: '1.2rem' }}>
+                                            <div style={{ fontWeight: 'bold', color: isPositive ? 'var(--success)' : 'var(--danger)', fontSize: '1.2rem' }}>
                                               {formatCurrency(bal, i18n.language)}
                                             </div>
                                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('dashboard.net_balance')}</div>
@@ -1330,7 +1253,7 @@ function App() {
                   </div>
 
                   {/* Right Column: Widgets / Anomaly & Reports (span 4) */}
-                  <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div className="bento-widgets" style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <AnomalyPanel workers={filteredWorkers} balances={balances} viewMode={viewMode} />
                     <GroupReportPanel activeProjectId={activeProjectId} viewMode={viewMode} />
                   </div>
@@ -1340,6 +1263,7 @@ function App() {
           )}
           </Suspense>
           </ErrorBoundary>
+          </div>
         </main>
       </div>
 
@@ -1394,18 +1318,18 @@ function App() {
       {undoAvailable && (
         <div style={{
           position: 'fixed', bottom: '2rem', right: '2rem',
-          background: '#1e293b', color: 'white', padding: '1rem 1.5rem',
+          background: 'var(--surface)', color: 'var(--text-primary)', padding: '1rem 1.5rem',
           borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
           display: 'flex', alignItems: 'center', gap: '1rem',
-          border: '1px solid #3b82f6', zIndex: 9999,
+          border: '1px solid var(--accent)', zIndex: 9999,
           animation: 'fadeIn 0.3s ease-out'
         }}>
           <div>
             <strong>{t('dashboard.import_done', 'Toplu aktarım tamamlandı!')}</strong>
-            <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>{t('dashboard.import_undo_hint', 'Bir hata yaptıysanız işlemi hemen geri alabilirsiniz.')}</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{t('dashboard.import_undo_hint', 'Bir hata yaptıysanız işlemi hemen geri alabilirsiniz.')}</div>
           </div>
           <button onClick={handleUndoImport} style={{
-            background: '#ef4444', color: 'white', border: 'none', padding: '0.5rem 1rem',
+            background: 'var(--danger)', color: 'white', border: 'none', padding: '0.5rem 1rem',
             borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
           }}>
             {t('dashboard.undo_button', 'Geri Al (Undo)')}
@@ -1418,9 +1342,9 @@ function App() {
       {isShuttingDown && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'var(--bg-gradient, linear-gradient(135deg, #090d16 0%, #11102b 100%))',
+          background: 'var(--canvas)',
           display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-          zIndex: 999999, color: 'var(--text-main)', fontFamily: 'Inter, sans-serif'
+          zIndex: 999999, color: 'var(--text-primary)', fontFamily: 'inherit'
         }}>
           <div className="shutdown-logo-wrapper">
             <img src={document.documentElement.getAttribute('data-theme') === 'light' ? TectonDark : TectonLight} alt="Tecton" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />

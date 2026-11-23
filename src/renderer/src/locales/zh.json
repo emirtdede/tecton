@@ -60,6 +60,12 @@
     "settings_ai": "人工智能"
   },
   "settings": {
+    "window_startup": "窗口与启动",
+    "start_with_windows": "Windows 启动时运行 Tecton",
+    "start_minimized": "在系统托盘中隐藏启动",
+    "close_to_tray": "关闭窗口后继续在托盘中运行",
+    "standard_daily_hours_hint": "用于将日薪换算为时薪。",
+    "overtime_multiplier_hint": "加班时薪，按正常时薪的倍数计算。",
     "theme_language": "主题与语言",
     "language": "应用语言",
     "theme": "应用主题",
@@ -69,7 +75,7 @@
     "company_name": "公司/机构名称",
     "company_logo": "公司徽标",
     "backup_db": "备份整个数据库",
-    "vacuum_db": " 优化系统 (Vacuum)",
+    "vacuum_db": "优化系统 (Vacuum)",
     "vacuum_desc": "在后台清理未使用的数据块并减小数据库大小，从而加快应用程序运行速度。（建议每月一次）",
     "cloud_sync_desc": "当您在计算机上选择Google Drive，Dropbox或OneDrive的同步文件夹时，应用程序将在关闭时自动进行后台备份。",
     "work_types_title": "工作类型和乘数",
@@ -204,7 +210,7 @@
     "undo_error": "撤消失败：",
     "delete_worker_title": "删除人员",
     "delete_worker_msg": "您确定要删除此人员（移至回收站）吗？系统数据不会被永久删除，但会从列表中移除。",
-    "bulk_timesheet": " 批量工时表",
+    "bulk_timesheet": "批量工时表",
     "no_search_results": "没有与您的搜索匹配的人员记录。",
     "import_done": "批量导入已完成！",
     "import_undo_hint": "如果操作有误，您可以立即撤销。",
@@ -468,6 +474,7 @@
     "all_periods": "全部"
   },
   "about": {
+    "page_subtitle": "应用详情、项目链接和常见问题。",
     "faq": "常见问题",
     "faq_q1": "Tecton 需要联网吗？",
     "faq_a1": "不需要。数据库位于本机，所有模块均可离线运行。仅在检查更新时使用网络。",
@@ -568,7 +575,7 @@
     "search_journal": "在日志备注、天气或日期中搜索..."
   },
   "media": {
-    "gallery_title": " 工地媒体库",
+    "gallery_title": "工地媒体库",
     "no_image": "无图像",
     "view_list": "列表视图",
     "view_grid": "画廊视图",
@@ -576,7 +583,7 @@
     "search_placeholder": "按标题、内容类型或日期搜索..."
   },
   "subcontractor": {
-    "title": " 分包商账目",
+    "title": "分包商账目",
     "name": "分包商名称 / 抬头",
     "name_ph": "例：卡拉德尼兹土方",
     "service": "服务领域",
@@ -601,14 +608,14 @@
     "delete_success": "分包商删除成功。"
   },
   "quality": {
-    "title": " 质量控制 & 工地报告",
+    "title": "质量控制 & 工地报告",
     "report_title": "报告 / 问题标题",
     "report_title_ph": "例：三层轴线偏移 / 模板安装错误",
     "initial_status": "初始状态",
     "status_open": "开启 (未解决)",
     "photo_label": "视觉 / 报告照片",
-    "select_pc": " 从电脑选择",
-    "upload_mobile": " 从手机上传 (QR)",
+    "select_pc": "从电脑选择",
+    "upload_mobile": "从手机上传 (QR)",
     "detailed_description": "详细描述",
     "description_ph": "所发现问题的具体细节...",
     "add_report": "添加报告",
@@ -620,7 +627,7 @@
     "delete_confirm": "您确定要删除此质量控制报告吗？此操作无法撤销。"
   },
   "journal": {
-    "title": " 工地施工日记",
+    "title": "工地施工日记",
     "worker_count": "出勤人员数量",
     "weather": "天气状态",
     "temperature": "温度",
@@ -641,7 +648,7 @@
     "weather_api_error": "天气服务返回错误。"
   },
   "materials": {
-    "title": " 送货单 & 材料入库",
+    "title": "送货单 & 材料入库",
     "supplier": "供应商公司",
     "supplier_ph": "例：阿克灿萨水泥股份公司",
     "material_type": "材料类型",
@@ -660,7 +667,7 @@
     "lan_error": "本地服务器无法启动："
   },
   "production": {
-    "title": " 工程量测算 & 施工进度跟踪",
+    "title": "工程量测算 & 施工进度跟踪",
     "item_name": "施工项目",
     "item_name_ph": "例：砌砖墙",
     "no_results": "未找到符合搜索条件的生产记录。",
@@ -1205,7 +1212,7 @@
     "save_error": "部分记录失败。成功：{{success}}，错误：{{error}}",
     "no_workers_selected": "请至少选择一名工人。",
     "no_workers": "未找到活跃工人。",
-    "already_entered": " 已输入",
+    "already_entered": "已输入",
     "group_filter_all": "所有组",
     "day": "天",
     "end_date": "结束日期",

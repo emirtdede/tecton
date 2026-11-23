@@ -5,7 +5,7 @@ import CustomDatePicker from './ui/CustomDatePicker';
 import GuideDrawer from './ui/GuideDrawer';
 import { useTranslation } from 'react-i18next';
 import { ensureLocale } from '../i18n';
-import { GripVertical, Edit2, Check, X, Trash2, RotateCcw, Save, ShieldAlert, Download, FolderOpen, DatabaseZap } from 'lucide-react';
+import { GripVertical, Edit2, Check, X, Trash2, RotateCcw, Save, ShieldAlert, Download, FolderOpen, DatabaseZap, Lightbulb } from 'lucide-react';
 // Single source of truth: the brand marks live in `tecton_assets/` (shared with
 // the window icon, splash screen and installer) - see `npm run brand`.
 import { setRegionalSettings } from '../utils/formatUtils';
@@ -14,11 +14,48 @@ import apiWrite, { apiMessage } from '../utils/apiWrite';
 import PageGuideIcon from './ui/PageGuideIcon';
 import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
 import Pagination from './ui/Pagination';
+import Switch from './ui/Switch';
 import AppearancePanel from './settings/AppearancePanel';
 import CloudSyncCard from './settings/CloudSyncCard';
 import IntegrationsPanel from './settings/IntegrationsPanel';
 import AiPanel from './settings/AiPanel';
 import { applyAppearance, cacheAppearance } from '../theme/appearance';
+
+/**
+ * Payroll inputs that live in the Finance tab. Only the values the calculation
+ * engine actually reads are listed here: the tab used to render every row of
+ * `app_settings` as a free-text box, which exposed internal keys such as
+ * `cloud_last_sync` next to user-facing options.
+ */
+const FINANCE_PARAMETERS = [
+  {
+    key: 'standard_daily_hours',
+    step: '0.5',
+    min: '1',
+    max: '24',
+    labelKey: 'settings.keys.standard_daily_hours',
+    labelFallback: 'Standard daily working hours',
+    hintKey: 'settings.standard_daily_hours_hint',
+    hintFallback: 'Used to turn a daily wage into an hourly rate.',
+  },
+  {
+    key: 'overtime_multiplier',
+    step: '0.1',
+    min: '1',
+    max: '5',
+    labelKey: 'settings.keys.overtime_multiplier',
+    labelFallback: 'Overtime rate multiplier',
+    hintKey: 'settings.overtime_multiplier_hint',
+    hintFallback: 'Hourly pay for overtime, as a multiple of the normal rate.',
+  },
+];
+
+/** Window lifecycle switches. They map onto the flags the tray menu uses. */
+const WINDOW_TOGGLES = [
+  { key: 'autostart', labelKey: 'settings.start_with_windows', fallback: 'Launch Tecton when Windows starts' },
+  { key: 'start_minimized', labelKey: 'settings.start_minimized', fallback: 'Start hidden in the system tray' },
+  { key: 'close_to_tray', labelKey: 'settings.close_to_tray', fallback: 'Keep running in the tray when the window is closed' },
+];
 
 const Settings = ({ activeTab = 'genel' }) => {
   const { t, i18n } = useTranslation();
@@ -226,9 +263,9 @@ const Settings = ({ activeTab = 'genel' }) => {
     const next = {
       mode: read('theme', 'dark'),
       themeId: read('theme_id', 'obsidian'),
-      customColor: read('custom_theme_color', '#8b5cf6'),
+      customColor: read('custom_theme_color', 'var(--accent)'),
       appIcon: read('app_icon', 'auto'),
-      iconColor: read('app_icon_color', '#8b5cf6'),
+      iconColor: read('app_icon_color', 'var(--accent)'),
       zoom: read('ui_zoom', 1),
       highContrast: read('a11y_high_contrast', 'false') === 'true',
       enhancedFocus: read('a11y_enhanced_focus', 'false') === 'true',
@@ -647,23 +684,23 @@ const Settings = ({ activeTab = 'genel' }) => {
   }
 
   return (
-    <div style={{ maxWidth: (activeTab === 'recycle' || activeTab === 'logs') ? '100%' : '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', minHeight: 'calc(100vh - 100px)' }}>
-      <header className="header" style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ margin: 0 }}>
-          {activeTab === 'genel' ? ` ${t('nav.settings_genel', 'Genel Ayarlar')}` : 
-           activeTab === 'finance' ? ` ${t('nav.settings_finance', 'Finans & Operasyon')}` : 
-           activeTab === 'security' ? ` ${t('nav.settings_security', 'Güvenlik ve Yedekleme')}` : 
-           activeTab === 'integrations' ? ` ${t('nav.settings_integrations', 'Entegrasyonlar')}` :
-           activeTab === 'ai' ? ` ${t('nav.settings_ai', 'Yapay Zeka')}` :
-           activeTab === 'recycle' ? ` ${t('recycle.title', 'Geri Dönüşüm & Çöp Kutusu')}` :
-           ` ${t('nav.settings_logs', 'Sistem Kayıtları')}`}
-        </h2>
+    <div className="settings-page">
+      <header className="page-head">
+        <h1 className="page-head-title">
+          {activeTab === 'genel' ? t('nav.settings_genel', 'Genel Ayarlar') :
+           activeTab === 'finance' ? t('nav.settings_finance', 'Finans & Operasyon') :
+           activeTab === 'security' ? t('nav.settings_security', 'Güvenlik ve Yedekleme') :
+           activeTab === 'integrations' ? t('nav.settings_integrations', 'Entegrasyonlar') :
+           activeTab === 'ai' ? t('nav.settings_ai', 'Yapay Zeka') :
+           activeTab === 'recycle' ? t('recycle.title', 'Geri Dönüşüm & Çöp Kutusu') :
+           t('nav.settings_logs', 'Sistem Kayıtları')}
+        </h1>
         {activeTab === 'finance' && (
           <PageGuideIcon onClick={() => setIsGuideOpen(true)} />
         )}
       </header>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto', paddingRight: '0.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         
         {activeTab === 'genel' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -672,6 +709,44 @@ const Settings = ({ activeTab = 'genel' }) => {
               onChange={handleSettingChange}
               surface={appearanceSurface}
             />
+
+            {/* Pencere ve Başlatma */}
+            <div className="glass-card">
+              <h3 className="card-title" style={{ marginBottom: '0.5rem' }}>
+                {t('settings.window_startup', 'Window and startup')}
+              </h3>
+              <div className="toggle-list">
+                {WINDOW_TOGGLES.map(({ key, labelKey, fallback }) => {
+                  const setting = appSettings.find(s => s.setting_key === key);
+                  if (!setting) return null;
+                  const label = t(labelKey, fallback);
+                  const enabled = setting.setting_value === 'true';
+                  return (
+                    <label key={key} className="toggle-row">
+                      <span>{label}</span>
+                      <Switch
+                        checked={enabled}
+                        label={label}
+                        onChange={async (event) => {
+                          const next = event.target.checked;
+                          // Starting with Windows is a registry entry, not only a
+                          // database flag, so the main process has to apply it.
+                          if (key === 'autostart' && window.api?.platform?.setStartWithWindows) {
+                            setAppSettings(prev => prev.map(s => s.id === setting.id ? { ...s, setting_value: next ? 'true' : 'false' } : s));
+                            const res = await apiWrite(window.api.platform.setStartWithWindows(next));
+                            if (res && res.success === false) {
+                              setAppSettings(prev => prev.map(s => s.id === setting.id ? { ...s, setting_value: next ? 'false' : 'true' } : s));
+                            }
+                            return;
+                          }
+                          handleSettingChange(setting.id, key, next ? 'true' : 'false');
+                        }}
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
 
 
             {/* Bölgesel Format Ayarları */}
@@ -797,14 +872,14 @@ const Settings = ({ activeTab = 'genel' }) => {
                           <img 
                             src={tempCompanyLogo} 
                             alt={t('common.company_logo', 'Şirket logosu')} 
-                            style={{ maxWidth: '150px', maxHeight: '100px', objectFit: 'contain', background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }} 
+                            style={{ maxWidth: '150px', maxHeight: '100px', objectFit: 'contain', background: 'var(--surface-subtle)', padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }} 
                           />
                           <button 
                             type="button"
                             className="btn btn-danger"
                             style={{ position: 'absolute', top: '-10px', right: '-10px', width: '24px', height: '24px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             onClick={() => handleRemoveLogo(setting.id)}
-                          >
+                          ><X size={14} aria-hidden="true" />
                             
                           </button>
                         </div>
@@ -854,31 +929,32 @@ const Settings = ({ activeTab = 'genel' }) => {
             {/* Standart Çalışma Parametreleri */}
             <div className="glass-card">
               <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>{t('settings.parameters')}</h3>
-              {appSettings.map(setting => {
-                if (['theme', 'language', 'company_name', 'company_logo', 'custom_currency', 'custom_date_format', 'custom_time_format', 'cloud_sync_folder', 'clean_shutdown'].includes(setting.setting_key) || setting.setting_key.endsWith('_order')) return null;
-                return (
-                  <div key={setting.id} className="form-group">
-                    {/*
-                      i18next returns the key itself (truthy) when a translation
-                      is missing, so `t(k) || description || k` could never fall
-                      back and the raw internal key ("settings.keys.foo") leaked
-                      into the UI. defaultValue is the only working fallback.
-                    */}
-                    <label className="form-label">
-                      {t(`settings.keys.${setting.setting_key}`, {
-                        defaultValue: setting.description || setting.setting_key
-                      })}
-                    </label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      value={setting.setting_value}
-                      onChange={(e) => handleSettingChange(setting.id, setting.setting_key, e.target.value)}
-                      onBlur={(e) => handleSettingBlur(setting.id, setting.setting_key, e.target.value)}
-                    />
-                  </div>
-                );
-              })}
+              <div className="form-grid-2">
+                {FINANCE_PARAMETERS.map(({ key, step, min, max, labelKey, labelFallback, hintKey, hintFallback }) => {
+                  const setting = appSettings.find(s => s.setting_key === key);
+                  if (!setting) return null;
+                  return (
+                    <div key={key} className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label" htmlFor={`finance-${key}`}>
+                        {t(labelKey, labelFallback)}
+                      </label>
+                      <input
+                        id={`finance-${key}`}
+                        type="number"
+                        inputMode="decimal"
+                        className="form-input"
+                        step={step}
+                        min={min}
+                        max={max}
+                        value={setting.setting_value}
+                        onChange={(e) => handleSettingChange(setting.id, key, e.target.value)}
+                        onBlur={(e) => handleSettingBlur(setting.id, key, e.target.value)}
+                      />
+                      <p className="form-hint">{t(hintKey, hintFallback)}</p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Çalışma Tipleri */}
@@ -932,7 +1008,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                         alignItems: 'center',
                         background: draggedWorkTypeIdx === idx 
                           ? 'rgba(99, 102, 241, 0.08)' 
-                          : 'rgba(255,255,255,0.02)',
+                          : 'var(--surface-subtle)',
                         padding: '0.75rem 1rem',
                         borderRadius: '8px',
                         border: draggedWorkTypeIdx === idx
@@ -1105,7 +1181,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                         alignItems: 'center',
                         background: draggedGroupIdx === idx 
                           ? 'rgba(99, 102, 241, 0.08)' 
-                          : 'rgba(255,255,255,0.02)',
+                          : 'var(--surface-subtle)',
                         padding: '0.75rem 1rem',
                         borderRadius: '8px',
                         border: draggedGroupIdx === idx
@@ -1275,7 +1351,7 @@ const Settings = ({ activeTab = 'genel' }) => {
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <div>
-                  <button className="btn" onClick={handleVacuum} style={{ width: '100%', marginBottom: '0.5rem', background: 'rgba(255,255,255,0.04)' }}>
+                  <button className="btn" onClick={handleVacuum} style={{ width: '100%', marginBottom: '0.5rem' }}>
                      {t('settings.vacuum_db', 'Veritabanını Optimize Et (Vacuum)')}
                   </button>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -1300,19 +1376,26 @@ const Settings = ({ activeTab = 'genel' }) => {
 
         {activeTab === 'recycle' && (
           <div ref={recycleContainerRef} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <h3 className="card-title" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                 {t('recycle_page_title', 'Geri Dönüşüm & Çöp Kutusu')}
+            <div className="card-toolbar">
+              <p className="card-subtitle" style={{ margin: 0 }}>
+                {t('recycle_page_desc', 'Silinen kayıtları buradan inceleyip orijinal yerlerine geri yükleyebilirsiniz.')}
+              </p>
+              <div className="card-toolbar-actions">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setIsGuideOpen(true)}
+                  title={t('guides.recycle.title', 'Geri Dönüşüm Kutusu Rehberi (5N1K)')}
+                >
+                  <Lightbulb size={14} aria-hidden="true" />
+                  {t('common.page_guide', 'Page guide')}
+                </button>
               </div>
-              <PageGuideIcon onClick={() => setIsGuideOpen(true)} />
-            </h3>
-            <p className="card-subtitle" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              {t('recycle_page_desc', 'Silinen kayıtları buradan inceleyip orijinal yerlerine geri yükleyebilirsiniz.')}
-            </p>
+            </div>
 
             {/* Filters & Search Bar */}
             <div style={{ 
-              background: 'rgba(255, 255, 255, 0.02)', 
+              background: 'var(--surface-subtle)', 
               border: '1px solid var(--glass-border)', 
               borderRadius: '12px', 
               padding: '1rem', 
@@ -1350,7 +1433,7 @@ const Settings = ({ activeTab = 'genel' }) => {
                       zIndex: 10
                     }}
                     title={t('common.clear', 'Temizle')}
-                  >
+                  ><X size={14} aria-hidden="true" />
                     
                   </button>
                 )}
@@ -1448,14 +1531,14 @@ const Settings = ({ activeTab = 'genel' }) => {
               return (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div key={recycleCurrentPage} className="recycle-animate-page" style={{ overflowX: 'auto' }}>
-                    <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <table className="fin-table">
                       <thead>
-                        <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left' }}>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_type', 'Record Type')}</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_project', 'Project / Site')}</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_content', 'Content / Title')}</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>{t('recycle_th_date', 'Deleted At')}</th>
-                          <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>{t('recycle_th_action', 'Action')}</th>
+                        <tr>
+                          <th>{t('recycle_th_type', 'Record Type')}</th>
+                          <th>{t('recycle_th_project', 'Project / Site')}</th>
+                          <th>{t('recycle_th_content', 'Content / Title')}</th>
+                          <th>{t('recycle_th_date', 'Deleted At')}</th>
+                          <th style={{ textAlign: 'right' }}>{t('recycle_th_action', 'Action')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1475,22 +1558,14 @@ const Settings = ({ activeTab = 'genel' }) => {
                           const isRestored = item.is_deleted === 0 || restoredKeys.includes(itemKey);
                           
                           return (
-                            <tr key={`${item.table}_${item.id}_${idx}`} style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                              <td style={{ padding: '1rem' }}>
-                                <span style={{ 
-                                  fontSize: '0.75rem', 
-                                  fontWeight: '600', 
-                                  background: 'rgba(255,255,255,0.06)', 
-                                  padding: '2px 8px', 
-                                  borderRadius: '4px' 
-                                }}>
-                                  {typeLabel}
-                                </span>
+                            <tr key={`${item.table}_${item.id}_${idx}`}>
+                              <td>
+                                <span className="pill">{typeLabel}</span>
                               </td>
-                              <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                              <td style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
                                 {item.project_name || '-'}
                               </td>
-                              <td style={{ padding: '1rem', fontWeight: '500', color: '#fff' }}>
+                              <td style={{ fontWeight: 500 }}>
                                 {(() => {
                                   if (item.table === 'worker_leaves') {
                                     const match = item.title.match(/^(.*?) İzni \((.*?) - (.*?)\)$/);
@@ -1502,59 +1577,27 @@ const Settings = ({ activeTab = 'genel' }) => {
                                   return item.title;
                                 })()}
                               </td>
-                              <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                              <td style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
                                 {item.deleted_at ? new Date(item.deleted_at).toLocaleString() : '-'}
                               </td>
-                              <td style={{ padding: '1rem', textAlign: 'right' }}>
-                                {isRestored ? (
-                                  <span 
-                                    style={{ 
-                                      padding: '6px 12px', 
-                                      fontSize: '0.8rem',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: '6px',
-                                      background: 'rgba(255, 255, 255, 0.03)',
-                                      color: 'var(--text-muted)',
-                                      border: '1px solid var(--glass-border)',
-                                      borderRadius: '6px',
-                                      fontWeight: '500'
-                                    }}
-                                  >
-                                    <Check size={13} style={{ color: 'var(--success)' }} />
-                                    {t('global.restored', 'Geri Yüklendi')}
-                                  </span>
-                                ) : (
-                                  <button 
-                                    className="btn btn-primary" 
-                                    onClick={() => handleRestore(item.table, item.id)}
-                                    style={{ 
-                                      padding: '6px 14px', 
-                                      fontSize: '0.8rem',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: '6px',
-                                      background: 'rgba(16, 185, 129, 0.08)',
-                                      color: '#10b981',
-                                      border: '1px solid rgba(16, 185, 129, 0.2)',
-                                      borderRadius: '6px',
-                                      fontWeight: '600',
-                                      cursor: 'pointer',
-                                      transition: 'all 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.currentTarget.style.background = '#10b981';
-                                      e.currentTarget.style.color = '#fff';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.currentTarget.style.background = 'rgba(16, 185, 129, 0.08)';
-                                      e.currentTarget.style.color = '#10b981';
-                                    }}
-                                  >
-                                    <RotateCcw size={13} />
-                                    {t('global.restore', 'Geri Yükle')}
-                                  </button>
-                                )}
+                              <td style={{ textAlign: 'right' }}>
+                                <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
+                                  {isRestored ? (
+                                    <span className="pill pill-success">
+                                      <Check size={12} aria-hidden="true" />
+                                      {t('global.restored', 'Geri Yüklendi')}
+                                    </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      className="btn"
+                                      onClick={() => handleRestore(item.table, item.id)}
+                                    >
+                                      <RotateCcw size={14} aria-hidden="true" />
+                                      {t('global.restore', 'Geri Yükle')}
+                                    </button>
+                                  )}
+                                </div>
                               </td>
                             </tr>
                           );
@@ -1602,21 +1645,21 @@ const Settings = ({ activeTab = 'genel' }) => {
         h1={t('settings.finance_guide.section1.title')} 
         p1={
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section1.p1_title')}</strong> {t('settings.finance_guide.section1.p1_desc')}</div>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section1.p2_title')}</strong> {t('settings.finance_guide.section1.p2_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section1.p1_title')}</strong> {t('settings.finance_guide.section1.p1_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section1.p2_title')}</strong> {t('settings.finance_guide.section1.p2_desc')}</div>
           </div>
         }
         h2={t('settings.finance_guide.section2.title')} 
         p2={
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section2.p1_title')}</strong> {t('settings.finance_guide.section2.p1_desc')}</div>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section2.p2_title')}</strong> {t('settings.finance_guide.section2.p2_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section2.p1_title')}</strong> {t('settings.finance_guide.section2.p1_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section2.p2_title')}</strong> {t('settings.finance_guide.section2.p2_desc')}</div>
           </div>
         }
         h3={t('settings.finance_guide.section3.title')} 
         p3={
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section3.p1_title')}</strong> {t('settings.finance_guide.section3.p1_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section3.p1_title')}</strong> {t('settings.finance_guide.section3.p1_desc')}</div>
             <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--primary)' }}>
               <p style={{ margin: '0 0 0.5rem 0', fontWeight: 'bold', color: 'var(--primary)' }}>{t('settings.finance_guide.section3.f_total')}</p>
               <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -1633,10 +1676,10 @@ const Settings = ({ activeTab = 'genel' }) => {
         h4={t('settings.finance_guide.section4.title')} 
         p4={
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p1_title')}</strong> {t('settings.finance_guide.section4.p1_desc')}</div>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p2_title')}</strong> {t('settings.finance_guide.section4.p2_desc')}</div>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p3_title')}</strong> {t('settings.finance_guide.section4.p3_desc')}</div>
-            <div><strong style={{ color: '#cbd5e1' }}>{t('settings.finance_guide.section4.p4_title')}</strong> {t('settings.finance_guide.section4.p4_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section4.p1_title')}</strong> {t('settings.finance_guide.section4.p1_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section4.p2_title')}</strong> {t('settings.finance_guide.section4.p2_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section4.p3_title')}</strong> {t('settings.finance_guide.section4.p3_desc')}</div>
+            <div><strong style={{ color: 'var(--text-primary)' }}>{t('settings.finance_guide.section4.p4_title')}</strong> {t('settings.finance_guide.section4.p4_desc')}</div>
           </div>
         }
       />

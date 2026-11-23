@@ -49,16 +49,16 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
   if (allNegativeBalanceWorkers.length === 0 && allIsgExpiredWorkers.length === 0 && allIsgApproachingWorkers.length === 0) {
     return (
       <div style={{
-        background: 'rgba(16, 185, 129, 0.08)',
-        border: '1px solid rgba(16, 185, 129, 0.3)',
+        background: 'var(--success-bg-light)',
+        border: '1px solid var(--success-border)',
         borderRadius: '12px',
         padding: '1.25rem 1.5rem',
         marginBottom: '1.5rem'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <span style={{ display: 'flex', alignItems: 'center', color: 'var(--day-amber, #f59e0b)' }}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+          <span style={{ display: 'flex', alignItems: 'center', color: 'var(--day-amber, var(--warning))' }}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600', color: '#10b981' }}>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600', color: 'var(--success)' }}>
               {t('anomaly.noAnomalies', 'Sistem Anomalisi Bulunmuyor')}
             </h3>
             <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -111,7 +111,7 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
           style={{
             background: 'transparent', border: 'none', color: activeTab === 'balance' ? 'var(--text-main)' : 'var(--text-muted)',
             cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-            borderBottom: activeTab === 'balance' ? '2px solid #ef4444' : 'none', fontSize: '0.8rem'
+            borderBottom: activeTab === 'balance' ? '2px solid var(--danger)' : 'none', fontSize: '0.8rem'
           }}
         >
           {t('filters.tab_low_balance', 'Düşük Bakiye')} ({negativeBalanceWorkers.length})
@@ -121,7 +121,7 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
           style={{
             background: 'transparent', border: 'none', color: activeTab === 'expired' ? 'var(--text-main)' : 'var(--text-muted)',
             cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-            borderBottom: activeTab === 'expired' ? '2px solid #ef4444' : 'none', fontSize: '0.8rem'
+            borderBottom: activeTab === 'expired' ? '2px solid var(--danger)' : 'none', fontSize: '0.8rem'
           }}
         >
           {t('filters.tab_expired_hse', 'İSG Dolanlar')} ({isgExpiredWorkers.length})
@@ -131,7 +131,7 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
           style={{
             background: 'transparent', border: 'none', color: activeTab === 'approaching' ? 'var(--text-main)' : 'var(--text-muted)',
             cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-            borderBottom: activeTab === 'approaching' ? '2px solid #f59e0b' : 'none', fontSize: '0.8rem'
+            borderBottom: activeTab === 'approaching' ? '2px solid var(--warning)' : 'none', fontSize: '0.8rem'
           }}
         >
           {t('filters.tab_expiring_hse', 'İSG Yaklaşanlar')} ({isgApproachingWorkers.length})
@@ -148,14 +148,14 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
             {/* Negatif Bakiye Uyarıları */}
             {(activeTab === 'all' || activeTab === 'balance') && negativeBalanceWorkers.length > 0 && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.08)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: 'var(--danger-bg)',
+                border: '1px solid var(--danger-border)',
                 borderRadius: '12px',
                 padding: '1.25rem 1.5rem'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <span style={{ display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
-                  <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: '#ef4444' }}>
+                  <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: 'var(--danger)' }}>
                     {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({negativeBalanceWorkers.length})
                   </h3>
                 </div>
@@ -170,14 +170,14 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
                         gap: '0.5rem',
                         padding: '0.4rem 0.8rem',
                         borderRadius: '8px',
-                        background: 'rgba(239, 68, 68, 0.12)',
-                        border: '1px solid rgba(239, 68, 68, 0.25)',
+                        background: 'var(--danger-bg)',
+                        border: '1px solid var(--danger-border)',
                         fontSize: '0.8rem',
                         width: viewMode === 'list' ? '100%' : 'auto'
                       }}
                     >
-                      <span style={{ fontWeight: '600', color: '#fca5a5' }}>{w.full_name}</span>
-                      <span style={{ fontWeight: '700', color: '#ef4444' }}>
+                      <span style={{ fontWeight: '600', color: 'var(--danger)' }}>{w.full_name}</span>
+                      <span style={{ fontWeight: '700', color: 'var(--danger)' }}>
                         {formatCurrency(balances[w.id], i18n.language)}
                       </span>
                     </div>
@@ -189,14 +189,14 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
             {/* İSG Süresi Dolanlar */}
             {(activeTab === 'all' || activeTab === 'expired') && isgExpiredWorkers.length > 0 && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.08)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: 'var(--danger-bg)',
+                border: '1px solid var(--danger-border)',
                 borderRadius: '12px',
                 padding: '1.25rem 1.5rem'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <span style={{ display: 'flex', alignItems: 'center', color: 'var(--danger)' }}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
-                  <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: '#ef4444' }}>
+                  <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: 'var(--danger)' }}>
                     {t('anomalies.hse_expired_title', 'İSG Süresi Dolanlar')} ({isgExpiredWorkers.length})
                   </h3>
                 </div>
@@ -211,14 +211,14 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
                         gap: '0.5rem',
                         padding: '0.4rem 0.8rem',
                         borderRadius: '8px',
-                        background: 'rgba(239, 68, 68, 0.12)',
-                        border: '1px solid rgba(239, 68, 68, 0.25)',
+                        background: 'var(--danger-bg)',
+                        border: '1px solid var(--danger-border)',
                         fontSize: '0.8rem',
                         width: viewMode === 'list' ? '100%' : 'auto'
                       }}
                     >
-                      <span style={{ fontWeight: '600', color: '#fca5a5' }}>{w.full_name}</span>
-                      <span style={{ fontWeight: '700', color: '#ef4444', fontSize: '0.85rem' }}>
+                      <span style={{ fontWeight: '600', color: 'var(--danger)' }}>{w.full_name}</span>
+                      <span style={{ fontWeight: '700', color: 'var(--danger)', fontSize: '0.85rem' }}>
                         {t('anomalies.hse_expired_badge', 'SÜRESİ DOLDU!')} ({w.isg_bitis_tarihi})
                       </span>
                     </div>
@@ -230,14 +230,14 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
             {/* İSG Süresi Yaklaşanlar */}
             {(activeTab === 'all' || activeTab === 'approaching') && isgApproachingWorkers.length > 0 && (
               <div style={{
-                background: 'rgba(245, 158, 11, 0.08)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
+                background: 'var(--warning-soft)',
+                border: '1px solid var(--warning-border)',
                 borderRadius: '12px',
                 padding: '1.25rem 1.5rem'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <span style={{ display: 'flex', alignItems: 'center', color: 'var(--danger)' }}><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
-                  <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: '#f59e0b' }}>
+                  <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: 'var(--warning)' }}>
                     {t('anomalies.hse_expiring_title', 'İSG Süresi Yaklaşanlar')} ({isgApproachingWorkers.length})
                   </h3>
                 </div>
@@ -252,14 +252,14 @@ const AnomalyPanel = ({ workers, balances, viewMode }) => {
                         gap: '0.5rem',
                         padding: '0.4rem 0.8rem',
                         borderRadius: '8px',
-                        background: 'rgba(245, 158, 11, 0.12)',
-                        border: '1px solid rgba(245, 158, 11, 0.25)',
+                        background: 'var(--warning-soft)',
+                        border: '1px solid var(--warning-border)',
                         fontSize: '0.8rem',
                         width: viewMode === 'list' ? '100%' : 'auto'
                       }}
                     >
-                      <span style={{ fontWeight: '600', color: '#fde68a' }}>{w.full_name}</span>
-                      <span style={{ fontWeight: '700', color: '#f59e0b', fontSize: '0.85rem' }}>
+                      <span style={{ fontWeight: '600', color: 'var(--warning)' }}>{w.full_name}</span>
+                      <span style={{ fontWeight: '700', color: 'var(--warning)', fontSize: '0.85rem' }}>
                         {w.remainingDays} {t('anomalies.days_left', 'gün kaldı')}
                       </span>
                     </div>

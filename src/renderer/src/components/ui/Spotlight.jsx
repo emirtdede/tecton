@@ -132,7 +132,7 @@ const Spotlight = ({ isOpen, onClose, onNavigate, workers = [], projects = [] })
             aria-autocomplete="list"
             aria-activedescendant={filteredItems[activeIndex] ? `spotlight-option-${activeIndex}` : undefined}
           />
-          <kbd style={{ background: 'rgba(255,255,255,0.08)', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>ESC</kbd>
+          <kbd style={{ background: 'var(--surface-hover)', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>ESC</kbd>
         </div>
         <div
           className="spotlight-results"

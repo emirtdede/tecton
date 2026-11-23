@@ -368,21 +368,18 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: 'calc(100vh - 80px)', position: 'relative' }}>
-      
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}</h1>
+          <p className="card-subtitle active-project-subtitle">
+            {t('common.active_project', 'Aktif Şantiye:')} <strong>{activeProject?.name}</strong>
+          </p>
+        </div>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      </header>
+
       {/* Top Card: Title, Form, Filters (Fixed/Non-scrolling) */}
       <div className="glass-card" style={{ flexShrink: 0, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-               {t('bulk_timesheet.title', 'Çoklu Puantaj Girişi')}
-            </h2>
-            <p className="card-subtitle active-project-subtitle" style={{ margin: 0 }}>
-              {t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span>
-            </p>
-          </div>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} fontSize="1.5rem" />
-        </div>
 
         {/* Add Record Form */}
         <form onSubmit={handleBulkSave} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', alignItems: 'flex-end', marginBottom: '0.25rem' }}>
@@ -457,9 +454,6 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
             className="btn btn-primary"
             disabled={saving || selectedIds.size === 0}
             style={{
-              height: '42px',
-              fontSize: '0.95rem',
-              fontWeight: 'bold',
               opacity: saving || selectedIds.size === 0 ? 0.5 : 1,
               cursor: saving || selectedIds.size === 0 ? 'not-allowed' : 'pointer'
             }}
@@ -470,7 +464,7 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
 
         {/* Filters & Search Bar */}
         <div style={{ 
-          background: 'rgba(255, 255, 255, 0.02)', 
+          background: 'var(--surface-subtle)', 
           border: '1px solid var(--glass-border)', 
           borderRadius: '12px', 
           padding: '0.75rem 1rem', 
@@ -575,8 +569,8 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
                     cursor: hasTimesheet ? 'not-allowed' : 'pointer',
                     border: `1px solid ${isSelected ? 'var(--primary)' : 'var(--glass-border)'}`,
                     background: hasTimesheet 
-                      ? 'rgba(16, 185, 129, 0.03)' 
-                      : (isSelected ? 'rgba(139, 92, 246, 0.08)' : 'rgba(255,255,255,0.02)'),
+                      ? 'var(--success-bg-light)' 
+                      : (isSelected ? 'var(--accent-soft)' : 'var(--surface-subtle)'),
                     opacity: hasTimesheet ? 0.75 : 1,
                     transition: 'all 0.15s ease',
                     userSelect: 'none'
@@ -584,8 +578,8 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
                 >
                   <div style={{
                     width: '20px', height: '20px', borderRadius: '4px', flexShrink: 0,
-                    border: `2px solid ${hasTimesheet ? '#10b981' : (isSelected ? 'var(--primary)' : 'var(--text-muted)')}`,
-                    background: hasTimesheet ? '#10b981' : (isSelected ? 'var(--primary)' : 'transparent'),
+                    border: `2px solid ${hasTimesheet ? 'var(--success)' : (isSelected ? 'var(--primary)' : 'var(--text-muted)')}`,
+                    background: hasTimesheet ? 'var(--success)' : (isSelected ? 'var(--primary)' : 'transparent'),
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'all 0.15s ease'
                   }}>
@@ -601,14 +595,14 @@ const BulkTimesheet = ({ activeProjectId, projects = [] }) => {
                     </div>
                     {hasTimesheet && (
                       <span style={{
-                        background: 'rgba(16, 185, 129, 0.15)',
-                        color: '#10b981',
+                        background: 'var(--success-bg)',
+                        color: 'var(--success)',
                         padding: '0.2rem 0.5rem',
                         borderRadius: '4px',
                         fontSize: '0.75rem',
                         fontWeight: '600'
                       }}>
-                        {t('bulk_timesheet.already_entered', ' Girildi')}
+                        {t('bulk_timesheet.already_entered', 'Girildi')}
                       </span>
                     )}
                   </div>

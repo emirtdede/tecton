@@ -60,6 +60,12 @@
     "settings_ai": "Sztuczna inteligencja"
   },
   "settings": {
+    "window_startup": "Okno i uruchamianie",
+    "start_with_windows": "Uruchamiaj Tecton przy starcie systemu Windows",
+    "start_minimized": "Uruchamiaj ukryty w zasobniku systemowym",
+    "close_to_tray": "Działaj w zasobniku po zamknięciu okna",
+    "standard_daily_hours_hint": "Służy do przeliczenia stawki dziennej na stawkę godzinową.",
+    "overtime_multiplier_hint": "Stawka godzinowa za nadgodziny jako wielokrotność stawki normalnej.",
     "theme_language": "Motyw i język",
     "language": "Język aplikacji",
     "theme": "Motyw",
@@ -69,7 +75,7 @@
     "company_name": "Nazwa firmy",
     "company_logo": "Logo firmy",
     "backup_db": "Utwórz kopię całej bazy danych",
-    "vacuum_db": " Optymalizuj system",
+    "vacuum_db": "Optymalizuj system",
     "vacuum_desc": "Zwalnia miejsce.",
     "cloud_sync_desc": "Automatyczna kopia zapasowa.",
     "work_types_title": "Rodzaje prac",
@@ -204,7 +210,7 @@
     "undo_error": "Cofnięcie nie powiodło się:",
     "delete_worker_title": "Usuń Personel",
     "delete_worker_msg": "Czy na pewno chcesz usunąć ten personel (przenieść do kosza)? Dane systemowe nie zostaną trwale usunięte, ale usunięte z list.",
-    "bulk_timesheet": " Zbiorcza karta pracy",
+    "bulk_timesheet": "Zbiorcza karta pracy",
     "no_search_results": "Brak rekordów pracowników pasujących do wyszukiwania.",
     "import_done": "Import zbiorczy zakończony!",
     "import_undo_hint": "Jeśli popełniono błąd, operację można natychmiast cofnąć.",
@@ -468,6 +474,7 @@
     "all_periods": "Wszystkie"
   },
   "about": {
+    "page_subtitle": "Szczegóły aplikacji, linki do projektu i najczęstsze pytania.",
     "faq": "Najczęstsze pytania",
     "faq_q1": "Czy Tecton wymaga połączenia z internetem?",
     "faq_a1": "Nie. Baza danych jest na tym komputerze, a wszystkie moduły działają offline. Internet służy tylko do sprawdzania aktualizacji.",
@@ -568,7 +575,7 @@
     "search_journal": "Szukaj w uwagach dziennika, pogodzie lub dacie..."
   },
   "media": {
-    "gallery_title": " Galeria multimediów placu budowy",
+    "gallery_title": "Galeria multimediów placu budowy",
     "no_image": "Brak obrazu",
     "view_list": "Widok Listy",
     "view_grid": "Widok Galerii",
@@ -576,7 +583,7 @@
     "search_placeholder": "Szukaj według tytułu, typu treści lub daty..."
   },
   "subcontractor": {
-    "title": " Księgi podwykonawców",
+    "title": "Księgi podwykonawców",
     "name": "Nazwa podwykonawcy / Firma",
     "name_ph": "np. Wykopy Karadeniz",
     "service": "Obszar usług",
@@ -601,14 +608,14 @@
     "delete_success": "Pomyślnie usunięto podwykonawcę."
   },
   "quality": {
-    "title": " Kontrola jakości i raporty z placu budowy",
+    "title": "Kontrola jakości i raporty z placu budowy",
     "report_title": "Tytuł raportu / Problem",
     "report_title_ph": "np. Przesunięcie osi na 3 piętrze / Nieprawidłowe szalowanie",
     "initial_status": "Stan początkowy",
     "status_open": "OTWARTE (Nierozwiązane)",
     "photo_label": "Wizualizacja / Zdjęcie usterki",
-    "select_pc": " Wybierz z komputera",
-    "upload_mobile": " Prześlij z telefonu (QR)",
+    "select_pc": "Wybierz z komputera",
+    "upload_mobile": "Prześlij z telefonu (QR)",
     "detailed_description": "Szczegółowy opis",
     "description_ph": "Szczegóły zidentyfikowanego problemu...",
     "add_report": "Dodaj raport",
@@ -620,7 +627,7 @@
     "delete_confirm": "Czy na pewno chcesz usunąć ten raport kontroli jakości? Tej czynności nie można cofnąć."
   },
   "journal": {
-    "title": " Dziennik budowy",
+    "title": "Dziennik budowy",
     "worker_count": "Liczba pracujących pracowników",
     "weather": "Stan pogody",
     "temperature": "Temperatura",
@@ -641,7 +648,7 @@
     "weather_api_error": "Usługa pogodowa zwróciła błąd."
   },
   "materials": {
-    "title": " Dowód dostawy i wprowadzanie materiałów",
+    "title": "Dowód dostawy i wprowadzanie materiałów",
     "supplier": "Dostawca",
     "supplier_ph": "np. Akçansa Beton S.A.",
     "material_type": "Rodzaj materiału",
@@ -660,7 +667,7 @@
     "lan_error": "Nie można uruchomić serwera lokalnego:"
   },
   "production": {
-    "title": " Ksiega obmiarów i śledzenie produkcji",
+    "title": "Ksiega obmiarów i śledzenie produkcji",
     "item_name": "Pozycja obmiarowa",
     "item_name_ph": "np. Murowanie ściany z cegły",
     "no_results": "Nie znaleziono żadnych rekordów produkcyjnych spełniających kryteria wyszukiwania.",
@@ -1205,7 +1212,7 @@
     "save_error": "Niektóre rekordy nie powiodły się. Sukces: {{success}}, Błąd: {{error}}",
     "no_workers_selected": "Wybierz co najmniej jednego pracownika.",
     "no_workers": "Nie znaleziono aktywnych pracowników.",
-    "already_entered": " Wpisano",
+    "already_entered": "Wpisano",
     "group_filter_all": "Wszystkie grupy",
     "day": "dzień",
     "end_date": "Data zakończenia",

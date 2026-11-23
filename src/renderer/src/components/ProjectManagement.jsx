@@ -6,7 +6,7 @@ import apiWrite from '../utils/apiWrite';
 import { logError } from '../utils/logger';
 import PageGuideIcon from './ui/PageGuideIcon';
 import Pagination from './ui/Pagination';
-import { MapPin, Plus } from 'lucide-react';
+import { Check, GripVertical, MapPin, Pencil, Plus, Trash2, X } from 'lucide-react';
 
 const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
   const { t } = useTranslation();
@@ -222,14 +222,12 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
 
   return (
     <>
-    <div ref={containerRef} className="glass-card project-panel" style={{ maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
-      <header className="project-panel-head">
+    <div ref={containerRef} className="glass-card project-panel" style={{ position: 'relative' }}>
+      <header className="page-head">
         <div>
-          <h2 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.2rem' }}>
-            {t('projects.title', 'Construction sites')}
-          </h2>
-          <p className="project-panel-sub">
-            {t('projects.subtitle', 'Every site keeps its own people, materials, payroll and cash record.')}
+          <h1 className="page-head-title">{t('projects.title', 'Şantiyeler')}</h1>
+          <p className="page-head-sub">
+            {t('projects.subtitle', 'Her şantiye kendi personelini, malzemesini, puantajını ve kasasını ayrı tutar.')}
           </p>
         </div>
         <PageGuideIcon onClick={() => setHelpOpen(true)} />
@@ -258,7 +256,7 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
             onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))}
           />
         </div>
-        <button type="submit" className="btn btn-primary" style={{ height: '42px' }}>
+        <button type="submit" className="btn btn-primary">
           <Plus size={16} /> {t('projects.add_btn', 'Add site')}
         </button>
       </form>
@@ -294,7 +292,7 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
               }}
               title={t('common.clear', 'Temizle')}
             >
-              
+              <X size={16} />
             </button>
           )}
         </div>
@@ -324,59 +322,19 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
             return (
               <div 
                 key={proj.id} 
-                className="glass-card" 
+                className={`site-row${isActive ? ' is-active' : ''}${isDragging ? ' is-dragging' : ''}${isDragOver ? ' is-drag-over' : ''}`}
                 draggable={!searchQuery && !isEditing}
                 onDragStart={(e) => handleDragStart(e, idx)}
                 onDragOver={(e) => handleDragOver(e, idx)}
                 onDragEnd={handleDragEnd}
                 onDrop={(e) => handleDrop(e, idx)}
-                style={{ 
-                  flexDirection: 'row', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  border: isDragging 
-                    ? '1px dashed var(--primary)' 
-                    : isDragOver 
-                    ? '1px solid var(--primary)' 
-                    : isActive 
-                    ? '1px solid var(--primary)' 
-                    : '1px solid var(--glass-border)',
-                  background: isDragging
-                    ? 'transparent'
-                    : isDragOver
-                    ? 'rgba(139, 92, 246, 0.1)'
-                    : isActive 
-                    ? 'rgba(139, 92, 246, 0.05)' 
-                    : 'var(--glass-bg)',
-                  padding: '1.25rem',
-                  opacity: isDragging ? 0.5 : 1,
-                  transform: isDragging ? 'scale(0.98)' : 'none',
-                  transition: 'all 0.2s ease',
-                  cursor: !searchQuery && !isEditing ? 'move' : 'default'
-                }}
+                style={{ cursor: !searchQuery && !isEditing ? 'move' : 'default' }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
                   {!searchQuery && !isEditing && (
-                    <div 
-                      className="project-drag-handle"
-                      style={{ 
-                        color: 'var(--text-muted)', 
-                        cursor: 'move', 
-                        fontSize: '1.2rem',
-                        userSelect: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '0.25rem',
-                        opacity: 0.5,
-                        transition: 'opacity 0.2s'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-                      onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
-                      title={t('projects.drag_to_reorder', 'Sürükleyerek yeniden sırala')}
-                    >
-                      ⋮⋮
-                    </div>
+                    <span className="site-row-handle" title={t('projects.drag_to_reorder', 'Sürükleyerek yeniden sırala')}>
+                      <GripVertical size={15} aria-hidden="true" />
+                    </span>
                   )}
                   {isEditing ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, paddingRight: '1rem' }} onDragStart={(e) => e.stopPropagation()} draggable={false}>
@@ -399,98 +357,90 @@ const ProjectManagement = ({ onSelectProject, activeProjectId }) => {
                       />
                     </div>
                   ) : (
-                    <div>
-                      <h3 className="card-title" style={{ color: isActive ? 'var(--accent)' : 'var(--text-main)', marginBottom: '0.25rem' }}>
-                        {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: 'var(--accent-text)' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
+                    <div style={{ minWidth: 0 }}>
+                      <h3 className="site-row-title">
+                        {proj.name}
+                        {isActive && <span className="pill pill-accent">{t('projects.active_workspace', 'Aktif Çalışma Alanı')}</span>}
                       </h3>
-                      <p className="card-subtitle" style={{ margin: 0 }}> {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
+                      <p className="site-row-meta">{proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
                     </div>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }} onDragStart={(e) => e.stopPropagation()} draggable={false}>
+                <div className="row-actions" onDragStart={(e) => e.stopPropagation()} draggable={false}>
                   {isEditing ? (
                     <>
-                      <button 
-                        className="btn btn-primary" 
+                      <button
+                        type="button"
+                        className="icon-btn"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSaveEdit(proj.id);
                         }}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         draggable={false}
                         onDragStart={(e) => e.stopPropagation()}
                         title={t('common.save', 'Kaydet')}
+                        aria-label={t('common.save', 'Kaydet')}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <Check size={15} aria-hidden="true" />
                       </button>
-                      <button 
-                        className="btn" 
+                      <button
+                        type="button"
+                        className="icon-btn"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCancelEdit();
                         }}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)' }}
                         draggable={false}
                         onDragStart={(e) => e.stopPropagation()}
                         title={t('common.cancel', 'Vazgeç')}
+                        aria-label={t('common.cancel', 'Vazgeç')}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
+                        <X size={15} aria-hidden="true" />
                       </button>
                     </>
                   ) : (
                     <>
                       {!isActive && (
-                        <button 
-                          className="btn" 
+                        <button
+                          type="button"
+                          className="btn"
                           onClick={(e) => {
                             e.stopPropagation();
                             onSelectProject(proj.id);
                           }}
-                          style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', height: '28px', display: 'flex', alignItems: 'center' }}
                           draggable={false}
                           onDragStart={(e) => e.stopPropagation()}
                         >
                           {t('projects.select_workspace', 'Çalışma Alanı Seç')}
                         </button>
                       )}
-                      <button 
-                        className="btn" 
+                      <button
+                        type="button"
+                        className="icon-btn"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleStartEdit(proj);
                         }}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)' }}
                         draggable={false}
                         onDragStart={(e) => e.stopPropagation()}
                         title={t('common.edit', 'Düzenle')}
+                        aria-label={t('common.edit', 'Düzenle')}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
+                        <Pencil size={15} aria-hidden="true" />
                       </button>
-                      <button 
-                        className="btn btn-danger" 
+                      <button
+                        type="button"
+                        className="icon-btn is-danger"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(proj.id);
                         }}
-                        style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         draggable={false}
                         onDragStart={(e) => e.stopPropagation()}
                         title={t('common.delete', 'Sil')}
+                        aria-label={t('common.delete', 'Sil')}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="3 6 5 6 21 6" />
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          <line x1="10" y1="11" x2="10" y2="17" />
-                          <line x1="14" y1="11" x2="14" y2="17" />
-                        </svg>
+                        <Trash2 size={15} aria-hidden="true" />
                       </button>
                     </>
                   )}

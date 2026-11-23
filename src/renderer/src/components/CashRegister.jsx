@@ -10,6 +10,7 @@ import { escapeHtml } from '../utils/htmlUtils';
 import { createPdfContainer, renderContainerToPdfPage } from '../utils/pdfRenderUtils';
 import GuideDrawer from './ui/GuideDrawer';
 import apiWrite from '../utils/apiWrite';
+import { Trash2, X } from 'lucide-react';
 import { logError } from '../utils/logger';
 import { CASH_IN, isCashIncome, isCashExpense, normalizeCashType } from '../utils/cashTypes';
 
@@ -315,7 +316,7 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
         
         <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
           <span style="font-size: 13px; color: #64748b; font-weight: 500; font-family: inherit;">${t('cash.netBalance', 'Net Kasa Bakiyesi')}:</span>
-          <span style="font-size: 18px; font-weight: bold; color: ${projNetBalance >= 0 ? '#16a34a' : '#dc2626'}; font-family: inherit;">
+          <span style="font-size: 18px; font-weight: bold; color: ${projNetBalance >= 0 ? '#16a34a' : 'var(--danger)'}; font-family: inherit;">
             ${formatCurrencySafe(projNetBalance, i18n.language)}
           </span>
         </div>
@@ -387,10 +388,10 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
   }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', fontFamily: "'Inter', 'Noto Sans', 'Arial', sans-serif" }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', fontFamily: 'inherit' }}>
       <header className="header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <h2 style={{ margin: 0 }}>{t('cash.title')}</h2>
+          <h1 style={{ margin: 0 }}>{t('cash.title')}</h1>
           <PageGuideIcon onClick={() => setHelpOpen(true)} fontSize="1.4rem" />
         </div>
       </header>
@@ -403,26 +404,26 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="glass-card balance-card" style={{ textAlign: 'center', padding: '1.5rem' }}>
               <h3 className="card-subtitle">{t('cash.net_balance')}</h3>
-              <div style={{ 
-                fontSize: '2.5rem', 
-                fontWeight: '700', 
+              <div style={{
+                fontSize: '2.25rem',
+                fontWeight: '700',
+                letterSpacing: '-0.02em',
                 marginTop: '0.25rem',
-                color: projNetBalance >= 0 ? 'var(--success-text)' : 'var(--danger-text)',
-                textShadow: projNetBalance >= 0 ? 'var(--success-shadow)' : 'var(--danger-shadow)'
+                color: 'var(--text-primary)'
               }}>
                 {formatCurrency(projNetBalance, i18n.language)}
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div className="glass-card" style={{ textAlign: 'center', padding: '1rem', background: 'var(--success-bg-light)', border: '1px solid var(--success-border)', boxShadow: 'var(--card-shadow)' }}>
-                <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.total_in')}</h4>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--success-text)', marginTop: '0.25rem' }}>
+              <div className="glass-card" style={{ textAlign: 'center', padding: '1rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{t('cash.total_in')}</h4>
+                <div style={{ fontSize: '1.25rem', fontWeight: '600', letterSpacing: '-0.01em', color: 'var(--success-text)', marginTop: '0.25rem' }}>
                   {formatCurrency(projTotalIn, i18n.language)}
                 </div>
               </div>
-              <div className="glass-card" style={{ textAlign: 'center', padding: '1rem', background: 'var(--danger-bg-light)', border: '1px solid var(--danger-border)', boxShadow: 'var(--card-shadow)' }}>
-                <h4 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.total_out')}</h4>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--danger-text)', marginTop: '0.25rem' }}>
+              <div className="glass-card" style={{ textAlign: 'center', padding: '1rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{t('cash.total_out')}</h4>
+                <div style={{ fontSize: '1.25rem', fontWeight: '600', letterSpacing: '-0.01em', color: 'var(--danger-text)', marginTop: '0.25rem' }}>
                   {formatCurrency(projTotalOut, i18n.language)}
                 </div>
               </div>
@@ -448,22 +449,22 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
           </div>
             
             {reportData ? (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div style={{ background: 'var(--accent-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--accent-border)' }}>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.wage_cost')}</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--accent)' }}>{formatCurrency(reportData.summary.totalWageCost, i18n.language)}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className="stat-tile">
+                  <div className="stat-tile-label">{t('cash.wage_cost')}</div>
+                  <div className="stat-tile-value">{formatCurrency(reportData.summary.totalWageCost, i18n.language)}</div>
                 </div>
-                <div style={{ background: 'var(--success-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--success-border)' }}>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.monthly_in')}</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--success-text)' }}>{formatCurrency(reportData.summary.totalCashIn, i18n.language)}</div>
+                <div className="stat-tile">
+                  <div className="stat-tile-label">{t('cash.monthly_in')}</div>
+                  <div className="stat-tile-value" style={{ color: 'var(--success-text)' }}>{formatCurrency(reportData.summary.totalCashIn, i18n.language)}</div>
                 </div>
-                <div style={{ background: 'var(--danger-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--danger-border)' }}>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.monthly_out')}</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--danger-text)' }}>{formatCurrency(reportData.summary.totalCashOut, i18n.language)}</div>
+                <div className="stat-tile">
+                  <div className="stat-tile-label">{t('cash.monthly_out')}</div>
+                  <div className="stat-tile-value" style={{ color: 'var(--danger-text)' }}>{formatCurrency(reportData.summary.totalCashOut, i18n.language)}</div>
                 </div>
-                <div style={{ background: 'var(--glass-bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)', boxShadow: 'var(--card-shadow)' }}>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('cash.net_change')}</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: reportData.summary.netCashFlow >= 0 ? 'var(--success-text)' : 'var(--danger-text)' }}>
+                <div className="stat-tile">
+                  <div className="stat-tile-label">{t('cash.net_change')}</div>
+                  <div className="stat-tile-value" style={{ color: reportData.summary.netCashFlow >= 0 ? 'var(--success-text)' : 'var(--danger-text)' }}>
                     {reportData.summary.netCashFlow > 0 ? '+' : ''}{formatCurrency(reportData.summary.netCashFlow, i18n.language)}
                   </div>
                 </div>
@@ -597,8 +598,9 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
                   zIndex: 10
                 }}
                 title={t('common.clear', 'Temizle')}
+                aria-label={t('common.clear', 'Temizle')}
               >
-                
+                <X size={14} aria-hidden="true" />
               </button>
             )}
           </div>
@@ -612,50 +614,35 @@ const CashRegister = ({ activeProjectId, projects = [] }) => {
               {paginatedTransactions.map(tr => {
                 const isIncome = isCashIncome(tr.type);
                 return (
-                  <div key={tr.id} style={{ 
-                    background: isIncome ? 'var(--success-bg-light)' : 'var(--danger-bg-light)', 
-                    border: `1px solid ${isIncome ? 'var(--success-border)' : 'var(--danger-border)'}`, 
-                    padding: '1rem', 
-                    borderRadius: '8px', 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center' 
-                  }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 'bold', color: 'var(--text-main)' }}>{formatDate(tr.trans_date, i18n.language)}</span>
-                        <span style={{ 
-                          fontSize: '0.75rem', 
-                          padding: '0.2rem 0.5rem', 
-                          borderRadius: '4px', 
-                          border: `1px solid var(${isIncome ? '--success-text' : '--danger-text'})`,
-                          color: `var(${isIncome ? '--success-text' : '--danger-text'})`
-                        }}>{isIncome ? t('cash.table.income') : t('cash.table.expense')}</span>
+                  <div key={tr.id} className="cash-row">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: 0 }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{formatDate(tr.trans_date, i18n.language)}</span>
+                        <span className={`pill ${isIncome ? 'pill-success' : 'pill-danger'}`}>
+                          {isIncome ? t('cash.table.income') : t('cash.table.expense')}
+                        </span>
                       </div>
                       <div className="card-subtitle" style={{ fontSize: '0.9rem' }}>
                         {tr.description || '-'}
                       </div>
                       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
-                        <span style={{ 
-                          fontSize: '0.75rem', 
-                          padding: '0.1rem 0.4rem', 
-                          borderRadius: '4px', 
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          color: 'var(--text-muted)'
-                        }}>
+                        <span className="pill">
                            {getProjectName(tr.project_id)}
                         </span>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontWeight: 'bold', color: isIncome ? 'var(--success-text)' : 'var(--danger-text)', fontSize: '1.1rem' }}>
+                    <div className="row-actions">
+                      <span style={{ fontWeight: '600', letterSpacing: '-0.01em', color: isIncome ? 'var(--success-text)' : 'var(--danger-text)', fontSize: '0.9375rem', marginInlineEnd: '0.25rem' }}>
                         {isIncome ? '+' : '-'}{formatCurrency(tr.amount, i18n.language)}
-                      </div>
-                      <button 
-                        onClick={() => handleDelete(tr.id)} 
-                        style={{ background: 'transparent', border: 'none', color: 'var(--danger-text)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline', marginTop: '0.25rem' }}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(tr.id)}
+                        className="icon-btn is-danger"
+                        title={t('common.delete', 'Sil')}
+                        aria-label={t('common.delete', 'Sil')}
                       >
-                        {t('common.delete')}
+                        <Trash2 size={15} aria-hidden="true" />
                       </button>
                     </div>
                   </div>

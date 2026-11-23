@@ -6,7 +6,7 @@ import { exportToExcel, exportToCSV, exportToJSON, exportToText, exportToMarkdow
 import CustomDatePicker from './ui/CustomDatePicker';
 import { formatDate, formatTime } from '../utils/formatUtils';
 import GuideDrawer from './ui/GuideDrawer';
-import PageGuideIcon from './ui/PageGuideIcon';
+import { Lightbulb, X } from 'lucide-react';
 import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
 import Pagination from './ui/Pagination';
 
@@ -185,34 +185,26 @@ const SystemLogs = () => {
   return (
     <>
       <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 className="card-title" style={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>{t('logs.title')}</span>
-          <PageGuideIcon onClick={() => setIsGuideOpen(true)} fontSize="1.4rem" />
-        </h3>
-        
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <button 
-            type="button" 
-            className="btn btn-secondary" 
-            onClick={handleOpenLogsFolder}
-            style={{ 
-              padding: '0.5rem 1rem', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              fontWeight: 'bold',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--glass-border)',
-              borderRadius: '6px',
-              color: 'var(--text-main)',
-              cursor: 'pointer'
-            }}
+      <div className="card-toolbar">
+        <div className="card-toolbar-actions">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => setIsGuideOpen(true)}
+            title={t('guides.logs.title', 'Sistem Kayıtları Kılavuzu (5N1K)')}
           >
-             {t('logs.open_folder', 'Geçmiş Log Klasörünü Aç')}
+            <Lightbulb size={14} aria-hidden="true" />
+            {t('common.page_guide', 'Page guide')}
+          </button>
+          <button
+            type="button"
+            className="btn"
+            onClick={handleOpenLogsFolder}
+          >
+            {t('logs.open_folder', 'Geçmiş Log Klasörünü Aç')}
           </button>
 
-          <select className="btn btn-primary" style={{ padding: '0.5rem', background: 'var(--accent)', color: 'var(--accent-text)', fontWeight: 'bold' }} onChange={e => {
+          <select className="form-input" style={{ width: 'auto' }} onChange={e => {
               const val = e.target.value;
               if (val) handleExport(val);
               e.target.value = "";
@@ -258,7 +250,7 @@ const SystemLogs = () => {
                   zIndex: 10
                 }}
                 title={t('common.clear', 'Temizle')}
-              >
+              ><X size={14} aria-hidden="true" />
                 
               </button>
             )}

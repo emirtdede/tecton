@@ -60,6 +60,12 @@
     "settings_ai": "Artificiell intelligens"
   },
   "settings": {
+    "window_startup": "Fönster och start",
+    "start_with_windows": "Starta Tecton när Windows startar",
+    "start_minimized": "Starta dolt i systemfältet",
+    "close_to_tray": "Fortsätt i systemfältet när fönstret stängs",
+    "standard_daily_hours_hint": "Används för att räkna om en dagslön till en timlön.",
+    "overtime_multiplier_hint": "Timlön för övertid som en multipel av den normala taxan.",
     "theme_language": "Tema & Språk",
     "language": "Appspråk",
     "theme": "Apptema",
@@ -69,7 +75,7 @@
     "company_name": "Företagsnamn",
     "company_logo": "Företagslogotyp",
     "backup_db": "Säkerhetskopiera hela databasen",
-    "vacuum_db": " Optimera system (Vacuum)",
+    "vacuum_db": "Optimera system (Vacuum)",
     "vacuum_desc": "Rensar oanvända datablock i bakgrunden och minskar databasstorleken, vilket gör applikationen snabbare.",
     "cloud_sync_desc": "När du väljer en synkroniseringsmapp tar programmet autonomt en säkerhetskopia i bakgrunden när det stängs.",
     "work_types_title": "Arbetstyper och multiplikatorer",
@@ -204,7 +210,7 @@
     "undo_error": "Det gick inte att ångra:",
     "delete_worker_title": "Ta Bort Personal",
     "delete_worker_msg": "Är du säker på att du vill ta bort denna personal (flytta till papperskorgen)? Systemdata kommer inte att raderas permanent, men tas bort från listor.",
-    "bulk_timesheet": " Mass-tidrapport",
+    "bulk_timesheet": "Mass-tidrapport",
     "no_search_results": "Inga personalposter matchar din sökning.",
     "import_done": "Massimport slutförd!",
     "import_undo_hint": "Om du gjorde ett misstag kan du ångra åtgärden direkt.",
@@ -468,6 +474,7 @@
     "all_periods": "Alla"
   },
   "about": {
+    "page_subtitle": "Appdetaljer, projektlänkar och vanliga frågor.",
     "faq": "Vanliga frågor",
     "faq_q1": "Behöver Tecton internet?",
     "faq_a1": "Nej. Databasen ligger på den här datorn och alla moduler fungerar offline. Internet behövs bara för att söka efter uppdateringar.",
@@ -568,7 +575,7 @@
     "search_journal": "Sök i journalanteckningar, väder eller datum..."
   },
   "media": {
-    "gallery_title": " Mediegalleri för byggarbetsplats",
+    "gallery_title": "Mediegalleri för byggarbetsplats",
     "no_image": "Ingen bild",
     "view_list": "Listvy",
     "view_grid": "Gallerivy",
@@ -576,7 +583,7 @@
     "search_placeholder": "Sök på titel, innehållstyp eller datum..."
   },
   "subcontractor": {
-    "title": " Huvudböcker för underentreprenörer",
+    "title": "Huvudböcker för underentreprenörer",
     "name": "Underentreprenör namn / firma",
     "name_ph": "t.ex. Karadeniz Schakt",
     "service": "Tjänsteområde",
@@ -601,14 +608,14 @@
     "delete_success": "Underleverantör har raderats."
   },
   "quality": {
-    "title": " Kvalitetskontroll & Platsrapporter",
+    "title": "Kvalitetskontroll & Platsrapporter",
     "report_title": "Rapport / Problem titel",
     "report_title_ph": "t.ex. Axelavvikelse 3:e våningen / Felaktig form",
     "initial_status": "Startstatus",
     "status_open": "ÖPPEN (Oavklarad)",
     "photo_label": "Visuell / Rapportfoto",
-    "select_pc": " Välj från PC",
-    "upload_mobile": " Ladda upp från mobil (QR)",
+    "select_pc": "Välj från PC",
+    "upload_mobile": "Ladda upp från mobil (QR)",
     "detailed_description": "Detaljerad beskrivning",
     "description_ph": "Detaljer om det identifierade problemet...",
     "add_report": "Lägg till rapport",
@@ -620,7 +627,7 @@
     "delete_confirm": "Är du säker på att du vill ta bort den här kvalitetskontrollrapporten? Denna åtgärd kan inte ångras."
   },
   "journal": {
-    "title": " Dagsjournal för byggarbetsplats",
+    "title": "Dagsjournal för byggarbetsplats",
     "worker_count": "Antal verksamma medarbetare",
     "weather": "Väderstatus",
     "temperature": "Temperatur",
@@ -641,7 +648,7 @@
     "weather_api_error": "Vädertjänsten returnerade ett fel."
   },
   "materials": {
-    "title": " Följeseddel & Materialregistrering",
+    "title": "Följeseddel & Materialregistrering",
     "supplier": "Leverantörsfirma",
     "supplier_ph": "t.ex. Akçansa Cement AB",
     "material_type": "Materialtyp",
@@ -660,7 +667,7 @@
     "lan_error": "Lokal server kunde inte startas:"
   },
   "production": {
-    "title": " Mängdförteckning & Produktionsspårning",
+    "title": "Mängdförteckning & Produktionsspårning",
     "item_name": "Produktionspost",
     "item_name_ph": "t.ex. Murning av tegelvägg",
     "no_results": "Inga produktionsposter hittades som matchade sökkriterierna.",
@@ -1205,7 +1212,7 @@
     "save_error": "Vissa poster misslyckades. Lyckades: {{success}}, Fel: {{error}}",
     "no_workers_selected": "Välj minst en arbetare.",
     "no_workers": "Inga aktiva arbetare hittades.",
-    "already_entered": " Inlagd",
+    "already_entered": "Inlagd",
     "group_filter_all": "Alla grupper",
     "day": "dag",
     "end_date": "Slutdatum",

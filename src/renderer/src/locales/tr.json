@@ -62,6 +62,12 @@
     "settings_ai": "Yapay zeka"
   },
   "settings": {
+    "window_startup": "Pencere ve Başlatma",
+    "start_with_windows": "Windows açıldığında Tecton'u başlat",
+    "start_minimized": "Sistem tepsisinde gizli başlat",
+    "close_to_tray": "Pencere kapatıldığında tepside çalışmaya devam et",
+    "standard_daily_hours_hint": "Günlük yevmiyeyi saat ücretine çevirmek için kullanılır.",
+    "overtime_multiplier_hint": "Fazla mesainin saat ücreti, normal ücretin kaç katı olduğu.",
     "theme_language": "Tema ve Dil",
     "language": "Uygulama Dili",
     "theme": "Uygulama Teması",
@@ -224,7 +230,7 @@
     "undo_error": "Geri alma başarısız oldu:",
     "delete_worker_title": "Personeli Sil",
     "delete_worker_msg": "Bu personeli silmek (çöp kutusuna taşımak) istediğinize emin misiniz? Sistemdeki verileri kalıcı olarak silinmez, ancak listelerden kaldırılır.",
-    "bulk_timesheet": " Çoklu Puantaj",
+    "bulk_timesheet": "Çoklu Puantaj",
     "no_search_results": "Arama kriterlerine uygun personel kaydı bulunamadı.",
     "import_done": "Toplu aktarım tamamlandı!",
     "import_undo_hint": "Bir hata yaptıysanız işlemi hemen geri alabilirsiniz.",
@@ -487,6 +493,7 @@
     "all_periods": "Tümü"
   },
   "about": {
+    "page_subtitle": "Uygulama bilgileri, proje bağlantıları ve sık sorulan sorular.",
     "faq": "Sıkça sorulan sorular",
     "faq_search_placeholder": "Sorularda ara",
     "faq_no_results": "Aramanızla eşleşen soru yok.",
@@ -569,7 +576,7 @@
     "search_journal": "Jurnal notlarında, hava durumunda veya tarihte ara..."
   },
   "media": {
-    "gallery_title": " Şantiye Medya Galerisi",
+    "gallery_title": "Şantiye Medya Galerisi",
     "no_image": "Görsel Yok",
     "view_list": "Liste Görünümü",
     "view_grid": "Galeri Görünümü",
@@ -577,7 +584,7 @@
     "search_placeholder": "Başlık, içerik türü veya tarihe göre arayın..."
   },
   "subcontractor": {
-    "title": " Taşeron ve Alt Yüklenici Carileri",
+    "title": "Taşeron ve Alt Yüklenici Carileri",
     "name": "Taşeron Adı / Ünvanı",
     "name_ph": "Örn: Öz Karadeniz Hafriyat",
     "service": "Hizmet Alanı",
@@ -602,14 +609,14 @@
     "delete_success": "Taşeron kaydı başarıyla silindi."
   },
   "quality": {
-    "title": " Kalite Kontrol & Şantiye Tutanakları",
+    "title": "Kalite Kontrol & Şantiye Tutanakları",
     "report_title": "Tutanak / Tespit Başlığı",
     "report_title_ph": "Örn: 3. Kat Aks Kayması / Hatalı Kalıp Kurulumu",
     "initial_status": "Başlangıç Durumu",
     "status_open": "AÇIK (Sorun Çözülmedi)",
     "photo_label": "Görsel / Tutanak Fotoğrafı",
-    "select_pc": " PC'den Seç",
-    "upload_mobile": " Mobilden Yükle (QR)",
+    "select_pc": "PC'den Seç",
+    "upload_mobile": "Mobilden Yükle (QR)",
     "detailed_description": "Detaylı Açıklama",
     "description_ph": "Tespit edilen aksaklığın ayrıntıları...",
     "add_report": "Tutanak Ekle",
@@ -621,7 +628,7 @@
     "delete_confirm": "Bu kalite kontrol raporunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
   },
   "journal": {
-    "title": " Şantiye Günlük Jurnali",
+    "title": "Şantiye Günlük Jurnali",
     "worker_count": "Çalışan Personel Sayısı",
     "weather": "Hava Durumu",
     "temperature": "Sıcaklık",
@@ -642,7 +649,7 @@
     "weather_api_error": "Hava durumu servisi hata döndürdü."
   },
   "materials": {
-    "title": " İrsaliye ve Malzeme Girişi",
+    "title": "İrsaliye ve Malzeme Girişi",
     "supplier": "Tedarikçi Firma",
     "supplier_ph": "Örn: Akçansa Beton A.Ş.",
     "material_type": "Malzeme Cinsi",
@@ -661,7 +668,7 @@
     "lan_error": "Yerel sunucu başlatılamadı:"
   },
   "production": {
-    "title": " Metraj ve İmalat Takibi",
+    "title": "Metraj ve İmalat Takibi",
     "item_name": "İmalat Kalemi",
     "item_name_ph": "Örn: Tuğla Duvar Örme",
     "no_results": "Arama kriterlerine uygun imalat kaydı bulunamadı.",
@@ -1213,7 +1220,7 @@
     "status_all": "Tümü",
     "status_entered": "Puantaj girildi",
     "status_not_entered": "Puantaj girilmedi",
-    "already_entered": " Girildi",
+    "already_entered": "Girildi",
     "group_filter_all": "Tüm Gruplar",
     "day": "gün",
     "end_date": "Bitiş Tarihi",

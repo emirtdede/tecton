@@ -15,6 +15,7 @@ import useTransientMessage from '../hooks/useTransientMessage';
 import MobileUploadModal from './ui/MobileUploadModal';
 import Pagination from './ui/Pagination';
 import { parsePositiveNumber } from '../utils/validation';
+import { Eye, Pencil, Trash2, X } from 'lucide-react';
 
 const MaterialManagement = ({ activeProjectId, projects = [] }) => {
   const { t, i18n } = useTranslation();
@@ -125,7 +126,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
           loadPhotoPreview(data.relativePath);
           // Show non-blocking toast and close QR Modal
           // Local showToast removed, using global ToastManager
-          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', ' Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('materials.photo_success', 'Mobil cihazdan çekilen fotoğraf başarıyla alındı!'), type: 'success' } }));
           setQrModal({ isOpen: false, qrCode: '', url: '' });
           // Fire-and-forget, but a rejection must not surface as an
           // unhandled promise rejection in the renderer.
@@ -315,13 +316,18 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
 
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('materials.title', 'İrsaliye ve Malzeme Girişi')}</h1>
+          <p className="card-subtitle active-project-subtitle">
+            {t('common.active_project', 'Aktif Şantiye:')} <strong>{activeProject?.name}</strong>
+          </p>
+        </div>
+        <PageGuideIcon onClick={() => setHelpOpen(true)} />
+      </header>
+
       {/* Main List and Form */}
       <div className="glass-card" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <h2 className="card-title" style={{ fontSize: '1.5rem', marginBottom: 0 }}>{t('materials.title', ' İrsaliye ve Malzeme Girişi')}</h2>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} />
-        </div>
-        <p className="card-subtitle active-project-subtitle" style={{ marginBottom: '1.5rem' }}>{t('common.active_project', 'Aktif Şantiye:')} <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{activeProject?.name}</span></p>
 
         {/* Add Record Form */}
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '0.5rem', alignItems: 'flex-end' }}>
@@ -399,10 +405,10 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             <label className="form-label">{t('materials.document_photo', 'Evrak Fotoğrafı')}</label>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <button type="button" className="btn" onClick={handleSelectLocalPhoto} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.select_pc', ' PC\'den Seç')}
+                {t('quality.select_pc', 'PC\'den Seç')}
               </button>
               <button type="button" className="btn btn-primary" onClick={handleOpenQRModal} style={{ flex: 1, fontSize: '0.85rem' }}>
-                {t('quality.upload_mobile', ' Mobilden Yükle (QR)')}
+                {t('quality.upload_mobile', 'Mobilden Yükle (QR)')}
               </button>
               {photoPreview && (
                 <div 
@@ -426,7 +432,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                       position: 'absolute', 
                       top: 0, 
                       right: 0, 
-                      background: 'rgba(239, 68, 68, 0.9)', 
+                      background: 'var(--danger)', 
                       color: 'white', 
                       border: 'none', 
                       width: '14px', 
@@ -444,8 +450,10 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                       setPhotoPreview(''); 
                       setFormData(prev => ({ ...prev, photo_path: '' })); 
                     }}
+                    title={t('common.remove', 'Kaldır')}
+                    aria-label={t('common.remove', 'Kaldır')}
                   >
-                    
+                    <X size={10} aria-hidden="true" />
                   </button>
                 </div>
               )}
@@ -459,7 +467,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             />
           </div>
 
-          <div className="form-group" style={{ marginBottom: 0, gridColumn: 'span 5' }}>
+          <div className="form-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
             <label className="form-label">{t('common.notes', 'Açıklama / Not')}</label>
             <input 
               type="text" 
@@ -470,8 +478,8 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%', gridColumn: 'span 3' }}>
-            <button type="submit" className="btn btn-primary" style={{ flex: 1, height: '42px' }}>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">
               {editingId ? t('common.save', 'Güncelle') : t('common.save', 'Kaydet')}
             </button>
             {editingId && (
@@ -492,7 +500,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                   });
                   setPhotoPreview('');
                 }} 
-                style={{ height: '42px' }}
+               
               >
                 {t('common.cancel', 'Vazgeç')}
               </button>
@@ -503,7 +511,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
         {/* Filters & Search Bar */}
         {records.length > 0 && (
           <div style={{ 
-            background: 'rgba(255, 255, 255, 0.02)', 
+            background: 'var(--surface-subtle)', 
             border: '1px solid var(--glass-border)', 
             borderRadius: '12px', 
             padding: '0.75rem 1rem', 
@@ -543,7 +551,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                       zIndex: 10
                     }}
                     title={t('common.clear', 'Temizle')}
-                  >
+                  ><X size={14} aria-hidden="true" />
                     
                   </button>
                 )}
@@ -635,48 +643,40 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
                       {r.quantity} {r.unit}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
+                      <div className="row-actions">
                         {r.photo_path && (
-                          <button 
-                            className="btn btn-primary" 
+                          <button
+                            type="button"
+                            className="icon-btn"
                             onClick={async () => {
                               const res = await window.api.media.readPhoto({ relativePath: r.photo_path });
                               if (res.success) {
                                 setLightboxImage(res.base64);
                               }
                             }}
-                            style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             title={t('materials.view_photo', 'Görüntüle')}
+                            aria-label={t('materials.view_photo', 'Görüntüle')}
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
+                            <Eye size={15} aria-hidden="true" />
                           </button>
                         )}
-                        <button 
-                          className="btn" 
+                        <button
+                          type="button"
+                          className="icon-btn"
                           onClick={() => handleStartEdit(r)}
-                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           title={t('dashboard.edit', 'Düzenle')}
+                          aria-label={t('dashboard.edit', 'Düzenle')}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                          </svg>
+                          <Pencil size={15} aria-hidden="true" />
                         </button>
-                        <button 
-                          className="btn btn-danger" 
+                        <button
+                          type="button"
+                          className="icon-btn is-danger"
                           onClick={() => handleDelete(r.id)}
-                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           title={t('common.delete', 'Sil')}
+                          aria-label={t('common.delete', 'Sil')}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                            <line x1="10" y1="11" x2="10" y2="17" />
-                            <line x1="14" y1="11" x2="14" y2="17" />
-                          </svg>
+                          <Trash2 size={15} aria-hidden="true" />
                         </button>
                       </div>
                     </td>
@@ -740,7 +740,7 @@ const MaterialManagement = ({ activeProjectId, projects = [] }) => {
           top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: 'rgba(16, 185, 129, 0.95)',
+          background: 'var(--success)',
           color: '#fff',
           padding: '0.75rem 1.5rem',
           borderRadius: '8px',

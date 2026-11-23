@@ -60,6 +60,12 @@
     "settings_ai": "Kunstig intelligens"
   },
   "settings": {
+    "window_startup": "Vindue og opstart",
+    "start_with_windows": "Start Tecton, når Windows starter",
+    "start_minimized": "Start skjult i systembakken",
+    "close_to_tray": "Fortsæt i systembakken, når vinduet lukkes",
+    "standard_daily_hours_hint": "Bruges til at omregne en dagsløn til en timeløn.",
+    "overtime_multiplier_hint": "Timeløn for overarbejde som et multiplum af den normale sats.",
     "theme_language": "Tema & Sprog",
     "language": "App-sprog",
     "theme": "App-tema",
@@ -69,7 +75,7 @@
     "company_name": "Firmanavn",
     "company_logo": "Firmalogo",
     "backup_db": "Sikkerhedskopier hele databasen",
-    "vacuum_db": " Optimer system",
+    "vacuum_db": "Optimer system",
     "vacuum_desc": "Renser ubrugte data.",
     "cloud_sync_desc": "Automatisk backup.",
     "work_types_title": "Arbejdstyper",
@@ -204,7 +210,7 @@
     "undo_error": "Fortrydelse mislykkedes:",
     "delete_worker_title": "Slet Personale",
     "delete_worker_msg": "Er du sikker på, at du vil slette dette personale (flytte til papirkurven)? Systemdata vil ikke blive permanent slettet, men fjernet fra lister.",
-    "bulk_timesheet": " Masse-timeseddel",
+    "bulk_timesheet": "Masse-timeseddel",
     "no_search_results": "Ingen medarbejderposter matcher din søgning.",
     "import_done": "Masseimport fuldført!",
     "import_undo_hint": "Hvis du lavede en fejl, kan du fortryde handlingen med det samme.",
@@ -468,6 +474,7 @@
     "all_periods": "Alle"
   },
   "about": {
+    "page_subtitle": "Appdetaljer, projektlinks og ofte stillede spørgsmål.",
     "faq": "Ofte stillede spørgsmål",
     "faq_q1": "Kræver Tecton internet?",
     "faq_a1": "Nej. Databasen ligger på denne computer, og alle moduler virker offline. Internet bruges kun til at kontrollere opdateringer.",
@@ -568,7 +575,7 @@
     "search_journal": "Søg i journalnoter, vejr eller dato..."
   },
   "media": {
-    "gallery_title": " Mediegalleri for byggeplads",
+    "gallery_title": "Mediegalleri for byggeplads",
     "no_image": "Intet billede",
     "view_list": "Listevisning",
     "view_grid": "Gallerivisning",
@@ -576,7 +583,7 @@
     "search_placeholder": "Søg efter titel, indholdstype eller dato..."
   },
   "subcontractor": {
-    "title": " Hovedbøger for underleverandører",
+    "title": "Hovedbøger for underleverandører",
     "name": "Underleverandør navn / titel",
     "name_ph": "f.eks. Karadeniz Jordarbejde",
     "service": "Serviceområde",
@@ -601,14 +608,14 @@
     "delete_success": "Underleverandør slettet."
   },
   "quality": {
-    "title": " Kvalitetskontrol & Pladsrapporter",
+    "title": "Kvalitetskontrol & Pladsrapporter",
     "report_title": "Rapport / Problem titel",
     "report_title_ph": "f.eks. 3. sals akseforskydning / Forkert forskalling",
     "initial_status": "Startstatus",
     "status_open": "ÅBEN (Uafklaret)",
     "photo_label": "Visuel / Rapportfoto",
-    "select_pc": " Vælg fra PC",
-    "upload_mobile": " Upload fra mobil (QR)",
+    "select_pc": "Vælg fra PC",
+    "upload_mobile": "Upload fra mobil (QR)",
     "detailed_description": "Detaljeret beskrivelse",
     "description_ph": "Detaljer om det identificerede problem...",
     "add_report": "Tilføj rapport",
@@ -620,7 +627,7 @@
     "delete_confirm": "Er du sikker på, at du vil slette denne kvalitetskontrolrapport? Denne handling kan ikke fortrydes."
   },
   "journal": {
-    "title": " Dagsjournal for byggeplads",
+    "title": "Dagsjournal for byggeplads",
     "worker_count": "Antal arbejdende personale",
     "weather": "Vejrstatus",
     "temperature": "Temperatur",
@@ -641,7 +648,7 @@
     "weather_api_error": "Vejrtjenesten returnerede en fejl."
   },
   "materials": {
-    "title": " Følgeseddel & Materialeindtastning",
+    "title": "Følgeseddel & Materialeindtastning",
     "supplier": "Leverandørfirma",
     "supplier_ph": "f.eks. Akçansa Beton A.S.",
     "material_type": "Materialetype",
@@ -660,7 +667,7 @@
     "lan_error": "Den lokale server kunne ikke startes:"
   },
   "production": {
-    "title": " Mængdeberegning & Produktionssporing",
+    "title": "Mængdeberegning & Produktionssporing",
     "item_name": "Produktionspost",
     "item_name_ph": "f.eks. Muring af murstensvæg",
     "no_results": "Ingen produktionsposter matcher søgningen.",
@@ -1208,7 +1215,7 @@
     "save_error": "Nogle poster mislykkedes. Succes: {{success}}, Fejl: {{error}}",
     "no_workers_selected": "Vælg mindst én arbejder.",
     "no_workers": "Ingen aktive arbejdere fundet.",
-    "already_entered": " Indtastet",
+    "already_entered": "Indtastet",
     "group_filter_all": "Alle grupper",
     "day": "dag",
     "end_date": "Slutdato",

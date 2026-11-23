@@ -60,6 +60,12 @@
     "settings_ai": "人工知能"
   },
   "settings": {
+    "window_startup": "ウィンドウと起動",
+    "start_with_windows": "Windows の起動時に Tecton を起動する",
+    "start_minimized": "システムトレイに隠して起動する",
+    "close_to_tray": "ウィンドウを閉じてもトレイで実行を続ける",
+    "standard_daily_hours_hint": "日給を時間給に換算するために使用します。",
+    "overtime_multiplier_hint": "残業の時間給を通常の賃率の倍率で指定します。",
     "theme_language": "テーマと言語",
     "language": "アプリ言語",
     "theme": "アプリのテーマ",
@@ -69,7 +75,7 @@
     "company_name": "会社名",
     "company_logo": "会社のロゴ",
     "backup_db": "データベース全体をバックアップ",
-    "vacuum_db": " システムの最適化",
+    "vacuum_db": "システムの最適化",
     "vacuum_desc": "未使用のデータをクリーンアップします。",
     "cloud_sync_desc": "自動バックアップ。",
     "work_types_title": "作業タイプと倍率",
@@ -204,7 +210,7 @@
     "undo_error": "元に戻すことができませんでした:",
     "delete_worker_title": "人員の削除",
     "delete_worker_msg": "この人員を削除して（ごみ箱に移動）もよろしいですか？システムデータは完全に削除されませんが、リストから削除されます。",
-    "bulk_timesheet": " 一括タイムシート",
+    "bulk_timesheet": "一括タイムシート",
     "no_search_results": "検索に一致する人員記録はありません。",
     "import_done": "一括インポートが完了しました！",
     "import_undo_hint": "誤って操作した場合は、すぐに元に戻せます。",
@@ -468,6 +474,7 @@
     "all_periods": "すべて"
   },
   "about": {
+    "page_subtitle": "アプリケーションの詳細、プロジェクトへのリンク、よくある質問。",
     "faq": "よくある質問",
     "faq_q1": "Tecton にインターネット接続は必要ですか?",
     "faq_a1": "いいえ。データベースはこの PC にあり、すべてのモジュールがオフラインで動作します。インターネットは更新の確認にのみ使用します。",
@@ -568,7 +575,7 @@
     "search_journal": "日誌メモ、天気、日付を検索..."
   },
   "media": {
-    "gallery_title": " 現場メディアギャラリー",
+    "gallery_title": "現場メディアギャラリー",
     "no_image": "画像なし",
     "view_list": "リスト表示",
     "view_grid": "ギャラリー表示",
@@ -576,7 +583,7 @@
     "search_placeholder": "タイトル、コンテンツの種類、日付で検索..."
   },
   "subcontractor": {
-    "title": " 下請業者台帳",
+    "title": "下請業者台帳",
     "name": "下請業者名 / 屋号",
     "name_ph": "例：カラデニズ土木",
     "service": "業務内容",
@@ -601,14 +608,14 @@
     "delete_success": "下請業者が削除されました。"
   },
   "quality": {
-    "title": " 品質管理＆現場報告",
+    "title": "品質管理＆現場報告",
     "report_title": "報告 / 指摘事項の件名",
     "report_title_ph": "例：3階軸ずれ / 型枠設置ミス",
     "initial_status": "初期状態",
     "status_open": "未解決（オープン）",
     "photo_label": "写真 / 添付画像",
-    "select_pc": " PCから選択",
-    "upload_mobile": " モバイルからアップロード (QR)",
+    "select_pc": "PCから選択",
+    "upload_mobile": "モバイルからアップロード (QR)",
     "detailed_description": "詳細説明",
     "description_ph": "検出された不具合の詳細...",
     "add_report": "報告を追加",
@@ -620,7 +627,7 @@
     "delete_confirm": "この品質管理レポートを削除してもよろしいですか？この操作は元に戻せません。"
   },
   "journal": {
-    "title": " 現場日誌",
+    "title": "現場日誌",
     "worker_count": "出役人数",
     "weather": "天候",
     "temperature": "温度",
@@ -641,7 +648,7 @@
     "weather_api_error": "天気サービスがエラーを返しました。"
   },
   "materials": {
-    "title": " 納品書＆材料入力",
+    "title": "納品書＆材料入力",
     "supplier": "仕入先企業",
     "supplier_ph": "例：アクチャンサ・セメント",
     "material_type": "材料品目",
@@ -660,7 +667,7 @@
     "lan_error": "ローカルサーバーを起動できませんでした:"
   },
   "production": {
-    "title": " 出来高・施工管理",
+    "title": "出来高・施工管理",
     "item_name": "施工項目",
     "item_name_ph": "例：レンガ積み工事",
     "no_results": "検索条件に一致する生産レコードは見つかりませんでした。",
@@ -1205,7 +1212,7 @@
     "save_error": "一部のレコードでエラーが発生しました。成功：{{success}}、エラー：{{error}}",
     "no_workers_selected": "少なくとも1名の作業員を選択してください。",
     "no_workers": "アクティブな作業員が見つかりません。",
-    "already_entered": " 入力済み",
+    "already_entered": "入力済み",
     "group_filter_all": "すべてのグループ",
     "day": "日",
     "end_date": "終了日",

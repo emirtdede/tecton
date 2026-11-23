@@ -62,19 +62,19 @@ export default function Documentation() {
 
   return (
     <div className="docs-view" style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div className="glass-card docs-hero">
+      <header className="page-head">
         <div>
-          <h2 className="card-title" style={{ marginBottom: '0.35rem' }}>
-            <BookOpen size={20} /> {t('docs.title', 'Documentation')}
-          </h2>
+          <h1 className="page-head-title">
+            <BookOpen size={20} aria-hidden="true" /> {t('docs.title', 'Documentation')}
+          </h1>
           <p className="docs-subtitle">
             {t('docs.subtitle', 'A practical manual for every module, plus the shortcuts and backup rules that keep your data safe.')}
           </p>
         </div>
-      </div>
+      </header>
 
       <div className="docs-layout">
-        <nav className="glass-card docs-nav" aria-label={t('docs.select_topic', 'Topics')}>
+        <nav className="docs-nav" aria-label={t('docs.select_topic', 'Topics')}>
           <span className="cloud-meta-label">{t('docs.select_topic', 'Topics')}</span>
           {TOPICS.map((topic) => (
             <button

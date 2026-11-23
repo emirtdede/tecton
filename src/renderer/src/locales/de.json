@@ -60,6 +60,12 @@
     "settings_ai": "Künstliche Intelligenz"
   },
   "settings": {
+    "window_startup": "Fenster und Start",
+    "start_with_windows": "Tecton beim Start von Windows ausführen",
+    "start_minimized": "Im Infobereich der Taskleiste ausgeblendet starten",
+    "close_to_tray": "Nach dem Schließen des Fensters im Infobereich weiterlaufen",
+    "standard_daily_hours_hint": "Wird verwendet, um einen Tageslohn in einen Stundensatz umzurechnen.",
+    "overtime_multiplier_hint": "Stundenlohn für Überstunden als Vielfaches des normalen Satzes.",
     "theme_language": "Design und Sprache",
     "language": "App-Sprache",
     "theme": "App-Design",
@@ -69,7 +75,7 @@
     "company_name": "Name des Unternehmens / der Institution",
     "company_logo": "Firmenlogo",
     "backup_db": "Gesamte Datenbank sichern",
-    "vacuum_db": " System optimieren (Vacuum)",
+    "vacuum_db": "System optimieren (Vacuum)",
     "vacuum_desc": "Bereinigt ungenutzte Datenblöcke im Hintergrund und reduziert die Datenbankgröße, wodurch die Anwendung schneller wird. (Empfohlen einmal im Monat)",
     "cloud_sync_desc": "Wenn Sie den Synchronisierungsordner von Google Drive, Dropbox oder OneDrive auf Ihrem Computer auswählen, führt die Anwendung beim Schließen selbstständig ein Hintergrund-Backup durch.",
     "work_types_title": "Arbeitsarten und Multiplikatoren",
@@ -204,7 +210,7 @@
     "undo_error": "Rückgängig machen fehlgeschlagen:",
     "delete_worker_title": "Personal Löschen",
     "delete_worker_msg": "Sind Sie sicher, dass Sie dieses Personal löschen möchten (in den Papierkorb verschieben)? Systemdaten werden nicht dauerhaft gelöscht, sondern aus den Listen entfernt.",
-    "bulk_timesheet": " Sammel-Stundenzettel",
+    "bulk_timesheet": "Sammel-Stundenzettel",
     "no_search_results": "Keine Personendatensätze entsprechen Ihrer Suche.",
     "import_done": "Massenimport abgeschlossen!",
     "import_undo_hint": "Bei einem Fehler können Sie den Vorgang sofort rückgängig machen.",
@@ -468,6 +474,7 @@
     "all_periods": "Alle"
   },
   "about": {
+    "page_subtitle": "App-Details, Projektlinks und häufig gestellte Fragen.",
     "faq": "Häufige Fragen",
     "faq_q1": "Braucht Tecton eine Internetverbindung?",
     "faq_a1": "Nein. Die Datenbank liegt auf diesem Computer und alle Module arbeiten offline. Internet ist nur für die Update-Prüfung nötig.",
@@ -568,7 +575,7 @@
     "search_journal": "In Journalnotizen, Wetter oder Datum suchen..."
   },
   "media": {
-    "gallery_title": " Medien-Galerie der Baustelle",
+    "gallery_title": "Medien-Galerie der Baustelle",
     "no_image": "Kein Bild",
     "view_list": "Listenansicht",
     "view_grid": "Galerieansicht",
@@ -576,7 +583,7 @@
     "search_placeholder": "Nach Titel, Inhaltstyp oder Datum suchen..."
   },
   "subcontractor": {
-    "title": " Subunternehmer-Konten",
+    "title": "Subunternehmer-Konten",
     "name": "Subunternehmer-Name / Firma",
     "name_ph": "z.B. Karadeniz Erdbau",
     "service": "Leistungsbereich",
@@ -601,14 +608,14 @@
     "delete_success": "Subunternehmer erfolgreich gelöscht."
   },
   "quality": {
-    "title": " Qualitätskontrolle & Baustellenberichte",
+    "title": "Qualitätskontrolle & Baustellenberichte",
     "report_title": "Berichts- / Mängeltitel",
     "report_title_ph": "z.B. Achsverschiebung 3. OG / Fehlerhafte Schalung",
     "initial_status": "Anfangsstatus",
     "status_open": "OFFEN (Ungelöst)",
     "photo_label": "Bild / Mängelfoto",
-    "select_pc": " Vom PC auswählen",
-    "upload_mobile": " Vom Handy hochladen (QR)",
+    "select_pc": "Vom PC auswählen",
+    "upload_mobile": "Vom Handy hochladen (QR)",
     "detailed_description": "Detaillierte Beschreibung",
     "description_ph": "Details des festgestellten Mangels...",
     "add_report": "Bericht hinzufügen",
@@ -620,7 +627,7 @@
     "delete_confirm": "Sind Sie sicher, dass Sie diesen Qualitätskontrollbericht löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "journal": {
-    "title": " Baustellen-Tagebuch",
+    "title": "Baustellen-Tagebuch",
     "worker_count": "Anzahl anwesender Mitarbeiter",
     "weather": "Wetterstatus",
     "temperature": "Temperatur",
@@ -641,7 +648,7 @@
     "weather_api_error": "Der Wetterdienst hat einen Fehler zurückgegeben."
   },
   "materials": {
-    "title": " Lieferschein & Materialeingang",
+    "title": "Lieferschein & Materialeingang",
     "supplier": "Lieferantenfirma",
     "supplier_ph": "z.B. Akçansa Beton AG",
     "material_type": "Materialart",
@@ -660,7 +667,7 @@
     "lan_error": "Lokaler Server konnte nicht gestartet werden:"
   },
   "production": {
-    "title": " Aufmaß & Produktionsüberwachung",
+    "title": "Aufmaß & Produktionsüberwachung",
     "item_name": "Produktionsposition",
     "item_name_ph": "z.B. Errichten einer Ziegelwand",
     "no_results": "Es wurden keine Produktionsdatensätze gefunden, die den Suchkriterien entsprechen.",
@@ -1205,7 +1212,7 @@
     "save_error": "Einige Einträge fehlgeschlagen. Erfolg: {{success}}, Fehler: {{error}}",
     "no_workers_selected": "Bitte wählen Sie mindestens einen Mitarbeiter.",
     "no_workers": "Keine aktiven Mitarbeiter gefunden.",
-    "already_entered": " Eingetragen",
+    "already_entered": "Eingetragen",
     "group_filter_all": "Alle Gruppen",
     "day": "Tag",
     "end_date": "Enddatum",

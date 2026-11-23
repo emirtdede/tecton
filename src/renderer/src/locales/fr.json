@@ -60,6 +60,12 @@
     "settings_ai": "Intelligence artificielle"
   },
   "settings": {
+    "window_startup": "Fenêtre et démarrage",
+    "start_with_windows": "Lancer Tecton au démarrage de Windows",
+    "start_minimized": "Démarrer masqué dans la zone de notification",
+    "close_to_tray": "Continuer à fonctionner dans la zone de notification après la fermeture de la fenêtre",
+    "standard_daily_hours_hint": "Sert à convertir un salaire journalier en taux horaire.",
+    "overtime_multiplier_hint": "Salaire horaire des heures supplémentaires, en multiple du taux normal.",
     "theme_language": "Thème et Langue",
     "language": "Langue de l'Application",
     "theme": "Thème de l'Application",
@@ -69,7 +75,7 @@
     "company_name": "Nom de l'Entreprise / Institution",
     "company_logo": "Logo de l'Entreprise",
     "backup_db": "Sauvegarder toute la base de données",
-    "vacuum_db": " Optimiser le Système (Vacuum)",
+    "vacuum_db": "Optimiser le Système (Vacuum)",
     "vacuum_desc": "Nettoie les blocs de données inutilisés en arrière-plan et réduit la taille de la base de données, rendant l'application plus rapide. (Recommandé une fois par mois)",
     "cloud_sync_desc": "Lorsque vous sélectionnez le dossier de synchronisation de Google Drive, Dropbox ou OneDrive sur votre ordinateur, l'application effectue de manière autonome une sauvegarde en arrière-plan lors de la fermeture.",
     "work_types_title": "Types de Travail et Multiplicateurs",
@@ -204,7 +210,7 @@
     "undo_error": "L'annulation a échoué :",
     "delete_worker_title": "Supprimer le Personnel",
     "delete_worker_msg": "Êtes-vous sûr de vouloir supprimer ce personnel (déplacer vers la corbeille) ? Les données du système ne seront pas supprimées définitivement, mais retirées des listes.",
-    "bulk_timesheet": " Feuille de temps collective",
+    "bulk_timesheet": "Feuille de temps collective",
     "no_search_results": "Aucun enregistrement de personnel ne correspond à votre recherche.",
     "import_done": "Import groupé terminé !",
     "import_undo_hint": "En cas d’erreur, vous pouvez annuler l’opération immédiatement.",
@@ -470,6 +476,7 @@
     "all_periods": "Tout"
   },
   "about": {
+    "page_subtitle": "Détails de l'application, liens du projet et questions fréquentes.",
     "faq": "Questions fréquentes",
     "faq_q1": "Tecton nécessite-t-il une connexion Internet ?",
     "faq_a1": "Non. La base de données se trouve sur cet ordinateur et tous les modules fonctionnent hors ligne. Internet ne sert qu'à vérifier les mises à jour.",
@@ -570,7 +577,7 @@
     "search_journal": "Rechercher dans les notes de journal, météo ou date..."
   },
   "media": {
-    "gallery_title": " Galerie multimédia du chantier",
+    "gallery_title": "Galerie multimédia du chantier",
     "no_image": "Aucune image",
     "view_list": "Vue Liste",
     "view_grid": "Vue Galerie",
@@ -578,7 +585,7 @@
     "search_placeholder": "Rechercher par titre, type de contenu ou date..."
   },
   "subcontractor": {
-    "title": " Grands livres des sous-traitants",
+    "title": "Grands livres des sous-traitants",
     "name": "Nom du sous-traitant / Entreprise",
     "name_ph": "ex. Excavations Karadeniz",
     "service": "Domaine de service",
@@ -603,14 +610,14 @@
     "delete_success": "Sous-traitant supprimé avec succès."
   },
   "quality": {
-    "title": " Contrôle qualité & rapports de chantier",
+    "title": "Contrôle qualité & rapports de chantier",
     "report_title": "Titre du rapport / Anomalie",
     "report_title_ph": "ex. Décalage d'axe au 3e étage / Coffrage incorrect",
     "initial_status": "Statut initial",
     "status_open": "OUVERT (Non résolu)",
     "photo_label": "Visuel / Photo du rapport",
-    "select_pc": " Sélectionner du PC",
-    "upload_mobile": " Importer du mobile (QR)",
+    "select_pc": "Sélectionner du PC",
+    "upload_mobile": "Importer du mobile (QR)",
     "detailed_description": "Description détaillée",
     "description_ph": "Détails de l'anomalie identifiée...",
     "add_report": "Ajouter un rapport",
@@ -622,7 +629,7 @@
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce rapport de contrôle qualité? Cette action est irréversible."
   },
   "journal": {
-    "title": " Journal quotidien de chantier",
+    "title": "Journal quotidien de chantier",
     "worker_count": "Nombre de personnel travaillant",
     "weather": "Météo",
     "temperature": "Température",
@@ -643,7 +650,7 @@
     "weather_api_error": "Le service météo a renvoyé une erreur."
   },
   "materials": {
-    "title": " Bon de livraison & saisie de matériel",
+    "title": "Bon de livraison & saisie de matériel",
     "supplier": "Fournisseur",
     "supplier_ph": "ex. Akçansa Béton S.A.",
     "material_type": "Type de matériel",
@@ -662,7 +669,7 @@
     "lan_error": "Le serveur local n'a pas pu être démarré :"
   },
   "production": {
-    "title": " Métré & suivi de production",
+    "title": "Métré & suivi de production",
     "item_name": "Poste de production",
     "item_name_ph": "ex. Pose de mur en briques",
     "no_results": "Aucun enregistrement de production correspondant aux critères de recherche n'a été trouvé.",
@@ -1207,7 +1214,7 @@
     "save_error": "Certaines entrées ont échoué. Succès : {{success}}, Erreur : {{error}}",
     "no_workers_selected": "Veuillez sélectionner au moins un travailleur.",
     "no_workers": "Aucun travailleur actif trouvé.",
-    "already_entered": " Saisi",
+    "already_entered": "Saisi",
     "group_filter_all": "Tous les groupes",
     "day": "jour",
     "end_date": "Date de fin",

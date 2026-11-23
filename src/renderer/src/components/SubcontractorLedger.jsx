@@ -16,6 +16,7 @@ import Pagination from './ui/Pagination';
 import useModalA11y from '../hooks/useModalA11y';
 import { parsePositiveNumber } from '../utils/validation';
 import { parseTags } from '../utils/tagUtils';
+import { Download, Eye, Pencil, Plus, Trash2, Upload, X } from 'lucide-react';
 import { isLedgerPayment, isLedgerProgress } from '../utils/ledgerTypes';
 
 const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) => {
@@ -322,14 +323,12 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
   return (
     <div ref={containerRef} className="subcontractor-page" style={{ animation: 'fadeIn 0.3s ease' }}>
-      {/* Header section identical to Personnel page */}
-      <header className="header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <h1 style={{ margin: 0 }}>{t('subcontractor.title', ' Taşeron ve Alt Yüklenici Carileri')}</h1>
-          <PageGuideIcon onClick={() => setHelpOpen(true)} fontSize="1.4rem" />
+      <header className="page-head">
+        <div>
+          <h1 className="page-head-title">{t('subcontractor.title', 'Taşeron ve Alt Yüklenici Carileri')}</h1>
         </div>
-        
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="card-toolbar-actions">
+          <PageGuideIcon onClick={() => setHelpOpen(true)} />
           <input 
             type="file" 
             accept=".xlsx, .xls" 
@@ -364,13 +363,15 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
               e.target.value = '';
             }}
           />
-          <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
+          <button className="btn" onClick={() => fileInputRef.current.click()}>
+            <Upload size={14} aria-hidden="true" />
             {t('subcontractor_import.import_btn', 'Excel\'den İçe Aktar')}
           </button>
-          <button className="btn" style={{ background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid #38bdf8' }} onClick={() => generateSubcontractorTemplate(t, i18n.language)}>
+          <button className="btn" onClick={() => generateSubcontractorTemplate(t, i18n.language)}>
+            <Download size={14} aria-hidden="true" />
             {t('subcontractor_import.download_template', 'Excel Taslağını İndir')}
           </button>
-          <select className="btn" style={{ padding: '0.5rem' }} onChange={e => {
+          <select className="form-input" style={{ width: 'auto', marginBottom: 0 }} onChange={e => {
             const format = e.target.value;
             if (!format) return;
             const lang = i18n.language;
@@ -401,7 +402,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
             <option value="json">JSON (.json)</option>
           </select>
           <button className="btn btn-primary" onClick={() => handleOpenDrawer()}>
-            {t('subcontractor.add_new', '+ Yeni Taşeron Ekle')}
+            {t('subcontractor.add_new', 'Yeni Taşeron Ekle')}
           </button>
         </div>
       </header>
@@ -441,7 +442,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                     zIndex: 10
                   }}
                   title={t('common.clear', 'Temizle')}
-                >
+                ><X size={14} aria-hidden="true" />
                   
                 </button>
               )}
@@ -500,8 +501,8 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                     const isPositive = bal >= 0;
                     return (
                       <tr key={c.id}>
-                        <td 
-                          style={{ fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }} 
+                        <td
+                          style={{ fontWeight: '600', cursor: 'pointer', color: 'var(--text-primary)' }}
                           onClick={() => onViewProfile && onViewProfile(c)}
                         >
                           {c.name}
@@ -511,58 +512,41 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                         <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--primary)' }}>
                           {formatCurrency(c.daily_wage, i18n.language)}
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444' }}>
+                        <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? 'var(--success)' : 'var(--danger)' }}>
                           {formatCurrency(bal, i18n.language)}
                         </td>
                         <td>
-                          <span style={{ 
-                            fontSize: '0.8rem', 
-                            padding: '2px 8px', 
-                            borderRadius: '10px', 
-                            background: c.status === 'passive' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)', 
-                            color: c.status === 'passive' ? 'var(--danger)' : 'var(--success)' 
-                          }}>
+                          <span className={`pill ${c.status === 'passive' ? 'pill-danger' : 'pill-success'}`}>
                             {c.status === 'passive' ? t('filters.passive', 'PASİF') : t('filters.active', 'AKTİF')}
                           </span>
                         </td>
                         <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
+                          <div className="row-actions">
                             {onViewProfile && (
-                              <button 
-                                className="btn btn-primary" 
+                              <button
+                                type="button"
+                                className="icon-btn"
                                 onClick={() => onViewProfile(c)}
-                                style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 title={t('common.details', 'Detay')}
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                  <circle cx="12" cy="12" r="3" />
-                                </svg>
+                                <Eye size={14} aria-hidden="true" />
                               </button>
                             )}
-                            <button 
-                              className="btn" 
+                            <button
+                              type="button"
+                              className="icon-btn"
                               onClick={() => handleOpenDrawer(c)}
-                              style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                               title={t('dashboard.edit', 'Düzenle')}
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                              </svg>
+                              <Pencil size={14} aria-hidden="true" />
                             </button>
-                            <button 
-                              className="btn btn-danger" 
+                            <button
+                              type="button"
+                              className="icon-btn is-danger"
                               onClick={() => handleDelete(c.id)}
-                              style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                               title={t('common.delete', 'Sil')}
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                <line x1="10" y1="11" x2="10" y2="17" />
-                                <line x1="14" y1="11" x2="14" y2="17" />
-                              </svg>
+                              <Trash2 size={14} aria-hidden="true" />
                             </button>
                           </div>
                         </td>
@@ -600,44 +584,40 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="segmented" role="tablist" aria-label={t('anomalies.title', 'Anomaliler')}>
               <button
+                type="button"
+                role="tab"
+                aria-selected={anomalyActiveTab === 'all'}
                 onClick={() => setAnomalyActiveTab('all')}
-                style={{
-                  background: 'transparent', border: 'none', color: anomalyActiveTab === 'all' ? 'var(--text-main)' : 'var(--text-muted)',
-                  cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-                  borderBottom: anomalyActiveTab === 'all' ? '2px solid var(--accent)' : 'none', fontSize: '0.75rem'
-                }}
+                className={`segmented-item ${anomalyActiveTab === 'all' ? 'active' : ''}`}
               >
                 {t('filters.tab_all', 'Hepsi')} ({filteredNegativeBalance.length + filteredIsgExpired.length + filteredIsgApproaching.length})
               </button>
               <button
+                type="button"
+                role="tab"
+                aria-selected={anomalyActiveTab === 'balance'}
                 onClick={() => setAnomalyActiveTab('balance')}
-                style={{
-                  background: 'transparent', border: 'none', color: anomalyActiveTab === 'balance' ? 'var(--text-main)' : 'var(--text-muted)',
-                  cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-                  borderBottom: anomalyActiveTab === 'balance' ? '2px solid #ef4444' : 'none', fontSize: '0.75rem'
-                }}
+                className={`segmented-item ${anomalyActiveTab === 'balance' ? 'active' : ''}`}
               >
                 {t('filters.tab_low_balance', 'Bakiye')} ({filteredNegativeBalance.length})
               </button>
               <button
+                type="button"
+                role="tab"
+                aria-selected={anomalyActiveTab === 'expired'}
                 onClick={() => setAnomalyActiveTab('expired')}
-                style={{
-                  background: 'transparent', border: 'none', color: anomalyActiveTab === 'expired' ? 'var(--text-main)' : 'var(--text-muted)',
-                  cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-                  borderBottom: anomalyActiveTab === 'expired' ? '2px solid #ef4444' : 'none', fontSize: '0.75rem'
-                }}
+                className={`segmented-item ${anomalyActiveTab === 'expired' ? 'active' : ''}`}
               >
                 {t('filters.tab_expired_hse', 'İSG Dolan')} ({filteredIsgExpired.length})
               </button>
               <button
+                type="button"
+                role="tab"
+                aria-selected={anomalyActiveTab === 'approaching'}
                 onClick={() => setAnomalyActiveTab('approaching')}
-                style={{
-                  background: 'transparent', border: 'none', color: anomalyActiveTab === 'approaching' ? 'var(--text-main)' : 'var(--text-muted)',
-                  cursor: 'pointer', fontWeight: '600', paddingBottom: '0.25rem',
-                  borderBottom: anomalyActiveTab === 'approaching' ? '2px solid #f59e0b' : 'none', fontSize: '0.75rem'
-                }}
+                className={`segmented-item ${anomalyActiveTab === 'approaching' ? 'active' : ''}`}
               >
                 {t('filters.tab_expiring_hse', 'İSG Yaklaşan')} ({filteredIsgApproaching.length})
               </button>
@@ -646,22 +626,22 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
             {/* List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '250px', overflowY: 'auto', paddingRight: '4px' }}>
               {(filteredNegativeBalance.length === 0 && filteredIsgExpired.length === 0 && filteredIsgApproaching.length === 0) ? (
-                <div style={{ padding: '1.5rem', textAlign: 'center', color: '#34d399', background: 'rgba(52, 211, 153, 0.05)', borderRadius: '12px', border: '1px solid rgba(52, 211, 153, 0.15)', fontSize: '0.8rem' }}>
+                <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--success-text)', background: 'var(--success-bg)', borderRadius: '0.5rem', border: '1px solid var(--success-border)', fontSize: '0.8rem' }}>
                    {t('subcontractor.all_isg_valid', 'Tüm durumlar ve İSG belgeleri güncel.')}
                 </div>
               ) : (
                 <>
                   {/* Financial Warnings */}
                   {(anomalyActiveTab === 'all' || anomalyActiveTab === 'balance') && filteredNegativeBalance.length > 0 && (
-                    <div style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
-                      <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
+                    <div style={{ background: 'var(--danger-bg)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--danger-border)' }}>
+                      <div style={{ color: 'var(--danger-text)', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
                          {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({filteredNegativeBalance.length})
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                         {filteredNegativeBalance.map(c => (
                           <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-main)' }}>
                             <span style={{ fontWeight: '500' }}>{c.name}</span>
-                            <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{formatCurrency(c.balance, i18n.language)}</span>
+                            <span style={{ color: 'var(--danger)', fontWeight: 'bold' }}>{formatCurrency(c.balance, i18n.language)}</span>
                           </div>
                         ))}
                       </div>
@@ -670,15 +650,15 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
                   {/* ISG Expired */}
                   {(anomalyActiveTab === 'all' || anomalyActiveTab === 'expired') && filteredIsgExpired.length > 0 && (
-                    <div style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
-                      <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
+                    <div style={{ background: 'var(--danger-bg)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--danger-border)' }}>
+                      <div style={{ color: 'var(--danger-text)', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
                          {t('isg.badge_expired', 'İSG Süresi Dolanlar')} ({filteredIsgExpired.length})
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                         {filteredIsgExpired.map(c => (
                           <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-main)' }}>
                             <span style={{ fontWeight: '500' }}>{c.name}</span>
-                            <span style={{ color: '#f87171' }}>{c.isg_expiry_date}</span>
+                            <span style={{ color: 'var(--danger)' }}>{c.isg_expiry_date}</span>
                           </div>
                         ))}
                       </div>
@@ -687,15 +667,15 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
 
                   {/* ISG Approaching */}
                   {(anomalyActiveTab === 'all' || anomalyActiveTab === 'approaching') && filteredIsgApproaching.length > 0 && (
-                    <div style={{ background: 'rgba(245, 158, 11, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-                      <div style={{ color: '#f59e0b', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
+                    <div style={{ background: 'var(--warning-soft)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--warning-border)' }}>
+                      <div style={{ color: 'var(--warning)', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
                          {t('isg.badge_approaching', 'İSG Süresi Yaklaşanlar')} ({filteredIsgApproaching.length})
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                         {filteredIsgApproaching.map(c => (
                           <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-main)' }}>
                             <span style={{ fontWeight: '500' }}>{c.name}</span>
-                            <span style={{ color: '#fbbf24' }}>{t('subcontractor.days_remaining', '{{count}} gün kaldı', { count: c.remainingDays })}</span>
+                            <span style={{ color: 'var(--warning)' }}>{t('subcontractor.days_remaining', '{{count}} gün kaldı', { count: c.remainingDays })}</span>
                           </div>
                         ))}
                       </div>
@@ -712,21 +692,21 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                {t('subcontractor.financial_summary', 'Taşeron Finans Özeti')}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--surface-subtle)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('subcontractor.total_receivable', 'Toplam Taşeron Alacağı')}</span>
-                <span style={{ color: '#34d399', fontWeight: 'bold' }}>
+                <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>
                   {formatCurrency(contractors.reduce((sum, c) => sum + (c.balance > 0 ? c.balance : 0), 0), i18n.language)}
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--surface-subtle)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{t('subcontractor.total_debt', 'Toplam Taşeron Borcu')}</span>
-                <span style={{ color: '#ef4444', fontWeight: 'bold' }}>
+                <span style={{ color: 'var(--danger)', fontWeight: 'bold' }}>
                   {formatCurrency(contractors.reduce((sum, c) => sum + (c.balance < 0 ? c.balance : 0), 0), i18n.language)}
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(139, 92, 246, 0.05)', borderRadius: '8px', border: '1px solid rgba(139, 92, 246, 0.15)', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--accent-soft)', borderRadius: '8px', border: '1px solid var(--accent-soft)', fontWeight: 'bold' }}>
                 <span style={{ fontSize: '0.85rem' }}>{t('dashboard.net_balance', 'Genel Net Bakiye')}</span>
-                <span style={{ color: contractors.reduce((sum, c) => sum + (c.balance || 0), 0) >= 0 ? '#34d399' : '#ef4444' }}>
+                <span style={{ color: contractors.reduce((sum, c) => sum + (c.balance || 0), 0) >= 0 ? 'var(--success)' : 'var(--danger)' }}>
                   {formatCurrency(contractors.reduce((sum, c) => sum + (c.balance || 0), 0), i18n.language)}
                 </span>
               </div>
@@ -785,7 +765,7 @@ const SubcontractorLedger = ({ activeProjectId, projects = [], onViewProfile }) 
                 title={t('common.close', 'Kapat')}
                 onClick={handleCloseDrawer} 
                 style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', border: 'none' }}
-              >
+              ><X size={14} aria-hidden="true" />
                 
               </button>
             </div>
