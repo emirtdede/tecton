@@ -83,6 +83,6 @@
     "url": "https://github.com/emirtdede/tecton/issues"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }

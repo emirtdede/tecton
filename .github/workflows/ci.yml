@@ -31,7 +31,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Cache electron-builder binaries
@@ -95,11 +95,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      # `npm ci` installs the Node-ABI native binding because the unit tests run
+      # under Node. Electron has a different ABI, so the packaged app and the
+      # Playwright suite need the Electron build of the same module.
+      - name: Rebuild native modules for Electron
+        run: npx electron-builder install-app-deps
 
       - name: Build renderer
         run: npm run build:react
