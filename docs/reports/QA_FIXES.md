@@ -544,13 +544,14 @@ ediliyordu.
   doğrulanıyor (önce mevcut anahtar, sonra düz metin eski yedekler).
 - Kurtarma öncesi bozuk dosya `.unreadable-<zaman>` / `.corrupt-<zaman>` olarak
   saklanıyor; hiçbir dosya sessizce silinmiyor.
-- Anahtar hiç yoksa ve dosya şifreliyse kurtarma hiç denenmiyor
-  (`database_locked_keystore_unavailable`), çünkü tüm yedekler aynı anahtarla
-  şifreli.
+- Anahtar yoksa ve dosya şifreliyse önce uyarı loglanıyor, ardından yalnızca
+  anahtarsız da okunabilen (düz metin) bir yedek varsa geri yükleme yapılıyor.
+  Hiçbir yedek açılamıyorsa açık hata veriliyor; kilitli dosya silinmiyor.
 
 **Doğrulama:** `keystore.test.js` 7 test (3 yeni: düz anahtar okuma, eski çift
 kodlanmış biçim + yükseltme, veritabanı varken anahtar döndürmeyi reddetme);
-tam paket `60 dosya / 349 test` yeşil.
+`db.test.js` 11 test (1 yeni: anahtar yokken düz metin yedekten kurtarma ve
+kilitli dosyayı saklama); tam paket `60 dosya / 350 test` yeşil.
 
 ### P-4 - CI Node 20'de yerel modülü derleyemiyordu (Yüksek)
 

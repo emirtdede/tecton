@@ -181,12 +181,38 @@ describe('db.js getDB (encrypted lifecycle)', () => {
   });
 
   it('throws when the primary is corrupted and no backup exists', async () => {
-    // NOTE (verified real behavior): `key` pragma is lazy, so a garbage
-    // primary passes openCompat and fails later at first read/integrity
-    // check -> getDB rejects. Documented here as a regression guard.
+    // `key` pragma is lazy, so a garbage primary passes openCompat and fails at
+    // the first read inside getDB -> rejects. Regression guard.
     fs.writeFileSync(dbPath(), 'garbage-not-sqlite');
     const { getDB } = await freshDbModule();
     await expect(getDB()).rejects.toThrow();
+  });
+
+  it('recovers from a plaintext backup when the key is unavailable', async () => {
+    // A rotated/lost key must not brick the app: an older plaintext backup is
+    // still readable, and the unreadable primary is kept for forensics.
+    const backupDir = path.join(paths.documents, 'TectonBackups', 'Database-Backups');
+    fs.mkdirSync(backupDir, { recursive: true });
+    const backupPath = path.join(backupDir, 'elektronik-yevmiye-backup-2026-01-05.sqlite');
+    const { default: Native } = await import('better-sqlite3-multiple-ciphers');
+    const seed = Native(backupPath);
+    seed.exec('CREATE TABLE probe(id INTEGER PRIMARY KEY, v TEXT)');
+    seed.prepare('INSERT INTO probe(v) VALUES (?)').run('plaintext');
+    seed.close();
+
+    keystoreCtl.impl = async () => {
+      throw new Error('keystore_unlock_failed');
+    };
+    // An encrypted-looking primary (binary header) that nothing can open.
+    fs.writeFileSync(dbPath(), Buffer.from([0x8f, 0x2a, 0x11, 0x00, 0x01, 0x02]));
+
+    const { getDB } = await freshDbModule();
+    const db = tracker.track(await getDB());
+
+    const row = await db.get('SELECT v FROM probe WHERE id = 1');
+    expect(row.v).toBe('plaintext');
+    const kept = fs.readdirSync(paths.userData).filter((f) => f.includes('.unreadable-'));
+    expect(kept.length).toBe(1);
   });
 
   it('runs an integrity check after an unclean shutdown', async () => {

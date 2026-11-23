@@ -100,10 +100,11 @@ async function getDB() {
     db = await openAndVerify();
   } catch (err) {
     logger.error('Failed to open primary database. Attempting auto-recovery...', err);
-    // A database with a binary (encrypted) header cannot be recovered while the
-    // key is missing: every backup is encrypted with the same key.
     if (!dbKey && fs.existsSync(dbPath) && !isPlaintextHeader(dbPath)) {
-      throw new Error('database_locked_keystore_unavailable');
+      // The key is gone, so the current file cannot be read by anyone. Recovery
+      // is still worth trying: an older plaintext backup may be usable, and the
+      // unreadable file is preserved below rather than deleted.
+      logger.error('[Auto-Recovery] No usable decryption key; only a plaintext backup can be restored.');
     }
 
     const latestBackup = await findUsableBackup();
@@ -112,6 +113,9 @@ async function getDB() {
       fs.copyFileSync(dbPath, `${dbPath}.unreadable-${Date.now()}`);
       fs.copyFileSync(latestBackup, dbPath);
       db = await openAndVerify();
+      if (!dbKey) {
+        logger.warn('[Auto-Recovery] Restored database is plaintext: no key was available to encrypt it.');
+      }
     } else {
       logger.error('[Auto-Recovery] No valid backups found to recover from.');
       throw err;
