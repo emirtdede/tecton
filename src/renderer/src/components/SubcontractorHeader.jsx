@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { exportToExcel, exportToCSV, exportToJSON, generateSubcontractorTemplate } from '../utils/exportUtils';
 import { readSubcontractorsFromExcel } from '../utils/importUtils';
 import { trLower } from '../utils/formatUtils';
+import { Lightbulb } from 'lucide-react';
 
 const SubcontractorHeader = ({ t, i18n, contractors, activeProjectId, fetchContractors, onAdd, onHelp }) => {
   const fileInputRef = useRef(null);
@@ -9,7 +10,7 @@ const SubcontractorHeader = ({ t, i18n, contractors, activeProjectId, fetchContr
   return (
     <header className="header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <h1 style={{ margin: 0 }}>{t('subcontractor.title', '🚜 Taşeron ve Alt Yüklenici Carileri')}</h1>
+        <h1 style={{ margin: 0 }}>{t('subcontractor.title', ' Taşeron ve Alt Yüklenici Carileri')}</h1>
         <span
           onClick={onHelp}
           style={{
@@ -24,7 +25,7 @@ const SubcontractorHeader = ({ t, i18n, contractors, activeProjectId, fetchContr
           onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
           title={t('common.page_guide', 'Sayfa Kılavuzu')}
         >
-          💡
+          <Lightbulb size={18} aria-hidden="true" />
         </span>
       </div>
 

@@ -1,5 +1,5 @@
 const { setupTestDB } = require('./testDb');
-const { calculateWorkerBalance, calculateBulkBalances } = require('./balanceService');
+const { calculateWorkerBalance, calculateBalancesForWorkers } = require('./balanceService');
 
 describe('Balance Service (Dinamik Bakiye - SUM Hesaplaması)', () => {
   let db;
@@ -16,9 +16,12 @@ describe('Balance Service (Dinamik Bakiye - SUM Hesaplaması)', () => {
       );
     }
 
-    // Add 2 transactions (Avans): 2 * 500 = 1000 given
-    await db.run("INSERT INTO transactions (worker_id, trans_date, amount) VALUES (1, '2026-06-11', 500)");
-    await db.run("INSERT INTO transactions (worker_id, trans_date, amount) VALUES (1, '2026-06-12', 500)");
+    // Add 2 transactions (Avans): 2 * 500 = 1000 given.
+    // `trans_type` is NOT NULL in the production schema (see database/schema.js);
+    // the old hand-copied test schema omitted the constraint, so these inserts
+    // passed there but would have failed against a real database.
+    await db.run("INSERT INTO transactions (worker_id, trans_date, trans_type, amount) VALUES (1, '2026-06-11', 'Avans', 500)");
+    await db.run("INSERT INTO transactions (worker_id, trans_date, trans_type, amount) VALUES (1, '2026-06-12', 'Avans', 500)");
   });
 
   it('should correctly calculate balance using SUM', async () => {
@@ -44,20 +47,44 @@ describe('Balance Service (Dinamik Bakiye - SUM Hesaplaması)', () => {
     expect(balance).toBe(0);
   });
 
-  it('bulk balances must equal per-worker balances', async () => {
-    await db.run("INSERT INTO workers (id, full_name, daily_wage) VALUES (2, 'Ikinci Isci', 2000)");
-    await db.run(
-      "INSERT INTO timesheets (worker_id, work_date, applied_wage, applied_multiplier, earned_amount) VALUES (2, '2026-06-11', 2000, 1.0, 2000)"
-    );
-    const bulk = await calculateBulkBalances([1, 2, 99], db);
-    expect(bulk[1]).toBe(await calculateWorkerBalance(1, db));
-    expect(bulk[2]).toBe(await calculateWorkerBalance(2, db));
-    expect(bulk[2]).toBe(2000);
-    expect(bulk[99]).toBe(0);
-  });
+  describe('calculateBalancesForWorkers (batched)', () => {
+    beforeEach(async () => {
+      await db.run("INSERT INTO workers (id, full_name, daily_wage) VALUES (2, 'İkinci İşçi', 800)");
+      await db.run(
+        "INSERT INTO timesheets (worker_id, work_date, applied_wage, applied_multiplier, earned_amount) VALUES (2, '2026-06-11', 800, 1.0, 800)"
+      );
+      await db.run(
+        "INSERT INTO transactions (worker_id, trans_date, trans_type, amount) VALUES (2, '2026-06-11', 'Avans', 300)"
+      );
+    });
 
-  it('bulk with empty/invalid input returns {}', async () => {
-    expect(await calculateBulkBalances([], db)).toEqual({});
-    expect(await calculateBulkBalances(['x'], db)).toEqual({});
+    it('returns the same values as the per-worker calculation', async () => {
+      const batched = await calculateBalancesForWorkers([1, 2], db);
+
+      expect(batched[1]).toBe(await calculateWorkerBalance(1, db));
+      expect(batched[2]).toBe(await calculateWorkerBalance(2, db));
+      expect(batched[1]).toBe(4000);
+      expect(batched[2]).toBe(500);
+    });
+
+    it('returns 0 for workers without records and deduplicates ids', async () => {
+      const batched = await calculateBalancesForWorkers([1, 1, 99], db);
+
+      expect(batched[1]).toBe(4000);
+      expect(batched[99]).toBe(0);
+      expect(Object.keys(batched)).toHaveLength(2);
+    });
+
+    it('respects soft-deleted rows', async () => {
+      await db.run('UPDATE transactions SET is_deleted = 1 WHERE worker_id = 2');
+
+      const batched = await calculateBalancesForWorkers([2], db);
+      expect(batched[2]).toBe(800);
+    });
+
+    it('returns an empty object for an empty or invalid id list', async () => {
+      expect(await calculateBalancesForWorkers([], db)).toEqual({});
+      expect(await calculateBalancesForWorkers(null, db)).toEqual({});
+    });
   });
 });

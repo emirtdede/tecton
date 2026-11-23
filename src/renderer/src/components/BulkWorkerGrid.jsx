@@ -5,7 +5,7 @@ const BulkWorkerGrid = ({ t, i18n, loading, filteredWorkers, selectedIds, existi
   return (
     <div className="glass-card" style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        👥 {t('bulk_timesheet.select_workers', 'Personel Seçin')} ({t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)})
+         {t('bulk_timesheet.select_workers', 'Personel Seçin')} ({t('bulk_timesheet.selected_count', '{{count}} personel seçildi').replace('{{count}}', selectedIds.size)})
       </h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem', marginTop: '0.25rem', paddingBottom: '2.5rem' }}>
@@ -48,7 +48,7 @@ const BulkWorkerGrid = ({ t, i18n, loading, filteredWorkers, selectedIds, existi
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'all 0.15s ease'
                 }}>
-                  {(isSelected || hasTimesheet) && <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</span>}
+                  {(isSelected || hasTimesheet) && <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}></span>}
                 </div>
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
@@ -67,7 +67,7 @@ const BulkWorkerGrid = ({ t, i18n, loading, filteredWorkers, selectedIds, existi
                       fontSize: '0.75rem',
                       fontWeight: '600'
                     }}>
-                      {t('bulk_timesheet.already_entered', '✓ Girildi')}
+                      {t('bulk_timesheet.already_entered', ' Girildi')}
                     </span>
                   )}
                 </div>

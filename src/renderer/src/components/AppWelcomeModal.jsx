@@ -179,8 +179,8 @@ const AppWelcomeModal = ({ t, i18n, show, dontShowAgain, setDontShowAgain, onClo
           gap: '0.4rem',
           width: '100%'
         }}>
-          <div>🚀 {t('welcome.infra_feature')} | 📊 {t('welcome.finance_feature')}</div>
-          <div>🔒 {t('welcome.database_feature')}</div>
+          <div> {t('welcome.infra_feature')} |  {t('welcome.finance_feature')}</div>
+          <div> {t('welcome.database_feature')}</div>
         </div>
 
         {/* Footer Actions */}

@@ -1,42 +1,90 @@
 /**
+ * Regional formatting settings.
+ *
+ * Previously these lived only on `window.regionalSettings`, i.e. implicit global
+ * mutable state read by every formatter. That made formatting order-dependent and
+ * untestable. The module now owns the state and mirrors it onto `window` for
+ * backward compatibility with any external code still reading it.
+ */
+const defaultRegionalSettings = {
+  currency: 'auto',
+  dateFormat: 'auto',
+  timeFormat: 'auto',
+  language: 'tr'
+};
+
+let regionalSettings = { ...defaultRegionalSettings };
+
+export const setRegionalSettings = (next = {}) => {
+  regionalSettings = { ...regionalSettings, ...next };
+  if (typeof window !== 'undefined') {
+    window.regionalSettings = regionalSettings;
+  }
+  return regionalSettings;
+};
+
+/**
+ * Single source of truth for locale/currency per language.
+ * Previously duplicated inside formatCurrency and formatCurrencySafe, which
+ * meant adding a language required editing both (and they drifted in shape).
+ */
+const LOCALE_CURRENCY_MAP = {
+  tr: { locale: 'tr-TR', currency: 'TRY' },
+  en: { locale: 'en-US', currency: 'USD' },
+  zh: { locale: 'zh-CN', currency: 'CNY' },
+  es: { locale: 'es-ES', currency: 'EUR' },
+  fr: { locale: 'fr-FR', currency: 'EUR' },
+  de: { locale: 'de-DE', currency: 'EUR' },
+  it: { locale: 'it-IT', currency: 'EUR' },
+  nl: { locale: 'nl-NL', currency: 'EUR' },
+  pt: { locale: 'pt-PT', currency: 'EUR' },
+  ru: { locale: 'ru-RU', currency: 'RUB' },
+  ja: { locale: 'ja-JP', currency: 'JPY' },
+  ko: { locale: 'ko-KR', currency: 'KRW' },
+  ar: { locale: 'ar-SA', currency: 'SAR' },
+  hi: { locale: 'hi-IN', currency: 'INR' },
+  sv: { locale: 'sv-SE', currency: 'SEK' },
+  no: { locale: 'nb-NO', currency: 'NOK' },
+  da: { locale: 'da-DK', currency: 'DKK' },
+  pl: { locale: 'pl-PL', currency: 'PLN' },
+  cs: { locale: 'cs-CZ', currency: 'CZK' }
+};
+
+const DEFAULT_LOCALE_CURRENCY = { locale: 'tr-TR', currency: 'TRY' };
+
+/**
+ * Resolves the effective currency, letting an explicit regional override win
+ * over the language default.
+ */
+const resolveCurrency = (lang) => {
+  const config = LOCALE_CURRENCY_MAP[lang] || DEFAULT_LOCALE_CURRENCY;
+  // `setRegionalSettings` is the API callers should use, but older call sites
+  // (and the settings bootstrap) assign `window.regionalSettings` directly, so
+  // both sources are honoured.
+  const globalSettings =
+    (typeof window !== 'undefined' && window && window.regionalSettings) || null;
+  const currency =
+    (globalSettings && globalSettings.currency) ||
+    (regionalSettings && regionalSettings.currency) ||
+    'auto';
+  if (currency && currency !== 'auto') {
+    return { locale: config.locale, currency };
+  }
+  return config;
+};
+
+/**
  * Formats a number as a currency string based on the selected language.
  * @param {number} amount - The numeric value to format.
  * @param {string} lang - The language key (e.g., 'tr', 'en').
  * @returns {string} The formatted currency string.
  */
 export const formatCurrency = (amount, lang = 'tr') => {
-  const currencyMap = {
-    tr: { locale: 'tr-TR', currency: 'TRY' },
-    en: { locale: 'en-US', currency: 'USD' },
-    zh: { locale: 'zh-CN', currency: 'CNY' },
-    es: { locale: 'es-ES', currency: 'EUR' },
-    fr: { locale: 'fr-FR', currency: 'EUR' },
-    de: { locale: 'de-DE', currency: 'EUR' },
-    it: { locale: 'it-IT', currency: 'EUR' },
-    nl: { locale: 'nl-NL', currency: 'EUR' },
-    pt: { locale: 'pt-PT', currency: 'EUR' },
-    ru: { locale: 'ru-RU', currency: 'RUB' },
-    ja: { locale: 'ja-JP', currency: 'JPY' },
-    ko: { locale: 'ko-KR', currency: 'KRW' },
-    ar: { locale: 'ar-SA', currency: 'SAR' },
-    hi: { locale: 'hi-IN', currency: 'INR' },
-    sv: { locale: 'sv-SE', currency: 'SEK' },
-    no: { locale: 'nb-NO', currency: 'NOK' },
-    da: { locale: 'da-DK', currency: 'DKK' },
-    pl: { locale: 'pl-PL', currency: 'PLN' },
-    cs: { locale: 'cs-CZ', currency: 'CZK' }
-  };
-
-  const config = currencyMap[lang] || { locale: 'tr-TR', currency: 'TRY' };
-  
-  let selectedCurrency = config.currency;
-  if (window.regionalSettings && window.regionalSettings.currency && window.regionalSettings.currency !== 'auto') {
-    selectedCurrency = window.regionalSettings.currency;
-  }
+  const { locale, currency: selectedCurrency } = resolveCurrency(lang);
 
   const num = Number(amount) || 0;
 
-  let formatted = new Intl.NumberFormat(config.locale, {
+  let formatted = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: selectedCurrency,
     minimumFractionDigits: 0,
@@ -73,8 +121,8 @@ export const formatDate = (dateVal, lang = 'tr') => {
   if (isNaN(d.getTime())) return String(dateVal);
 
   let formatMode = 'auto';
-  if (window.regionalSettings && window.regionalSettings.dateFormat) {
-    formatMode = window.regionalSettings.dateFormat;
+  if (regionalSettings.dateFormat) {
+    formatMode = regionalSettings.dateFormat;
   }
 
   if (formatMode === 'auto') {
@@ -119,15 +167,17 @@ export const formatDate = (dateVal, lang = 'tr') => {
  */
 export const formatTime = (dateTimeVal, lang = 'tr') => {
   if (!dateTimeVal) return '-';
-  const d = new Date(dateTimeVal);
+  let d = new Date(dateTimeVal);
   if (isNaN(d.getTime())) {
     if (typeof dateTimeVal === 'string' && dateTimeVal.includes(':')) {
       const parts = dateTimeVal.split(':');
       const hours = parseInt(parts[0], 10);
       const minutes = parseInt(parts[1], 10);
       if (!isNaN(hours) && !isNaN(minutes)) {
-        d.setHours(hours);
-        d.setMinutes(minutes);
+        // `new Date('14:30')` is Invalid Date, and calling setHours() on an
+        // invalid Date keeps it NaN - the user then saw the literal text
+        // "Invalid Date" in the UI. A time-only value needs a real base date.
+        d = new Date(1970, 0, 1, hours, minutes);
       } else {
         return dateTimeVal;
       }
@@ -135,10 +185,11 @@ export const formatTime = (dateTimeVal, lang = 'tr') => {
       return String(dateTimeVal);
     }
   }
+  if (isNaN(d.getTime())) return String(dateTimeVal);
 
   let formatMode = 'auto';
-  if (window.regionalSettings && window.regionalSettings.timeFormat) {
-    formatMode = window.regionalSettings.timeFormat;
+  if (regionalSettings.timeFormat) {
+    formatMode = regionalSettings.timeFormat;
   }
 
   if (formatMode === 'auto') {
@@ -173,15 +224,7 @@ export const formatTime = (dateTimeVal, lang = 'tr') => {
  * @returns {string} Currency symbol (e.g. '₺', '$', '€').
  */
 export const getCurrencySymbol = (lang = 'tr') => {
-  const currencyMap = {
-    tr: 'TRY', en: 'USD', zh: 'CNY', es: 'EUR', fr: 'EUR', de: 'EUR', it: 'EUR', nl: 'EUR', pt: 'EUR',
-    ru: 'RUB', ja: 'JPY', ko: 'KRW', ar: 'SAR', hi: 'INR', sv: 'SEK', no: 'NOK', da: 'DKK', pl: 'PLN', cs: 'CZK'
-  };
-
-  let selectedCurrency = currencyMap[lang] || 'TRY';
-  if (window.regionalSettings && window.regionalSettings.currency && window.regionalSettings.currency !== 'auto') {
-    selectedCurrency = window.regionalSettings.currency;
-  }
+  const { currency: selectedCurrency } = resolveCurrency(lang);
 
   const symbolMap = {
     TRY: '₺', USD: '$', EUR: '€', GBP: '£', CNY: '¥', JPY: '¥', KRW: '₩', RUB: '₽',
@@ -199,15 +242,7 @@ export const getCurrencySymbol = (lang = 'tr') => {
  * @returns {string} The formatted string e.g., "51.937,50 JPY"
  */
 export const formatCurrencySafe = (amount, lang = 'tr') => {
-  const currencyMap = {
-    tr: 'TRY', en: 'USD', zh: 'CNY', es: 'EUR', fr: 'EUR', de: 'EUR', it: 'EUR', nl: 'EUR', pt: 'EUR',
-    ru: 'RUB', ja: 'JPY', ko: 'KRW', ar: 'SAR', hi: 'INR', sv: 'SEK', no: 'NOK', da: 'DKK', pl: 'PLN', cs: 'CZK'
-  };
-
-  let selectedCurrency = currencyMap[lang] || 'TRY';
-  if (window.regionalSettings && window.regionalSettings.currency && window.regionalSettings.currency !== 'auto') {
-    selectedCurrency = window.regionalSettings.currency;
-  }
+  const { currency: selectedCurrency } = resolveCurrency(lang);
 
   if (amount === undefined || amount === null) return `0,00 ${selectedCurrency}`;
   
@@ -217,6 +252,71 @@ export const formatCurrencySafe = (amount, lang = 'tr') => {
   }).format(Number(amount) || 0);
   
   return `${safeNumber} ${selectedCurrency}`;
+};
+
+/**
+ * Formats a Date as a local 'YYYY-MM-DD' string.
+ *
+ * `new Date(y, m, d).toISOString()` converts local midnight to UTC: in any
+ * timezone east of UTC (e.g. UTC+3 Türkiye) `2026-11-01T00:00+03:00` becomes
+ * `2026-10-31T21:00Z`, so `.split('T')[0]` returns `2026-10-31` - the previous
+ * day. Every month-start/month-end default was one day early because of this.
+ * Reading the local components directly is correct in every timezone.
+ *
+ * @param {Date} [date] defaults to now
+ * @returns {string} e.g. '2026-11-21'
+ */
+export const toLocalDateString = (date = new Date()) => {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+/** Today in the user's local timezone as 'YYYY-MM-DD'. */
+export const localToday = () => toLocalDateString(new Date());
+
+/**
+ * Parses a 'YYYY-MM-DD' string as **local** midnight.
+ *
+ * `new Date('2026-11-01')` is UTC midnight, so `.getDate()` returns 31 in any
+ * timezone west of UTC. Building the Date from parts keeps the calendar day the
+ * user typed. Returns `null` when the string is not a plain ISO date.
+ *
+ * @param {string} value
+ * @returns {Date|null}
+ */
+export const parseLocalDate = (value) => {
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+  if (Number.isNaN(date.getTime())) return null;
+  // Reject rollover input such as 2026-02-31.
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return date;
+};
+
+/**
+ * Parses a 'YYYY-MM' string as the **first day** of that month at local midnight.
+ * Used by the month-year date picker, whose stored value has no day part.
+ * Returns `null` when the string is not a valid 'YYYY-MM'.
+ *
+ * @param {string} value
+ * @returns {Date|null}
+ */
+export const parseLocalMonth = (value) => {
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4})-(\d{2})$/.exec(value.trim());
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  if (month < 1 || month > 12) return null;
+  return new Date(year, month - 1, 1);
 };
 
 /**

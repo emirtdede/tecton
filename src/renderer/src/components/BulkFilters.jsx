@@ -28,7 +28,7 @@ const BulkFilters = ({ t, searchQuery, setSearchQuery, selectedGroup, setSelecte
               type="button"
               onClick={() => setSearchQuery('')}
               style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', padding: '4px' }}
-            >✕</button>
+            ></button>
           )}
         </div>
       </div>

@@ -336,14 +336,14 @@ const SubcontractorStatement = ({ t, i18n, subcontractor, transactions, filterSt
           }}
           value=""
         >
-          <option value="" disabled>📄 {t('worker_profile.filter.export', 'Dışa Aktar / Yazdır...')}</option>
+          <option value="" disabled> {t('worker_profile.filter.export', 'Dışa Aktar / Yazdır...')}</option>
           <option value="pdf">PDF</option>
           <option value="excel">Excel (.xlsx)</option>
           <option value="csv">CSV</option>
           <option value="json">JSON</option>
         </select>
         <button onClick={handleWhatsAppSend} className="btn" style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          💬 {t('subcontractor_profile.whatsapp_share', 'WhatsApp')}
+           {t('subcontractor_profile.whatsapp_share', 'WhatsApp')}
         </button>
       </div>
     </div>

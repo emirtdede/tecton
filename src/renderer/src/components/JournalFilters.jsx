@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomDatePicker from './ui/CustomDatePicker';
+import { X } from 'lucide-react';
 
 const JournalFilters = ({ t, hasJournals, searchQuery, setSearchQuery, startDate, onStartDateChange, endDate, onEndDateChange, sortBy, setSortBy }) => {
   if (!hasJournals) return null;
@@ -47,7 +48,7 @@ const JournalFilters = ({ t, hasJournals, searchQuery, setSearchQuery, startDate
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>

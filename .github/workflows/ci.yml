@@ -1,42 +1,121 @@
-name: ci
+name: CI
 
 on:
   push:
+    branches: [main, development]
   pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ELECTRON_BUILDER_CACHE: '${{ github.workspace }}/.cache/electron-builder'
 
 jobs:
-  unit:
+  verify:
+    name: Verify and package
     runs-on: windows-latest
+    timeout-minutes: 40
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --no-audit --no-fund
-      - run: npx vitest run
-      - run: npx vitest run --coverage
-      - uses: actions/upload-artifact@v4
+
+      - name: Cache electron-builder binaries
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/electron-builder
+          key: electron-builder-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typography gate
+        run: npm run style:check
+
+      - name: Translation gate
+        run: npm run i18n:check
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Coverage report
+        run: npx vitest run --coverage
+
+      - name: Upload coverage
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage/
 
-  e2e-nightly:
+      - name: Build renderer
+        run: npm run build:react
+
+      - name: Generate installer languages
+        run: npm run installer:langs
+
+      - name: Package installer
+        run: npx electron-builder --config electron-builder.config.cjs --publish never
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: tecton-setup
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            release/Tecton-Setup-*.exe
+            release/Tecton-Setup-*.exe.blockmap
+            release/latest.yml
+
+  e2e:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: End-to-end
     runs-on: windows-latest
+    timeout-minutes: 30
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --no-audit --no-fund
-      - run: npm run build:react
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test
-      - uses: actions/upload-artifact@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      # `npm ci` installs the Node-ABI native binding because the unit tests run
+      # under Node. Electron has a different ABI, so the packaged app and the
+      # Playwright suite need the Electron build of the same module.
+      - name: Rebuild native modules for Electron
+        run: npx electron-builder install-app-deps
+
+      - name: Build renderer
+        run: npm run build:react
+
+      - name: Run Playwright suite
+        run: npx playwright test
+
+      - name: Upload e2e artifacts
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: e2e-artifacts
           path: e2e/artifacts/

@@ -114,7 +114,7 @@ const JournalForm = ({ t, i18n, activeProject, activeProjectId, formData, setFor
           {weatherLoading ? (
             <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('journal.weather_loading', 'Bulutlardan okunuyor...')}</span>
           ) : weatherError ? (
-            <span style={{ fontSize: '0.9rem', color: 'var(--danger-text)', fontWeight: 'bold' }}>⚠️ {weatherError}</span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--danger-text)', fontWeight: 'bold' }}> {weatherError}</span>
           ) : formData.weather_desc ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {formData.weather_icon && <img src={`http://openweathermap.org/img/wn/${formData.weather_icon}.png`} alt="Weather Icon" style={{ width: '30px', height: '30px' }} />}

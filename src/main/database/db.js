@@ -2,16 +2,16 @@ const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
 const AdmZip = require('adm-zip');
-const { openCompat, isPlaintextHeader } = require('./dbCompat');
+const { openCompat, isPlaintextHeader, verifyDbFile, inspectDbFile } = require('./dbCompat');
 const { loadOrCreateDbKey } = require('../services/keystore');
 const logger = require('../logger');
 
 let dbPromise;
 
-function findLatestBackup(backupFolder) {
+function listBackups(backupFolder) {
   try {
-    if (!fs.existsSync(backupFolder)) return null;
-    let sqliteFiles = [];
+    if (!fs.existsSync(backupFolder)) return [];
+    const sqliteFiles = [];
     const traverse = (dir) => {
       const list = fs.readdirSync(dir);
       list.forEach(file => {
@@ -24,13 +24,46 @@ function findLatestBackup(backupFolder) {
       });
     };
     traverse(backupFolder);
-    if (sqliteFiles.length === 0) return null;
     sqliteFiles.sort((a, b) => b.localeCompare(a));
-    return sqliteFiles[0];
+    return sqliteFiles;
   } catch (err) {
     logger.error('Error finding latest backup:', err);
-    return null;
+    return [];
   }
+}
+
+function findLatestBackup(backupFolder) {
+  return listBackups(backupFolder)[0] || null;
+}
+
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+// A `-wal` / `-shm` / `-journal` left next to a database belongs to the file
+// that was there before. After the main file is replaced, SQLite would replay
+// that journal into the new file and report "file is not a database" (the WAL
+// is still encrypted with the key of the discarded database). Windows can hold
+// the handle for a moment after a failed open, so retry briefly.
+function removeSidecars(dbPath) {
+  let cleared = true;
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    const sibling = `${dbPath}${suffix}`;
+    let removed = !fs.existsSync(sibling);
+    for (let attempt = 0; attempt < 5 && !removed; attempt += 1) {
+      if (attempt > 0) sleepSync(60);
+      try {
+        fs.unlinkSync(sibling);
+        removed = true;
+      } catch (err) {
+        if (attempt === 4) {
+          logger.error(`Could not remove stale ${suffix} sidecar:`, err.message);
+        }
+      }
+    }
+    if (!removed) cleared = false;
+  }
+  return cleared;
 }
 
 let initPromise = null;
@@ -43,13 +76,13 @@ async function getDB() {
 
   const isDev = process.env.NODE_ENV === 'development';
   const dbPath = isDev 
-    ? path.join(__dirname, '../../../database.sqlite')
+    ? path.join(__dirname, '../../../.tecton-dev-data/database.sqlite')
     : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 
   let db;
   let dbKey = null;
   try {
-    dbKey = await loadOrCreateDbKey();
+    dbKey = await loadOrCreateDbKey({ dbPath });
   } catch (keyErr) {
     logger.error('Keystore unavailable, opening database without encryption:', keyErr.message);
   }
@@ -64,19 +97,72 @@ async function getDB() {
   } catch (migErr) {
     logger.error('Pre-encryption safety copy failed:', migErr.message);
   }
+  // better-sqlite3 opens lazily, so an encrypted database opened with the
+  // wrong key only fails on the first read. Verify with a real query so that
+  // case takes the recovery path instead of booting a broken handle.
+  const openAndVerify = async () => {
+    const handle = openCompat({ filename: dbPath, key: dbKey });
+    try {
+      await handle.get('SELECT count(*) AS c FROM sqlite_master');
+      return handle;
+    } catch (verifyErr) {
+      try { await handle.close(); } catch (_) { /* already gone */ }
+      throw verifyErr;
+    }
+  };
+
+  const backupDir = app
+    ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups')
+    : path.join(__dirname, '../../.tecton-dev-data/Database-Backups');
+
+  // Only restore a backup that really opens (key first, then legacy plaintext).
+  // For an encrypted database, an older copy encrypted under a previous key is
+  // useless, and copying it over the primary file would destroy the only
+  // remaining copy. verifyDbFile is read-only, so probing is safe.
+  const findUsableBackup = async () => {
+    // Prefer the newest backup that still holds business data. A backup taken
+    // after a failed recovery can be valid and completely empty, and restoring
+    // it silently replaces real records with nothing, so only fall back to an
+    // empty one when no populated backup is readable.
+    let emptyCandidate = null;
+    for (const candidate of listBackups(backupDir).slice(0, 20)) {
+      const info = inspectDbFile(candidate, dbKey);
+      if (!info.ok) {
+        logger.warn(`[Auto-Recovery] Backup unusable with the current key: ${candidate}`);
+        continue;
+      }
+      if (info.projects > 0) return candidate;
+      logger.warn(`[Auto-Recovery] Backup is empty, keeping it as a last resort: ${candidate}`);
+      if (!emptyCandidate) emptyCandidate = candidate;
+    }
+    return emptyCandidate;
+  };
+
   try {
-    db = openCompat({ filename: dbPath, key: dbKey });
+    db = await openAndVerify();
   } catch (err) {
     logger.error('Failed to open primary database. Attempting auto-recovery...', err);
-    const backupDir = app 
-      ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
-      : path.join(__dirname, '../../test_data/Database-Backups');
-    
-    const latestBackup = findLatestBackup(backupDir);
-    if (latestBackup && fs.existsSync(latestBackup)) {
+    if (!dbKey && fs.existsSync(dbPath) && !isPlaintextHeader(dbPath)) {
+      // The key is gone, so the current file cannot be read by anyone. Recovery
+      // is still worth trying: an older plaintext backup may be usable, and the
+      // unreadable file is preserved below rather than deleted.
+      logger.error('[Auto-Recovery] No usable decryption key; only a plaintext backup can be restored.');
+    }
+
+    const latestBackup = await findUsableBackup();
+    if (latestBackup) {
       logger.info(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
+      if (!removeSidecars(dbPath)) {
+        // Replacing the file now would let SQLite replay the old journal over
+        // the restored data and destroy the backup's contents too.
+        throw new Error('database_sidecars_locked');
+      }
+      fs.copyFileSync(dbPath, `${dbPath}.unreadable-${Date.now()}`);
       fs.copyFileSync(latestBackup, dbPath);
-      db = openCompat({ filename: dbPath, key: dbKey });
+      db = await openAndVerify();
+      if (!dbKey) {
+        logger.warn('[Auto-Recovery] Restored database is plaintext: no key was available to encrypt it.');
+      }
     } else {
       logger.error('[Auto-Recovery] No valid backups found to recover from.');
       throw err;
@@ -98,13 +184,15 @@ async function getDB() {
           if (check && check.integrity_check !== 'ok') {
             logger.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
             await db.close();
-            const backupDir = app 
-              ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
-              : path.join(__dirname, '../../test_data/Database-Backups');
-            const latestBackup = findLatestBackup(backupDir);
+            const latestBackup = await findUsableBackup();
             if (latestBackup) {
+              if (!removeSidecars(dbPath)) {
+                logger.error('[Integrity Check] Stale journal files are locked; skipping the restore.');
+                throw new Error('database_sidecars_locked');
+              }
+              fs.copyFileSync(dbPath, `${dbPath}.corrupt-${Date.now()}`);
               fs.copyFileSync(latestBackup, dbPath);
-              db = openCompat({ filename: dbPath, key: dbKey });
+              db = await openAndVerify();
               // dbPromise set deferred
             }
           }
@@ -594,6 +682,42 @@ async function getDB() {
     }
   }
 
+  // Settings introduced after the first release. Inserted only when missing so
+  // a user value is never overwritten by a default.
+  const DEFAULT_SETTINGS = [
+    ['theme_id', 'obsidian', 'Accent palette id'],
+    ['custom_theme_color', '#8b5cf6', 'Custom accent colour (hex)'],
+    ['app_icon', 'auto', 'Application icon variant'],
+    ['app_icon_color', '#8b5cf6', 'Custom application icon colour (hex)'],
+    ['ui_zoom', '1', 'Interface zoom factor (0.8 - 1.6)'],
+    ['a11y_high_contrast', 'false', 'High contrast accessibility mode'],
+    ['a11y_enhanced_focus', 'false', 'Enhanced keyboard focus outlines'],
+    ['a11y_readable_spacing', 'false', 'Increased letter and line spacing'],
+    ['a11y_reduce_motion', 'false', 'Reduce interface animations'],
+    ['onboarding_completed', 'false', 'First-run wizard completed'],
+    ['close_to_tray', 'true', 'Closing the window keeps the app in the tray'],
+    ['start_minimized', 'false', 'Start hidden in the system tray'],
+    ['autostart', 'false', 'Launch when Windows starts'],
+    ['notifications_enabled', 'true', 'Show desktop notifications'],
+    ['notification_sound', 'true', 'Play a sound with notifications'],
+    ['company_website', '', 'Publisher website'],
+    ['company_email', '', 'Publisher support email'],
+    ['cloud_provider', 'none', 'Active cloud sync provider'],
+    ['cloud_auto_sync', 'true', 'Sync changes to the cloud automatically'],
+    ['cloud_last_sync', '', 'Timestamp of the last successful cloud sync'],
+  ];
+  {
+    const existingRows = await db.all('SELECT setting_key FROM app_settings');
+    const existingKeys = new Set(existingRows.map((row) => row.setting_key));
+    for (const [key, value, description] of DEFAULT_SETTINGS) {
+      if (existingKeys.has(key)) continue;
+      await db.run(
+        'INSERT INTO app_settings (setting_key, setting_value, description) VALUES (?, ?, ?)',
+        [key, value, description]
+      );
+    }
+  }
+
   const workTypesCount = await db.get('SELECT COUNT(*) as count FROM work_types');
   if (workTypesCount.count === 0) {
     await db.run("INSERT INTO work_types (name, multiplier) VALUES (?, ?)", ['Tam Gün', 1.0]);
@@ -609,15 +733,34 @@ async function getDB() {
     return db;
   })();
 
-  const resultDb = await initPromise;
+  try {
+    const resultDb = await initPromise;
+    initPromise = null;
+    return resultDb;
+  } catch (err) {
+    // Do not cache a rejected initialisation forever: after the user fixes the
+    // cause (disk space, locked file) the next getDB() must retry instead of
+    // instantly rethrowing the stale error.
+    initPromise = null;
+    dbPromise = null;
+    throw err;
+  }
+}
+
+/**
+ * Drops the cached connection so the next getDB() reopens the file. A restore
+ * closes the shared handle; every caller still holding it would otherwise query
+ * a closed database.
+ */
+function resetConnection() {
+  dbPromise = null;
   initPromise = null;
-  return resultDb;
 }
 
 function getSystemLogsDir() {
   const baseDir = app 
     ? path.join(app.getPath('documents'), 'TectonBackups', 'SystemLogs-Backups') 
-    : path.join(__dirname, '../../test_data/SystemLogs-Backups');
+    : path.join(__dirname, '../../.tecton-dev-data/SystemLogs-Backups');
   if (!fs.existsSync(baseDir)) {
     try {
       fs.mkdirSync(baseDir, { recursive: true });
@@ -783,7 +926,7 @@ function archiveOldLogs() {
 function getDBPath() {
   const isDev = process.env.NODE_ENV === 'development';
   return isDev 
-    ? path.join(__dirname, '../../../database.sqlite')
+    ? path.join(__dirname, '../../../.tecton-dev-data/database.sqlite')
     : path.join(app.getPath('userData'), 'elektronik-yevmiye.sqlite');
 }
 
@@ -814,4 +957,4 @@ function restoreSnapshot(suffix = 'restore-point') {
   }
 }
 
-module.exports = { getDB, createSnapshot, restoreSnapshot };
+module.exports = { getDB, createSnapshot, restoreSnapshot, resetConnection };

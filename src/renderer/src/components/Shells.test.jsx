@@ -5,7 +5,14 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k, f) => f || k, i18n: { language: 'tr', changeLanguage: vi.fn() } }),
+  useTranslation: (() => {
+    // Stable identity: production i18next returns a memoised `t`, and effects
+    // that list `t` in their dependency array would otherwise loop forever.
+    const t = (k, f) => f || k;
+    const i18n = { language: 'tr', changeLanguage: vi.fn() };
+    return () => ({ t, i18n });
+  })(),
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
 import Settings from './Settings';
@@ -35,7 +42,7 @@ describe('Settings shell', () => {
   it('renders genel tab content', async () => {
     baseApi();
     render(<Settings activeTab="genel" />);
-    expect(await screen.findByText(/Görünüm ve Dil/)).toBeInTheDocument();
+    expect(await screen.findByText(/Görünüm ve Dil|Appearance and language/)).toBeInTheDocument();
   });
 
   it('renders finance tab content', async () => {
@@ -63,7 +70,7 @@ describe('MediaGallery shell', () => {
   it('guard without project', async () => {
     baseApi();
     render(<MediaGallery activeProjectId={null} projects={[]} />);
-    expect(await screen.findByText(/şantiye seçin/i)).toBeInTheDocument();
+    expect(await screen.findByText(/şantiye seçin|Select an active site/i)).toBeInTheDocument();
   });
 });
 

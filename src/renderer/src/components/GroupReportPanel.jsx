@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomDatePicker from './ui/CustomDatePicker';
+import { logError } from '../utils/logger';
+import { apiMessage } from '../utils/apiWrite';
 import { exportToExcel, exportToJSON } from '../utils/exportUtils';
-import { formatCurrency } from '../utils/formatUtils';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
-const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
+import { formatCurrency, toLocalDateString } from '../utils/formatUtils';
+import { loadPdf } from '../utils/lazyLibraries';
+import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
+
+import { toAsciiFilename, toAsciiText } from '../utils/pdfUtils';
+const GroupReportPanel = ({ activeProjectId, viewMode }) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState([]);
   
   const today = new Date();
-  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+  const firstDay = toLocalDateString(new Date(today.getFullYear(), today.getMonth(), 1));
+  const lastDay = toLocalDateString(new Date(today.getFullYear(), today.getMonth() + 1, 0));
  
   const [startDate, setStartDate] = useState(firstDay);
   const [endDate, setEndDate] = useState(lastDay);
@@ -21,51 +24,74 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
   const [companyLogo, setCompanyLogo] = useState('');
 
   const handleStartDateChange = (val) => {
-    if (val && endDate && new Date(val) > new Date(endDate)) {
-      setStartDate(endDate);
-      setEndDate(val);
-    } else {
-      setStartDate(val);
-    }
+    const [start, end] = reorderRangeForStart(val, endDate);
+    setStartDate(start);
+    setEndDate(end);
   };
 
   const handleEndDateChange = (val) => {
-    if (val && startDate && new Date(startDate) > new Date(val)) {
-      setEndDate(startDate);
-      setStartDate(val);
-    } else {
-      setEndDate(val);
-    }
+    const [start, end] = reorderRangeForEnd(val, startDate);
+    setStartDate(start);
+    setEndDate(end);
   };
 
+  // Guards against stale responses overwriting newer report data when the date
+  // range or project changes rapidly.
+  const requestIdRef = useRef(0);
+
   const fetchGroupReport = async () => {
-    if (window.api && window.api.finance) {
-      setLoading(true);
-      try {
-        const res = await window.api.finance.groupStatement({ start_date: startDate, end_date: endDate, project_id: activeProjectId });
-        if (res.success) {
-          setReportData(res.groups);
-        } else {
-          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('group_report.error', 'Rapor alınırken hata oluştu:') + ' ' + res.message, type: 'error' } }));
-        }
-      } catch (err) {
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('group_report.error', 'Rapor alınırken hata oluştu:') + ' ' + err.message, type: 'error' } }));
+    if (!(window.api && window.api.finance)) return;
+    const requestId = ++requestIdRef.current;
+    setLoading(true);
+    try {
+      const res = await window.api.finance.groupStatement({ start_date: startDate, end_date: endDate, project_id: activeProjectId });
+      if (requestId !== requestIdRef.current) return;
+      if (res.success) {
+        setReportData(res.groups || []);
+      } else {
+        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('group_report.error', 'Rapor alınırken hata oluştu:') + ' ' + apiMessage(res), type: 'error' } }));
       }
-      
+
       const settings = await window.api.db.read('app_settings');
+      if (requestId !== requestIdRef.current) return;
       const cName = settings.find(s => s.setting_key === 'company_name')?.setting_value;
       const cLogo = settings.find(s => s.setting_key === 'company_logo')?.setting_value;
       if (cName) setCompanyName(cName);
       if (cLogo) setCompanyLogo(cLogo);
-      setLoading(false);
+    } catch (err) {
+      // The settings read used to sit outside the try block, so a single failed
+      // IPC left the panel spinning forever with an unhandled rejection.
+      if (requestId !== requestIdRef.current) return;
+      logError('Group report fetch failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('group_report.error', 'Rapor alınırken hata oluştu.'), type: 'error' } }));
+    } finally {
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   };
  
   useEffect(() => {
     fetchGroupReport();
-  }, [startDate, endDate, activeProjectId, workers, balances]);
+    // `workers` and `balances` were in this list but are never read by
+    // fetchGroupReport: every dashboard refresh (balance load, worker rename)
+    // re-ran the backend group statement for nothing.
+  }, [startDate, endDate, activeProjectId]);
 
+  // `jspdf` + `jspdf-autotable` are ~610 kB combined and are only needed when
+  // a PDF is actually requested, so they load on demand. `generatePDF` itself
+  // stays synchronous from the caller's point of view and swallows failures
+  // into a toast: a rejected dynamic chunk must never surface as an unhandled
+  // rejection (the user would just see the button do nothing).
   const generatePDF = () => {
+    buildPdf().catch((err) => {
+      logError('Group report PDF failed:', err);
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: t('export.failed', 'Dışa aktarma başarısız oldu.'), type: 'error' }
+      }));
+    });
+  };
+
+  const buildPdf = async () => {
+    const { jsPDF, autoTable } = await loadPdf();
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     const getFormatFromBase64 = (base64) => {
@@ -81,14 +107,6 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
       return 'PNG';
     };
 
-    const trMap = { 'ç':'c', 'ğ':'g', 'ş':'s', 'ö':'o', 'ü':'u', 'ı':'i', 'Ç':'C', 'Ğ':'G', 'Ş':'S', 'Ö':'O', 'Ü':'U', 'İ':'I' };
-    const toEn = (str) => {
-      if (!str) return '';
-      let s = String(str);
-      s = s.replace(/[çğşöüıÇĞŞÖÜİ]/g, letter => trMap[letter]);
-      s = s.replace(/₺/g, 'TL');
-      return s;
-    };
     
     // Header
     let textStartY = 20;
@@ -98,30 +116,47 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
         doc.addImage(companyLogo, getFormatFromBase64(companyLogo), pageWidth / 2 - 15, 10, 30, 15);
         textStartY = 35;
       } catch (err) {
-        console.error('Error adding logo to PDF', err);
+        logError('Error adding logo to PDF', err);
       }
     }
 
     doc.setFontSize(22);
     doc.setTextColor(30, 58, 138);
-    doc.text(toEn(companyName), pageWidth / 2, textStartY, { align: 'center' });
+    doc.text(toAsciiText(companyName), pageWidth / 2, textStartY, { align: 'center' });
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
-    doc.text(toEn(t('group_report.title')), pageWidth / 2, textStartY + 10, { align: 'center' });
+    doc.text(toAsciiText(t('group_report.title')), pageWidth / 2, textStartY + 10, { align: 'center' });
     doc.setFontSize(10);
-    doc.text(`Tarih Araligi: ${startDate || 'Tumu'} / ${endDate || 'Tumu'}`, 14, textStartY + 25);
+    doc.text(
+      toAsciiText(
+        t('group_report.period_range', {
+          start: startDate || t('group_report.all_periods', 'Tümü'),
+          end: endDate || t('group_report.all_periods', 'Tümü')
+        })
+      ),
+      14,
+      textStartY + 25
+    );
     
     // Table
-    const tableColumn = ["Grup Adi", "Kisi Sayisi", "Bu Donem Hak Edis", "Bu Donem Avans", "Genel Toplam Bakiye"];
+    // Headers come from the active locale; previously they were hardcoded
+    // Turkish, so an English/Arabic user still got a Turkish PDF.
+    const tableColumn = [
+      t('group_report.col_group', 'Grup Adı'),
+      t('group_report.col_count', 'Kişi Sayısı'),
+      t('group_report.col_earned', 'Bu Dönem Hak Ediş'),
+      t('group_report.col_advance', 'Bu Dönem Avans/Ödeme'),
+      t('group_report.col_total', 'Genel Toplam Bakiye')
+    ];
     const tableRows = [];
 
     reportData.forEach(g => {
       const rowData = [
-        toEn(g.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : g.group_name),
+        toAsciiText(g.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : g.group_name),
         `${g.worker_count}`,
-        toEn(formatCurrency(g.period_earned, i18n.language)),
-        toEn(formatCurrency(g.period_advance, i18n.language)),
-        toEn(formatCurrency(g.absolute_balance, i18n.language))
+        toAsciiText(formatCurrency(g.period_earned, i18n.language)),
+        toAsciiText(formatCurrency(g.period_advance, i18n.language)),
+        toAsciiText(formatCurrency(g.absolute_balance, i18n.language))
       ];
       tableRows.push(rowData);
     });
@@ -136,16 +171,17 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
       alternateRowStyles: { fillColor: [249, 250, 251] },
     });
 
-    doc.save(`${toEn(companyName)}_Grup_Raporu.pdf`);
+    doc.save(`${toAsciiFilename(companyName)}_Grup_Raporu.pdf`);
   };
 
   const handleExport = (format) => {
     const dataToExport = reportData.map(g => ({
-      'Grup Adı': g.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : g.group_name,
-      'Kişi Sayısı': g.worker_count,
-      'Bu Dönem Hak Ediş': formatCurrency(g.period_earned, i18n.language),
-      'Bu Dönem Avans/Ödeme': formatCurrency(g.period_advance, i18n.language),
-      'Genel Toplam Bakiye': formatCurrency(g.absolute_balance, i18n.language)
+      [t('group_report.col_group', 'Grup Adı')]:
+        g.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : g.group_name,
+      [t('group_report.col_count', 'Kişi Sayısı')]: g.worker_count,
+      [t('group_report.col_earned', 'Bu Dönem Hak Ediş')]: formatCurrency(g.period_earned, i18n.language),
+      [t('group_report.col_advance', 'Bu Dönem Avans/Ödeme')]: formatCurrency(g.period_advance, i18n.language),
+      [t('group_report.col_total', 'Genel Toplam Bakiye')]: formatCurrency(g.absolute_balance, i18n.language)
     }));
 
     if (format === 'excel') exportToExcel(dataToExport, `Grup_Raporu_${startDate}_${endDate}`);
@@ -212,17 +248,17 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
                       {group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}
                     </td>
                     <td style={{ textAlign: 'left', padding: '0.6rem 0.15rem 0.6rem 0.35rem', whiteSpace: 'nowrap' }}>
-                      <span style={{ fontSize: '0.75rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.15rem 0.4rem', borderRadius: '12px' }}>
+                      <span style={{ fontSize: '0.75rem', background: 'var(--accent-soft)', color: 'var(--accent)', padding: '0.15rem 0.4rem', borderRadius: '12px' }}>
                         {group.worker_count}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', color: '#34d399', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'right', color: 'var(--success)', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
                       +{formatCurrency(group.period_earned, i18n.language)}
                     </td>
-                    <td style={{ textAlign: 'right', color: '#ef4444', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'right', color: 'var(--danger)', fontWeight: 'bold', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
                       -{formatCurrency(group.period_advance, i18n.language)}
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? '#34d399' : '#ef4444', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'right', fontWeight: 'bold', color: isPositive ? 'var(--success)' : 'var(--danger)', padding: '0.6rem 0.15rem', whiteSpace: 'nowrap' }}>
                       {formatCurrency(group.absolute_balance, i18n.language)}
                     </td>
                   </tr>
@@ -236,7 +272,7 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
           {reportData.map(group => {
             return (
               <div key={group.group_id} style={{ 
-                background: 'rgba(255,255,255,0.02)', 
+                background: 'var(--surface-subtle)', 
                 border: '1px solid var(--glass-border)', 
                 borderRadius: '8px', 
                 padding: '1.2rem',
@@ -244,23 +280,23 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
                 flexDirection: 'column',
                 gap: '1rem'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--surface-subtle)', paddingBottom: '0.5rem' }}>
                   <h4 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.1rem' }}>{group.group_name === 'Grupsuz Personeller' ? t('group_report.no_group') : group.group_name}</h4>
-                  <span style={{ fontSize: '0.8rem', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
+                  <span style={{ fontSize: '0.8rem', background: 'var(--accent-soft)', color: 'var(--accent)', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>
                     {group.worker_count} {t('group_report.person_count')}
                   </span>
                 </div>
                 
                 <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ flex: 1, borderRight: '1px solid rgba(255,255,255,0.05)', paddingRight: '1rem' }}>
+                  <div style={{ flex: 1, borderRight: '1px solid var(--surface-subtle)', paddingRight: '1rem' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('group_report.period')}</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
                       <span>{t('group_report.earned')}</span>
-                      <span style={{ color: '#34d399' }}>+{formatCurrency(group.period_earned, i18n.language)}</span>
+                      <span style={{ color: 'var(--success)' }}>+{formatCurrency(group.period_earned, i18n.language)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                       <span>{t('group_report.advance')}</span>
-                      <span style={{ color: '#ef4444' }}>-{formatCurrency(group.period_advance, i18n.language)}</span>
+                      <span style={{ color: 'var(--danger)' }}>-{formatCurrency(group.period_advance, i18n.language)}</span>
                     </div>
                   </div>
 
@@ -269,7 +305,7 @@ const GroupReportPanel = ({ activeProjectId, workers, balances, viewMode }) => {
                     <div style={{ 
                       fontSize: '1.4rem', 
                       fontWeight: 'bold', 
-                      color: group.absolute_balance >= 0 ? '#34d399' : '#ef4444' 
+                      color: group.absolute_balance >= 0 ? 'var(--success)' : 'var(--danger)' 
                     }}>
                       {formatCurrency(group.absolute_balance, i18n.language)}
                     </div>

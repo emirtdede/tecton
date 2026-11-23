@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TagInput from './ui/TagInput';
 import CustomDatePicker from './ui/CustomDatePicker';
 import { getCurrencySymbol } from '../utils/formatUtils';
+import { X } from 'lucide-react';
 
 const EMPTY_FORM = {
   name: '',
@@ -100,7 +101,7 @@ const SubcontractorFormDrawer = ({ t, i18n, activeProjectId, contractor, open, o
             onClick={handleClose}
             style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', border: 'none' }}
           >
-            ✕
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -176,7 +177,7 @@ const SubcontractorFormDrawer = ({ t, i18n, activeProjectId, contractor, open, o
 
           <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', marginTop: '0.25rem' }}>
             <div style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🛡️ {t('isg.section_title', 'İSG (İş Sağlığı ve Güvenliği)')}
+               {t('isg.section_title', 'İSG (İş Sağlığı ve Güvenliği)')}
             </div>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>

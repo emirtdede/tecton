@@ -32,7 +32,13 @@ async function setupTestDB() {
     CREATE TABLE IF NOT EXISTS workers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       full_name TEXT NOT NULL,
+      tc_no TEXT,
+      phone TEXT,
       daily_wage REAL NOT NULL,
+      start_date DATE,
+      status TEXT DEFAULT 'active',
+      extra_data TEXT,
+      tags TEXT,
       group_id INTEGER,
       project_id INTEGER,
       isg_start_date DATE,
@@ -45,10 +51,13 @@ async function setupTestDB() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       worker_id INTEGER,
       work_date DATE NOT NULL,
+      work_type_id INTEGER,
       applied_wage REAL NOT NULL,
       applied_multiplier REAL NOT NULL,
       overtime_hours REAL DEFAULT 0,
       earned_amount REAL NOT NULL,
+      notes TEXT,
+      tags TEXT,
       project_id INTEGER,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP
@@ -63,6 +72,8 @@ async function setupTestDB() {
       notes TEXT,
       linked_cash_id INTEGER,
       project_id INTEGER,
+      tags TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP
     );
@@ -74,6 +85,8 @@ async function setupTestDB() {
       amount REAL NOT NULL,
       description TEXT,
       project_id INTEGER,
+      tags TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP
     );
@@ -85,7 +98,8 @@ async function setupTestDB() {
       action TEXT,
       old_values TEXT,
       new_values TEXT,
-      project_id INTEGER
+      project_id INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS projects (
@@ -123,6 +137,7 @@ async function setupTestDB() {
       receipt_date DATE NOT NULL,
       photo_path TEXT,
       notes TEXT,
+      tags TEXT,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -151,6 +166,7 @@ async function setupTestDB() {
       status TEXT DEFAULT 'open',
       photo_path TEXT,
       report_date DATE NOT NULL,
+      tags TEXT,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -166,6 +182,7 @@ async function setupTestDB() {
       status TEXT DEFAULT 'active',
       isg_start_date DATE,
       isg_expiry_date DATE,
+      tags TEXT,
       is_deleted BOOLEAN DEFAULT 0,
       deleted_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

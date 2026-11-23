@@ -5,7 +5,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k, f) => f || k, i18n: { language: 'tr', changeLanguage: vi.fn() } }),
+  useTranslation: (() => {
+    // Stable identity: production i18next returns a memoised `t`, and effects
+    // that list `t` in their dependency array would otherwise loop forever.
+    const t = (k, f) => f || k;
+    const i18n = { language: 'tr', changeLanguage: vi.fn() };
+    return () => ({ t, i18n });
+  })(),
 }));
 
 import GuideDrawer from './GuideDrawer';
@@ -30,7 +36,7 @@ describe('GuideDrawer', () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     render(<GuideDrawer isOpen onClose={onClose} title="T" h1="H" />);
-    await user.click(screen.getByText('✕'));
+    await user.click(screen.getByRole('button', { name: /Kapat|close/i }));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

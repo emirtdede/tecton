@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+  <defs>
+    <!-- Arka Plan Koyu Mimari Gradyan -->
+    <linearGradient id="bgGrad" x1="48" y1="32" x2="464" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#060B14" />
+    </linearGradient>
+
+    <!-- Dış Çerçeve Parıltısı -->
+    <linearGradient id="rimGrad" x1="24" y1="24" x2="488" y2="488" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#64748B" stop-opacity="0.55" />
+      <stop offset="50%" stop-color="#334155" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.45" />
+    </linearGradient>
+
+    <!-- Ana Çelik & Kehribar Altın T-Gövde Gradyanı -->
+    <linearGradient id="amberSteel" x1="124" y1="124" x2="388" y2="388" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="45%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <!-- Üst Kiriş Işık Pahı -->
+    <linearGradient id="amberHighlight" x1="256" y1="124" x2="256" y2="134" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Alt Kiriş Kanat Gölgesi -->
+    <linearGradient id="amberShadow" x1="256" y1="178" x2="256" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#92400E" stop-opacity="0" />
+      <stop offset="100%" stop-color="#78350F" stop-opacity="0.55" />
+    </linearGradient>
+
+    <!-- Bütünleşik Dijital T-Omurga Gradyanı -->
+    <linearGradient id="coreSpineGrad" x1="256" y1="151" x2="256" y2="382" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7DD3FC" />
+      <stop offset="45%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Masaüstü Uygulama İkonu Ana Gövdesi (464x464, Merkez: 256,256) -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGrad)" />
+  <rect x="25.5" y="25.5" width="461" height="461" rx="106.5" stroke="url(#rimGrad)" stroke-width="3" />
+
+  <!-- Arka Plan Teknik Izgara -->
+  <g stroke="#334155" stroke-width="1" stroke-opacity="0.35">
+    <line x1="148" y1="44" x2="148" y2="468" />
+    <line x1="256" y1="44" x2="256" y2="468" />
+    <line x1="364" y1="44" x2="364" y2="468" />
+    <line x1="44" y1="148" x2="468" y2="148" />
+    <line x1="44" y1="256" x2="468" y2="256" />
+    <line x1="44" y1="364" x2="468" y2="364" />
+  </g>
+
+  <!-- Maksimum Ölçekli Altıgen Mühendislik Çerçevesi (Yarıçap: 216px, Merkez: 256,256) -->
+  <polygon points="256,40 443,148 443,364 256,472 69,364 69,148" stroke="#38BDF8" stroke-width="1.75" stroke-opacity="0.28" fill="#0F172A" fill-opacity="0.35" />
+
+  <!-- CAD Köşe Hizalama İşaretleri -->
+  <g stroke="#64748B" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.65">
+    <path d="M 66 88 V 66 H 88" />
+    <path d="M 424 66 H 446 V 88" />
+    <path d="M 66 424 V 446 H 88" />
+    <path d="M 424 446 H 446 V 424" />
+  </g>
+
+  <!-- TECTON MONOGRAMI: 264x264 Tam Simetrik Çelik T-Gövde ve Dijital T-Omurga -->
+  <g>
+    <!-- Yekpare Pahlı Çelik T-Yapısı (x: 124..388, y: 124..388) -->
+    <path d="M 136 124 L 376 124 L 388 136 L 388 176 L 376 188 L 300 188 L 300 376 L 288 388 L 266 388 L 266 166 L 367 166 L 367 146 L 145 146 L 145 166 L 246 166 L 246 388 L 224 388 L 212 376 L 212 188 L 136 188 L 124 176 L 124 136 Z" fill="url(#amberSteel)" />
+
+    <!-- Üst Kiriş Işık Yansıması -->
+    <polygon points="136,124 376,124 366,134 146,134" fill="url(#amberHighlight)" />
+
+    <!-- Sol ve Sağ Kanat Alt Pah Gölgeleri -->
+    <polygon points="146,178 220,178 212,188 136,188" fill="url(#amberShadow)" />
+    <polygon points="292,178 366,178 376,188 300,188" fill="url(#amberShadow)" />
+
+    <!-- Bütünleşik Mavi Dijital T-Omurga (5px Eşit Kanal Boşluklu) -->
+    <path d="M 150 151 L 362 151 L 362 161 L 261 161 L 261 382 L 251 382 L 251 161 L 150 161 Z" fill="url(#coreSpineGrad)" />
+  </g>
+</svg>

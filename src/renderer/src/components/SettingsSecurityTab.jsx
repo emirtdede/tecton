@@ -50,13 +50,13 @@ const SettingsSecurityTab = ({ t, appSettings, fetchData, setModalConfig }) => {
       {/* Kritik Veri İşlemleri - Kırmızı / Uyarı Tasarımı */}
       <div className="glass-card" style={{ borderLeft: '4px solid var(--danger)', background: 'rgba(239, 68, 68, 0.02)' }}>
         <h3 className="card-title" style={{ color: 'var(--danger)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          ⚠️ {t('settings.critical_system_actions', 'Kritik Sistem Eylemleri')}
+           {t('settings.critical_system_actions', 'Kritik Sistem Eylemleri')}
         </h3>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div>
             <button className="btn btn-primary" onClick={handleBackup} style={{ width: '100%', background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', marginBottom: '0.5rem' }}>
-              📦 {t('settings.backup_db', 'Tüm Veritabanını Yedekle (.sqlite Export)')}
+               {t('settings.backup_db', 'Tüm Veritabanını Yedekle (.sqlite Export)')}
             </button>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               {t('settings.backup_db_desc', 'Tüm sisteminizi (.sqlite veritabanı dosyası olarak) yerel diskinize aktarır. Bilgisayar değişimi veya yedekleme için kullanabilirsiniz.')}
@@ -65,7 +65,7 @@ const SettingsSecurityTab = ({ t, appSettings, fetchData, setModalConfig }) => {
 
           <div>
             <button className="btn" onClick={handleOpenOldBackups} style={{ width: '100%', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)' }}>
-              📂 {t('settings.open_old_backups', 'Eski Yedekleme Klasörünü Aç')}
+               {t('settings.open_old_backups', 'Eski Yedekleme Klasörünü Aç')}
             </button>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
               {t('settings.old_backups_desc', 'Geri yükleme öncesinde otomatik alınan sistem yedeklerine (Time Machine) buradan ulaşabilirsiniz.')}
@@ -112,7 +112,7 @@ const SettingsSecurityTab = ({ t, appSettings, fetchData, setModalConfig }) => {
               onDragEnter={(e) => e.currentTarget.style.borderColor = 'var(--danger)'}
               onDragLeave={(e) => e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'}
             >
-              <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>📥</div>
+              <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}></div>
               <strong style={{ fontSize: '0.85rem', color: '#fff', display: 'block' }}>{t('settings.restore_db_title', 'Yedek Veritabanını Üzerine Yazdır')}</strong>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('settings.restore_db_desc', '.sqlite dosyasını buraya sürükleyip bırakın (Uygulama otomatik olarak yeniden başlayacaktır)')}</span>
             </div>
@@ -127,7 +127,7 @@ const SettingsSecurityTab = ({ t, appSettings, fetchData, setModalConfig }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
             <button className="btn" onClick={handleVacuum} style={{ width: '100%', marginBottom: '0.5rem', background: 'rgba(255,255,255,0.04)' }}>
-              🧹 {t('settings.vacuum_db', 'Veritabanını Optimize Et (Vacuum)')}
+               {t('settings.vacuum_db', 'Veritabanını Optimize Et (Vacuum)')}
             </button>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               {t('settings.vacuum_db_desc', 'Boşaltılan veya silinen kayıtların oluşturduğu veritabanı boşluklarını temizler, disk alanını geri kazanır ve sorgu hızlarını artırır.')}
@@ -136,7 +136,7 @@ const SettingsSecurityTab = ({ t, appSettings, fetchData, setModalConfig }) => {
 
           <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem' }}>
             <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#10B981', fontWeight: '500' }}>
-              ☁️ {t('settings.keys.cloud_sync_folder', 'Bulut Yedekleme Klasörü')}
+               {t('settings.keys.cloud_sync_folder', 'Bulut Yedekleme Klasörü')}
             </label>
             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <input

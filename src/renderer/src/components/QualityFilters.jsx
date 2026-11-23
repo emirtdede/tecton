@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomDatePicker from './ui/CustomDatePicker';
+import { X } from 'lucide-react';
 
 const QualityFilters = ({ t, hasReports, searchQuery, setSearchQuery, filterStartDate, onStartDateChange, filterEndDate, onEndDateChange, sortBy, setSortBy, filterPhoto, setFilterPhoto, filterStatus, setFilterStatus }) => {
   if (!hasReports) return null;
@@ -47,7 +48,7 @@ const QualityFilters = ({ t, hasReports, searchQuery, setSearchQuery, filterStar
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>

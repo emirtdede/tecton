@@ -1,5 +1,5 @@
 import React from 'react';
-import { Save } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import TectonDark from '../assets/tecton_dark.svg';
 import TectonLight from '../assets/tecton_light.svg';
 
@@ -219,7 +219,7 @@ const SettingsGeneralTab = ({ t, appSettings, tempCompanyName, setTempCompanyNam
                       style={{ position: 'absolute', top: '-10px', right: '-10px', width: '24px', height: '24px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       onClick={() => handleRemoveLogo(setting.id)}
                     >
-                      ✕
+                      <X size={14} aria-hidden="true" />
                     </button>
                   </div>
                 )}
@@ -230,7 +230,7 @@ const SettingsGeneralTab = ({ t, appSettings, tempCompanyName, setTempCompanyNam
                     className="btn"
                     style={{ cursor: 'pointer', margin: 0 }}
                   >
-                    📁 {t('settings.file_select_button')}
+                     {t('settings.file_select_button')}
                   </label>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                     {tempCompanyLogo ? t('settings.logo_uploaded', 'Logo yüklendi') : t('settings.file_not_selected')}

@@ -81,52 +81,52 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
             <strong style={{ color: '#fff', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '0.15rem' }}>{activeProjectObj.name}</strong>
           </div>
         ) : (
-          <div className="sidebar-active-project" style={{ color: 'var(--danger)', fontSize: '0.8rem', margin: '0 1rem 1.5rem 1rem', fontWeight: 'bold' }}>⚠️ {t('nav.no_project_selected', 'Şantiye Seçilmedi!')}</div>
+          <div className="sidebar-active-project" style={{ color: 'var(--danger)', fontSize: '0.8rem', margin: '0 1rem 1.5rem 1rem', fontWeight: 'bold' }}> {t('nav.no_project_selected', 'Şantiye Seçilmedi!')}</div>
         )}
 
         <nav className="sidebar-nav">
           <div className={`sidebar-link ${view === 'projects' ? 'active' : ''}`} onClick={() => setView('projects')}>
-            <span className="sidebar-icon">🏗️</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.projects', 'Şantiyeler (Lokasyon)')}</span>
           </div>
           <div className={`sidebar-link ${view === 'list' || view === 'profile' ? 'active' : ''}`} onClick={() => { setView('list'); setSelectedWorkerProfile(null); }}>
-            <span className="sidebar-icon">👥</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.personnel')}</span>
           </div>
           <div className={`sidebar-link ${view === 'subcontractor' || view === 'subcontractor_profile' ? 'active' : ''}`} onClick={() => setView('subcontractor')}>
-            <span className="sidebar-icon">🚜</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.subcontractors', 'Taşeron Carileri')}</span>
           </div>
           <div className={`sidebar-link ${view === 'bulk_timesheet' ? 'active' : ''}`} onClick={() => setView('bulk_timesheet')}>
-            <span className="sidebar-icon">📋</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('bulk_timesheet.nav_title', 'Çoklu Puantaj')}</span>
           </div>
           <div className={`sidebar-link ${view === 'production' ? 'active' : ''}`} onClick={() => setView('production')}>
-            <span className="sidebar-icon">📐</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.production', 'İmalat ve Metraj')}</span>
           </div>
           <div className={`sidebar-link ${view === 'materials' ? 'active' : ''}`} onClick={() => setView('materials')}>
-            <span className="sidebar-icon">📄</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.materials', 'İrsaliye & Malzeme')}</span>
           </div>
           <div className={`sidebar-link ${view === 'journal' ? 'active' : ''}`} onClick={() => setView('journal')}>
-            <span className="sidebar-icon">📓</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.journal', 'Günlük Jurnal')}</span>
           </div>
           <div className={`sidebar-link ${view === 'quality' ? 'active' : ''}`} onClick={() => setView('quality')}>
-            <span className="sidebar-icon">🛡️</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.quality', 'Kalite Kontrol')}</span>
           </div>
           <div className={`sidebar-link ${view === 'media' ? 'active' : ''}`} onClick={() => setView('media')}>
-            <span className="sidebar-icon">📷</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.media', 'Medya Galerisi')}</span>
           </div>
           <div className={`sidebar-link ${view === 'kasa' ? 'active' : ''}`} onClick={() => setView('kasa')}>
-            <span className="sidebar-icon">💵</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.cash')}</span>
           </div>
           <div className={`sidebar-link ${view === 'hakkinda' ? 'active' : ''}`} onClick={() => setView('hakkinda')}>
-            <span className="sidebar-icon">❓</span>
+            <span className="sidebar-icon"></span>
             <span className="sidebar-text">{t('nav.help', 'Hakkında & Yardım')}</span>
           </div>
           <div>
@@ -134,7 +134,7 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
               className={`sidebar-link ${view.startsWith('settings_') ? 'active' : ''}`}
               onClick={() => setIsSettingsOpen(prev => !prev)}
             >
-              <span className="sidebar-icon">⚙️</span>
+              <span className="sidebar-icon"></span>
               <span className="sidebar-text" style={{ flex: 1 }}>{t('nav.settings')}</span>
               <span className="sidebar-text" style={{
                 transform: isSettingsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -159,7 +159,7 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
                 onClick={() => setView('settings_genel')}
                 style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
               >
-                <span className="sidebar-icon">⚙️</span>
+                <span className="sidebar-icon"></span>
                 <span className="sidebar-text">{t('nav.settings_genel', 'Genel Ayarlar')}</span>
               </div>
               <div
@@ -167,7 +167,7 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
                 onClick={() => setView('settings_finance')}
                 style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
               >
-                <span className="sidebar-icon">💼</span>
+                <span className="sidebar-icon"></span>
                 <span className="sidebar-text">{t('nav.settings_finance', 'Finans & Operasyon')}</span>
               </div>
               <div
@@ -175,7 +175,7 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
                 onClick={() => setView('settings_security')}
                 style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
               >
-                <span className="sidebar-icon">🛡️</span>
+                <span className="sidebar-icon"></span>
                 <span className="sidebar-text">{t('nav.settings_security', 'Güvenlik & Yedek')}</span>
               </div>
               <div
@@ -183,7 +183,7 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
                 onClick={() => setView('settings_logs')}
                 style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
               >
-                <span className="sidebar-icon">📋</span>
+                <span className="sidebar-icon"></span>
                 <span className="sidebar-text">{t('nav.settings_logs', 'Sistem Kayıtları')}</span>
               </div>
               <div
@@ -191,7 +191,7 @@ const AppSidebar = ({ t, view, setView, setSelectedWorkerProfile, sidebarState, 
                 onClick={() => setView('settings_recycle')}
                 style={{ fontSize: '0.825rem', padding: '0.5rem 0.75rem' }}
               >
-                <span className="sidebar-icon">🗑️</span>
+                <span className="sidebar-icon"></span>
                 <span className="sidebar-text">{t('sidebar_recycle_btn', 'Çöp Kutusu')}</span>
               </div>
             </div>

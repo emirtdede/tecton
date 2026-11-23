@@ -1,6 +1,7 @@
 import React from 'react';
 import CustomDatePicker from './ui/CustomDatePicker';
 import { formatCurrency, formatDate } from '../utils/formatUtils';
+import { X } from 'lucide-react';
 
 const CashHistory = ({ t, i18n, projects, filterProject, setFilterProject, filterStartDate, onStartDateChange, filterEndDate, onEndDateChange, filterType, setFilterType, searchQuery, setSearchQuery, filteredTransactions, paginatedTransactions, totalPages, currentPage, setCurrentPage, getProjectName, onDelete, onExport, listRef }) => {
   return (
@@ -77,7 +78,7 @@ const CashHistory = ({ t, i18n, projects, filterProject, setFilterProject, filte
             }}
             title={t('common.clear', 'Temizle')}
           >
-            ✕
+            <X size={14} aria-hidden="true" />
           </button>
         )}
       </div>
@@ -122,7 +123,7 @@ const CashHistory = ({ t, i18n, projects, filterProject, setFilterProject, filte
                       background: 'rgba(255, 255, 255, 0.05)',
                       color: 'var(--text-muted)'
                     }}>
-                      📁 {getProjectName(tr.project_id)}
+                       {getProjectName(tr.project_id)}
                     </span>
                   </div>
                 </div>

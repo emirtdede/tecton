@@ -5,7 +5,14 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k, f) => f || k, i18n: { language: 'tr', changeLanguage: vi.fn() } }),
+  useTranslation: (() => {
+    // Stable identity: production i18next returns a memoised `t`, and effects
+    // that list `t` in their dependency array would otherwise loop forever.
+    const t = (k, f) => f || k;
+    const i18n = { language: 'tr', changeLanguage: vi.fn() };
+    return () => ({ t, i18n });
+  })(),
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 vi.mock('./components/AnomalyPanel', () => ({ default: () => null }));
 vi.mock('./components/GroupReportPanel', () => ({ default: () => null }));
@@ -40,8 +47,8 @@ function apiFor() {
 }
 
 beforeEach(() => {
-  localStorage.clear();
-  localStorage.setItem('dashboard_view_mode', 'list');
+  window.localStorage.clear();
+  window.localStorage.setItem('dashboard_view_mode', 'list');
 });
 
 describe('App router', () => {
@@ -57,22 +64,26 @@ describe('App router', () => {
     apiFor();
     render(<App />);
     await screen.findByText('Ali Veli');
-    const checks = screen.getAllByRole('checkbox');
-    await user.click(checks[0]);
-    const btns = screen.getAllByRole('button');
-    const start = btns.find((b) => /Başla|Get Started|welcome/i.test(b.textContent));
-    if (start) await user.click(start);
-    expect(localStorage.getItem('hide_welcome_modal')).toBe('true');
+    // The first-run experience is the onboarding wizard: leaving it (skip on
+    // the first step) must persist the dismissal flag.
+    const dialog = await screen.findByRole('dialog');
+    await user.click(within(dialog).getAllByRole('button', { name: /Skip|Atla/i })[0]);
+    expect(window.localStorage.getItem('hide_welcome_modal')).toBe('true');
   });
 
   it('sidebar navigates to projects view', async () => {
     const user = userEvent.setup();
     apiFor();
+    // Skip the first-run wizard so the sidebar is not covered by the modal.
+    window.localStorage.setItem('hide_welcome_modal', 'true');
     const { container } = render(<App />);
     await screen.findByText('Ali Veli');
     const sidebar = container.querySelector('.sidebar');
-    const links = within(sidebar).getAllByText(/Şantiye|proje|Project/i);
-    await user.click(links[0]);
-    expect(await screen.findByText(/Şantiye \(Lokasyon\)|Lokasyon/)).toBeInTheDocument();
+    // The group heading repeats the same label key, so target the nav button.
+    const projectsNav = within(sidebar)
+      .getAllByRole('button')
+      .find((btn) => /proje|project|şantiye/i.test(btn.textContent));
+    await user.click(projectsNav);
+    expect(await screen.findByRole('heading', { name: /Şantiyeler|Projeler/i })).toBeInTheDocument();
   });
 });

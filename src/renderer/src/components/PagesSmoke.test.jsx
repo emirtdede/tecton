@@ -5,11 +5,25 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k, f) => f || k, i18n: { language: 'tr', changeLanguage: vi.fn() } }),
+  useTranslation: (() => {
+    // Stable identity: production i18next returns a memoised `t`, and effects
+    // that list `t` in their dependency array would otherwise loop forever.
+    const t = (k, f) => f || k;
+    const i18n = { language: 'tr', changeLanguage: vi.fn() };
+    return () => ({ t, i18n });
+  })(),
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k, f) => f || k, i18n: { language: 'tr', changeLanguage: vi.fn() } }),
+  useTranslation: (() => {
+    // Stable identity: production i18next returns a memoised `t`, and effects
+    // that list `t` in their dependency array would otherwise loop forever.
+    const t = (k, f) => f || k;
+    const i18n = { language: 'tr', changeLanguage: vi.fn() };
+    return () => ({ t, i18n });
+  })(),
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
 import CashRegister from './CashRegister';
@@ -50,7 +64,7 @@ describe('page smoke tests (mocked api)', () => {
   it('ProjectManagement renders add form', async () => {
     mockApi();
     render(<ProjectManagement onSelectProject={() => {}} activeProjectId={1} />);
-    expect(await screen.findByText(/Lokasyon\) Yönetimi/)).toBeInTheDocument();
+    expect(await screen.findByText(/Lokasyon\) Yönetimi|Şantiyeler/)).toBeInTheDocument();
   });
 
   it('BulkTimesheet renders grid', async () => {
@@ -77,6 +91,6 @@ describe('page smoke tests (mocked api)', () => {
     const user = userEvent.setup();
     void user;
     render(<MaterialManagement activeProjectId={null} projects={[]} />);
-    expect(await screen.findByText(/şantiye seçin/i)).toBeInTheDocument();
+    expect(await screen.findByText(/şantiye seçin|Select an active site/i)).toBeInTheDocument();
   });
 });

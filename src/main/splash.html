@@ -80,10 +80,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const theme = urlParams.get('theme') || 'dark';
     const logoImg = document.getElementById('logo-img');
+    // Same mapping as the renderer sidebar (index.css): the light theme uses
+    // the dark badge for contrast against a light background, and vice versa.
     if (theme === 'light') {
-      logoImg.src = '../../tecton_assets/tecton_light.svg';
+      logoImg.src = '../../tecton_assets/tecton-tray-dark.svg';
     } else {
-      logoImg.src = '../../tecton_assets/tecton_dark.svg';
+      logoImg.src = '../../tecton_assets/tecton-tray-light.svg';
     }
   </script>
 </body>

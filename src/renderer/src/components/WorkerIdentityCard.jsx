@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../utils/formatUtils';
+import { Lightbulb } from 'lucide-react';
 
 const WorkerIdentityCard = ({ t, i18n, worker, projectName, groupName, balance, onBack, onHelp, onOpenIsg }) => {
   const isPositive = balance >= 0;
@@ -36,7 +37,7 @@ const WorkerIdentityCard = ({ t, i18n, worker, projectName, groupName, balance, 
           onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
           title={t('common.page_guide', 'Sayfa Kılavuzu')}
         >
-          💡
+          <Lightbulb size={18} aria-hidden="true" />
         </span>
       </div>
 
@@ -49,17 +50,17 @@ const WorkerIdentityCard = ({ t, i18n, worker, projectName, groupName, balance, 
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', margin: '0.5rem 0 1rem 0' }}>
             {projectName && (
               <span style={{ fontSize: '0.8rem', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                🏗️ {projectName}
+                 {projectName}
               </span>
             )}
             {groupName && (
               <span style={{ fontSize: '0.8rem', background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                👥 {groupName}
+                 {groupName}
               </span>
             )}
             {parsedTags.map((tag, idx) => (
               <span key={idx} style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500' }}>
-                🏷️ {tag}
+                 {tag}
               </span>
             ))}
             {(() => {
@@ -71,7 +72,7 @@ const WorkerIdentityCard = ({ t, i18n, worker, projectName, groupName, balance, 
                     style={{ fontSize: '0.8rem', background: 'rgba(148, 163, 184, 0.2)', color: '#94a3b8', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
                     title={t('isg.update_btn', 'İSG Güncelle')}
                   >
-                    🛡️ {t('isg.badge_undefined', 'İSG Tanımsız')}
+                     {t('isg.badge_undefined', 'İSG Tanımsız')}
                   </span>
                 );
               }
@@ -82,11 +83,11 @@ const WorkerIdentityCard = ({ t, i18n, worker, projectName, groupName, balance, 
               const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
               let badgeBg, badgeColor, badgeText, badgeIcon;
               if (diffDays < 0) {
-                badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = '🔴'; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
+                badgeBg = 'rgba(239, 68, 68, 0.2)'; badgeColor = '#f87171'; badgeIcon = ''; badgeText = t('isg.badge_expired', 'İSG Süresi Doldu');
               } else if (diffDays <= 30) {
-                badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = '🟡'; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
+                badgeBg = 'rgba(245, 158, 11, 0.2)'; badgeColor = '#fbbf24'; badgeIcon = ''; badgeText = t('isg.badge_approaching', 'İSG Yaklaşıyor') + ` (${diffDays} ${t('isg.days', 'gün')})`;
               } else {
-                badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = '🟢'; badgeText = t('isg.badge_valid', 'İSG Geçerli');
+                badgeBg = 'rgba(16, 185, 129, 0.2)'; badgeColor = '#34d399'; badgeIcon = ''; badgeText = t('isg.badge_valid', 'İSG Geçerli');
               }
               return (
                 <span

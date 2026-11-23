@@ -1,7 +1,7 @@
 // Integration tests for src/main/ipcHandlers.js: every ipcMain channel is
 // registered against an in-memory DB and invoked directly (no Electron).
 //
-// SEAMS (all native require.cache seeds — CJS `require()` inside sources
+// SEAMS (all native require.cache seeds - CJS `require()` inside sources
 // bypasses `vi.mock`; see test-helpers/electronMock.js):
 // - 'electron'      -> capturing stub (ipcMain/dialog/app/BrowserWindow/...)
 // - '../database/db'-> { getDB } returning the per-test :memory: DB
@@ -279,7 +279,9 @@ describe('ipc recycle bin', () => {
     expect(res.success).toBe(true);
     expect((await db.get('SELECT is_deleted FROM workers WHERE id = 5')).is_deleted).toBe(0);
 
-    expect(await h['db:restore']({}, { table: 'workers', id: 99999 })).toEqual({
+    // `messageKey` is additive i18n metadata on the dev branch, so match the
+    // meaningful fields rather than the whole object.
+    expect(await h['db:restore']({}, { table: 'workers', id: 99999 })).toMatchObject({
       success: false,
       message: 'Çöp kutusu kaydı bulunamadı.',
     });
@@ -331,7 +333,7 @@ describe('ipc finance:*', () => {
       "INSERT INTO transactions (id, worker_id, trans_date, amount, linked_cash_id, is_deleted) VALUES (32, 1, '2026-02-01', 700, 31, 0)"
     );
 
-    expect(await h['finance:delete-transaction']({}, { id: 9999 })).toEqual({
+    expect(await h['finance:delete-transaction']({}, { id: 9999 })).toMatchObject({
       success: false,
       message: 'Transaction not found',
     });
@@ -350,12 +352,14 @@ describe('ipc finance:*', () => {
     expect(avans.success).toBe(true);
     expect(avans.linked_cash_id).toBeGreaterThan(0);
     expect((await db.get('SELECT type FROM cash_register WHERE id = ?', [avans.linked_cash_id])).type).toBe(
-      'Nakit Çıkışı'
+      'expense'
     );
 
+    // 'Ödeme' is a legacy spelling of an advance, so the non-cash case uses a
+    // balance carry-over, which never moves cash.
     const odeme = await h['finance:create-advance'](
       {},
-      { data: { worker_id: 1, trans_date: '2026-03-02', trans_type: 'Ödeme', amount: 100, project_id: null } }
+      { data: { worker_id: 1, trans_date: '2026-03-02', trans_type: 'Bakiye Devri', amount: 100, project_id: null } }
     );
     expect(odeme.success).toBe(true);
     expect(odeme.linked_cash_id).toBeNull();
@@ -383,7 +387,7 @@ describe('ipc finance:*', () => {
     expect(ok).toEqual({ success: true, wage: 1375 });
 
     await db.run("UPDATE app_settings SET setting_value = '-3' WHERE setting_key = 'standard_daily_hours'");
-    expect(await h['finance:calculate-wage']({}, { daily_wage: 1000, multiplier: 1 })).toEqual({
+    expect(await h['finance:calculate-wage']({}, { daily_wage: 1000, multiplier: 1 })).toMatchObject({
       success: false,
       message: 'Çalışma saati 0 veya daha küçük olamaz.',
     });
@@ -424,7 +428,7 @@ describe('ipc finance:*', () => {
 describe('ipc system:*', () => {
   it('backs up the DB (cancel + success)', async () => {
     const h = await freshHandlers();
-    expect(await h['system:backup-db']({})).toEqual({ success: false, message: 'İşlem iptal edildi' });
+    expect(await h['system:backup-db']({})).toMatchObject({ success: false, message: 'İşlem iptal edildi' });
 
     fs.writeFileSync(liveDbPath(), 'dummy-db');
     const dest = path.join(paths.root, 'manual-backup.sqlite');
@@ -449,7 +453,7 @@ describe('ipc system:*', () => {
     expect(ranged.logs).toEqual(['day6']);
 
     const empty = await h['system:read-logs']({}, { startDate: '2020-01-01', endDate: '2020-01-02' });
-    expect(empty).toEqual({ success: true, logs: [] });
+    expect(empty).toMatchObject({ success: true, logs: [] });
   });
 
   it('vacuums the DB', async () => {
@@ -459,7 +463,7 @@ describe('ipc system:*', () => {
 
   it('sets the cloud folder (insert + update + cancel)', async () => {
     const h = await freshHandlers();
-    expect(await h['system:set-cloud-folder']()).toEqual({ success: false, message: 'İşlem iptal edildi' });
+    expect(await h['system:set-cloud-folder']()).toMatchObject({ success: false, message: 'İşlem iptal edildi' });
 
     const dir = path.join(paths.root, 'cloud');
     fs.mkdirSync(dir, { recursive: true });
@@ -556,23 +560,23 @@ describe('ipc system:*', () => {
 
   it('changes the desktop icon through every branch', async () => {
     const h = await freshHandlers();
-    expect(await h['system:change-desktop-icon']({}, { theme: 'dark' })).toEqual({
+    expect(await h['system:change-desktop-icon']({}, { theme: 'dark' })).toMatchObject({
       success: false,
       message: 'İkon dosyası bulunamadı.',
     });
 
     const assets = path.join(paths.root, 'tecton_assets');
     fs.mkdirSync(assets, { recursive: true });
-    fs.writeFileSync(path.join(assets, 'tecton_dark.ico'), 'ico');
-    fs.writeFileSync(path.join(assets, 'tecton_light.ico'), 'ico');
-    expect(await h['system:change-desktop-icon']({}, { theme: 'dark' })).toEqual({
+    fs.writeFileSync(path.join(assets, 'tecton-tray-dark.ico'), 'ico');
+    fs.writeFileSync(path.join(assets, 'tecton-tray-light.ico'), 'ico');
+    expect(await h['system:change-desktop-icon']({}, { theme: 'dark' })).toMatchObject({
       success: false,
       message: 'Masaüstü kısayolu bulunamadı (Tecton.lnk).',
     });
 
     fs.writeFileSync(path.join(paths.desktop, 'Tecton.lnk'), 'lnk');
     stub().shell.writeShortcutLink = () => false;
-    expect(await h['system:change-desktop-icon']({}, { theme: 'light' })).toEqual({
+    expect(await h['system:change-desktop-icon']({}, { theme: 'light' })).toMatchObject({
       success: false,
       message: 'Kısayol güncellenemedi.',
     });
@@ -594,7 +598,7 @@ describe('ipc media:*', () => {
 
   it('saves/reads photos with traversal guard', async () => {
     const h = await freshHandlers();
-    expect(await h['media:save-photo']({}, {})).toEqual({ success: false, message: 'Dosya seçilmedi' });
+    expect(await h['media:save-photo']({}, {})).toMatchObject({ success: false, message: 'Dosya seçilmedi' });
 
     const src = path.join(paths.root, 'src.jpg');
     fs.writeFileSync(src, 'jpeg-bytes');
@@ -606,20 +610,20 @@ describe('ipc media:*', () => {
     expect(read.success).toBe(true);
     expect(read.base64.startsWith('data:image/jpeg;base64,')).toBe(true);
 
-    expect(await h['media:read-photo']({}, { relativePath: '../../evil.jpg' })).toEqual({
+    expect(await h['media:read-photo']({}, { relativePath: '../../evil.jpg' })).toMatchObject({
       success: false,
       message: 'Geçersiz dosya yolu',
     });
-    expect(await h['media:read-photo']({}, { relativePath: 'project_7/nope.jpg' })).toEqual({
+    expect(await h['media:read-photo']({}, { relativePath: 'project_7/nope.jpg' })).toMatchObject({
       success: false,
       message: 'Dosya bulunamadı',
     });
-    expect(await h['media:read-photo']({}, {})).toEqual({ success: false, message: 'Dosya belirtilmedi' });
+    expect(await h['media:read-photo']({}, {})).toMatchObject({ success: false, message: 'Dosya belirtilmedi' });
   });
 
   it('saves base64 photos', async () => {
     const h = await freshHandlers();
-    expect(await h['media:save-photo-base64']({}, {})).toEqual({ success: false, message: 'Veri boş' });
+    expect(await h['media:save-photo-base64']({}, {})).toMatchObject({ success: false, message: 'Veri boş' });
     const payload = `data:image/webp;base64,${Buffer.from('webp-bytes').toString('base64')}`;
     const saved = await h['media:save-photo-base64']({}, { projectId: 3, base64Data: payload });
     expect(saved.success).toBe(true);
@@ -644,7 +648,7 @@ describe('ipc lan/restore/window', () => {
     lanCtl.mode = 'fail';
     expect(
       await h['system:start-lan-server']({ sender: {} }, { projectId: 4, projectName: 'S', lang: 'tr' })
-    ).toEqual({ success: false, message: 'Sunucu başlatılamadı.' });
+    ).toMatchObject({ success: false, message: 'Sunucu başlatılamadı.' });
 
     expect(await h['system:stop-lan-server']()).toEqual({ success: true });
     expect(lanCtl.stopped).toBe(true);
@@ -652,18 +656,18 @@ describe('ipc lan/restore/window', () => {
 
   it('restores a DB file (invalid + corrupted + success)', async () => {
     const h = await freshHandlers();
-    expect(await h['system:restore-db-file']({}, {})).toEqual({
+    expect(await h['system:restore-db-file']({}, {})).toMatchObject({
       success: false,
       message: 'Geçersiz dosya yolu.',
     });
-    expect(await h['system:restore-db-file']({}, { filePath: '/nonexistent/x.sqlite' })).toEqual({
+    expect(await h['system:restore-db-file']({}, { filePath: '/nonexistent/x.sqlite' })).toMatchObject({
       success: false,
       message: 'Geçersiz dosya yolu.',
     });
 
     const garbage = path.join(paths.root, 'garbage.sqlite');
     fs.writeFileSync(garbage, 'garbage-not-sqlite');
-    expect(await h['system:restore-db-file']({}, { filePath: garbage })).toEqual({
+    expect(await h['system:restore-db-file']({}, { filePath: garbage })).toMatchObject({
       success: false,
       message: 'RESTORE_CORRUPTED',
     });
@@ -679,6 +683,9 @@ describe('ipc lan/restore/window', () => {
     stub().app.relaunch = () => calls.push('relaunch');
     stub().app.exit = () => calls.push('exit');
     expect(await h['system:restore-db-file']({}, { filePath: candidate })).toEqual({ success: true });
+    // The handler replies first, then relaunches on a short timer so the IPC
+    // result reaches the renderer before the process restarts.
+    await new Promise((resolve) => setTimeout(resolve, 600));
     expect(calls).toEqual(['relaunch', 'exit']);
 
     const check = openCompat({ filename: liveDbPath(), key: TEST_KEY });

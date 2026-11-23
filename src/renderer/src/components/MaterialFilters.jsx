@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomDatePicker from './ui/CustomDatePicker';
+import { X } from 'lucide-react';
 
 const MaterialFilters = ({ t, hasRecords, searchQuery, setSearchQuery, filterStartDate, onStartDateChange, filterEndDate, onEndDateChange, filterUnit, setFilterUnit, filterPhoto, setFilterPhoto }) => {
   if (!hasRecords) return null;
@@ -47,7 +48,7 @@ const MaterialFilters = ({ t, hasRecords, searchQuery, setSearchQuery, filterSta
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>

@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { logError } from '../utils/logger';
+import { apiMessage } from '../utils/apiWrite';
 import { useTranslation } from 'react-i18next';
 import { exportToExcel, exportToCSV, exportToJSON, exportToText, exportToMarkdown } from '../utils/exportUtils';
 import CustomDatePicker from './ui/CustomDatePicker';
 import { formatDate, formatTime } from '../utils/formatUtils';
 import GuideDrawer from './ui/GuideDrawer';
+import { Lightbulb, X } from 'lucide-react';
+import { reorderRangeForStart, reorderRangeForEnd } from '../utils/dateRangeUtils';
+import Pagination from './ui/Pagination';
 
 const SystemLogs = () => {
   const { t, i18n } = useTranslation();
@@ -26,21 +31,15 @@ const SystemLogs = () => {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const handleStartDateChange = (val) => {
-    if (val && endDate && new Date(val) > new Date(endDate)) {
-      setStartDate(endDate);
-      setEndDate(val);
-    } else {
-      setStartDate(val);
-    }
+    const [start, end] = reorderRangeForStart(val, endDate);
+    setStartDate(start);
+    setEndDate(end);
   };
 
   const handleEndDateChange = (val) => {
-    if (val && startDate && new Date(startDate) > new Date(val)) {
-      setEndDate(startDate);
-      setStartDate(val);
-    } else {
-      setEndDate(val);
-    }
+    const [start, end] = reorderRangeForEnd(val, startDate);
+    setStartDate(start);
+    setEndDate(end);
   };
 
   useEffect(() => {
@@ -50,33 +49,44 @@ const SystemLogs = () => {
   }, [currentPage]);
 
   useEffect(() => {
+    // `active` guards the late reply: the IPC round-trip can outlive the
+    // component (the user switches screen while projects are loading), and
+    // calling setProjects afterwards updates an unmounted component.
+    let active = true;
     const fetchProjects = async () => {
       if (window.api && window.api.db) {
         const projs = await window.api.db.read('projects');
+        if (!active) return;
         setProjects(projs || []);
       }
     };
     fetchProjects();
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [filterText, startDate, endDate, selectedType, selectedProjectId, selectedTable]);
 
+  // Guards against stale log responses overwriting newer ones after a date change.
+  const requestIdRef = useRef(0);
+
   const fetchLogs = async () => {
     if (window.api) {
+      const requestId = ++requestIdRef.current;
       setLoading(true);
       try {
         const res = await window.api.system.readLogs(startDate, endDate);
+        if (requestId !== requestIdRef.current) return;
         if (res.success) {
           setLogs(res.logs);
         } else {
-          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings_logs.error_read', 'Loglar okunamadı:') + ' ' + res.message, type: 'error' } }));
+          window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: t('settings_logs.error_read', 'Loglar okunamadı:') + ' ' + apiMessage(res), type: 'error' } }));
         }
       } catch (error) {
-        console.error(error);
+        logError(error);
       }
-      setLoading(false);
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   };
 
@@ -87,27 +97,37 @@ const SystemLogs = () => {
   const selectedProject = projects.find(p => String(p.id) === String(selectedProjectId));
   const selectedProjectName = selectedProject ? selectedProject.name : '';
 
-  const filteredLogs = logs.filter(log => {
-    if (filterText && !log.toLowerCase().includes(filterText.toLowerCase())) {
-      return false;
-    }
-    if (selectedType) {
-      if (selectedType === 'error' && !log.includes('[error]')) return false;
-      if (selectedType === 'info' && !log.includes('[info]')) return false;
-      if (selectedType === 'db_create' && !log.includes('[DB CREATE')) return false;
-      if (selectedType === 'db_update' && !log.includes('[DB UPDATE]')) return false;
-      if (selectedType === 'db_delete' && !log.includes('[DB DELETE]')) return false;
-    }
-    if (selectedTable) {
-      if (!log.includes(`[${selectedTable}]`)) return false;
-    }
-    if (selectedProjectId && selectedProjectName) {
-      if (!log.includes(`[Şantiye: ${selectedProjectName}]`) && !log.includes(`[Project: ${selectedProjectName}]`)) {
+  // Filtered log list, latest first.
+  // Memoized: the filter chain previously re-ran on every render (each page
+  // change, export menu toggle...) and `.reverse()` mutated the result in place.
+  const filteredLogs = useMemo(() => {
+    const needle = filterText ? filterText.toLowerCase() : '';
+    const projectMarkers = selectedProjectId && selectedProjectName
+      ? [`[Şantiye: ${selectedProjectName}]`, `[Project: ${selectedProjectName}]`]
+      : null;
+
+    const rows = logs.filter(log => {
+      if (needle && !log.toLowerCase().includes(needle)) {
         return false;
       }
-    }
-    return true;
-  }).reverse(); // Show latest first
+      if (selectedType) {
+        if (selectedType === 'error' && !log.includes('[error]')) return false;
+        if (selectedType === 'info' && !log.includes('[info]')) return false;
+        if (selectedType === 'db_create' && !log.includes('[DB CREATE')) return false;
+        if (selectedType === 'db_update' && !log.includes('[DB UPDATE]')) return false;
+        if (selectedType === 'db_delete' && !log.includes('[DB DELETE]')) return false;
+      }
+      if (selectedTable) {
+        if (!log.includes(`[${selectedTable}]`)) return false;
+      }
+      if (projectMarkers) {
+        if (!projectMarkers.some(marker => log.includes(marker))) return false;
+      }
+      return true;
+    });
+
+    return rows.reverse(); // Show latest first
+  }, [logs, filterText, selectedType, selectedTable, selectedProjectId, selectedProjectName]);
 
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
   const paginatedLogs = filteredLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -138,7 +158,7 @@ const SystemLogs = () => {
 
   const handleOpenLogsFolder = () => {
     if (window.api && window.api.system && window.api.system.openLogsFolder) {
-      window.api.system.openLogsFolder();
+      Promise.resolve(window.api.system.openLogsFolder()).catch(logError);
     }
   };
 
@@ -165,51 +185,26 @@ const SystemLogs = () => {
   return (
     <>
       <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 className="card-title" style={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>{t('logs.title')}</span>
-          <span 
+      <div className="card-toolbar">
+        <div className="card-toolbar-actions">
+          <button
+            type="button"
+            className="btn btn-ghost"
             onClick={() => setIsGuideOpen(true)}
-            style={{ 
-              cursor: 'pointer', 
-              opacity: 'var(--guide-icon-opacity, 0.4)', filter: 'var(--guide-icon-filter, none)', 
-              transition: 'opacity 0.25s ease-in-out', 
-              fontSize: '1.4rem',
-              userSelect: 'none',
-              padding: '0.25rem',
-              display: 'inline-flex',
-              alignItems: 'center'
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity-hover, 1)'}
-            onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
-            title={t('common.page_guide', 'Sayfa Kılavuzu')}
+            title={t('guides.logs.title', 'Sistem Kayıtları Kılavuzu (5N1K)')}
           >
-            💡
-          </span>
-        </h3>
-        
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <button 
-            type="button" 
-            className="btn btn-secondary" 
+            <Lightbulb size={14} aria-hidden="true" />
+            {t('common.page_guide', 'Page guide')}
+          </button>
+          <button
+            type="button"
+            className="btn"
             onClick={handleOpenLogsFolder}
-            style={{ 
-              padding: '0.5rem 1rem', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              fontWeight: 'bold',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--glass-border)',
-              borderRadius: '6px',
-              color: 'var(--text-main)',
-              cursor: 'pointer'
-            }}
           >
-            📂 {t('logs.open_folder', 'Geçmiş Log Klasörünü Aç')}
+            {t('logs.open_folder', 'Geçmiş Log Klasörünü Aç')}
           </button>
 
-          <select className="btn btn-primary" style={{ padding: '0.5rem', background: 'var(--accent)', color: 'var(--accent-text)', fontWeight: 'bold' }} onChange={e => {
+          <select className="form-input" style={{ width: 'auto' }} onChange={e => {
               const val = e.target.value;
               if (val) handleExport(val);
               e.target.value = "";
@@ -255,8 +250,8 @@ const SystemLogs = () => {
                   zIndex: 10
                 }}
                 title={t('common.clear', 'Temizle')}
-              >
-                ✕
+              ><X size={14} aria-hidden="true" />
+                
               </button>
             )}
           </div>
@@ -270,20 +265,20 @@ const SystemLogs = () => {
             style={{ width: '100%' }}
           >
             <option value="">{t('logs.table_all', 'Tüm Modüller')}</option>
-            <option value="app_settings">app_settings</option>
-            <option value="workers">workers</option>
-            <option value="worker_groups">worker_groups</option>
-            <option value="timesheets">timesheets</option>
-            <option value="transactions">Avans/İşlem (transactions)</option>
-            <option value="cash_register">Kasa (cash_register)</option>
-            <option value="projects">Şantiye (projects)</option>
-            <option value="production_records">İmalat/Metraj (production_records)</option>
-            <option value="materials">Malzeme/İrsaliye (materials)</option>
-            <option value="daily_journals">Jurnal (daily_journals)</option>
-            <option value="quality_reports">Tutanaklar (quality_reports)</option>
-            <option value="subcontractor_ledgers">Taşeron Cari (subcontractor_ledgers)</option>
-            <option value="subcontractor_transactions">Taşeron İşlemleri (subcontractor_transactions)</option>
-            <option value="worker_leaves">Personel İzni (worker_leaves)</option>
+            <option value="app_settings">{t('logs.table_app_settings', 'Uygulama Ayarları')}</option>
+            <option value="workers">{t('logs.table_workers', 'Personel')}</option>
+            <option value="worker_groups">{t('logs.table_worker_groups', 'Personel Grupları')}</option>
+            <option value="timesheets">{t('logs.table_timesheets', 'Puantaj')}</option>
+            <option value="transactions">{t('logs.table_transactions', 'Avans / İşlem')}</option>
+            <option value="cash_register">{t('logs.table_cash_register', 'Kasa')}</option>
+            <option value="projects">{t('logs.table_projects', 'Şantiye')}</option>
+            <option value="production_records">{t('logs.table_production_records', 'İmalat / Metraj')}</option>
+            <option value="materials">{t('logs.table_materials', 'Malzeme / İrsaliye')}</option>
+            <option value="daily_journals">{t('logs.table_daily_journals', 'Jurnal')}</option>
+            <option value="quality_reports">{t('logs.table_quality_reports', 'Tutanaklar')}</option>
+            <option value="subcontractor_ledgers">{t('logs.table_subcontractor_ledgers', 'Taşeron Cari')}</option>
+            <option value="subcontractor_transactions">{t('logs.table_subcontractor_transactions', 'Taşeron İşlemleri')}</option>
+            <option value="worker_leaves">{t('logs.table_worker_leaves', 'Personel İzni')}</option>
           </select>
         </div>
         <div style={{ flex: 1, minWidth: '150px' }}>
@@ -295,11 +290,11 @@ const SystemLogs = () => {
             style={{ width: '100%' }}
           >
             <option value="">{t('logs.type_all', 'Tüm Log Türleri')}</option>
-            <option value="info">Info</option>
-            <option value="error">Error</option>
-            <option value="db_create">DB Create</option>
-            <option value="db_update">DB Update</option>
-            <option value="db_delete">DB Delete</option>
+            <option value="info">{t('logs.type_info', 'Bilgi')}</option>
+            <option value="error">{t('logs.type_error', 'Hata')}</option>
+            <option value="db_create">{t('logs.type_db_create', 'Kayıt Oluşturma')}</option>
+            <option value="db_update">{t('logs.type_db_update', 'Kayıt Güncelleme')}</option>
+            <option value="db_delete">{t('logs.type_db_delete', 'Kayıt Silme')}</option>
           </select>
         </div>
         <div style={{ flex: 1, minWidth: '180px' }}>
@@ -353,74 +348,8 @@ const SystemLogs = () => {
         )}
       </div>
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div style={{
-          position: 'sticky',
-          bottom: 0,
-          background: 'var(--option-bg, #0f172a)',
-          borderTop: '1px solid var(--glass-border)',
-          zIndex: 10,
-          padding: '1rem',
-          marginTop: '1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '0 0 8px 8px'
-        }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-            {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages} {t('global.recordsCount', { count: filteredLogs.length })}
-          </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button 
-              className="btn" 
-              disabled={currentPage === 1} 
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              style={{ 
-                padding: '0.4rem 1rem', 
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: '8px',
-                color: 'var(--text-main)',
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                opacity: currentPage === 1 ? 0.5 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-              onMouseLeave={(e) => { if (currentPage !== 1) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-            >
-              {t('common.prev', 'Önceki')}
-            </button>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              {t('common.page_info', 'Sayfa')} {currentPage} / {totalPages}
-            </span>
-            <button 
-              className="btn" 
-              disabled={currentPage === totalPages} 
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              style={{ 
-                padding: '0.4rem 1rem', 
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: '8px',
-                color: 'var(--text-main)',
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                opacity: currentPage === totalPages ? 0.5 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-              onMouseLeave={(e) => { if (currentPage !== totalPages) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-            >
-              {t('common.next', 'Sonraki')}
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Pagination - shared component (ui/Pagination) */}
+      <Pagination variant="sticky" currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} totalRecords={filteredLogs.length} />
       </div>
       {/* Guide Drawer */}
       <GuideDrawer 

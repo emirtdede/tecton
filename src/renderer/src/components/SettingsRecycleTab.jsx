@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, RotateCcw } from 'lucide-react';
+import { Check, RotateCcw, Lightbulb, X } from 'lucide-react';
 import CustomDatePicker from './ui/CustomDatePicker';
 
 const SettingsRecycleTab = ({ setModalConfig, setIsGuideOpen }) => {
@@ -116,7 +116,7 @@ const SettingsRecycleTab = ({ setModalConfig, setIsGuideOpen }) => {
     <div ref={recycleContainerRef} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <h3 className="card-title" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🗑️ {t('recycle_page_title', 'Geri Dönüşüm & Çöp Kutusu')}
+           {t('recycle_page_title', 'Geri Dönüşüm & Çöp Kutusu')}
         </div>
         <span
           onClick={() => setIsGuideOpen(true)}
@@ -132,7 +132,7 @@ const SettingsRecycleTab = ({ setModalConfig, setIsGuideOpen }) => {
           onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
           title={t('common.page_guide', 'Sayfa Kılavuzu')}
         >
-          💡
+          <Lightbulb size={18} aria-hidden="true" />
         </span>
       </h3>
       <p className="card-subtitle" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
@@ -180,7 +180,7 @@ const SettingsRecycleTab = ({ setModalConfig, setIsGuideOpen }) => {
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>

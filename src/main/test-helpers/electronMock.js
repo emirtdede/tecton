@@ -39,6 +39,8 @@ function buildStub() {
         return map.root || '/mock/app';
       },
       getLocale: () => 'tr-TR',
+      requestSingleInstanceLock: () => true,
+      hasSingleInstanceLock: () => true,
       setAppUserModelId: () => {},
       relaunch: () => {},
       exit: () => {},
@@ -47,6 +49,7 @@ function buildStub() {
       off: () => {},
       once: () => {},
       whenReady: () => Promise.resolve(),
+      isReady: () => true,
     },
     safeStorage: {
       isEncryptionAvailable: () => false,
@@ -149,7 +152,7 @@ function resetElectronStub() {
 
 // Generic native stub for any module required via CJS from main-process
 // sources (project-relative like '../services/lanServer', or bare builtins
-// like 'child_process' — verified per-module by the tests that use it).
+// like 'child_process' - verified per-module by the tests that use it).
 function seedNativeStub(relPath, mark, makeExports) {
   const rq = nativeRequireForHere();
   const resolved = rq.resolve(relPath);
@@ -304,8 +307,8 @@ function seedNativeLogger() {
 
 // dbCompat wrapper: delegates to the REAL implementation, with an optional
 // one-shot open failure to exercise db.js auto-recovery honestly.
-// (`key` pragma is lazy — real corruption surfaces at first read, NOT at
-// open — so only a hard open failure reaches the recovery branch.)
+// (`key` pragma is lazy - real corruption surfaces at first read, NOT at
+// open - so only a hard open failure reaches the recovery branch.)
 const dbCompatCtl = { failOpenOnce: false };
 
 function seedNativeDbCompat() {
@@ -323,6 +326,7 @@ function seedNativeDbCompat() {
     wrap: real.wrap,
     isPlaintextHeader: real.isPlaintextHeader,
     verifyDbFile: real.verifyDbFile,
+    inspectDbFile: real.inspectDbFile,
     openCompat: (...args) => {
       if (dbCompatCtl.failOpenOnce) {
         dbCompatCtl.failOpenOnce = false;

@@ -1,5 +1,5 @@
 const logger = require('../logger');
-const { assertAllowedTable, assertAllowedColumns } = require('./allowlist');
+const { assertAllowedTable, assertAllowedColumns, isAllowedTable } = require('./allowlist');
 
 function generateHumanMessage(table_name, action, old_values, new_values, lang = 'tr') {
   const isTr = lang === 'tr';
@@ -381,5 +381,7 @@ module.exports = {
   createRecord,
   updateRecord,
   deleteRecord,
-  createBulkRecord
+  createBulkRecord,
+  // Kept for callers that only need to know whether a table is addressable.
+  isKnownTable: isAllowedTable
 };

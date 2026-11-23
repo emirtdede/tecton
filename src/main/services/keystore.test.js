@@ -64,6 +64,39 @@ describe('keystore (TDE key lifecycle)', () => {
     await expect(keystore.loadOrCreateDbKey()).rejects.toThrow(/keystore_write_failed/);
   });
 
+  // Regression: keys written before the app was ready used to be stored
+  // unwrapped and were then undecryptable, which rotated the key on every
+  // launch and locked the encrypted database.
+  it('reads a key stored unwrapped (no safeStorage)', async () => {
+    stub.safeStorage.isEncryptionAvailable = () => true;
+    const raw = Buffer.alloc(32, 7).toString('base64');
+    fs.writeFileSync(path.join(paths.userData, '.tecton-key'), raw);
+    await expect(keystore.loadOrCreateDbKey()).resolves.toBe(raw);
+  });
+
+  it('reads and upgrades the double-encoded legacy key format', async () => {
+    stub.safeStorage.isEncryptionAvailable = () => true;
+    const raw = Buffer.alloc(32, 9).toString('base64');
+    const legacy = Buffer.from(raw, 'utf8').toString('base64');
+    const keyFile = path.join(paths.userData, '.tecton-key');
+    fs.writeFileSync(keyFile, legacy);
+
+    await expect(keystore.loadOrCreateDbKey()).resolves.toBe(raw);
+    // Re-wrapped in the safeStorage format now that the key is known.
+    const stored = fs.readFileSync(keyFile, 'utf8').trim();
+    expect(stored).not.toBe(legacy);
+    expect(Buffer.from(stored, 'base64').toString('utf8')).toBe(`enc:${raw}`);
+  });
+
+  it('refuses to rotate an unreadable key when a database exists', async () => {
+    stub.safeStorage.isEncryptionAvailable = () => false;
+    const dbPath = path.join(paths.userData, 'elektronik-yevmiye.sqlite');
+    fs.writeFileSync(path.join(paths.userData, '.tecton-key'), Buffer.alloc(20, 1).toString('base64'));
+    fs.writeFileSync(dbPath, Buffer.from('encrypted-database'));
+
+    await expect(keystore.loadOrCreateDbKey({ dbPath })).rejects.toThrow(/keystore_unlock_failed/);
+  });
+
   it('exposes the key file path inside userData', () => {
     expect(keystore.keyFilePath()).toBe(path.join(paths.userData, '.tecton-key'));
   });

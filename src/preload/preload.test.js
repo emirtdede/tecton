@@ -38,7 +38,11 @@ beforeEach(() => {
 describe('preload bridge', () => {
   it('exposes window/db/finance/system/media namespaces', () => {
     expect(Object.keys(exposed)).toEqual(['api']);
-    expect(Object.keys(exposed.api).sort()).toEqual(['db', 'finance', 'media', 'system', 'window']);
+    // The dev branch adds cloud/platform/update/integrations/ai; the five
+    // namespaces below are the contract consumers rely on.
+    expect(Object.keys(exposed.api)).toEqual(
+      expect.arrayContaining(['db', 'finance', 'media', 'system', 'window'])
+    );
     expect(typeof exposed.api.db.createBulk).toBe('function');
     expect(typeof exposed.api.system.onPhotoUploaded).toBe('function');
     expect(typeof exposed.api.system.onShutdownStarting).toBe('function');

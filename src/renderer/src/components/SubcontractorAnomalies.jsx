@@ -8,7 +8,7 @@ const SubcontractorAnomalies = ({ t, i18n, anomalySearch, setAnomalySearch, anom
       {/* Subcontractor Anomaly Panel */}
       <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🛡️ {t('subcontractor.anomalies', 'Taşeron Uyarıları')}
+           {t('subcontractor.anomalies', 'Taşeron Uyarıları')}
         </h3>
 
         {/* Search Input */}
@@ -71,7 +71,7 @@ const SubcontractorAnomalies = ({ t, i18n, anomalySearch, setAnomalySearch, anom
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '250px', overflowY: 'auto', paddingRight: '4px' }}>
           {(filteredNegativeBalance.length === 0 && filteredIsgExpired.length === 0 && filteredIsgApproaching.length === 0) ? (
             <div style={{ padding: '1.5rem', textAlign: 'center', color: '#34d399', background: 'rgba(52, 211, 153, 0.05)', borderRadius: '12px', border: '1px solid rgba(52, 211, 153, 0.15)', fontSize: '0.8rem' }}>
-              🟢 {t('subcontractor.all_isg_valid', 'Tüm durumlar ve İSG belgeleri güncel.')}
+               {t('subcontractor.all_isg_valid', 'Tüm durumlar ve İSG belgeleri güncel.')}
             </div>
           ) : (
             <>
@@ -79,7 +79,7 @@ const SubcontractorAnomalies = ({ t, i18n, anomalySearch, setAnomalySearch, anom
               {(anomalyActiveTab === 'all' || anomalyActiveTab === 'balance') && filteredNegativeBalance.length > 0 && (
                 <div style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                   <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                    ⚠️ {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({filteredNegativeBalance.length})
+                     {t('anomalies.financial_warnings_title', 'Finansal Uyarılar')} ({filteredNegativeBalance.length})
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                     {filteredNegativeBalance.map(c => (
@@ -96,7 +96,7 @@ const SubcontractorAnomalies = ({ t, i18n, anomalySearch, setAnomalySearch, anom
               {(anomalyActiveTab === 'all' || anomalyActiveTab === 'expired') && filteredIsgExpired.length > 0 && (
                 <div style={{ background: 'rgba(239, 68, 68, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                   <div style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                    🔴 {t('isg.badge_expired', 'İSG Süresi Dolanlar')} ({filteredIsgExpired.length})
+                     {t('isg.badge_expired', 'İSG Süresi Dolanlar')} ({filteredIsgExpired.length})
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                     {filteredIsgExpired.map(c => (
@@ -113,7 +113,7 @@ const SubcontractorAnomalies = ({ t, i18n, anomalySearch, setAnomalySearch, anom
               {(anomalyActiveTab === 'all' || anomalyActiveTab === 'approaching') && filteredIsgApproaching.length > 0 && (
                 <div style={{ background: 'rgba(245, 158, 11, 0.05)', padding: '0.75rem', borderRadius: '10px', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
                   <div style={{ color: '#f59e0b', fontWeight: 'bold', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                    🟡 {t('isg.badge_approaching', 'İSG Süresi Yaklaşanlar')} ({filteredIsgApproaching.length})
+                     {t('isg.badge_approaching', 'İSG Süresi Yaklaşanlar')} ({filteredIsgApproaching.length})
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                     {filteredIsgApproaching.map(c => (
@@ -133,7 +133,7 @@ const SubcontractorAnomalies = ({ t, i18n, anomalySearch, setAnomalySearch, anom
       {/* Subcontractor financial report summary */}
       <div className="glass-card">
         <h3 className="card-title" style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          📊 {t('subcontractor.financial_summary', 'Taşeron Finans Özeti')}
+           {t('subcontractor.financial_summary', 'Taşeron Finans Özeti')}
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>

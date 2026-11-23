@@ -3,6 +3,7 @@ import TagInput from './ui/TagInput';
 import CustomDatePicker from './ui/CustomDatePicker';
 import { formatCurrency } from '../utils/formatUtils';
 import { formatDate, getCurrencySymbol } from '../utils/formatUtils';
+import { X } from 'lucide-react';
 
 const WorkerEntryForms = ({ t, i18n, worker, workTypes, workerLeaves, activeTab, setActiveTab, onSaved, setConfirmModalState, cReport, filterText, setFilterText, filterType, setFilterType, generatePDF, handleExport, handleWhatsAppSend }) => {
   // Form State for Puantaj
@@ -339,7 +340,7 @@ const WorkerEntryForms = ({ t, i18n, worker, workTypes, workerLeaves, activeTab,
                       }}
                       title={t('common.clear', 'Temizle')}
                     >
-                      ✕
+                      <X size={14} aria-hidden="true" />
                     </button>
                   )}
                 </div>
@@ -394,7 +395,7 @@ const WorkerEntryForms = ({ t, i18n, worker, workTypes, workerLeaves, activeTab,
                 style={{ padding: '0.5rem', flex: 1, background: '#25D366', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', border: 'none' }}
                 onClick={handleWhatsAppSend}
               >
-                🟢 WhatsApp
+                 WhatsApp
               </button>
             </div>
           </div>

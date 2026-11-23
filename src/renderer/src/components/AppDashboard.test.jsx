@@ -5,7 +5,14 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k, f) => f || k, i18n: { language: 'tr', changeLanguage: vi.fn() } }),
+  useTranslation: (() => {
+    // Stable identity: production i18next returns a memoised `t`, and effects
+    // that list `t` in their dependency array would otherwise loop forever.
+    const t = (k, f) => f || k;
+    const i18n = { language: 'tr', changeLanguage: vi.fn() };
+    return () => ({ t, i18n });
+  })(),
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 vi.mock('./AnomalyPanel', () => ({ default: () => null }));
 vi.mock('./GroupReportPanel', () => ({ default: () => null }));
@@ -15,7 +22,7 @@ import AppDashboard from './AppDashboard';
 import { mockApi } from '../utils/apiMock';
 
 beforeEach(() => {
-  localStorage.setItem('dashboard_view_mode', 'list');
+  window.localStorage.setItem('dashboard_view_mode', 'list');
 });
 
 const t = (k, f) => f || k;

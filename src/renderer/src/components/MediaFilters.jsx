@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomDatePicker from './ui/CustomDatePicker';
+import { X } from 'lucide-react';
 
 const MediaFilters = ({ t, searchQuery, setSearchQuery, filterStartDate, onStartDateChange, filterEndDate, onEndDateChange, sortBy, setSortBy, filterType, setFilterType, filterPhoto, setFilterPhoto, viewMode, setViewMode }) => {
   return (
@@ -39,7 +40,7 @@ const MediaFilters = ({ t, searchQuery, setSearchQuery, filterStartDate, onStart
                 padding: '4px'
               }}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 
 const ProjectList = ({ t, projects, searchQuery, setSearchQuery, loading, filteredProjects, paginatedProjects, totalPages, currentPage, setCurrentPage, activeProjectId, draggedIndex, dragOverIndex, editingProjectId, editFormData, setEditFormData, onDragStart, onDragOver, onDragEnd, onDrop, onSelectProject, onStartEdit, onCancelEdit, onSaveEdit, onDelete }) => {
   return (
@@ -34,7 +35,7 @@ const ProjectList = ({ t, projects, searchQuery, setSearchQuery, loading, filter
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>
@@ -137,7 +138,7 @@ const ProjectList = ({ t, projects, searchQuery, setSearchQuery, loading, filter
                       <h3 className="card-title" style={{ color: isActive ? 'var(--accent)' : 'var(--text-main)', marginBottom: '0.25rem' }}>
                         {proj.name} {isActive && <span style={{ fontSize: '0.75rem', background: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginLeft: '0.5rem', color: 'var(--accent-text)' }}>{t('projects.active_workspace', 'AKTİF ÇALIŞMA ALANI')}</span>}
                       </h3>
-                      <p className="card-subtitle" style={{ margin: 0 }}>📍 {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
+                      <p className="card-subtitle" style={{ margin: 0 }}> {proj.location || t('projects.location_unspecified', 'Lokasyon belirtilmemiş')}</p>
                     </div>
                   )}
                 </div>

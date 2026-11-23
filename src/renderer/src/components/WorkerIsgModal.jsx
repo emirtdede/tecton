@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 import CustomDatePicker from './ui/CustomDatePicker';
 
 const WorkerIsgModal = ({ t, worker, open, onClose, onSaved, isgForm, setIsgForm }) => {
@@ -18,12 +19,14 @@ const WorkerIsgModal = ({ t, worker, open, onClose, onSaved, isgForm, setIsgForm
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            🛡️ {t('isg.update_title', 'İSG Tarihlerini Güncelle')}
+             {t('isg.update_title', 'İSG Tarihlerini Güncelle')}
           </h3>
           <button
             onClick={onClose}
             style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '1.2rem', cursor: 'pointer' }}
-          >✕</button>
+          >
+            <X size={16} aria-hidden="true" />
+          </button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div className="form-group" style={{ marginBottom: 0 }}>

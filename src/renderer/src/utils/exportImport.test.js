@@ -24,7 +24,7 @@ describe('exportUtils', () => {
     const path = await import('path');
     const target = path.resolve('Rapor.xlsx');
     try { fs.unlinkSync(target); } catch (_) {}
-    exportToExcel([{ a: 1 }], 'Rapor');
+    await exportToExcel([{ a: 1 }], 'Rapor');
     expect(fs.existsSync(target)).toBe(true);
     expect(fs.statSync(target).size).toBeGreaterThan(0);
     fs.unlinkSync(target);

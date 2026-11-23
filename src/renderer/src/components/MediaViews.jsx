@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDate } from '../utils/formatUtils';
+import { Image } from 'lucide-react';
 
 const MediaViews = ({ t, i18n, loading, viewMode, paginatedItems, totalItems, totalPages, validCurrentPage, setCurrentPage, onSelectImage }) => {
   if (loading) {
@@ -55,7 +56,7 @@ const MediaViews = ({ t, i18n, loading, viewMode, paginatedItems, totalItems, to
                   fontSize: '2rem',
                   border: '1px dashed rgba(255, 255, 255, 0.08)'
                 }}>
-                  📄
+                  
                   <span style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--text-muted)' }}>{t('media.no_image', 'Görsel Yok')}</span>
                 </div>
               )}
@@ -74,7 +75,7 @@ const MediaViews = ({ t, i18n, loading, viewMode, paginatedItems, totalItems, to
                 <h4 style={{ fontSize: '0.85rem', margin: '0.5rem 0 0.25rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#fff' }}>
                   {item.title}
                 </h4>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>📅 {formatDate(item.date, i18n.language)}</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}> {formatDate(item.date, i18n.language)}</span>
               </div>
             </div>
           ))}
@@ -122,7 +123,7 @@ const MediaViews = ({ t, i18n, loading, viewMode, paginatedItems, totalItems, to
                       fontSize: '1.2rem',
                       border: '1px dashed rgba(255, 255, 255, 0.08)'
                     }}>
-                      📄
+                      <Image size={22} aria-hidden="true" />
                     </div>
                   )}
                 </td>
@@ -143,7 +144,7 @@ const MediaViews = ({ t, i18n, loading, viewMode, paginatedItems, totalItems, to
                   </span>
                 </td>
                 <td>
-                  📅 {formatDate(item.date, i18n.language)}
+                   {formatDate(item.date, i18n.language)}
                 </td>
                 <td style={{ textAlign: 'right' }}>
                   {item.base64 ? (

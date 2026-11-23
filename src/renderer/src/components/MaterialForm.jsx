@@ -1,5 +1,6 @@
 import React from 'react';
 import CustomDatePicker from './ui/CustomDatePicker';
+import { X } from 'lucide-react';
 
 const MaterialForm = ({ t, formData, setFormData, photoPreview, setPhotoPreview, setLightboxImage, editingId, setEditingId, onSubmit, onSelectLocalPhoto, onLocalFileChange, onOpenQr }) => {
   return (
@@ -78,10 +79,10 @@ const MaterialForm = ({ t, formData, setFormData, photoPreview, setPhotoPreview,
         <label className="form-label">{t('materials.document_photo', 'Evrak Fotoğrafı')}</label>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button type="button" className="btn" onClick={onSelectLocalPhoto} style={{ flex: 1, fontSize: '0.85rem' }}>
-            {t('quality.select_pc', '📂 PC\'den Seç')}
+            {t('quality.select_pc', ' PC\'den Seç')}
           </button>
           <button type="button" className="btn btn-primary" onClick={onOpenQr} style={{ flex: 1, fontSize: '0.85rem' }}>
-            {t('quality.upload_mobile', '📲 Mobilden Yükle (QR)')}
+            {t('quality.upload_mobile', ' Mobilden Yükle (QR)')}
           </button>
           {photoPreview && (
             <div
@@ -124,7 +125,7 @@ const MaterialForm = ({ t, formData, setFormData, photoPreview, setPhotoPreview,
                   setFormData(prev => ({ ...prev, photo_path: '' }));
                 }}
               >
-                ✕
+                <X size={14} aria-hidden="true" />
               </button>
             </div>
           )}

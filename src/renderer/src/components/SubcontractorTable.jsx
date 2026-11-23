@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../utils/formatUtils';
+import { X } from 'lucide-react';
 
 const SubcontractorTable = ({ t, i18n, loading, searchQuery, setSearchQuery, filterServiceType, setFilterServiceType, filterStatus, setFilterStatus, uniqueServiceTypes, filteredContractors, paginatedContractors, totalPages, currentPage, setCurrentPage, onViewProfile, onOpenDrawer, onDelete }) => {
   return (
@@ -36,7 +37,7 @@ const SubcontractorTable = ({ t, i18n, loading, searchQuery, setSearchQuery, fil
               }}
               title={t('common.clear', 'Temizle')}
             >
-              ✕
+              <X size={14} aria-hidden="true" />
             </button>
           )}
         </div>

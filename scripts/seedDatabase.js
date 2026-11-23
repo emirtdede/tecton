@@ -69,7 +69,7 @@ async function seed() {
     console.log(chalk.cyan('Mevcut bir database.sqlite bulunamadı, sıfırdan başlanacak.'));
   }
 
-  // Yeni DB bağlantısı (dev DB; keystore yok — plaintext, şifreli prod DB'yi etkilemez)
+  // Yeni DB bağlantısı (dev DB; keystore yok - plaintext, şifreli prod DB'yi etkilemez)
   const db = openCompat({ filename: dbPath });
 
   // Tabloları temizleme (EBUSY durumunda temiz başlangıç için)

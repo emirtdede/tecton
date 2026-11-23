@@ -7,6 +7,7 @@ import GuideDrawer from './ui/GuideDrawer';
 import { exportToExcel, exportToCSV, exportToJSON, generateExcelTemplate } from '../utils/exportUtils';
 import { formatCurrency } from '../utils/formatUtils';
 import { useWorkerImport } from '../hooks/useWorkerImport';
+import { Lightbulb, X } from 'lucide-react';
 
 const AppDashboard = ({ t, i18n, workers, balances, workerGroups, projects, activeProjectId, activeProjectObj, loading, onOpenProfile, onDataChanged, onOpenBulk }) => {
   // Filtre State
@@ -131,7 +132,7 @@ const AppDashboard = ({ t, i18n, workers, balances, workerGroups, projects, acti
               onMouseLeave={e => e.currentTarget.style.opacity = 'var(--guide-icon-opacity, 0.4)'}
               title={t('common.page_guide', 'Sayfa Kılavuzu')}
             >
-              💡
+              <Lightbulb size={18} aria-hidden="true" />
             </span>
           </div>
 
@@ -144,7 +145,7 @@ const AppDashboard = ({ t, i18n, workers, balances, workerGroups, projects, acti
               onChange={handleFileUpload}
             />
             <button className="btn btn-bulk-timesheet" onClick={onOpenBulk}>
-              {t('dashboard.bulk_timesheet', '📋 Çoklu Puantaj')}
+              {t('dashboard.bulk_timesheet', ' Çoklu Puantaj')}
             </button>
             <button className="btn" style={{ background: '#10B981', color: 'white', border: 'none' }} onClick={() => fileInputRef.current.click()}>
               {t('dashboard.import_excel')}
@@ -167,7 +168,7 @@ const AppDashboard = ({ t, i18n, workers, balances, workerGroups, projects, acti
 
       {!activeProjectId ? (
         <div className="glass-card text-center" style={{ padding: '3rem' }}>
-          <h2>👥 {t('nav.personnel', 'Personel Yönetimi')}</h2>
+          <h2> {t('nav.personnel', 'Personel Yönetimi')}</h2>
           <p className="text-muted" style={{ marginTop: '1rem' }}>{t('common.select_project_msg', 'Lütfen sol menüden veya Şantiye Yönetimi sayfasından aktif bir şantiye seçin.')}</p>
         </div>
       ) : (
@@ -204,7 +205,7 @@ const AppDashboard = ({ t, i18n, workers, balances, workerGroups, projects, acti
                     }}
                     title={t('common.clear', 'Temizle')}
                   >
-                    ✕
+                    <X size={14} aria-hidden="true" />
                   </button>
                 )}
               </div>
@@ -310,7 +311,7 @@ const AppDashboard = ({ t, i18n, workers, balances, workerGroups, projects, acti
                   {sortedNames.map((groupName) => (
                     <div key={groupName}>
                       <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-main)', borderLeft: '4px solid var(--accent)', paddingLeft: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span>👥 {groupName}</span>
+                        <span> {groupName}</span>
                         <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', padding: '0.2rem 0.5rem', borderRadius: '10px' }}>
                           {grouped[groupName].length} {t('group_report.person_count')}
                         </span>

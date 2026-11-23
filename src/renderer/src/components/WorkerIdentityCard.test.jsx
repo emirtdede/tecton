@@ -15,8 +15,8 @@ describe('WorkerIdentityCard', () => {
       <WorkerIdentityCard t={t} i18n={i18n} worker={worker} projectName="S1" groupName="G1" balance={2500} onBack={() => {}} onHelp={() => {}} onOpenIsg={() => {}} />
     );
     expect(screen.getByText('Ahmet Yilmaz')).toBeInTheDocument();
-    expect(screen.getByText('🏷️ usta')).toBeInTheDocument();
-    expect(screen.getByText('🏗️ S1')).toBeInTheDocument();
+    expect(screen.getByText(/usta/)).toBeInTheDocument();
+    expect(screen.getByText(/S1/)).toBeInTheDocument();
   });
 
   it('back button calls onBack', async () => {

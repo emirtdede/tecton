@@ -30,7 +30,7 @@ const JournalList = ({ t, i18n, loading, filteredJournals, paginatedJournals, to
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ fontSize: '0.8rem', background: 'var(--accent-bg)', color: 'var(--accent)', padding: '2px 8px', borderRadius: '10px', marginRight: '0.5rem', fontWeight: '500' }}>
-                👷 {j.worker_count} {t('journal.worker_count_badge', 'Çalışan')}
+                 {j.worker_count} {t('journal.worker_count_badge', 'Çalışan')}
               </span>
               {j.journal_date === todayStr && (
                 <button

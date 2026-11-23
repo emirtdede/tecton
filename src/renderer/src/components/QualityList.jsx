@@ -28,7 +28,7 @@ const QualityList = ({ t, i18n, loading, filteredReports, paginatedReports, tota
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
             <div>
               <h3 className="card-title" style={{ fontSize: '1.05rem' }}>{rep.title}</h3>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>📅 {formatDate(rep.report_date, i18n.language)}</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}> {formatDate(rep.report_date, i18n.language)}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span
@@ -44,7 +44,7 @@ const QualityList = ({ t, i18n, loading, filteredReports, paginatedReports, tota
                   border: rep.status === 'resolved' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
                 }}
               >
-                {rep.status === 'resolved' ? `✓ ${t('filters.status_resolved', 'ÇÖZÜLDÜ')}` : `⚠️ ${t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}`}
+                {rep.status === 'resolved' ? ` ${t('filters.status_resolved', 'ÇÖZÜLDÜ')}` : ` ${t('quality.status_open', 'AÇIK (Sorun Çözülmedi)')}`}
               </span>
               {rep.photo_path && (
                 <button
