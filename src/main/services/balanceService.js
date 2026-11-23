@@ -67,4 +67,4 @@ async function calculateBalancesForWorkers(workerIds, db) {
   return balances;
 }
 
-module.exports = { calculateWorkerBalance, calculateBalancesForWorkers };
+module.exports = { calculateWorkerBalance, calculateBalancesForWorkers, calculateBulkBalances: calculateBalancesForWorkers };

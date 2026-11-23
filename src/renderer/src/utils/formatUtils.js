@@ -58,8 +58,17 @@ const DEFAULT_LOCALE_CURRENCY = { locale: 'tr-TR', currency: 'TRY' };
  */
 const resolveCurrency = (lang) => {
   const config = LOCALE_CURRENCY_MAP[lang] || DEFAULT_LOCALE_CURRENCY;
-  if (regionalSettings.currency && regionalSettings.currency !== 'auto') {
-    return { locale: config.locale, currency: regionalSettings.currency };
+  // `setRegionalSettings` is the API callers should use, but older call sites
+  // (and the settings bootstrap) assign `window.regionalSettings` directly, so
+  // both sources are honoured.
+  const globalSettings =
+    (typeof window !== 'undefined' && window && window.regionalSettings) || null;
+  const currency =
+    (globalSettings && globalSettings.currency) ||
+    (regionalSettings && regionalSettings.currency) ||
+    'auto';
+  if (currency && currency !== 'auto') {
+    return { locale: config.locale, currency };
   }
   return config;
 };

@@ -1,48 +1,5 @@
 const logger = require('../logger');
-const { withTransaction } = require('../database/transaction');
-const { cashTypeLabel } = require('./cashTypes');
-const { ledgerTypeLabel } = require('./ledgerTypes');
-
-// Allowlist of tables and their writable columns. Anything not listed is rejected,
-// which prevents arbitrary table/column access from the renderer (SQL injection surface).
-const TABLE_COLUMNS = {
-  app_settings: ['setting_key', 'setting_value', 'description'],
-  work_types: ['name', 'multiplier', 'is_active'],
-  worker_groups: ['name', 'is_active'],
-  workers: ['full_name', 'tc_no', 'phone', 'daily_wage', 'group_id', 'start_date', 'status', 'extra_data', 'project_id', 'isg_start_date', 'isg_bitis_tarihi', 'tags'],
-  timesheets: ['worker_id', 'work_date', 'work_type_id', 'applied_wage', 'applied_multiplier', 'overtime_hours', 'earned_amount', 'notes', 'project_id', 'tags'],
-  transactions: ['worker_id', 'trans_date', 'trans_type', 'amount', 'notes', 'linked_cash_id', 'project_id', 'tags'],
-  cash_register: ['trans_date', 'type', 'amount', 'description', 'project_id', 'tags'],
-  projects: ['name', 'location', 'status', 'sort_order'],
-  production_records: ['project_id', 'item_name', 'quantity', 'unit', 'notes', 'record_date'],
-  materials: ['project_id', 'supplier', 'material_type', 'quantity', 'unit', 'receipt_number', 'receipt_date', 'photo_path', 'notes', 'tags'],
-  daily_journals: ['project_id', 'journal_date', 'weather_temp', 'weather_desc', 'weather_icon', 'notes', 'worker_count'],
-  quality_reports: ['project_id', 'title', 'description', 'status', 'photo_path', 'report_date', 'tags'],
-  subcontractor_ledgers: ['project_id', 'name', 'service_type', 'phone', 'daily_wage', 'status', 'isg_start_date', 'isg_expiry_date', 'tags'],
-  subcontractor_transactions: ['subcontractor_id', 'trans_date', 'type', 'amount', 'description', 'project_id', 'linked_cash_id', 'tags'],
-  worker_leaves: ['worker_id', 'project_id', 'start_date', 'end_date', 'type', 'description'],
-  audit_logs: []
-};
-
-const READABLE_TABLES = new Set(Object.keys(TABLE_COLUMNS));
-
-function assertTable(table) {
-  if (!READABLE_TABLES.has(table)) {
-    throw new Error(`Geçersiz tablo adı: ${table}`);
-  }
-}
-
-function isKnownTable(table) {
-  return READABLE_TABLES.has(table);
-}
-
-function assertColumn(table, column) {
-  const columns = TABLE_COLUMNS[table] || [];
-  if (column !== 'id' && column !== 'is_deleted' && !columns.includes(column)) {
-    throw new Error(`Geçersiz kolon adı: ${table}.${column}`);
-  }
-}
-
+const { assertAllowedTable, assertAllowedColumns, isAllowedTable } = require('./allowlist');
 
 function generateHumanMessage(table_name, action, old_values, new_values, lang = 'tr') {
   const isTr = lang === 'tr';
@@ -86,7 +43,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
   if (action === 'CREATE') {
     if (table_name === 'workers') return isTr ? `Yeni personel eklendi: ${new_values.full_name}` : `New personnel added: ${new_values.full_name}`;
     if (table_name === 'transactions') return isTr ? `Yeni avans/işlem eklendi. Tutar: ${new_values.amount} TL` : `New transaction/advance added. Amount: ${new_values.amount} TL`;
-    if (table_name === 'cash_register') return isTr ? `Kasaya yeni işlem girildi. Tutar: ${new_values.amount} TL (${cashTypeLabel(new_values.type, true)})` : `New cash entry added. Amount: ${new_values.amount} TL (${cashTypeLabel(new_values.type, false)})`;
+    if (table_name === 'cash_register') return isTr ? `Kasaya yeni işlem girildi. Tutar: ${new_values.amount} TL (${new_values.type})` : `New cash entry added. Amount: ${new_values.amount} TL (${new_values.type})`;
     if (table_name === 'timesheets') return isTr ? `Yeni puantaj girildi. Tarih: ${new_values.work_date}, Tutar: ${new_values.earned_amount} TL` : `New timesheet entry added. Date: ${new_values.work_date}, Earned: ${new_values.earned_amount} TL`;
     if (table_name === 'projects') return isTr ? `Yeni şantiye eklendi: ${new_values.name}${new_values.location ? ' (' + new_values.location + ')' : ''}` : `New project added: ${new_values.name}${new_values.location ? ' (' + new_values.location + ')' : ''}`;
     if (table_name === 'production_records') return isTr ? `Yeni imalat kaydı eklendi: ${new_values.item_name} - ${new_values.quantity} ${new_values.unit}` : `New production record added: ${new_values.item_name} - ${new_values.quantity} ${new_values.unit}`;
@@ -94,7 +51,7 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
     if (table_name === 'daily_journals') return isTr ? `Günlük jurnal oluşturuldu. Tarih: ${new_values.journal_date}, Sıcaklık: ${new_values.weather_temp || 0}°C (${new_values.weather_desc || ''})` : `Daily journal created. Date: ${new_values.journal_date}, Temperature: ${new_values.weather_temp || 0}°C (${new_values.weather_desc || ''})`;
     if (table_name === 'quality_reports') return isTr ? `Yeni kalite tutanağı eklendi: ${new_values.title} (Durum: ${new_values.status})` : `New quality report added: ${new_values.title} (Status: ${new_values.status})`;
     if (table_name === 'subcontractor_ledgers') return isTr ? `Yeni taşeron eklendi: ${new_values.name} (${new_values.service_type})` : `New subcontractor added: ${new_values.name} (${new_values.service_type})`;
-    if (table_name === 'subcontractor_transactions') return isTr ? `Yeni taşeron işlemi eklendi (${ledgerTypeLabel(new_values.type, true)}). Tutar: ${new_values.amount} TL` : `New subcontractor transaction added (${ledgerTypeLabel(new_values.type, false)}). Amount: ${new_values.amount} TL`;
+    if (table_name === 'subcontractor_transactions') return isTr ? `Yeni taşeron işlemi eklendi (${new_values.type}). Tutar: ${new_values.amount} TL` : `New subcontractor transaction added (${new_values.type}). Amount: ${new_values.amount} TL`;
     if (table_name === 'worker_groups') return isTr ? `Yeni personel grubu eklendi: ${new_values.name}` : `New personnel group added: ${new_values.name}`;
     if (table_name === 'worker_leaves') return isTr ? `Yeni personel izni eklendi: ${new_values.start_date} / ${new_values.end_date} (${new_values.type})` : `New personnel leave added: ${new_values.start_date} / ${new_values.end_date} (${new_values.type})`;
     return isTr ? `Sisteme yeni bir ${tName} kaydı eklendi.` : `New ${tName} record added to system.`;
@@ -174,8 +131,8 @@ function generateHumanMessage(table_name, action, old_values, new_values, lang =
       const type = new_values.type || (old_values && old_values.type) || '';
       const amount = new_values.amount !== undefined ? new_values.amount : (old_values ? old_values.amount : 0);
       return isTr
-        ? `Taşeron işlemi güncellendi (${ledgerTypeLabel(type, true)}). Tutar: ${amount} TL`
-        : `Subcontractor transaction updated (${ledgerTypeLabel(type, false)}). Amount: ${amount} TL`;
+        ? `Taşeron işlemi güncellendi (${type}). Tutar: ${amount} TL`
+        : `Subcontractor transaction updated (${type}). Amount: ${amount} TL`;
     }
     if (table_name === 'worker_groups') {
       const oldName = old_values ? old_values.name : '';
@@ -227,12 +184,7 @@ async function logAudit(db, table_name, record_id, action, old_values = null, ne
     } else if (old_values && old_values.project_id) {
       project_id = old_values.project_id;
     } else {
-      const tablesWithProject = [
-        'workers', 'timesheets', 'transactions', 'cash_register',
-        'production_records', 'materials', 'daily_journals',
-        'quality_reports', 'subcontractor_ledgers',
-        'subcontractor_transactions', 'worker_leaves'
-      ];
+      const tablesWithProject = ['workers', 'timesheets', 'transactions', 'cash_register', 'production_records', 'materials', 'daily_journals', 'quality_reports', 'subcontractor_ledgers'];
       if (tablesWithProject.includes(table_name) && record_id) {
         try {
           const row = await db.get(`SELECT project_id FROM ${table_name} WHERE id = ?`, [record_id]);
@@ -292,7 +244,8 @@ async function logAudit(db, table_name, record_id, action, old_values = null, ne
 }
 
 async function readRecord(db, table, conditions = {}) {
-  assertTable(table);
+  assertAllowedTable(table);
+  assertAllowedColumns(table, conditions);
   // Tables that do NOT have is_deleted column
   const tablesWithoutSoftDelete = ['app_settings', 'audit_logs'];
   const hasSoftDelete = !tablesWithoutSoftDelete.includes(table);
@@ -305,7 +258,6 @@ async function readRecord(db, table, conditions = {}) {
   }
 
   for (const [key, value] of Object.entries(conditions)) {
-    assertColumn(table, key);
     query += hasSoftDelete || params.length > 0 ? ' AND ' : ' WHERE ';
     query += `${key} = ?`;
     params.push(value);
@@ -321,13 +273,8 @@ async function readRecord(db, table, conditions = {}) {
 }
 
 async function createRecord(db, table, data) {
-  assertTable(table);
+  assertAllowedColumns(table, data);
   const keys = Object.keys(data);
-  // An empty payload would produce `INSERT INTO t () VALUES ()` (syntax error).
-  if (keys.length === 0) {
-    return { success: false, message: 'Eklenecek alan yok.', messageKey: 'errors.no_fields_to_insert' };
-  }
-  keys.forEach(k => assertColumn(table, k));
   const values = Object.values(data);
   const placeholders = keys.map(() => '?').join(', ');
   
@@ -336,22 +283,15 @@ async function createRecord(db, table, data) {
   
   await logAudit(db, table, result.lastID, 'CREATE', null, data);
   
-  return { success: true, id: result.lastID, message: 'Kayıt başarıyla eklendi.', messageKey: 'errors.record_added' };
+  return { success: true, id: result.lastID, message: 'Kayıt başarıyla eklendi.' };
 }
 
 async function updateRecord(db, table, id, data) {
-  assertTable(table);
-  const keys = Object.keys(data);
-  // An empty payload would produce `UPDATE t SET  WHERE id = ?` (syntax error),
-  // so treat it as a no-op instead of letting SQLite throw.
-  if (keys.length === 0) {
-    return { success: true, message: 'Güncellenecek alan yok.', messageKey: 'errors.no_fields_to_update' };
-  }
-  keys.forEach(k => assertColumn(table, k));
-
+  assertAllowedColumns(table, data);
   // Get old record for audit
   const oldRecord = await db.get(`SELECT * FROM ${table} WHERE id = ?`, [id]);
-
+  
+  const keys = Object.keys(data);
   const values = Object.values(data);
   const setClause = keys.map(k => `${k} = ?`).join(', ');
   
@@ -360,11 +300,11 @@ async function updateRecord(db, table, id, data) {
   
   await logAudit(db, table, id, 'UPDATE', oldRecord, data);
   
-  return { success: true, message: 'Kayıt başarıyla güncellendi.', messageKey: 'errors.record_updated' };
+  return { success: true, message: 'Kayıt başarıyla güncellendi.' };
 }
 
 async function deleteRecord(db, table, id) {
-  assertTable(table);
+  assertAllowedTable(table);
   // Get old record for audit
   const oldRecord = await db.get(`SELECT * FROM ${table} WHERE id = ?`, [id]);
   
@@ -372,103 +312,65 @@ async function deleteRecord(db, table, id) {
   const tablesWithoutSoftDelete = ['app_settings', 'audit_logs'];
   const hasSoftDelete = !tablesWithoutSoftDelete.includes(table);
 
-  // A project delete touches up to 12 tables. Without a transaction a failure in
-  // the middle (lock, disk error, FK rejection) left the project hidden while
-  // some children stayed visible - their rows then kept counting in every total
-  // while the UI no longer showed the project they belong to.
-  try {
-    await withTransaction(db, async () => {
-      if (hasSoftDelete) {
-        const query = `UPDATE ${table} SET is_deleted = 1, deleted_at = datetime('now', 'localtime') WHERE id = ?`;
-        await db.run(query, [id]);
-
-        // Cascade delete related records if a project is soft-deleted.
-        // Every table carrying project_id must be listed, otherwise the child rows
-        // stay visible (and keep counting in totals) after the project is gone.
-        if (table === 'projects') {
-          const childTables = [
-            'workers', 'timesheets', 'transactions', 'cash_register',
-            'production_records', 'materials', 'daily_journals',
-            'quality_reports', 'subcontractor_ledgers',
-            'subcontractor_transactions', 'worker_leaves'
-          ];
-          for (const t of childTables) {
-            await db.run(`UPDATE ${t} SET is_deleted = 1, deleted_at = datetime('now', 'localtime') WHERE project_id = ? AND is_deleted = 0`, [id]);
-          }
-        }
-
-        await logAudit(db, table, id, 'DELETE', oldRecord, { is_deleted: 1 });
-      } else {
-        const query = `DELETE FROM ${table} WHERE id = ?`;
-        await db.run(query, [id]);
-        await logAudit(db, table, id, 'DELETE', oldRecord, null);
+  if (hasSoftDelete) {
+    const query = `UPDATE ${table} SET is_deleted = 1, deleted_at = datetime('now', 'localtime') WHERE id = ?`;
+    await db.run(query, [id]);
+    
+    // Cascade delete related records if a project is soft-deleted
+    if (table === 'projects') {
+      const childTables = ['workers', 'timesheets', 'transactions', 'cash_register', 'production_records', 'materials', 'daily_journals', 'quality_reports', 'subcontractor_ledgers'];
+      for (const t of childTables) {
+        await db.run(`UPDATE ${t} SET is_deleted = 1, deleted_at = datetime('now', 'localtime') WHERE project_id = ? AND is_deleted = 0`, [id]);
       }
-    });
-  } catch (error) {
-    logger.error(`Delete error in ${table} (id ${id}):`, error);
-    throw error;
+    }
+    
+    await logAudit(db, table, id, 'DELETE', oldRecord, { is_deleted: 1 });
+  } else {
+    const query = `DELETE FROM ${table} WHERE id = ?`;
+    await db.run(query, [id]);
+    await logAudit(db, table, id, 'DELETE', oldRecord, null);
   }
-
-  return { success: true, message: 'Kayıt başarıyla silindi.', messageKey: 'errors.record_deleted' };
+  
+  return { success: true, message: 'Kayıt başarıyla silindi.' };
 }
 
 async function createBulkRecord(db, table, dataList, logMessage) {
-  assertTable(table);
+  assertAllowedTable(table);
   if (!Array.isArray(dataList) || dataList.length === 0) {
-    return { success: false, message: 'Veri listesi boş.', messageKey: 'errors.data_list_empty' };
+    return { success: false, message: 'Veri listesi boş.' };
   }
 
   try {
-    await withTransaction(db, async () => {
-      const firstItem = dataList[0];
-      if (!firstItem || typeof firstItem !== 'object' || Array.isArray(firstItem)) {
-        throw new Error(`Bulk insert expects objects, got ${typeof firstItem}`);
-      }
-      const keys = Object.keys(firstItem);
-      if (keys.length === 0) {
-        throw new Error(`Bulk insert row for ${table} has no columns`);
-      }
-      // Same allowlist check as createRecord: keys are interpolated into the
-      // INSERT statement, so they must be validated or a crafted payload can
-      // inject SQL through the column list.
-      keys.forEach(k => assertColumn(table, k));
-      const placeholders = keys.map(() => '?').join(', ');
-      const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`;
-      const expectedKeySet = new Set(keys);
+    await db.run('BEGIN TRANSACTION');
 
-      for (const item of dataList) {
-        if (!item || typeof item !== 'object' || Array.isArray(item)) {
-          throw new Error(`Bulk insert row for ${table} is not an object`);
-        }
-        // Every row must use the SAME key set as the prepared statement.
-        // Comparing only counts let {a:1,b:2} and {b:3,c:4} through, writing
-        // the second row's values into the first row's columns (silent
-        // corruption of whatever column order SQLite resolved).
-        const rowKeys = Object.keys(item);
-        const sameKeys =
-          rowKeys.length === keys.length &&
-          rowKeys.every(k => expectedKeySet.has(k));
-        if (!sameKeys) {
-          throw new Error(
-            `Bulk insert row mismatch in ${table}: expected columns [${keys.join(', ')}], got [${rowKeys.join(', ')}]`
-          );
-        }
-        const values = keys.map(k => item[k]);
-        await db.run(query, values);
-      }
+    const firstItem = dataList[0];
+    assertAllowedColumns(table, firstItem);
+    const keys = Object.keys(firstItem);
+    const placeholders = keys.map(() => '?').join(', ');
+    const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`;
 
-      // Single audit log for the bulk operation (inside the transaction so a
-      // failure here rolls the inserted rows back too).
-      const projectId = firstItem.project_id || null;
-      await logAudit(db, table, null, 'CREATE_BULK', null, {
-        logMessage,
-        project_id: projectId,
-        record_count: dataList.length
-      });
+    for (const item of dataList) {
+      const values = keys.map(k => item[k]);
+      await db.run(query, values);
+    }
+
+    await db.run('COMMIT');
+
+    // Single audit log for the bulk operation
+    const projectId = firstItem.project_id || null;
+    await logAudit(db, table, null, 'CREATE_BULK', null, { 
+      logMessage, 
+      project_id: projectId,
+      record_count: dataList.length 
     });
 
-    return { success: true, message: 'Toplu kayıtlar başarıyla eklendi.', messageKey: 'errors.bulk_added' };
+    return { success: true, message: 'Toplu kayıtlar başarıyla eklendi.' };
   } catch (error) {
+    try {
+      await db.run('ROLLBACK');
+    } catch (rbErr) {
+      // ignore
+    }
     logger.error(`Bulk create error in ${table}:`, error);
     throw error;
   }
@@ -480,5 +382,6 @@ module.exports = {
   updateRecord,
   deleteRecord,
   createBulkRecord,
-  isKnownTable
+  // Kept for callers that only need to know whether a table is addressable.
+  isKnownTable: isAllowedTable
 };

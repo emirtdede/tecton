@@ -71,7 +71,55 @@ function escapeHtml(value) {
 }
 
 function sanitizeProjectId(projectId) {
-  return String(projectId || 'default').replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
+  // Allowlist, not strip: `a/b` and `../../x` must be rejected outright rather
+  // than silently rewritten into a different (still valid) folder name.
+  const value = String(projectId == null ? 'default' : projectId);
+  return /^[a-z0-9_-]{1,32}$/i.test(value) ? value : 'default';
+}
+
+// In-memory rate limit for the upload endpoint: one device retrying a failed
+// upload must not be able to hammer the LAN server.
+const _rateBuckets = new Map();
+
+function inMemoryRateLimit(req, res, next) {
+  try {
+    const ip = String(req.ip || req.connection?.remoteAddress || 'unknown');
+    const now = Date.now();
+    const recent = (_rateBuckets.get(ip) || []).filter((t) => now - t < 60000);
+    if (recent.length >= 15) {
+      return res.status(429).json({ success: false, message: 'Too many requests.' });
+    }
+    recent.push(now);
+    _rateBuckets.set(ip, recent);
+    next();
+  } catch (err) {
+    next();
+  }
+}
+
+function getUploadRateLimiter() {
+  // Single-process LAN server: an in-memory bucket is sufficient.
+  return inMemoryRateLimit;
+}
+
+/**
+ * Verifies the stored file really is an image by reading its magic bytes.
+ * The client-supplied Content-Type is a claim, not evidence.
+ */
+async function verifyImageMagic(filePath) {
+  try {
+    const mod = await import('file-type');
+    const fn = mod.fileTypeFromFile || (mod.default && mod.default.fileTypeFromFile);
+    if (!fn) return { verified: false, reason: 'UNVERIFIED' };
+    const detected = await fn(filePath);
+    if (!detected) return { verified: false, reason: 'INVALID_CONTENT' };
+    if (['image/jpeg', 'image/png', 'image/webp'].includes(detected.mime)) {
+      return { verified: true, mime: detected.mime };
+    }
+    return { verified: false, reason: 'INVALID_CONTENT', detected: detected.mime };
+  } catch (err) {
+    return { verified: false, reason: 'UNVERIFIED' };
+  }
 }
 
 async function startLANServer(mainWindow, lang) {
@@ -88,6 +136,17 @@ async function startLANServer(mainWindow, lang) {
   uploadToken = createUploadToken();
 
   const expressApp = express();
+
+  // The upload page is served to a phone on the LAN. A strict CSP keeps a
+  // stored/reflected string from loading remote code. Inline script and style
+  // are required by the single-file uploader, so they are allowlisted.
+  expressApp.use((req, res, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; object-src 'none'"
+    );
+    next();
+  });
   
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -354,7 +413,7 @@ async function startLANServer(mainWindow, lang) {
   // The token check runs BEFORE multer: multer writes the file to disk as part
   // of parsing the request, so validating afterwards would mean an unauthenticated
   // caller could still fill the disk - it would just be told "no" at the end.
-  expressApp.post('/upload', (req, res, next) => {
+  expressApp.post('/upload', getUploadRateLimiter(), (req, res, next) => {
     if (!isAuthorizedRequest(req)) {
       const isTr = currentLang === 'tr';
       return res.status(403).json({
@@ -363,11 +422,22 @@ async function startLANServer(mainWindow, lang) {
       });
     }
     next();
-  }, upload.single('photo'), (req, res) => {
+  }, upload.single('photo'), async (req, res) => {
     try {
       const isTr = currentLang === 'tr';
       if (!req.file) {
         return res.status(400).json({ success: false, message: isTr ? 'Fotoğraf dosyası bulunamadı.' : 'Photo file not found.' });
+      }
+
+      // Reject anything whose bytes are not a real image and delete it: the
+      // file already exists on disk at this point.
+      const verdict = await verifyImageMagic(req.file.path);
+      if (!verdict.verified) {
+        try { fs.unlinkSync(req.file.path); } catch (err) { /* already gone */ }
+        return res.status(415).json({
+          success: false,
+          message: isTr ? 'Yüklenen dosya geçerli bir görsel değil.' : 'The uploaded file is not a valid image.'
+        });
       }
 
       const projectId = sanitizeProjectId(req.query.projectId);
@@ -407,11 +477,15 @@ async function startLANServer(mainWindow, lang) {
     res.status(400).json({ success: false, message });
   });
 
+  // Bind the LAN interface, never 0.0.0.0: the upload page must be reachable
+  // from the local network but not from any other interface the machine has.
+  const bindIp = getLocalIP();
+
   // `listen` emits 'error' asynchronously (EADDRINUSE, EACCES). Without a
   // listener that becomes an unhandled 'error' event and kills the Electron
   // main process. Try a small range of ports and report failure instead.
   const listenOnPort = (port) => new Promise((resolve, reject) => {
-    const server = expressApp.listen(port, '0.0.0.0');
+    const server = expressApp.listen(port, bindIp);
     const onError = (err) => {
       server.removeListener('listening', onListening);
       reject(err);
@@ -433,7 +507,7 @@ async function startLANServer(mainWindow, lang) {
       // Runtime errors after startup (EMFILE, socket errors) must be logged,
       // never allowed to become unhandled.
       serverInstance.on('error', (err) => logger.error('LAN server runtime error:', err));
-      return { success: true, port, ip: getLocalIP(), token: uploadToken };
+      return { success: true, port, ip: bindIp, token: uploadToken };
     } catch (err) {
       lastError = err;
       if (err.code !== 'EADDRINUSE' && err.code !== 'EACCES') break;
@@ -448,7 +522,7 @@ async function startLANServer(mainWindow, lang) {
       serverInstance = await listenOnPort(0);
       currentPort = serverInstance.address().port;
       serverInstance.on('error', (err) => logger.error('LAN server runtime error:', err));
-      return { success: true, port: currentPort, ip: getLocalIP(), token: uploadToken };
+      return { success: true, port: currentPort, ip: bindIp, token: uploadToken };
     } catch (ephemeralErr) {
       lastError = ephemeralErr;
     }
@@ -479,4 +553,11 @@ function stopLANServer() {
   uploadToken = null;
 }
 
-module.exports = { startLANServer, stopLANServer, getLocalIP };
+module.exports = {
+  startLANServer,
+  stopLANServer,
+  getLocalIP,
+  sanitizeProjectId,
+  escapeHtml,
+  verifyImageMagic
+};

@@ -322,7 +322,16 @@ async function setupHandlers() {
   });
 
   // --- REPORTING API ---
-  const { generateWorkerStatement, generateCompanyFinancialSummary, generateGroupStatement } = require('./services/reportService');
+  const { generateWorkerMonthlyReport, generateWorkerStatement, generateCompanyFinancialSummary, generateGroupStatement } = require('./services/reportService');
+
+  ipcMain.handle('finance:worker-report', async (_, { worker_id, year, month } = {}) => {
+    try {
+      return await generateWorkerMonthlyReport(db, worker_id, year, month);
+    } catch (error) {
+      logger.error('Error generating worker monthly report:', error);
+      return { success: false, message: error.message };
+    }
+  });
 
   ipcMain.handle('finance:worker-statement', async (_, { worker_id, start_date, end_date } = {}) => {
     try {
@@ -570,7 +579,7 @@ async function setupHandlers() {
       if (!apiKey) {
         return {
           success: false,
-          errorType: 'unauthorized',
+          errorType: 'missing_key',
           message: lang === 'tr'
             ? 'Hava durumu API anahtarı tanımlı değil. Lütfen Ayarlar sayfasından girin.'
             : 'Weather API key is not configured. Please set it in Settings.'
@@ -693,6 +702,43 @@ async function setupHandlers() {
     }
   });
 
+  ipcMain.handle('media:select-photo', async () => {
+    try {
+      const { canceled, filePaths } = await dialog.showOpenDialog({
+        title: 'Fotoğraf Seç',
+        properties: ['openFile'],
+        filters: [{ name: 'Görseller', extensions: ['jpg', 'jpeg', 'png', 'webp'] }]
+      });
+      if (canceled || filePaths.length === 0) return { success: false };
+      return { success: true, filePath: filePaths[0] };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  });
+
+  ipcMain.handle('media:save-photo', async (_, { projectId, filePath } = {}) => {
+    try {
+      if (!filePath) return { success: false, message: 'Dosya seçilmedi' };
+
+      const safeProjectId = safePathSegment(projectId);
+      const projectDir = path.join(resolveMediaDir(), `project_${safeProjectId}`);
+      if (!fs.existsSync(projectDir)) {
+        fs.mkdirSync(projectDir, { recursive: true });
+      }
+
+      const ext = path.extname(filePath).toLowerCase();
+      if (!/^\.(jpe?g|png|webp|heic|heif)$/.test(ext)) {
+        return { success: false, message: 'Desteklenmeyen dosya türü.' };
+      }
+      const uniqueName = `${Date.now()}_${Math.floor(Math.random() * 10000)}${ext}`;
+      fs.copyFileSync(filePath, path.join(projectDir, uniqueName));
+
+      return { success: true, relativePath: `project_${safeProjectId}/${uniqueName}` };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  });
+
   ipcMain.handle('media:save-photo-base64', async (_, { projectId, base64Data } = {}) => {
     try {
       if (!base64Data) return { success: false, message: 'Veri boş', messageKey: 'errors.empty_data' };
@@ -801,20 +847,18 @@ async function setupHandlers() {
       
       const dbPath = resolveDbPath();
 
-      // Verify new backup integrity BEFORE touching current DB
-      const sqlite3 = require('sqlite3');
-      const checkDB = new Promise((resolve) => {
-        const tempDb = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY, (err) => {
-          if (err) return resolve(false);
-          tempDb.get('PRAGMA integrity_check', (err, row) => {
-            tempDb.close();
-            if (err || row.integrity_check !== 'ok') resolve(false);
-            else resolve(true);
-          });
-        });
-      });
-
-      const isValid = await checkDB;
+      // Verify new backup integrity BEFORE touching current DB. The check is
+      // key-aware: the live database is encrypted with the keystore key, while
+      // an old backup may still be plaintext.
+      const { verifyDbFile } = require('./database/dbCompat');
+      const { loadOrCreateDbKey } = require('./services/keystore');
+      let restoreKey = null;
+      try {
+        restoreKey = await loadOrCreateDbKey();
+      } catch (_) {
+        // Keystore unavailable: verifyDbFile still accepts a plaintext file.
+      }
+      const isValid = verifyDbFile(filePath, restoreKey);
       if (!isValid) {
         return { success: false, message: 'RESTORE_CORRUPTED' };
       }
@@ -947,6 +991,24 @@ async function setupHandlers() {
     } catch (err) {
       logger.error('window:set-zoom error:', err);
       return { success: false, ...toUserError(err, 'unknown_error') };
+    }
+  });
+
+  ipcMain.handle('system:set-weather-key', async (_, { apiKey } = {}) => {
+    try {
+      const { setWeatherKey } = require('./services/secret');
+      return await setWeatherKey(db, apiKey);
+    } catch (error) {
+      return { success: false, errorType: error.message, message: error.message };
+    }
+  });
+
+  ipcMain.handle('system:is-weather-configured', async () => {
+    try {
+      const { isWeatherKeyConfigured } = require('./services/secret');
+      return { success: true, configured: await isWeatherKeyConfigured(db) };
+    } catch (error) {
+      return { success: false, configured: false, message: error.message };
     }
   });
 
@@ -1233,8 +1295,10 @@ async function setupHandlers() {
 setupHandlers().catch((err) => {
   logger.error('Failed to initialize IPC handlers:', err);
   const { dialog } = require('electron');
-  dialog.showErrorBox(
-    'Başlatma Hatası',
-    `Veritabanı veya servisler başlatılamadı:\n${err.message}`
-  );
+  if (typeof dialog.showErrorBox === 'function') {
+    dialog.showErrorBox(
+      'Başlatma Hatası',
+      `Veritabanı veya servisler başlatılamadı:\n${err.message}`
+    );
+  }
 });

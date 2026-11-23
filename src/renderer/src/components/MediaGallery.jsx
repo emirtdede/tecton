@@ -9,7 +9,7 @@ import CustomDatePicker from './ui/CustomDatePicker';
 import PageGuideIcon from './ui/PageGuideIcon';
 import { clampRangeForStart, clampRangeForEnd } from '../utils/dateRangeUtils';
 import Pagination from './ui/Pagination';
-import { LayoutGrid, List, Eye, X } from 'lucide-react';
+import { LayoutGrid, List, Eye, X, Image } from 'lucide-react';
 
 
 const MediaGallery = ({ activeProjectId, projects = [] }) => {
@@ -415,7 +415,7 @@ const MediaGallery = ({ activeProjectId, projects = [] }) => {
                           fontSize: '1.2rem',
                           border: '1px dashed var(--surface-hover)'
                         }}>
-                          
+                          <Image size={22} aria-hidden="true" />
                         </div>
                       )}
                     </td>

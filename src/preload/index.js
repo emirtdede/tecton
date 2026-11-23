@@ -69,6 +69,7 @@ contextBridge.exposeInMainWorld('api', {
     createBulk: (table, dataList, logMessage) => ipcRenderer.invoke('db:create-bulk', { table, dataList, logMessage }),
     update: (table, id, data) => ipcRenderer.invoke('db:update', { table, id, data }),
     delete: (table, id) => ipcRenderer.invoke('db:delete', { table, id }),
+    transactionDelete: (id) => ipcRenderer.invoke('db:transaction:delete', { id }),
     readDeleted: () => ipcRenderer.invoke('db:read-deleted'),
     restoreRecord: (table, id) => ipcRenderer.invoke('db:restore', { table, id }),
     readAllProjects: () => ipcRenderer.invoke('db:read-all-projects')
@@ -79,6 +80,8 @@ contextBridge.exposeInMainWorld('api', {
     calculateWage: (params) => ipcRenderer.invoke('finance:calculate-wage', params),
     deleteTransaction: (id) => ipcRenderer.invoke('finance:delete-transaction', { id }),
     createAdvance: (data) => ipcRenderer.invoke('finance:create-advance', { data }),
+    workerReport: (worker_id, year, month) =>
+      ipcRenderer.invoke('finance:worker-report', { worker_id, year, month }),
     workerStatement: (params) => ipcRenderer.invoke('finance:worker-statement', params),
     companyReport: (year, month, projectId) => ipcRenderer.invoke('finance:company-report', { year, month, projectId }),
     groupStatement: (params) => ipcRenderer.invoke('finance:group-statement', params),
@@ -93,6 +96,8 @@ contextBridge.exposeInMainWorld('api', {
     vacuumDB: () => ipcRenderer.invoke('system:vacuum-db'),
     setCloudFolder: () => ipcRenderer.invoke('system:set-cloud-folder'),
     getWeather: (params) => ipcRenderer.invoke('system:get-weather', params),
+    setWeatherKey: (apiKey) => ipcRenderer.invoke('system:set-weather-key', { apiKey }),
+    isWeatherConfigured: () => ipcRenderer.invoke('system:is-weather-configured'),
     startLANServer: (params) => ipcRenderer.invoke('system:start-lan-server', params),
     stopLANServer: () => ipcRenderer.invoke('system:stop-lan-server'),
     restoreDBFile: (params) => ipcRenderer.invoke('system:restore-db-file', params),
@@ -116,6 +121,8 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
   media: {
+    selectPhoto: () => ipcRenderer.invoke('media:select-photo'),
+    savePhoto: (params) => ipcRenderer.invoke('media:save-photo', params),
     savePhotoBase64: (params) => ipcRenderer.invoke('media:save-photo-base64', params),
     readPhoto: (params) => ipcRenderer.invoke('media:read-photo', params)
   }

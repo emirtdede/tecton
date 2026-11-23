@@ -1,5 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const { openCompat } = require('../src/main/database/dbCompat');
 const path = require('path');
 const fs = require('fs');
 const { fakerTR } = require('@faker-js/faker');
@@ -70,11 +69,8 @@ async function seed() {
     console.log(chalk.cyan('Mevcut bir database.sqlite bulunamadı, sıfırdan başlanacak.'));
   }
 
-  // Yeni DB bağlantısı
-  const db = await open({
-    filename: dbPath,
-    driver: sqlite3.Database
-  });
+  // Yeni DB bağlantısı (dev DB; keystore yok - plaintext, şifreli prod DB'yi etkilemez)
+  const db = openCompat({ filename: dbPath });
 
   // Tabloları temizleme (EBUSY durumunda temiz başlangıç için)
   await db.exec(`

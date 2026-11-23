@@ -1,8 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { formatTime, formatDate, formatCurrencySafe, setRegionalSettings } from './formatUtils';
+import {
+  formatTime,
+  formatDate,
+  formatCurrencySafe,
+  setRegionalSettings,
+  getCurrencySymbol,
+  trLower,
+} from './formatUtils';
 
 beforeEach(() => {
   // Reset to the default ("auto") formatting so tests do not depend on order.
+  globalThis.window = {};
   setRegionalSettings({ language: 'tr', dateFormat: 'auto', timeFormat: 'auto', currency: 'auto' });
 });
 
@@ -91,5 +99,29 @@ describe('formatCurrencySafe', () => {
   it('formats real numbers', () => {
     expect(formatCurrencySafe(0, 'tr')).toContain('0');
     expect(formatCurrencySafe(1250.5, 'tr')).not.toMatch(/NaN/);
+  });
+});
+
+describe('formatUtils', () => {
+  it('maps locale to currency symbol', () => {
+    expect(getCurrencySymbol('tr')).toBe('₺');
+    expect(getCurrencySymbol('en')).toBe('$');
+    expect(getCurrencySymbol('ja')).toBe('¥');
+  });
+
+  it('respects regionalSettings override', () => {
+    globalThis.window = { regionalSettings: { currency: 'EUR' } };
+    expect(getCurrencySymbol('tr')).toBe('€');
+  });
+
+  it('formatCurrencySafe handles null and numbers', () => {
+    expect(formatCurrencySafe(null)).toBe('0,00 TRY');
+    expect(formatCurrencySafe(51937.5, 'ja')).toContain('JPY');
+  });
+
+  it('trLower handles Turkish dotted/dotless I', () => {
+    expect(trLower('İSTANBUL')).toBe('istanbul');
+    expect(trLower('IĞDIR')).toBe('ığdır');
+    expect(trLower('')).toBe('');
   });
 });

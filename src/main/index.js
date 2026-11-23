@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, session, shell } = require('electron');
 const path = require('path');
 const { fileURLToPath } = require('url');
 const logger = require('./logger');
@@ -27,6 +27,7 @@ let splashWindow;
 let splashStartTime = 0;
 let isQuitting = false;
 let launchHidden = false;
+let currentTheme = 'dark';
 
 // Only one Tecton instance may run: two instances would write the same SQLite
 // file and the same cloud snapshot. A second launch focuses the existing window.
@@ -90,6 +91,10 @@ function createSplashWindow(theme) {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
     },
   });
 
@@ -113,8 +118,29 @@ function createWindow(theme, { hidden = false } = {}) {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
     },
   });
+
+  // Content-Security-Policy: the renderer only loads its own bundle. Inline
+  // scripts and remote origins are rejected outright, so an injected string
+  // cannot execute or exfiltrate through a script tag.
+  try {
+    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': ["default-src 'self'; script-src 'self'; object-src 'none'"],
+        },
+      });
+    });
+  } catch (error) {
+    // Session is not ready in some flows; the window still opens hardened.
+    logger.warn('CSP registration skipped:', error && error.message);
+  }
 
   // Security hardening.
   //
@@ -164,10 +190,19 @@ function createWindow(theme, { hidden = false } = {}) {
   // never calls getUserMedia/mediaDevices, so anything asking for a permission is
   // either a compromised renderer or a hijacked navigation. Electron defaults to
   // allowing some of these, so leaving them unset is not the safe default.
-  mainWindow.webContents.session.setPermissionRequestHandler((_wc, _permission, callback) => {
-    callback(false);
-  });
-  mainWindow.webContents.session.setPermissionCheckHandler(() => false);
+  try {
+    const windowSession = mainWindow.webContents.session;
+    if (typeof windowSession?.setPermissionRequestHandler === 'function') {
+      windowSession.setPermissionRequestHandler((_wc, _permission, callback) => {
+        callback(false);
+      });
+    }
+    if (typeof windowSession?.setPermissionCheckHandler === 'function') {
+      windowSession.setPermissionCheckHandler(() => false);
+    }
+  } catch (error) {
+    logger.warn('Permission handler registration skipped:', error && error.message);
+  }
 
   // Gelistirme ortaminda Vite dev server'a baglan, uretimde dosyayi yukle
   if (process.env.NODE_ENV === 'development') {
@@ -216,19 +251,21 @@ function createWindow(theme, { hidden = false } = {}) {
   let isShuttingDown = false;
 
   mainWindow.on('close', async (e) => {
+    // A completed shutdown has already released the window; a later close is
+    // the real quit and must not be intercepted.
+    if (isQuitting) return;
     if (isShuttingDown) {
       // A shutdown is already in progress: keep blocking the close, the
       // in-flight handler will close the window once it is done.
       e.preventDefault();
       return;
     }
-    if (isQuitting) return;
 
     e.preventDefault();
 
     // "Close to tray": the window disappears but the app (and its background
     // sync) keeps running. The tray menu is the only way to really quit.
-    const closeToTray = (await readSetting('close_to_tray', 'true')) === 'true';
+    const closeToTray = (await readSetting('close_to_tray', 'false')) === 'true';
     if (closeToTray) {
       try {
         await cloudRuntime.flush();
@@ -284,20 +321,24 @@ function createWindow(theme, { hidden = false } = {}) {
         await db.run(`VACUUM INTO '${escapedPath}'`);
         logger.info('Daily safe backup completed via VACUUM INTO:', destPath);
 
-        const { open } = require('sqlite');
-        const sqlite3 = require('sqlite3').verbose();
-        const tempDb = await open({
-          filename: destPath,
-          driver: sqlite3.Database,
-        });
-        const checkResult = await tempDb.get('PRAGMA integrity_check');
-        await tempDb.close();
+        // Verify the copy with the same driver and key as the live database.
+        // Opening the snapshot with an unrelated plaintext driver reported a
+        // false "integrity failed" for every encrypted database.
+        const { verifyDbFile } = require('./database/dbCompat');
+        const { loadOrCreateDbKey } = require('./services/keystore');
+        let backupKey = null;
+        try {
+          backupKey = await loadOrCreateDbKey();
+        } catch {
+          // Keystore unavailable: a plaintext copy is still verifiable.
+        }
+        const backupOk = verifyDbFile(destPath, backupKey);
 
-        if (checkResult && checkResult.integrity_check === 'ok') {
+        if (backupOk) {
           logger.info('[Safe Backup] Backup integrity check passed.');
           await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
         } else {
-          logger.error('[Safe Backup] Backup integrity check failed:', checkResult);
+          logger.error('[Safe Backup] Backup integrity check failed:', destPath);
         }
       }
     } catch (err) {
@@ -329,7 +370,8 @@ async function bootstrap() {
   app.setAppUserModelId('com.tecton.app');
 
   const theme = await readSetting('theme', 'dark');
-  const surface = theme === 'light' ? 'light' : 'dark';
+  currentTheme = theme === 'light' ? 'light' : 'dark';
+  const surface = currentTheme;
 
   platform.configure({
     database: () => require('./database/db').getDB(),
@@ -366,9 +408,10 @@ async function bootstrap() {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    readSetting('theme', 'dark')
-      .then((theme) => createWindow(theme, { hidden: false }))
-      .catch((error) => logger.error('Failed to recreate window:', error));
+    // Recreate immediately: macOS expects the window to exist by the time the
+    // activation event returns. The theme is cached from bootstrap, so no async
+    // setting read is needed.
+    createWindow(currentTheme, { hidden: false });
   } else {
     platform.showWindow();
   }

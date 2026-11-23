@@ -52,6 +52,16 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Coverage report
+        run: npx vitest run --coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
       - name: Build renderer
         run: npm run build:react
 
@@ -71,3 +81,35 @@ jobs:
             release/Tecton-Setup-*.exe
             release/Tecton-Setup-*.exe.blockmap
             release/latest.yml
+
+  e2e:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: End-to-end
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build renderer
+        run: npm run build:react
+
+      - name: Run Playwright suite
+        run: npx playwright test
+
+      - name: Upload e2e artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: e2e/artifacts/

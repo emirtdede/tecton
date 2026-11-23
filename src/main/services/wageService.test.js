@@ -38,4 +38,15 @@ describe('Wage Service (Puantaj Matematiği)', () => {
     });
     expect(result).toBe(0);
   });
+
+  it('should reject zero standard_hours (divide-by-zero guard)', () => {
+    expect(() => calculateWage({ daily_wage: 1000, multiplier: 1.0, standard_hours: 0 }))
+      .toThrow('invalid_input:standard_hours');
+  });
+
+  it('should reject non-finite and negative inputs', () => {
+    expect(() => calculateWage({ daily_wage: NaN, multiplier: 1.0 })).toThrow('invalid_input:daily_wage');
+    expect(() => calculateWage({ daily_wage: 1000, multiplier: -1 })).toThrow('invalid_input:negative');
+    expect(() => calculateWage({ daily_wage: 1000, multiplier: 1.0, overtime_hours: Infinity })).toThrow();
+  });
 });
