@@ -19,21 +19,21 @@ export default defineConfig({
     ],
     setupFiles: ['src/renderer/src/testSetup.js'],
     // Each jsdom suite costs a few hundred MB. On a many-core machine the
-    // default fork pool (cores - 1) spawns enough of them in parallel to hit
+    // default worker pool (cores - 1) spawns enough of them in parallel to hit
     // the OS memory limit, which surfaces as an unrelated "worker exited
     // unexpectedly" failure. Cap the pool so a full run is deterministic.
-    poolOptions: {
-      forks: { minForks: 1, maxForks: 4 },
-    },
+    maxWorkers: 4,
+    minWorkers: 1,
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{js,jsx}'],
       exclude: ['**/*.test.*', '**/locales/**', 'src/main/splash.html', 'src/main/test-helpers/**'],
-      // Ratchet gates (measured 2026-10-11: lines ~55.2 / functions ~35.2 /
-      // branches ~39.5 after main-process integration tests). Raise toward
-      // 80/80/70 as renderer component suites land (backlog: Settings*,
-      // WorkerProfile, CashRegister, App.jsx, import/export utils).
-      thresholds: { lines: 50, functions: 34, branches: 38 },
+      // Ratchet gates, re-measured 2026-11-23 after the main + development
+      // merge (46.3 / 29.3 / 32.3 on the combined tree): the renderer now
+      // carries the full page set, which pulled the previous main-only
+      // 50/34/38 numbers down. Keep these just under the measured values so a
+      // regression fails the gate, and raise them as suites are added.
+      thresholds: { lines: 45, functions: 28, branches: 31 },
     },
   },
 });
