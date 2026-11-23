@@ -15,8 +15,8 @@ Her satır yayın öncesinde tekrar doğrulanmalıdır. `[x]` işaretli maddeler
 | # | Kontrol | Komut | Beklenen | Durum |
 |---|---|---|---|---|
 | 1.1 | Tipografi (em dash, emoji, mojibake) | `npm run style:check` | `clean` | [x] |
-| 1.2 | Sözlük bütünlüğü | `npm run i18n:check` | 19 dil, 1222 anahtar | [x] |
-| 1.3 | Birim testleri | `npm run test` | 17 dosya / 140 test | [x] |
+| 1.2 | Sözlük bütünlüğü | `npm run i18n:check` | 19 dil, 1229 anahtar | [x] |
+| 1.3 | Birim testleri | `npm run test` | 60 dosya / 349 test | [x] |
 | 1.4 | Üçünün birleşik kapısı | `npm run quality` | `all checks passed` | [x] |
 | 1.5 | Renderer derlemesi | `npm run build:react` | hatasız, CSP enjekte edilmiş | [x] |
 
@@ -85,6 +85,8 @@ Her satır yayın öncesinde tekrar doğrulanmalıdır. `[x]` işaretli maddeler
 | 7.4 | Kaldırma sayfası | "Verilerimi de sil" onay kutusu, varsayılan işaretsiz | [x] |
 | 7.5 | Kayıt defteri | Publisher, destek, güncelleme bağlantıları, `DisplayIcon` | [x] |
 | 7.6 | Kaldırma veri koruması | İşaretsizse veritabanı, yedek ve loglar korunur | [x] |
+| 7.7 | Yerel SQLite modülü | `app.asar.unpacked/.../better_sqlite3.node` pakette mevcut | [x] |
+| 7.8 | Şifreli veritabanı anahtarı | İki açılışta aynı anahtar, veritabanı açılıyor | [x] |
 
 ## 8. Güvenlik
 
@@ -108,15 +110,14 @@ Her satır yayın öncesinde tekrar doğrulanmalıdır. `[x]` işaretli maddeler
 | 9.4 | Depo adı | `tecton`, herkese açık (`github.com/emirtdede/tecton`) | [x] |
 | 9.5 | CI | Yeşil (`development`), `main`e birleştirme yapılmadı | [x] |
 
-> **Dal durumu (karar bekliyor):** Yayın hattı `development` dalında ve `1.0.0`
-> etiketi orayı gösteriyor. `main` dalı, bu çalışma başlamadan önceki
-> `41ae621` commit'inde (11 Ekim 2026) duruyor; o dalda ayrıştırılmış
-> bileşenler, 50 test dosyası ve güvenlik modülleri (`allowlist`, `keystore`,
-> `secret`) var, bu yayın hattında ise kurumsal katman (tema, sihirbaz, bulut,
-> yapay zeka, MCP/CLI, 73 dilli kurulum) var. İki dal 330 dosyada ayrışıyor ve
-> 30 dosyada çakışıyor; kullanıcı onayı olmadan birleştirilmedi. Bu nedenle
-> README'deki CI rozeti `main` dalını gösterdiği için kırmızı görünür; yeşil
-> koşu `development` dalındadır.
+> **Dal durumu:** Iki dal tek mimaride birlestirildi. main uzerindeki 28
+> commit (ayristirilmis bilesenler, 60 test dosyasi, sifreli
+> `better-sqlite3-multiple-ciphers` + `dbCompat`/`keystore`, allowlist) korundu;
+> `development` uzerindeki PowerPilot duz kabuk, 15 tema ve sayfa hizalari ayni
+> mimariye tasindi. Birlesme `development` dalinda ve yalnizca orada duruyor:
+> `main` hala `41ae621` (11 Ekim 2026) commit'inde, PR #1 acik ve
+> `MERGEABLE`. Kullanici onayi olmadan `main`e birlesme yapilmaz; bu yuzden
+> `main` icin CI kosusu yoktur.
 
 ## 10. Kanıtlar
 
