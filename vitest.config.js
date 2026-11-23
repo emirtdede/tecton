@@ -18,6 +18,13 @@ export default defineConfig({
       'src/renderer/src/*.test.jsx',
     ],
     setupFiles: ['src/renderer/src/testSetup.js'],
+    // The Windows CI runner can be 30x slower than a dev machine for the
+    // encrypted-DB integration tests (native module load + temp file I/O on a
+    // scanned volume), where a single test has been seen at 3.5 s. The default
+    // 5 s per-test budget produced random failures on an otherwise green tree,
+    // so allow a real margin without letting a true hang run forever.
+    testTimeout: 20000,
+    hookTimeout: 20000,
     // Each jsdom suite costs a few hundred MB. On a many-core machine the
     // default worker pool (cores - 1) spawns enough of them in parallel to hit
     // the OS memory limit, which surfaces as an unrelated "worker exited
