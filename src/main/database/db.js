@@ -2,16 +2,16 @@ const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
 const AdmZip = require('adm-zip');
-const { openCompat, isPlaintextHeader } = require('./dbCompat');
+const { openCompat, isPlaintextHeader, verifyDbFile } = require('./dbCompat');
 const { loadOrCreateDbKey } = require('../services/keystore');
 const logger = require('../logger');
 
 let dbPromise;
 
-function findLatestBackup(backupFolder) {
+function listBackups(backupFolder) {
   try {
-    if (!fs.existsSync(backupFolder)) return null;
-    let sqliteFiles = [];
+    if (!fs.existsSync(backupFolder)) return [];
+    const sqliteFiles = [];
     const traverse = (dir) => {
       const list = fs.readdirSync(dir);
       list.forEach(file => {
@@ -24,15 +24,17 @@ function findLatestBackup(backupFolder) {
       });
     };
     traverse(backupFolder);
-    if (sqliteFiles.length === 0) return null;
     sqliteFiles.sort((a, b) => b.localeCompare(a));
-    return sqliteFiles[0];
+    return sqliteFiles;
   } catch (err) {
     logger.error('Error finding latest backup:', err);
-    return null;
+    return [];
   }
 }
 
+function findLatestBackup(backupFolder) {
+  return listBackups(backupFolder)[0] || null;
+}
 let initPromise = null;
 
 async function getDB() {
@@ -49,7 +51,7 @@ async function getDB() {
   let db;
   let dbKey = null;
   try {
-    dbKey = await loadOrCreateDbKey();
+    dbKey = await loadOrCreateDbKey({ dbPath });
   } catch (keyErr) {
     logger.error('Keystore unavailable, opening database without encryption:', keyErr.message);
   }
@@ -64,19 +66,52 @@ async function getDB() {
   } catch (migErr) {
     logger.error('Pre-encryption safety copy failed:', migErr.message);
   }
+  // better-sqlite3 opens lazily, so an encrypted database opened with the
+  // wrong key only fails on the first read. Verify with a real query so that
+  // case takes the recovery path instead of booting a broken handle.
+  const openAndVerify = async () => {
+    const handle = openCompat({ filename: dbPath, key: dbKey });
+    try {
+      await handle.get('SELECT count(*) AS c FROM sqlite_master');
+      return handle;
+    } catch (verifyErr) {
+      try { await handle.close(); } catch (_) { /* already gone */ }
+      throw verifyErr;
+    }
+  };
+
+  const backupDir = app
+    ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups')
+    : path.join(__dirname, '../../.tecton-dev-data/Database-Backups');
+
+  // Only restore a backup that really opens (key first, then legacy plaintext).
+  // For an encrypted database, an older copy encrypted under a previous key is
+  // useless, and copying it over the primary file would destroy the only
+  // remaining copy. verifyDbFile is read-only, so probing is safe.
+  const findUsableBackup = async () => {
+    for (const candidate of listBackups(backupDir).slice(0, 5)) {
+      if (verifyDbFile(candidate, dbKey)) return candidate;
+      logger.warn(`[Auto-Recovery] Backup unusable with the current key: ${candidate}`);
+    }
+    return null;
+  };
+
   try {
-    db = openCompat({ filename: dbPath, key: dbKey });
+    db = await openAndVerify();
   } catch (err) {
     logger.error('Failed to open primary database. Attempting auto-recovery...', err);
-    const backupDir = app 
-      ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
-      : path.join(__dirname, '../../.tecton-dev-data/Database-Backups');
-    
-    const latestBackup = findLatestBackup(backupDir);
-    if (latestBackup && fs.existsSync(latestBackup)) {
+    // A database with a binary (encrypted) header cannot be recovered while the
+    // key is missing: every backup is encrypted with the same key.
+    if (!dbKey && fs.existsSync(dbPath) && !isPlaintextHeader(dbPath)) {
+      throw new Error('database_locked_keystore_unavailable');
+    }
+
+    const latestBackup = await findUsableBackup();
+    if (latestBackup) {
       logger.info(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
+      fs.copyFileSync(dbPath, `${dbPath}.unreadable-${Date.now()}`);
       fs.copyFileSync(latestBackup, dbPath);
-      db = openCompat({ filename: dbPath, key: dbKey });
+      db = await openAndVerify();
     } else {
       logger.error('[Auto-Recovery] No valid backups found to recover from.');
       throw err;
@@ -98,13 +133,11 @@ async function getDB() {
           if (check && check.integrity_check !== 'ok') {
             logger.error('[Integrity Check] Database is corrupted! Attempting recovery from backup...');
             await db.close();
-            const backupDir = app 
-              ? path.join(app.getPath('documents'), 'TectonBackups', 'Database-Backups') 
-              : path.join(__dirname, '../../.tecton-dev-data/Database-Backups');
-            const latestBackup = findLatestBackup(backupDir);
+            const latestBackup = await findUsableBackup();
             if (latestBackup) {
+              fs.copyFileSync(dbPath, `${dbPath}.corrupt-${Date.now()}`);
               fs.copyFileSync(latestBackup, dbPath);
-              db = openCompat({ filename: dbPath, key: dbKey });
+              db = await openAndVerify();
               // dbPromise set deferred
             }
           }

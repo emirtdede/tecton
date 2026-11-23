@@ -462,3 +462,118 @@ PASS  unit tests
 Sessiz ekran görüntüsü seti yeniden alındı (Electron 29.4.6, production,
 `PrintWindow` + `SW_SHOWNOACTIVATE`, odak çalınmadan): 20 gezinme görüntüsü
 `docs/screenshots/` altında, `=== problems === none`.
+
+## 6. Paketleme ve şifreli veritabanı düzeltmeleri (sürüm öncesi son tur)
+
+Birleştirme sonrası paketlenmiş uygulama açılıyor ama veritabanını açamıyordu
+(`SqliteError: file is not a database`). Kök neden üç ayrı hata zinciriydi:
+
+### P-1 - Yerel modül `app.asar` içinden yüklenemiyordu (Kritik)
+
+**Dosya:** `electron-builder.config.cjs` (47)
+
+**Sorun:** `asar: true` ile `better_sqlite3.node` arşivin içine giriyordu.
+`.node` dosyaları gerçek bir dosya yolu gerektirir; arşivden yüklenemez.
+Paketlenmiş uygulamada veritabanı hiç açılmıyor, yalnızca geliştirme modunda
+çalışıyordu.
+
+**Düzeltme:** Şifreli SQLite modülünün tamamı arşiv dışında tutuldu.
+
+```js
+asar: true,
+asarUnpack: ['**/node_modules/better-sqlite3-multiple-ciphers/**'],
+```
+
+**Doğrulama:** `release/win-unpacked/resources/app.asar.unpacked/node_modules/
+better-sqlite3-multiple-ciphers/build/Release/better_sqlite3.node` var;
+paketlenmiş `Tecton.exe` veritabanını açıyor.
+
+### P-2 - Anahtar her açılışta yeniden üretiliyordu ve veritabanı kilitleniyordu (Kritik)
+
+**Dosya:** `src/main/services/keystore.js`
+
+**Sorun:** `getDB()` uygulama hazır olmadan çağrılıyor. Bu anda
+`safeStorage.isEncryptionAvailable()` her zaman `false` döner, bu yüzden ilk
+açılışta anahtar `safeStorage` ile sarılmadan yazılıyordu (`Buffer.from(rawB64,
+'utf8').toString('base64')`, 60 karakter). Okuma yolu ise yalnızca
+`safeStorage.decryptString` deniyordu; sarılmamış anahtar okunamıyor, kod
+"anahtar yok" sayıp her açılışta yeni anahtar üretiyordu. Veritabanı eski
+anahtarla şifreli kaldığı için bir sonraki açılışta açılamıyordu. Ölçüm:
+
+```
+çalıştırma 1 -> key 2F4B4071...
+çalıştırma 2 -> key 5B1D55F2...   (her açılışta değişiyor)
+```
+
+**Düzeltme:**
+
+- `safeStorage` kullanılmadan önce `app.whenReady()` bekleniyor.
+- Okuma yolu üç biçimi destekliyor: `safeStorage` ile sarılmış anahtar, düz
+  base64 anahtar (44 karakter) ve eski çift kodlanmış biçim (60 karakter).
+- Okunan düz anahtar, `safeStorage` varsa yerinde sarılarak yükseltiliyor.
+- Okunamayan anahtar, veritabanı varken **asla** üzerine yazılmıyor:
+  `keystore_unlock_failed` hatası veriliyor (sessiz veri kaybı yerine açık hata).
+
+**Doğrulama:**
+
+```
+çalıştırma 1 -> key 44CCAFD9...  (100 karakter, sarılmış)
+çalıştırma 2 -> key 44CCAFD9...  (aynı anahtar, veritabanı açıldı)
+```
+
+Eski 60 karakterlik anahtar dosyası da okunup sarılmış biçime yükseltiliyor:
+`Keystore key upgraded to the safeStorage-wrapped format.`
+
+### P-3 - Yanlış anahtar "bozuk veritabanı" sayılıp yedekle eziliyordu (Yüksek)
+
+**Dosya:** `src/main/database/db.js` (73), `src/main/database/dbCompat.js`
+
+**Sorun:** `better-sqlite3` tembel açılıyor; yanlış anahtarla açılan şifreli
+dosya ancak ilk sorguda hata veriyor. Bu yüzden `openCompat` istisna atmıyor,
+otomatik kurtarma hiç çalışmıyor, uygulama "file is not a database" ile açılışta
+duruyordu. Kurtarma çalıştığında ise en yeni yedek doğrulanmadan ana dosyanın
+üzerine kopyalanıyordu; yedek farklı anahtarla şifriliyse tek kopya da yok
+ediliyordu.
+
+**Düzeltme:**
+
+- `openAndVerify()` eklendi: açılıştan sonra `SELECT count(*) FROM sqlite_master`
+  ile gerçek bir okuma yapılıyor, hata varsa tanıtıcı kapatılıp kurtarma yoluna
+  giriliyor.
+- Yedek, ana dosyanın üzerine yazılmadan önce `verifyDbFile()` ile salt-okunur
+  doğrulanıyor (önce mevcut anahtar, sonra düz metin eski yedekler).
+- Kurtarma öncesi bozuk dosya `.unreadable-<zaman>` / `.corrupt-<zaman>` olarak
+  saklanıyor; hiçbir dosya sessizce silinmiyor.
+- Anahtar hiç yoksa ve dosya şifreliyse kurtarma hiç denenmiyor
+  (`database_locked_keystore_unavailable`), çünkü tüm yedekler aynı anahtarla
+  şifreli.
+
+**Doğrulama:** `keystore.test.js` 7 test (3 yeni: düz anahtar okuma, eski çift
+kodlanmış biçim + yükseltme, veritabanı varken anahtar döndürmeyi reddetme);
+tam paket `60 dosya / 349 test` yeşil.
+
+### P-4 - CI Node 20'de yerel modülü derleyemiyordu (Yüksek)
+
+**Dosya:** `.github/workflows/ci.yml`, `package.json` (engines)
+
+**Sorun:** `better-sqlite3-multiple-ciphers@12` Node ABI 127/137/147 için ön
+derlenmiş ikili yayınlıyor, Node 20 (ABI 115) için yok. `npm ci` node-gyp'e
+düşüyor ve Visual Studio olmadığı için `npm error code 1` ile duruyordu.
+
+**Düzeltme:** CI ve `engines` Node 22'ye çekildi; Electron ABI'si gereken işler
+için `npx electron-builder install-app-deps` adımı eklendi.
+
+```yaml
+- name: Rebuild native modules for Electron
+  run: npx electron-builder install-app-deps
+```
+
+**Not (yerel):** Yerel modül tek bir ABI için derlenir. Testler Node ABI'si,
+paketleme ve ekran görüntüsü Electron ABI'si ister:
+
+```powershell
+# testler (Node ABI)
+npx --yes prebuild-install --prefix node_modules/better-sqlite3-multiple-ciphers
+# paketleme / ekran goruntusu (Electron ABI)
+npx electron-builder install-app-deps
+```

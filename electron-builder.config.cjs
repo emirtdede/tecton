@@ -45,6 +45,10 @@ module.exports = {
     { from: 'src/cli', to: 'integrations/cli' },
   ],
   asar: true,
+  // A native .node binary cannot be loaded from inside the archive: the file
+  // has no real path for the loader. Keep the whole encrypted-SQLite module
+  // unpacked so it is a plain file next to app.asar at runtime.
+  asarUnpack: ['**/node_modules/better-sqlite3-multiple-ciphers/**'],
   compression: 'maximum',
   // The executable metadata is written by scripts/afterPack.js with rcedit, so
   // electron-builder does not download the winCodeSign bundle (whose macOS

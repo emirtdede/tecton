@@ -49,6 +49,7 @@ function buildStub() {
       off: () => {},
       once: () => {},
       whenReady: () => Promise.resolve(),
+      isReady: () => true,
     },
     safeStorage: {
       isEncryptionAvailable: () => false,
