@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
 const AdmZip = require('adm-zip');
-const { openCompat, isPlaintextHeader, verifyDbFile } = require('./dbCompat');
+const { openCompat, isPlaintextHeader, verifyDbFile, inspectDbFile } = require('./dbCompat');
 const { loadOrCreateDbKey } = require('../services/keystore');
 const logger = require('../logger');
 
@@ -35,6 +35,37 @@ function listBackups(backupFolder) {
 function findLatestBackup(backupFolder) {
   return listBackups(backupFolder)[0] || null;
 }
+
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+// A `-wal` / `-shm` / `-journal` left next to a database belongs to the file
+// that was there before. After the main file is replaced, SQLite would replay
+// that journal into the new file and report "file is not a database" (the WAL
+// is still encrypted with the key of the discarded database). Windows can hold
+// the handle for a moment after a failed open, so retry briefly.
+function removeSidecars(dbPath) {
+  let cleared = true;
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    const sibling = `${dbPath}${suffix}`;
+    let removed = !fs.existsSync(sibling);
+    for (let attempt = 0; attempt < 5 && !removed; attempt += 1) {
+      if (attempt > 0) sleepSync(60);
+      try {
+        fs.unlinkSync(sibling);
+        removed = true;
+      } catch (err) {
+        if (attempt === 4) {
+          logger.error(`Could not remove stale ${suffix} sidecar:`, err.message);
+        }
+      }
+    }
+    if (!removed) cleared = false;
+  }
+  return cleared;
+}
+
 let initPromise = null;
 
 async function getDB() {
@@ -89,11 +120,22 @@ async function getDB() {
   // useless, and copying it over the primary file would destroy the only
   // remaining copy. verifyDbFile is read-only, so probing is safe.
   const findUsableBackup = async () => {
-    for (const candidate of listBackups(backupDir).slice(0, 5)) {
-      if (verifyDbFile(candidate, dbKey)) return candidate;
-      logger.warn(`[Auto-Recovery] Backup unusable with the current key: ${candidate}`);
+    // Prefer the newest backup that still holds business data. A backup taken
+    // after a failed recovery can be valid and completely empty, and restoring
+    // it silently replaces real records with nothing, so only fall back to an
+    // empty one when no populated backup is readable.
+    let emptyCandidate = null;
+    for (const candidate of listBackups(backupDir).slice(0, 20)) {
+      const info = inspectDbFile(candidate, dbKey);
+      if (!info.ok) {
+        logger.warn(`[Auto-Recovery] Backup unusable with the current key: ${candidate}`);
+        continue;
+      }
+      if (info.projects > 0) return candidate;
+      logger.warn(`[Auto-Recovery] Backup is empty, keeping it as a last resort: ${candidate}`);
+      if (!emptyCandidate) emptyCandidate = candidate;
     }
-    return null;
+    return emptyCandidate;
   };
 
   try {
@@ -110,6 +152,11 @@ async function getDB() {
     const latestBackup = await findUsableBackup();
     if (latestBackup) {
       logger.info(`[Auto-Recovery] Found valid backup: ${latestBackup}. Restoring...`);
+      if (!removeSidecars(dbPath)) {
+        // Replacing the file now would let SQLite replay the old journal over
+        // the restored data and destroy the backup's contents too.
+        throw new Error('database_sidecars_locked');
+      }
       fs.copyFileSync(dbPath, `${dbPath}.unreadable-${Date.now()}`);
       fs.copyFileSync(latestBackup, dbPath);
       db = await openAndVerify();
@@ -139,6 +186,10 @@ async function getDB() {
             await db.close();
             const latestBackup = await findUsableBackup();
             if (latestBackup) {
+              if (!removeSidecars(dbPath)) {
+                logger.error('[Integrity Check] Stale journal files are locked; skipping the restore.');
+                throw new Error('database_sidecars_locked');
+              }
               fs.copyFileSync(dbPath, `${dbPath}.corrupt-${Date.now()}`);
               fs.copyFileSync(latestBackup, dbPath);
               db = await openAndVerify();

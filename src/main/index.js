@@ -314,31 +314,47 @@ function createWindow(theme, { hidden = false } = {}) {
 
         const destPath = path.join(targetDir, `elektronik-yevmiye-backup-${todayStr}.sqlite`);
 
-        if (fs.existsSync(destPath)) {
-          fs.unlinkSync(destPath);
-        }
-        const escapedPath = destPath.replace(/'/g, "''");
-        await db.run(`VACUUM INTO '${escapedPath}'`);
-        logger.info('Daily safe backup completed via VACUUM INTO:', destPath);
-
-        // Verify the copy with the same driver and key as the live database.
-        // Opening the snapshot with an unrelated plaintext driver reported a
-        // false "integrity failed" for every encrypted database.
-        const { verifyDbFile } = require('./database/dbCompat');
-        const { loadOrCreateDbKey } = require('./services/keystore');
-        let backupKey = null;
+        // Never publish a backup of an empty database, and never replace an
+        // existing backup with one. A recovery that restored an empty file used
+        // to write that emptiness over the day's real backup, which is how a
+        // good history can disappear one shutdown at a time.
+        let projects = 0;
         try {
-          backupKey = await loadOrCreateDbKey();
-        } catch {
-          // Keystore unavailable: a plaintext copy is still verifiable.
+          const row = await db.get('SELECT count(*) AS c FROM projects');
+          projects = row ? row.c : 0;
+        } catch (countErr) {
+          logger.warn('Could not count projects before the daily backup:', countErr.message);
         }
-        const backupOk = verifyDbFile(destPath, backupKey);
-
-        if (backupOk) {
-          logger.info('[Safe Backup] Backup integrity check passed.');
+        if (!projects) {
+          logger.warn('[Safe Backup] Database holds no projects; skipping the daily backup.');
+          await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
+        } else if (fs.existsSync(destPath)) {
+          logger.info('[Safe Backup] Today already has a backup; keeping the existing file.');
           await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
         } else {
-          logger.error('[Safe Backup] Backup integrity check failed:', destPath);
+          const escapedPath = destPath.replace(/'/g, "''");
+          await db.run(`VACUUM INTO '${escapedPath}'`);
+          logger.info('Daily safe backup completed via VACUUM INTO:', destPath);
+
+          // Verify the copy with the same driver and key as the live database.
+          // Opening the snapshot with an unrelated plaintext driver reported a
+          // false "integrity failed" for every encrypted database.
+          const { verifyDbFile } = require('./database/dbCompat');
+          const { loadOrCreateDbKey } = require('./services/keystore');
+          let backupKey = null;
+          try {
+            backupKey = await loadOrCreateDbKey();
+          } catch {
+            // Keystore unavailable: a plaintext copy is still verifiable.
+          }
+          const backupOk = verifyDbFile(destPath, backupKey);
+
+          if (backupOk) {
+            logger.info('[Safe Backup] Backup integrity check passed.');
+            await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
+          } else {
+            logger.error('[Safe Backup] Backup integrity check failed:', destPath);
+          }
         }
       }
     } catch (err) {

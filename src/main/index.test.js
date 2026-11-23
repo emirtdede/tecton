@@ -224,6 +224,9 @@ describe('main lifecycle', () => {
       "INSERT INTO app_settings (setting_key, setting_value) VALUES ('cloud_sync_folder', ?)",
       [path.join(paths.documents, 'TectonBackups')]
     );
+    // An empty database is deliberately not backed up (see the next test), so
+    // give it one real record the way a used installation would have.
+    await dbIdxCtl.db.run("INSERT INTO projects (name) VALUES ('Test site')");
     const { main } = await freshApp();
 
     let prevented = false;
@@ -254,6 +257,36 @@ describe('main lifecycle', () => {
     let prevented2 = false;
     main.handlers.close[0]({ preventDefault: () => { prevented2 = true; } });
     expect(prevented2).toBe(false);
+  });
+
+  it('skips the safe backup when the database holds no projects', async () => {
+    // A recovery that restored an empty file must not then write that
+    // emptiness into the daily backup slot and destroy the real history.
+    await dbIdxCtl.db.run(
+      "INSERT INTO app_settings (setting_key, setting_value) VALUES ('cloud_sync_folder', ?)",
+      [path.join(paths.documents, 'TectonBackups')]
+    );
+    const { main } = await freshApp();
+
+    const p = main.handlers.close[0]({ preventDefault: () => {} });
+    await vi.advanceTimersByTimeAsync(6000);
+    await p;
+
+    const sqlite = [];
+    const walk = (dir) => {
+      if (!fs.existsSync(dir)) return;
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, e.name);
+        if (e.isDirectory()) walk(full);
+        else if (e.name.endsWith('.sqlite')) sqlite.push(full);
+      }
+    };
+    walk(path.join(paths.documents, 'TectonBackups'));
+    expect(sqlite).toHaveLength(0);
+    const flag = await dbIdxCtl.db.get(
+      "SELECT setting_value FROM app_settings WHERE setting_key = 'clean_shutdown'"
+    );
+    expect(flag === undefined || flag.setting_value === '1').toBe(true);
   });
 
   it('quits on window-all-closed outside darwin', async () => {

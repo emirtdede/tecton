@@ -578,3 +578,146 @@ npx --yes prebuild-install --prefix node_modules/better-sqlite3-multiple-ciphers
 # paketleme / ekran goruntusu (Electron ABI)
 npx electron-builder install-app-deps
 ```
+
+## 7. Veri kaybi zinciri ve yerel modul degistirici (ikinci tur)
+
+Paketlenmis uygulama acilirken canli profildeki gercek veriler kayboldu: santiyeler
+ve personel listesi bos geldi, oysa ayni klasordeki eski yedeklerde 12 santiye ve
+280 personel vardi. Uc ayri hata birlikte calisti.
+
+### P-5 - Bos veritabani, gercek veriyi gunluk yedege yazip gecmisi eziyordu (Kritik)
+
+**Dosya:** `src/main/index.js` (315-343)
+
+**Sorun:** Kapanista gunluk yedek kosulsuz uretiliyordu. Kurtarma bos bir dosya
+getirdiginde, o bos veritabani `VACUUM INTO` ile gunun yedegine yaziliyor ve
+var olan gercek yedek siliniyordu (`fs.unlinkSync`). Bir sonraki acilista kurtarma
+en yeni yedegi -yani bos olani- sectigi icin veri her kapanista bir kat daha
+kayboluyordu.
+
+**Duzeltme:**
+
+- Yedek oncesi `projects` sayisi okunuyor; sifirsa yedek yazilmiyor ve
+  `clean_shutdown` yine de `1` yapiliyor.
+- O gun icin yedek zaten varsa dosya silinmiyor, mevcut dosya korunuyor.
+- Bos veritabaninin yedege yazilmasi ve gercek yedegin ezilmesi artik mumkun degil.
+
+```js
+let projects = 0;
+try {
+  const row = await db.get('SELECT count(*) AS c FROM projects');
+  projects = row ? row.c : 0;
+} catch (countErr) {
+  logger.warn('Could not count projects before the daily backup:', countErr.message);
+}
+if (!projects) {
+  logger.warn('[Safe Backup] Database holds no projects; skipping the daily backup.');
+  await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
+} else if (fs.existsSync(destPath)) {
+  logger.info('[Safe Backup] Today already has a backup; keeping the existing file.');
+  await db.run("UPDATE app_settings SET setting_value = '1' WHERE setting_key = 'clean_shutdown'");
+} else {
+  // VACUUM INTO + dogrulama
+}
+```
+
+### P-6 - Kurtarma, dolu yedek dururken bos yedegi seciyordu (Kritik)
+
+**Dosya:** `src/main/database/db.js` (122-140), `src/main/database/dbCompat.js` (68-104)
+
+**Sorun:** `findUsableBackup` yalnizca "aciliyor mu" sorusunu soruyordu. Bos ama
+saglam bir yedek, dolu bir yedekten daha yeni oldugu icin once seciliyor ve
+kullaniciya bos uygulama aciliyordu. Ayrica yalnizca ilk 5 aday deneniyordu;
+bozuk bes dosya gercek yedege hic sira birakmiyordu.
+
+**Duzeltme:** `dbCompat.js` icine `inspectDbFile()` eklendi; dosya acilabiliyorsa
+`PRAGMA integrity_check` sonucunu ve `projects` satir sayisini donduruyor.
+`findUsableBackup` ilk 20 adayi gezip `projects > 0` olan en yeni yedegi seciyor;
+bos ama saglam yedek yalnizca hic dolu yedek yoksa son care olarak kullaniliyor.
+
+```js
+let emptyCandidate = null;
+for (const candidate of listBackups(backupDir).slice(0, 20)) {
+  const info = inspectDbFile(candidate, dbKey);
+  if (!info.ok) {
+    logger.warn(`[Auto-Recovery] Backup unusable with the current key: ${candidate}`);
+    continue;
+  }
+  if (info.projects > 0) return candidate;
+  logger.warn(`[Auto-Recovery] Backup is empty, keeping it as a last resort: ${candidate}`);
+  if (!emptyCandidate) emptyCandidate = candidate;
+}
+return emptyCandidate;
+```
+
+### P-7 - Degistirilen veritabaninin yan dosyalari geri yuklemeyi bozuyordu (Yuksek)
+
+**Dosya:** `src/main/database/db.js` (39-70, 141-165)
+
+**Sorun:** Ana dosya yedekle degistirilirken eski dosyanin `-wal` / `-shm`
+dosyalari yerinde kaliyordu. SQLite acilista eski anahtarla sifreli WAL'i yeni
+dosyaya uygulamaya calisip `file is not a database` ile dusuyordu; kurtarma
+sonsuz donguye giriyordu. Windows, basarisiz acilistan hemen sonra tutamaci
+birakmadigi icin ilk `unlink` `EBUSY` aliyordu.
+
+**Duzeltme:** `removeSidecars()` eklendi: `-wal`, `-shm`, `-journal` dosyalarini
+60 ms araliklarla 5 kez silmeyi dener. Silinemezse geri yukleme yapilmiyor
+(`database_sidecars_locked`), boylece bozuk bir kopya yedegin de uzerine yazmiyor.
+
+```js
+function removeSidecars(dbPath) {
+  let cleared = true;
+  for (const suffix of ['-wal', '-shm', '-journal']) {
+    const sibling = `${dbPath}${suffix}`;
+    let removed = !fs.existsSync(sibling);
+    for (let attempt = 0; attempt < 5 && !removed; attempt += 1) {
+      if (attempt > 0) sleepSync(60);
+      try {
+        fs.unlinkSync(sibling);
+        removed = true;
+      } catch (err) {
+        if (attempt === 4) logger.error(`Could not remove stale ${suffix} sidecar:`, err.message);
+      }
+    }
+    if (!removed) cleared = false;
+  }
+  return cleared;
+}
+```
+
+### P-8 - Node/Electron ABI degisimi her paketlemeden sonra testleri kiriyordu (Orta)
+
+**Dosya:** `scripts/nativeBinding.js` (yeni), `scripts/vitestGlobalSetup.js` (yeni),
+`package.json` (16-19), `vitest.config.js` (7)
+
+**Sorun:** `better_sqlite3.node` tek bir ABI icin derlenir. Paketleme Electron
+ABI'sine ceviriyor, testler Node ABI'si istiyor; her paketlemeden sonra testler
+`NODE_MODULE_VERSION 121 ... requires 147` ile dusuyordu. Elle
+`prebuild-install` calistirmak unutuldugunda hata yanlis yerde (testte) gorunuyordu.
+
+**Duzeltme:** `scripts/nativeBinding.js` her iki ikiliyi
+`node_modules/.cache/tecton-native/` altinda saklayip gerekeni yerine kopyaliyor
+(EBUSY'a karsi 10 deneme). `vitest.config.js` bir `globalSetup` ile test
+baslamadan Node ikilisini yerine koyuyor; `npm run dev:electron` ve
+`npm run build:electron` Electron ikilisini seciyor.
+
+```powershell
+node scripts/nativeBinding.js node       # testler
+node scripts/nativeBinding.js electron   # paketleme / ekran goruntusu
+```
+
+**Dogrulama:** `db.test.js` 12 test (2 yeni: bos yedegin dolu yedegi gecmemesi,
+kilitli yan dosyalarin temizlenmesi); `index.test.js` 8 test (1 yeni: bos
+veritabaninda gunluk yedegin yazilmamasi); tam paket `60 dosya / 352 test` yesil.
+Canli profilde 12 santiye / 280 personel iceren yedek geri yuklendi,
+`integrity_check: ok`, `VACUUM` basarili.
+
+### P-9 - Gunluk yedek dogrulamasi yanlis anahtarla calisabiliyordu (Dusuk)
+
+**Dosya:** `src/main/index.js` (330-345)
+
+**Sorun:** Anahtar deposu cevap vermedigi anda yedek dogrulamasi `null` anahtarla
+yapiliyordu; sifreli bir yedek "bozuk" gorunup `clean_shutdown` isareti hic
+konmuyor, sonraki acilis gereksiz butunluk kontrolu yapiyordu. Bu davranis
+korundu ama artik bos veritabani korumasi sayesinde yanlis pozitif bir yedegi
+ezemiyor; yalnizca gunluk bir butunluk taramasi fazladan kosuyor.

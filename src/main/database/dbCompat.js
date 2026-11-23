@@ -65,9 +65,12 @@ function openCompat({ filename, key = null, readonly = false }) {
   return wrap(native);
 }
 
-// Verify a candidate DB file WITHOUT touching the live DB.
-// Tries key-first, then plaintext. Returns true only if integrity_check is ok.
-function verifyDbFile(filePath, key = null) {
+// Inspect a candidate DB file WITHOUT touching the live DB.
+// Tries key-first, then plaintext. `ok` is true only if integrity_check passes;
+// `projects` is how many rows the projects table holds (-1 when unreadable), so
+// a caller can tell a real backup from an empty database that was written after
+// a failed recovery.
+function inspectDbFile(filePath, key = null) {
   const Native = require('better-sqlite3-multiple-ciphers');
   const attempts = [];
   if (key) attempts.push(`key='${key.replace(/'/g, "''")}'`);
@@ -78,13 +81,28 @@ function verifyDbFile(filePath, key = null) {
       native = Native(filePath, { readonly: true });
       if (pragma) native.pragma(pragma);
       const row = native.prepare('PRAGMA integrity_check').get();
+      if (!row || row.integrity_check !== 'ok') {
+        native.close();
+        continue;
+      }
+      let projects = 0;
+      try {
+        projects = native.prepare('SELECT count(*) AS c FROM projects').get().c;
+      } catch (_) {
+        // Older schema without a projects table: nothing to weigh.
+        projects = 0;
+      }
       native.close();
-      if (row && row.integrity_check === 'ok') return true;
+      return { ok: true, projects };
     } catch (_) {
       try { if (native) native.close(); } catch (_) { /* ignore */ }
     }
   }
-  return false;
+  return { ok: false, projects: -1 };
 }
 
-module.exports = { openCompat, verifyDbFile, isPlaintextHeader, wrap };
+function verifyDbFile(filePath, key = null) {
+  return inspectDbFile(filePath, key).ok;
+}
+
+module.exports = { openCompat, verifyDbFile, inspectDbFile, isPlaintextHeader, wrap };

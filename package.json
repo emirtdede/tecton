@@ -12,10 +12,10 @@
   },
   "scripts": {
     "dev:react": "vite",
-    "dev:electron": "wait-on tcp:5173 && cross-env NODE_ENV=development electron .",
+    "dev:electron": "node scripts/nativeBinding.js electron && wait-on tcp:5173 && cross-env NODE_ENV=development electron .",
     "dev": "concurrently \"npm run dev:react\" \"npm run dev:electron\"",
     "build:react": "vite build",
-    "build:electron": "npm run installer:langs && electron-builder --config electron-builder.config.cjs",
+    "build:electron": "npm run installer:langs && electron-builder --config electron-builder.config.cjs && node scripts/nativeBinding.js save electron",
     "build": "npm run build:react && npm run build:electron",
     "brand": "electron scripts/generateBrandAssets.js",
     "installer:langs": "node scripts/generateInstallerLanguages.js",

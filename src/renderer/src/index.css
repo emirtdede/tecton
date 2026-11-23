@@ -22,6 +22,9 @@
   --text-primary: #f4f4f5;
   --text-secondary: #a8a8b3;
   --text-muted: #8b8b98;
+  /* Scrim behind modal surfaces; opaque enough that the page behind a dialog
+     never shows through the dialog itself. */
+  --scrim: rgba(5, 7, 12, 0.86);
 
   /* Motion, geometry and content width. */
   --pp-ease: cubic-bezier(0.2, 0, 0, 1);
@@ -29,7 +32,8 @@
   --radius: 14px;
   --radius-sm: 8px;
   --sidebar-width: 15.5rem;
-  --sidebar-width-collapsed: 4.25rem;  --window-controls-width: 8.75rem;
+  --sidebar-width-collapsed: 4.25rem;
+  --window-controls-width: 8.75rem;
   --drag-strip-height: 2.25rem;
 
   /* Accent (rewritten at runtime by the appearance engine). */
@@ -105,6 +109,7 @@
   --text-primary: #111113;
   --text-secondary: #4b4b53;
   --text-muted: #52525b;
+  --scrim: rgba(240, 243, 245, 0.9);
 
   --accent: #18181b;
   --accent-hover: #2c2c31;
@@ -2384,9 +2389,9 @@ body.dragging * {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: rgba(5, 7, 12, 0.72);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  /* Flat shell: a solid scrim instead of a blur, so the page behind the card
+     never shows through the card itself. */
+  background: var(--scrim);
   animation: fadeIn 0.25s ease-out;
 }
 
@@ -2395,9 +2400,9 @@ body.dragging * {
   max-height: min(86vh, 760px);
   display: flex;
   flex-direction: column;
-  border-radius: 22px;
-  border: 1px solid var(--glass-border);
-  background: var(--bg-gradient);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
   overflow: hidden;
   animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);

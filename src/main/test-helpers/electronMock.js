@@ -326,6 +326,7 @@ function seedNativeDbCompat() {
     wrap: real.wrap,
     isPlaintextHeader: real.isPlaintextHeader,
     verifyDbFile: real.verifyDbFile,
+    inspectDbFile: real.inspectDbFile,
     openCompat: (...args) => {
       if (dbCompatCtl.failOpenOnce) {
         dbCompatCtl.failOpenOnce = false;

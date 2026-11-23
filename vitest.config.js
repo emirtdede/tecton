@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    // Packaging rebuilds the native SQLite addon for the Electron ABI; tests
+    // need the Node one. Swapping happens once, in the main process.
+    globalSetup: './scripts/vitestGlobalSetup.js',
     // jsdom needs a real origin before it exposes localStorage/sessionStorage;
     // the default opaque about:blank origin leaves them undefined.
     environmentOptions: { jsdom: { url: 'http://localhost:5173/' } },

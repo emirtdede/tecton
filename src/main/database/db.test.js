@@ -180,8 +180,37 @@ describe('db.js getDB (encrypted lifecycle)', () => {
     expect(row.v).toBe('recovered');
   });
 
-  it('throws when the primary is corrupted and no backup exists', async () => {
-    // `key` pragma is lazy, so a garbage primary passes openCompat and fails at
+  it('prefers a populated backup over a newer empty one', async () => {
+    // A recovery that restored an empty database used to write an empty backup
+    // the next shutdown. Recovery must not then pick that newer empty file and
+    // hand the user a blank app while the real records sit one file away.
+    const backupDir = path.join(paths.documents, 'TectonBackups', 'Database-Backups');
+    fs.mkdirSync(backupDir, { recursive: true });
+
+    const rich = path.join(backupDir, 'elektronik-yevmiye-backup-2026-01-08.sqlite');
+    const richDb = openCompat({ filename: rich, key: TEST_KEY });
+    await richDb.exec('CREATE TABLE projects(id INTEGER PRIMARY KEY, name TEXT)');
+    await richDb.exec('CREATE TABLE probe(id INTEGER PRIMARY KEY, v TEXT)');
+    await richDb.run('INSERT INTO projects(name) VALUES (?)', ['real site']);
+    await richDb.run('INSERT INTO probe(v) VALUES (?)', ['kept']);
+    await richDb.close();
+
+    const empty = path.join(backupDir, 'elektronik-yevmiye-backup-2026-01-09.sqlite');
+    const emptyDb = openCompat({ filename: empty, key: TEST_KEY });
+    await emptyDb.exec('CREATE TABLE projects(id INTEGER PRIMARY KEY, name TEXT)');
+    await emptyDb.close();
+
+    fs.writeFileSync(dbPath(), 'garbage-not-sqlite');
+    dbCompatCtl.failOpenOnce = true;
+
+    const { getDB } = await freshDbModule();
+    const db = tracker.track(await getDB());
+
+    const row = await db.get('SELECT v FROM probe WHERE id = 1');
+    expect(row.v).toBe('kept');
+  });
+
+  it('throws when the primary is corrupted and no backup exists', async () => {    // `key` pragma is lazy, so a garbage primary passes openCompat and fails at
     // the first read inside getDB -> rejects. Regression guard.
     fs.writeFileSync(dbPath(), 'garbage-not-sqlite');
     const { getDB } = await freshDbModule();
@@ -203,8 +232,11 @@ describe('db.js getDB (encrypted lifecycle)', () => {
     keystoreCtl.impl = async () => {
       throw new Error('keystore_unlock_failed');
     };
-    // An encrypted-looking primary (binary header) that nothing can open.
+    // An encrypted-looking primary (binary header) that nothing can open, plus
+    // the WAL/shm pair a crashed previous run would leave beside it.
     fs.writeFileSync(dbPath(), Buffer.from([0x8f, 0x2a, 0x11, 0x00, 0x01, 0x02]));
+    fs.writeFileSync(`${dbPath()}-wal`, Buffer.from('stale-wal'));
+    fs.writeFileSync(`${dbPath()}-shm`, Buffer.from('stale-shm'));
 
     const { getDB } = await freshDbModule();
     const db = tracker.track(await getDB());
@@ -213,6 +245,10 @@ describe('db.js getDB (encrypted lifecycle)', () => {
     expect(row.v).toBe('plaintext');
     const kept = fs.readdirSync(paths.userData).filter((f) => f.includes('.unreadable-'));
     expect(kept.length).toBe(1);
+    // The stale sidecars must be gone, otherwise SQLite replays them into the
+    // restored file and fails with "file is not a database".
+    expect(fs.existsSync(`${dbPath()}-wal`)).toBe(false);
+    expect(fs.existsSync(`${dbPath()}-shm`)).toBe(false);
   });
 
   it('runs an integrity check after an unclean shutdown', async () => {
